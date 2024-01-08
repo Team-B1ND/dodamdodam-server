@@ -1,0 +1,6 @@
+dependencies {
+    implementation project(':dodam-core')
+    implementation project(':dodam-infra')
+
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+}

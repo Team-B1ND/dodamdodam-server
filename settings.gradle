@@ -1,1 +1,5 @@
 rootProject.name = 'dodam'
+
+include 'dodam-api'
+include 'dodam-core'
+include 'dodam-infra'

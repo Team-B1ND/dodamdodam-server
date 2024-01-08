@@ -1,10 +1,10 @@
-package b1nd.dodam;
+package b1nd.dodamapi;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class DodamdodamServerApplicationTests {
+class DodamApiApplicationTests {
 
     @Test
     void contextLoads() {
