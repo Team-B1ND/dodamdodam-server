@@ -1,4 +1,4 @@
-package b1nd.dodamapi;
+package b1nd;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
