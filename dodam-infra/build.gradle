@@ -1,5 +1,10 @@
 dependencies {
+    implementation project(':dodam-core')
 
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+    implementation 'org.springframework.boot:spring-boot-starter-webflux'
+
+    compileOnly 'org.apache.tomcat.embed:tomcat-embed-core:10.1.7'
 }
 
 bootJar { enabled = false }

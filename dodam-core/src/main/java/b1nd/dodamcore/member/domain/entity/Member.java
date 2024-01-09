@@ -1,5 +1,6 @@
 package b1nd.dodamcore.member.domain.entity;
 
+import b1nd.dodamcore.auth.application.PasswordEncoder;
 import b1nd.dodamcore.member.domain.enums.AuthStatus;
 import b1nd.dodamcore.member.domain.enums.MemberRole;
 import com.fasterxml.jackson.annotation.JsonFormat;
@@ -50,6 +51,18 @@ public class Member {
     @NotNull
     private String phone;
 
+    public Member login(String pw, PasswordEncoder passwordEncoder) {
+        if(!passwordEncoder.matches(pw, this.pw)) {
+            throw new RuntimeException();
+        }
+
+        if(status.equals(AuthStatus.DEACTIVATE)) {
+            throw new RuntimeException();
+        }
+
+        return this;
+    }
+
     public void updateStatus(AuthStatus status) {
         this.status = status;
     }
@@ -74,4 +87,5 @@ public class Member {
         this.profileImage = profileImage;
         this.phone = phone;
     }
+
 }
