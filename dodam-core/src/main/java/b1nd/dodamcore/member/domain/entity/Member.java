@@ -11,7 +11,6 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
-import org.springframework.util.Assert;
 
 import java.time.LocalDateTime;
 
@@ -48,8 +47,8 @@ public class Member {
 
     private String profileImage;
 
-    @OneToOne(mappedBy = "member")
-    private Student student;
+    @NotNull
+    private String phone;
 
     public void updateStatus(AuthStatus status) {
         this.status = status;
@@ -65,15 +64,7 @@ public class Member {
     }
 
     @Builder
-    public Member(String id, String pw, String name, String email, MemberRole role, AuthStatus status,String profileImage) {
-        Assert.hasText(id, "id must not be empty");
-        Assert.hasText(pw, "pw must not be empty");
-        Assert.hasText(name, "name must not be empty");
-        Assert.hasText(email, "email must not be empty");
-        Assert.notNull(role, "accessLevel must not be null");
-        Assert.notNull(status, "allowed must not be empty");
-        Assert.hasText(email, "email must have a text");
-
+    public Member(String id, String pw, String name, String email, MemberRole role, AuthStatus status, String profileImage, String phone) {
         this.id = id;
         this.pw = pw;
         this.email = email;
@@ -81,5 +72,6 @@ public class Member {
         this.role = role;
         this.status = status;
         this.profileImage = profileImage;
+        this.phone = phone;
     }
 }
