@@ -1,8 +1,9 @@
 package b1nd.dodaminfra.webclient;
 
+import b1nd.dodaminfra.webclient.exception.WebClientException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
@@ -13,6 +14,7 @@ import reactor.core.publisher.Mono;
 import java.util.function.Function;
 
 @Component
+@Slf4j
 @RequiredArgsConstructor
 public class WebClientSupport {
 
@@ -22,8 +24,7 @@ public class WebClientSupport {
         return webClient.method(HttpMethod.GET)
                 .uri(url)
                 .retrieve()
-                .onStatus(HttpStatusCode::is4xxClientError, onClientError())
-                .onStatus(HttpStatusCode::is5xxServerError, onServerError())
+                .onStatus(HttpStatusCode::isError, onError())
                 .toEntity(responseDtoClass)
                 .block();
     }
@@ -33,31 +34,18 @@ public class WebClientSupport {
                 .uri(url)
                 .bodyValue(requestDto)
                 .retrieve()
-                .onStatus(HttpStatusCode::is4xxClientError, onClientError())
-                .onStatus(HttpStatusCode::is5xxServerError, onServerError())
+                .onStatus(HttpStatusCode::isError, onError())
                 .toEntity(responseDtoClass)
                 .block();
     }
 
-    private Function<ClientResponse, Mono<? extends Throwable>> onClientError() {
-        return response -> switch ((HttpStatus) response.statusCode()) {
-            case BAD_REQUEST ->
-                //return Mono.error(WebClientException.EXCEPTION);
-                    Mono.error(new RuntimeException());
-            case UNAUTHORIZED ->
-                //return Mono.error(InvalidTokenException.EXCEPTION);
-                    Mono.error(new RuntimeException());
-            case GONE ->
-                //return Mono.error(ExpiredTokenException.EXCEPTION);
-                    Mono.error(new RuntimeException());
-            default ->
-                //return Mono.error(InternalServerException.EXCEPTION);
-                    Mono.error(new RuntimeException());
-        };
-    }
+    private Function<ClientResponse, Mono<? extends Throwable>> onError() {
+        return response -> {
+            log.error("ClientException Status : " + response.statusCode());
+            log.error("ClientException Body : " + response.bodyToMono(Object.class).block());
 
-    private Function<ClientResponse, Mono<? extends Throwable>> onServerError() {
-        return response -> Mono.error(new RuntimeException());
+            return Mono.error(WebClientException::new);
+        };
     }
 
 }

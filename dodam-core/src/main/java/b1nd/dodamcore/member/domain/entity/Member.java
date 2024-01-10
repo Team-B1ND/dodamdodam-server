@@ -3,6 +3,8 @@ package b1nd.dodamcore.member.domain.entity;
 import b1nd.dodamcore.auth.application.PasswordEncoder;
 import b1nd.dodamcore.member.domain.enums.AuthStatus;
 import b1nd.dodamcore.member.domain.enums.MemberRole;
+import b1nd.dodamcore.member.domain.exception.DeactivateMemberException;
+import b1nd.dodamcore.member.domain.exception.WrongPasswordException;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
@@ -52,11 +54,11 @@ public class Member {
 
     public Member login(String pw, PasswordEncoder passwordEncoder) {
         if(!passwordEncoder.matches(pw, this.pw)) {
-            throw new RuntimeException();
+            throw new WrongPasswordException();
         }
 
         if(status.equals(AuthStatus.DEACTIVATE)) {
-            throw new RuntimeException();
+            throw new DeactivateMemberException();
         }
 
         return this;

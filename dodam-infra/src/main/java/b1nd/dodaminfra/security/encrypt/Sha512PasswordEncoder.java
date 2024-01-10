@@ -1,6 +1,7 @@
 package b1nd.dodaminfra.security.encrypt;
 
 import b1nd.dodamcore.auth.application.PasswordEncoder;
+import b1nd.dodamcore.common.exception.custom.InternalServerException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
@@ -26,7 +27,7 @@ final class Sha512PasswordEncoder implements PasswordEncoder {
             log.error("Encrypt Exception : " + e.getClass());
             log.error("Encrypt Exception Message : " + e.getMessage());
 
-            throw new RuntimeException();
+            throw new InternalServerException();
         }
     }
 

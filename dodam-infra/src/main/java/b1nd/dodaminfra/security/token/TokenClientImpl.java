@@ -10,12 +10,14 @@ import b1nd.dodamcore.member.domain.entity.Member;
 import b1nd.dodamcore.member.domain.enums.MemberRole;
 import b1nd.dodaminfra.webclient.WebClientSupport;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 
 @Component
+@Slf4j
 @RequiredArgsConstructor
 final class TokenClientImpl implements TokenClient {
 
@@ -35,10 +37,6 @@ final class TokenClientImpl implements TokenClient {
     public String reissueAccessToken(String refreshToken) {
         VerifyTokenResponse.VerifyToken token = verifyToken(refreshToken).getData();
 
-        if(isInvalidToken(token.getIss(), token.getSub())) {
-            throw new RuntimeException();
-        }
-
         MemberRole role = MemberRole.valueOfNumber(token.getAccessLevel());
 
         return issueToken(token.getMemberId(), role, tokenProperties.getGenerate()).join();
@@ -46,43 +44,16 @@ final class TokenClientImpl implements TokenClient {
 
     @Override
     public String getMemberIdByToken(String token) {
-        VerifyTokenResponse verifyTokenRo = verifyToken(token);
-
-        if (verifyTokenRo.getData() == null) {
-            //throw ExpiredTokenException.EXCEPTION;
-            throw new RuntimeException();
-        }
-
-        return verifyTokenRo.getData().getMemberId();
+        return verifyToken(token).getData().getMemberId();
     }
 
     @Override
     public VerifyTokenResponse verifyToken(String token) {
-        VerifyTokenResponse ro = webClient.post(
-                        jwtProperties.getTokenServer() + tokenProperties.getVerify(),
+        return webClient.post(
+                jwtProperties.getTokenServer() + tokenProperties.getVerify(),
                         new Token(token),
-                        VerifyTokenResponse.class)
-                .getBody();
-
-        if(ro == null) {
-            // TODO :: 에러 관리 파일에 로깅하기
-            throw new RuntimeException();
-            //throw TokenServerException.EXCEPTION;
-        }
-
-        switch (ro.getStatusCode()) {
-            case 400 ->
-                //throw CredentialsNotFoundException.EXCEPTION;
-                    throw new RuntimeException();
-            case 403 ->
-                //throw InvalidTokenException.EXCEPTION;
-                    throw new RuntimeException();
-            case 410 ->
-                //throw ExpiredTokenException.EXCEPTION;
-                    throw new RuntimeException();
-        }
-
-        return ro;
+                VerifyTokenResponse.class
+                ).getBody();
     }
 
     private CompletableFuture<String> issueToken(String userId, MemberRole role, String url) {
@@ -95,10 +66,6 @@ final class TokenClientImpl implements TokenClient {
                         ).getBody()
                 ).data().token()
         );
-    }
-
-    private boolean isInvalidToken(String iss, String sub) {
-        return !jwtProperties.getIssuer().equals(iss) || !sub.equals("token");
     }
 
 }
