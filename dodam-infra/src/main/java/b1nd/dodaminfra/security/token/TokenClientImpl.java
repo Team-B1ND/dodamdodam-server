@@ -2,10 +2,10 @@ package b1nd.dodaminfra.security.token;
 
 import b1nd.dodamcore.auth.application.dto.response.LoginResponse;
 import b1nd.dodamcore.auth.application.TokenClient;
+import b1nd.dodamcore.auth.application.dto.response.TokenInfoResponse;
 import b1nd.dodamcore.auth.application.dto.response.TokenResponse;
 import b1nd.dodamcore.auth.application.dto.Token;
 import b1nd.dodamcore.auth.application.dto.request.TokenRequest;
-import b1nd.dodamcore.auth.application.dto.response.VerifyTokenResponse;
 import b1nd.dodamcore.member.domain.entity.Member;
 import b1nd.dodamcore.member.domain.enums.MemberRole;
 import b1nd.dodaminfra.webclient.WebClientSupport;
@@ -35,24 +35,24 @@ final class TokenClientImpl implements TokenClient {
 
     @Override
     public String reissueAccessToken(String refreshToken) {
-        VerifyTokenResponse.VerifyToken token = verifyToken(refreshToken).getData();
+        TokenInfoResponse.TokenInfo token = verifyToken(refreshToken).data();
 
-        MemberRole role = MemberRole.valueOfNumber(token.getAccessLevel());
+        MemberRole role = MemberRole.valueOfNumber(token.accessLevel());
 
-        return issueToken(token.getMemberId(), role, tokenProperties.getGenerate()).join();
+        return issueToken(token.memberId(), role, tokenProperties.getGenerate()).join();
     }
 
     @Override
     public String getMemberIdByToken(String token) {
-        return verifyToken(token).getData().getMemberId();
+        return verifyToken(token).data().memberId();
     }
 
     @Override
-    public VerifyTokenResponse verifyToken(String token) {
+    public TokenInfoResponse verifyToken(String token) {
         return webClient.post(
                 jwtProperties.getTokenServer() + tokenProperties.getVerify(),
                         new Token(token),
-                VerifyTokenResponse.class
+                TokenInfoResponse.class
                 ).getBody();
     }
 
