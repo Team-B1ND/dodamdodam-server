@@ -14,4 +14,12 @@ public class Response {
     public static Response of(HttpStatus status, String message) {
         return new Response(status.value(), message);
     }
+
+    public static Response ok(String message) {
+        return new Response(HttpStatus.OK.value(), message);
+    }
+
+    public static Response created(String message) {
+        return new Response(HttpStatus.CREATED.value(), message);
+    }
 }

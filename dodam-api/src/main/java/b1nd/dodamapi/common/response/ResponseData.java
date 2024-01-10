@@ -16,4 +16,8 @@ public class ResponseData<T> extends Response {
     public static <T> ResponseData<T> of(HttpStatus status, String message, T data) {
         return new ResponseData<>(status, message, data);
     }
+
+    public static <T> ResponseData<T> ok(String message, T data) {
+        return new ResponseData<>(HttpStatus.OK, message, data);
+    }
 }

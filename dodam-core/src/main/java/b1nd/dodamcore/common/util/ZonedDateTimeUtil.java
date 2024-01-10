@@ -5,7 +5,9 @@ import java.time.LocalTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 
-public abstract class ZonedDateTimeUtil {
+public final class ZonedDateTimeUtil {
+
+    private ZonedDateTimeUtil() {}
 
     public static LocalDateTime nowToLocalDateTime() {
         return ZonedDateTime.now(ZoneId.of("Asia/Seoul")).toLocalDateTime();
