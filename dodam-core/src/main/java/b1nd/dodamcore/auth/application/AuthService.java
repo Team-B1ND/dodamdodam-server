@@ -8,7 +8,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.validation.annotation.Validated;
 
 import java.util.concurrent.CompletableFuture;
 
@@ -22,7 +21,7 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
 
     @Async
-    public CompletableFuture<LoginResponse> login(@Validated LoginRequest request) {
+    public CompletableFuture<LoginResponse> login(LoginRequest request) {
         CompletableFuture<Member> member = CompletableFuture.supplyAsync(
                 () -> memberRepository.findById(request.id())
                         .orElseThrow(RuntimeException::new)
