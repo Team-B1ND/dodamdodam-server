@@ -1,11 +1,11 @@
 package b1nd.dodamcore.member.domain.entity;
 
 import b1nd.dodamcore.auth.application.PasswordEncoder;
+import b1nd.dodamcore.common.entity.BaseEntity;
 import b1nd.dodamcore.member.domain.enums.AuthStatus;
 import b1nd.dodamcore.member.domain.enums.MemberRole;
 import b1nd.dodamcore.member.domain.exception.DeactivateMemberException;
 import b1nd.dodamcore.member.domain.exception.WrongPasswordException;
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
@@ -13,14 +13,11 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.CreationTimestamp;
-
-import java.time.LocalDateTime;
 
 @Getter
 @Entity(name = "member")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Member {
+public class Member extends BaseEntity {
 
     @Id
     private String id;
@@ -43,10 +40,6 @@ public class Member {
     @Enumerated(EnumType.STRING)
     private AuthStatus status;
 
-    @CreationTimestamp
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
-    private LocalDateTime joinDate;
-
     private String profileImage;
 
     @NotNull
@@ -64,6 +57,10 @@ public class Member {
         return this;
     }
 
+    public void updatePw(String pw) {
+        this.pw = pw;
+    }
+
     public void updateStatus(AuthStatus status) {
         this.status = status;
     }
@@ -71,10 +68,6 @@ public class Member {
     public void updateInfo(String imageUrl, String email) {
         this.profileImage = imageUrl;
         this.email = email;
-    }
-
-    public void updatePw(String pw) {
-        this.pw = pw;
     }
 
     @Builder
