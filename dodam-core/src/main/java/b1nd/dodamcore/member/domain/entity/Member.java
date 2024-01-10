@@ -41,7 +41,6 @@ public class Member {
     @Enumerated(EnumType.STRING)
     private AuthStatus status;
 
-    @NotNull
     @CreationTimestamp
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime joinDate;

@@ -31,6 +31,8 @@ class SecurityConfig {
 
                 .authorizeHttpRequests()
                 .requestMatchers("/auth/**").permitAll()
+                .requestMatchers("/member/join-student").permitAll()
+                .requestMatchers("/member/join-teacher").permitAll()
 
                 .anyRequest().authenticated();
 

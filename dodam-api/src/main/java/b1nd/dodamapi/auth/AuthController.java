@@ -3,6 +3,7 @@ package b1nd.dodamapi.auth;
 import b1nd.dodamcore.auth.application.AuthService;
 import b1nd.dodamcore.auth.application.dto.request.LoginRequest;
 import b1nd.dodamcore.auth.application.dto.response.LoginResponse;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -19,7 +20,7 @@ public class AuthController {
     private final AuthService authService;
 
     @PostMapping("/login")
-    public CompletableFuture<LoginResponse> login(@RequestBody LoginRequest request) {
+    public CompletableFuture<LoginResponse> login(@RequestBody @Valid LoginRequest request) {
         return authService.login(request);
     }
 
