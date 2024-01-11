@@ -10,7 +10,9 @@ public enum MemberExceptionCode implements ExceptionCode {
     MEMBER_DUPLICATION(HttpStatus.FORBIDDEN, "이미 존재하는 멤버"),
     WRONG_PASSWORD(HttpStatus.FORBIDDEN, "잘못된 비밀번호"),
     DEACTIVATE_MEMBER(HttpStatus.FORBIDDEN, "비활성화된 멤버"),
-    MEMBER_NOT_FOUND(HttpStatus.NOT_FOUND, "없는 멤버");
+    MEMBER_NOT_FOUND(HttpStatus.NOT_FOUND, "없는 멤버"),
+    STUDENT_NOT_FOUND(HttpStatus.NOT_FOUND, "없는 학생"),
+    TEACHER_NOT_FOUND(HttpStatus.NOT_FOUND, "없는 선생님");
 
     private final HttpStatus status;
     private final String message;
