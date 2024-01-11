@@ -13,6 +13,8 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
+import static org.springframework.http.HttpMethod.*;
+
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
@@ -31,11 +33,20 @@ class SecurityConfig {
                 .addFilterAfter(tokenFilter, UsernamePasswordAuthenticationFilter.class)
 
                 .authorizeHttpRequests()
-                .requestMatchers("/auth/**").permitAll()
-                .requestMatchers(HttpMethod.POST, "/member/**").permitAll()
-                .requestMatchers(HttpMethod.GET, "/bus").hasAnyRole("STUDENT", "TEACHER")
+                
+                .requestMatchers(POST, "/auth/**").permitAll()
+
+                .requestMatchers(POST, "/member/**").permitAll()
+          
+                .requestMatchers(GET, "/bus").hasAnyRole("STUDENT", "TEACHER")
                 .requestMatchers("/bus/apply/**").hasRole("STUDENT")
                 .requestMatchers("/bus/**").hasRole("TEACHER")
+
+                .requestMatchers(POST, "/night-study").hasRole("STUDENT")
+                .requestMatchers(DELETE, "/night-study/**").hasRole("STUDENT")
+                .requestMatchers(GET, "/night-study/my").hasRole("STUDENT")
+                .requestMatchers(GET, "/night-study/**").hasAnyRole("TEACHER", "ADMIN")
+                .requestMatchers(PATCH, "/night-study/**").hasAnyRole("TEACHER", "ADMIN")
 
                 .anyRequest().authenticated();
 

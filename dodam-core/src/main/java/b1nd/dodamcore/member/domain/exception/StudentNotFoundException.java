@@ -5,10 +5,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 @ResponseStatus(value = HttpStatus.NOT_FOUND)
-public class MemberNotFoundException extends CustomException {
+public class StudentNotFoundException extends CustomException {
 
-    public MemberNotFoundException() {
-        super(MemberExceptionCode.MEMBER_NOT_FOUND);
+    public StudentNotFoundException() {
+        super(MemberExceptionCode.STUDENT_NOT_FOUND);
     }
 
 }
