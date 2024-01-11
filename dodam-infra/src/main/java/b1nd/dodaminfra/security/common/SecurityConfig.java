@@ -33,6 +33,7 @@ class SecurityConfig {
                 .authorizeHttpRequests()
                 .requestMatchers("/auth/**").permitAll()
                 .requestMatchers(HttpMethod.POST, "/member/**").permitAll()
+                .requestMatchers(HttpMethod.GET, "/bus").hasAnyRole("STUDENT", "TEACHER")
                 .requestMatchers("/bus/apply/**").hasRole("STUDENT")
                 .requestMatchers("/bus/**").hasRole("TEACHER")
 

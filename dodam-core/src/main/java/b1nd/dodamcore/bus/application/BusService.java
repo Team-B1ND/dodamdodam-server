@@ -1,6 +1,8 @@
 package b1nd.dodamcore.bus.application;
 
 import b1nd.dodamcore.bus.application.dto.req.BusReq;
+import b1nd.dodamcore.bus.application.dto.res.BusMemberRes;
+import b1nd.dodamcore.bus.application.dto.res.BusRes;
 import b1nd.dodamcore.bus.domain.entity.Bus;
 import b1nd.dodamcore.bus.domain.entity.BusMember;
 import b1nd.dodamcore.bus.domain.exception.*;
@@ -13,8 +15,15 @@ import b1nd.dodamcore.member.domain.entity.Student;
 import b1nd.dodamcore.member.repository.StudentRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -25,6 +34,55 @@ public class BusService {
     private final BusRepository busRepository;
     private final BusMemberRepository busMemberRepository;
     private final StudentRepository studentRepository;
+
+    public List<Bus> getValidBuses() {
+
+        LocalDateTime now = ZonedDateTimeUtil.nowToLocalDateTime();
+        List<Bus> buses = busRepository.findBusByLeaveTimeBetween(now, now.plusDays(7));
+
+        if(buses.size() == 0) return new ArrayList<>();
+        else return buses;
+    }
+
+    public List<BusRes> getBuses(int page, int limit) {
+
+        PageRequest pageRequest = PageRequest.of(page - 1, limit);
+        List<Bus> buses = busRepository.findAllByOrderByIdDesc(pageRequest);
+
+        return parseToBusList(buses);
+    }
+
+    public List<BusRes> getBusesByDate(int year, int month, int day) {
+
+        String yearStr = String.format("%04d", year);
+        String monthStr = String.format("%02d", month);
+        String dayStr = String.format("%02d", day);
+
+        List<Bus> buses = busRepository.findAllByLeaveTime(LocalDate.parse(yearStr + "-" + monthStr + "-" + dayStr));
+
+        return parseToBusList(buses);
+    }
+
+    private List<BusRes> parseToBusList(List<Bus> buses) {
+        return buses.stream().map(bus ->
+                BusRes.createFromBus(
+                        bus,
+                        getBusMembers(bus).stream()
+                                .map(BusMemberRes::createFromBusMember)
+                                .collect(Collectors.toList())
+                )
+        ).collect(Collectors.toList());
+    }
+
+    private List<BusMember> getBusMembers(Bus bus) {
+        return busMemberRepository.findByBusOrderByStudentAsc(bus);
+    }
+
+    public Bus getAppliedBus() {
+        Student student = studentRepository.findByMember(memberSessionHolder.current())
+                .orElseThrow(RuntimeException::new);
+        return busRepository.findBusByStudent(LocalDateTime.now(), student.getId());
+    }
 
     @Transactional(rollbackFor = Exception.class)
     public void createBus(BusReq createBusReq) {
@@ -62,10 +120,9 @@ public class BusService {
     @Transactional(rollbackFor = Exception.class)
     public void applyBus(int id) {
 
-        //TODO: private 메서드화, 중복되는 로직
         Bus bus = busRepository.findById(id)
                 .orElseThrow(BusNotFoundException::new);
-        //TODO: studentService Exception 처리
+        //TODO: studentService Exception 처리 - 중복되는 로직
         Student student = studentRepository.findByMember(memberSessionHolder.current())
                 .orElseThrow(RuntimeException::new);
 
