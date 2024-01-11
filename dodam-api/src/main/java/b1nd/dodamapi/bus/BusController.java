@@ -19,13 +19,13 @@ public class BusController {
 
     private final BusService busService;
 
-    @GetMapping //teacher, student
+    @GetMapping
     public ResponseData<List<Bus>> getValidBuses() {
         List<Bus> buses = busService.getValidBuses();
         return ResponseData.ok("유효 버스 조회 성공", buses);
     }
 
-    @GetMapping("/list") //teacher
+    @GetMapping("/list")
     public ResponseData<List<BusRes>> getBuses(
             @RequestParam(name = "page") int page,
             @RequestParam(name = "limit") int limit
@@ -34,7 +34,7 @@ public class BusController {
         return ResponseData.ok("버스 조회 성공", buses);
     }
 
-    @GetMapping("/date") //teacher
+    @GetMapping("/date")
     public ResponseData<List<BusRes>> getBusesByDate(
             @RequestParam("year") int year,
             @RequestParam("month") int month,

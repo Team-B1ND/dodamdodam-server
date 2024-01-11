@@ -17,8 +17,6 @@ public interface BusMemberRepository extends JpaRepository<BusMember, Integer> {
     @EntityGraph(attributePaths = {"student", "student.member"})
     List<BusMember> findByBusOrderByStudentAsc(Bus bus);
 
-    List<BusMember> findByBus(Bus bus);
-
     Optional<BusMember> findByStudentAndBus_Id(Student student, int busId);
 
     @EntityGraph(attributePaths = {"bus"})
