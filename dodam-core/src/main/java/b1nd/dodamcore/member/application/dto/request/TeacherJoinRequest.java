@@ -16,7 +16,7 @@ public record TeacherJoinRequest(@NotEmpty String id, @NotEmpty String pw, @NotE
                 .pw(encodedPw)
                 .email(email)
                 .name(name)
-                .role(MemberRole.STUDENT)
+                .role(MemberRole.TEACHER)
                 .phone(phone)
                 .status(AuthStatus.DEACTIVATE)
                 .build();
