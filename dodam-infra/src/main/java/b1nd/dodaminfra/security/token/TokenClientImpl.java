@@ -37,7 +37,7 @@ final class TokenClientImpl implements TokenClient {
     public String reissueAccessToken(String refreshToken) {
         TokenInfoResponse.TokenInfo token = verifyToken(refreshToken).data();
 
-        MemberRole role = MemberRole.valueOfNumber(token.accessLevel());
+        MemberRole role = MemberRole.of(token.accessLevel());
 
         return issueToken(token.memberId(), role, tokenProperties.getGenerate()).join();
     }

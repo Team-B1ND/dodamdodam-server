@@ -1,14 +1,14 @@
-package b1nd.dodamcore.member.domain.exception;
+package b1nd.dodamcore.nightstudy.domain.exception;
 
 import b1nd.dodamcore.common.exception.custom.CustomException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 @ResponseStatus(value = HttpStatus.NOT_FOUND)
-public class MemberNotFoundException extends CustomException {
+public class NightStudyNotFoundException extends CustomException {
 
-    public MemberNotFoundException() {
-        super(MemberExceptionCode.MEMBER_NOT_FOUND);
+    public NightStudyNotFoundException() {
+        super(NightStudyExceptionCode.NOT_FOUND);
     }
 
 }

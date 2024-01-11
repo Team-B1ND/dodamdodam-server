@@ -17,7 +17,7 @@ public enum MemberRole {
     private final String role;
     private final int number;
 
-    public static MemberRole valueOfNumber(int number) {
+    public static MemberRole of(int number) {
         return Arrays.stream(values())
                 .filter(value -> value.number == number)
                 .findAny()

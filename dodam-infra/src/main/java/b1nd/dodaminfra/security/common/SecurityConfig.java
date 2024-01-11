@@ -12,6 +12,8 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
+import static org.springframework.http.HttpMethod.*;
+
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
@@ -30,9 +32,15 @@ class SecurityConfig {
                 .addFilterAfter(tokenFilter, UsernamePasswordAuthenticationFilter.class)
 
                 .authorizeHttpRequests()
-                .requestMatchers("/auth/**").permitAll()
-                .requestMatchers("/member/join-student").permitAll()
-                .requestMatchers("/member/join-teacher").permitAll()
+                .requestMatchers(POST, "/auth/**").permitAll()
+
+                .requestMatchers(POST, "/member/**").permitAll()
+
+                .requestMatchers(POST, "/night-study").hasRole("STUDENT")
+                .requestMatchers(DELETE, "/night-study/**").hasRole("STUDENT")
+                .requestMatchers(GET, "/night-study/my").hasRole("STUDENT")
+                .requestMatchers(GET, "/night-study/**").hasAnyRole("TEACHER", "ADMIN")
+                .requestMatchers(PATCH, "/night-study/**").hasAnyRole("TEACHER", "ADMIN")
 
                 .anyRequest().authenticated();
 
