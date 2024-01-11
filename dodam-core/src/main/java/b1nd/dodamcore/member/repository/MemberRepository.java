@@ -16,8 +16,6 @@ public interface MemberRepository extends JpaRepository<Member, String> {
 
     Optional<Member> findByIdAndPw(String id, String pw);
 
-    List<Member> findByJoinDateAfter(LocalDateTime joinDate);
-
     List<Member> findByStatus(AuthStatus status);
 
     //Optional<Member> findByStudent(Student student);

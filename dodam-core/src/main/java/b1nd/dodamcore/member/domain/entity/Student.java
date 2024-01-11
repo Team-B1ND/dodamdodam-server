@@ -17,7 +17,7 @@ public class Student {
     private int id;
 
     @NotNull
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "fk_member_id")
     private Member member;
 

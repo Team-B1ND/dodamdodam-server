@@ -4,6 +4,7 @@ import b1nd.dodaminfra.security.token.TokenFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.web.SecurityFilterChain;
@@ -31,8 +32,9 @@ class SecurityConfig {
 
                 .authorizeHttpRequests()
                 .requestMatchers("/auth/**").permitAll()
-                .requestMatchers("/member/join-student").permitAll()
-                .requestMatchers("/member/join-teacher").permitAll()
+                .requestMatchers(HttpMethod.POST, "/member/**").permitAll()
+                .requestMatchers("/bus/apply/**").hasRole("STUDENT")
+                .requestMatchers("/bus/**").hasRole("TEACHER")
 
                 .anyRequest().authenticated();
 
