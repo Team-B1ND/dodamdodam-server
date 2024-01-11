@@ -1,11 +1,11 @@
 package b1nd.dodaminfra.security.token;
 
-import b1nd.dodamcore.auth.application.dto.response.LoginResponse;
+import b1nd.dodamcore.auth.application.dto.res.LoginRes;
 import b1nd.dodamcore.auth.application.TokenClient;
-import b1nd.dodamcore.auth.application.dto.response.TokenInfoResponse;
-import b1nd.dodamcore.auth.application.dto.response.TokenResponse;
+import b1nd.dodamcore.auth.application.dto.res.TokenInfoRes;
+import b1nd.dodamcore.auth.application.dto.res.TokenRes;
 import b1nd.dodamcore.auth.application.dto.Token;
-import b1nd.dodamcore.auth.application.dto.request.TokenRequest;
+import b1nd.dodamcore.auth.application.dto.req.TokenReq;
 import b1nd.dodamcore.member.domain.entity.Member;
 import b1nd.dodamcore.member.domain.enums.MemberRole;
 import b1nd.dodaminfra.webclient.WebClientSupport;
@@ -26,16 +26,16 @@ final class TokenClientImpl implements TokenClient {
     private final TokenProperties tokenProperties;
 
     @Override
-    public CompletableFuture<LoginResponse> issueTokens(Member member) {
+    public CompletableFuture<LoginRes> issueTokens(Member member) {
         CompletableFuture<String> accessToken = issueToken(member.getId(), member.getRole(), tokenProperties.getGenerate());
         CompletableFuture<String> refreshToken = issueToken(member.getId(), member.getRole(), tokenProperties.getRefresh());
 
-        return accessToken.thenCombine(refreshToken, (a, r) -> new LoginResponse(member, a, r));
+        return accessToken.thenCombine(refreshToken, (a, r) -> new LoginRes(member, a, r));
     }
 
     @Override
     public String reissueAccessToken(String refreshToken) {
-        TokenInfoResponse.TokenInfo token = verifyToken(refreshToken).data();
+        TokenInfoRes.TokenInfo token = verifyToken(refreshToken).data();
 
         MemberRole role = MemberRole.of(token.accessLevel());
 
@@ -48,11 +48,11 @@ final class TokenClientImpl implements TokenClient {
     }
 
     @Override
-    public TokenInfoResponse verifyToken(String token) {
+    public TokenInfoRes verifyToken(String token) {
         return webClient.post(
                 jwtProperties.getTokenServer() + tokenProperties.getVerify(),
                         new Token(token),
-                TokenInfoResponse.class
+                TokenInfoRes.class
                 ).getBody();
     }
 
@@ -61,8 +61,8 @@ final class TokenClientImpl implements TokenClient {
                 () -> Objects.requireNonNull(
                         webClient.post(
                                 jwtProperties.getTokenServer() + url,
-                                new TokenRequest(userId, role.getNumber(), 0),
-                                TokenResponse.class
+                                new TokenReq(userId, role.getNumber(), 0),
+                                TokenRes.class
                         ).getBody()
                 ).data().token()
         );

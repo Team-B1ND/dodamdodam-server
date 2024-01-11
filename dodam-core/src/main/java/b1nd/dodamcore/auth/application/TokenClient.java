@@ -1,16 +1,16 @@
 package b1nd.dodamcore.auth.application;
 
-import b1nd.dodamcore.auth.application.dto.response.TokenInfoResponse;
-import b1nd.dodamcore.auth.application.dto.response.LoginResponse;
+import b1nd.dodamcore.auth.application.dto.res.TokenInfoRes;
+import b1nd.dodamcore.auth.application.dto.res.LoginRes;
 import b1nd.dodamcore.member.domain.entity.Member;
 
 import java.util.concurrent.CompletableFuture;
 
 public interface TokenClient {
 
-    CompletableFuture<LoginResponse> issueTokens(Member member);
+    CompletableFuture<LoginRes> issueTokens(Member member);
 
-    TokenInfoResponse verifyToken(String token);
+    TokenInfoRes verifyToken(String token);
 
     String reissueAccessToken(String refreshToken);
 

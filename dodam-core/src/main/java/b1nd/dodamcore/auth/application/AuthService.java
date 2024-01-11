@@ -1,7 +1,7 @@
 package b1nd.dodamcore.auth.application;
 
-import b1nd.dodamcore.auth.application.dto.request.LoginRequest;
-import b1nd.dodamcore.auth.application.dto.response.LoginResponse;
+import b1nd.dodamcore.auth.application.dto.req.LoginReq;
+import b1nd.dodamcore.auth.application.dto.res.LoginRes;
 import b1nd.dodamcore.member.domain.exception.MemberNotFoundException;
 import b1nd.dodamcore.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
@@ -21,7 +21,7 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
 
     @Async
-    public CompletableFuture<LoginResponse> login(LoginRequest request) {
+    public CompletableFuture<LoginRes> login(LoginReq request) {
         return CompletableFuture.supplyAsync(() -> memberRepository.findById(request.id())
                         .orElseThrow(MemberNotFoundException::new))
                 .thenApply(m -> m.login(request.pw(), passwordEncoder))

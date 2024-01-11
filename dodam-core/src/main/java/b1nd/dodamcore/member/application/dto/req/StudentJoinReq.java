@@ -1,4 +1,4 @@
-package b1nd.dodamcore.member.application.dto.request;
+package b1nd.dodamcore.member.application.dto.req;
 
 import b1nd.dodamcore.member.domain.entity.Member;
 import b1nd.dodamcore.member.domain.entity.Student;
@@ -8,8 +8,8 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 
-public record StudentJoinRequest(@NotEmpty String id, @NotEmpty String pw, @NotEmpty String name, @NotEmpty @Email String email,
-                                 @NotEmpty String phone, @NotNull int grade, @NotNull int room, @NotNull int number) {
+public record StudentJoinReq(@NotEmpty String id, @NotEmpty String pw, @NotEmpty String name, @NotEmpty @Email String email,
+                             @NotEmpty String phone, @NotNull int grade, @NotNull int room, @NotNull int number) {
 
     public Member mapToMember(String encodedPw) {
         return Member.builder()
