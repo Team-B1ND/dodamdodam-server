@@ -27,7 +27,7 @@ public class MemberService {
                 .orElseThrow(RuntimeException::new);
     }
 
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public void joinStudent(StudentJoinRequest studentJoinRequest) {
 
         String encryptedPassword = checkExistMember(studentJoinRequest.id(), studentJoinRequest.pw());
@@ -36,7 +36,7 @@ public class MemberService {
         studentRepository.save(studentJoinRequest.mapToStudent(savedMember));
     }
 
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public void joinTeacher(TeacherJoinRequest teacherJoinRequest) {
 
         String encryptedPassword = checkExistMember(teacherJoinRequest.id(), teacherJoinRequest.pw());

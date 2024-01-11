@@ -4,6 +4,7 @@ import b1nd.dodaminfra.security.token.TokenFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.web.SecurityFilterChain;
@@ -32,9 +33,14 @@ class SecurityConfig {
                 .addFilterAfter(tokenFilter, UsernamePasswordAuthenticationFilter.class)
 
                 .authorizeHttpRequests()
+                
                 .requestMatchers(POST, "/auth/**").permitAll()
 
                 .requestMatchers(POST, "/member/**").permitAll()
+          
+                .requestMatchers(GET, "/bus").hasAnyRole("STUDENT", "TEACHER")
+                .requestMatchers("/bus/apply/**").hasRole("STUDENT")
+                .requestMatchers("/bus/**").hasRole("TEACHER")
 
                 .requestMatchers(POST, "/night-study").hasRole("STUDENT")
                 .requestMatchers(DELETE, "/night-study/**").hasRole("STUDENT")
