@@ -13,7 +13,7 @@ import b1nd.dodamcore.nightstudy.domain.entity.NightStudy;
 import b1nd.dodamcore.nightstudy.domain.enums.NightStudyStatus;
 import b1nd.dodamcore.nightstudy.domain.exception.NightStudyDuplicateException;
 import b1nd.dodamcore.nightstudy.domain.exception.NightStudyNotFoundException;
-import b1nd.dodamcore.nightstudy.domain.vo.NightStudyVo;
+import b1nd.dodamcore.nightstudy.application.dto.res.NightStudyRes;
 import b1nd.dodamcore.nightstudy.repository.NightStudyRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -69,29 +69,29 @@ public class NightStudyService {
     }
 
     @Transactional(readOnly = true)
-    public List<NightStudyVo> getMy() {
+    public List<NightStudyRes> getMy() {
         Student student = studentRepository.findByMember(memberSessionHolder.current())
                 .orElseThrow(StudentNotFoundException::new);
         LocalDate now = ZonedDateTimeUtil.nowToLocalDate();
 
         return nightStudyRepository.findAllByStudentAndEndAtGreaterThanEqual(student, now).stream()
-                .map(NightStudyVo::of)
+                .map(NightStudyRes::of)
                 .toList();
     }
 
     @Transactional(readOnly = true)
-    public List<NightStudyVo> getPending() {
+    public List<NightStudyRes> getPending() {
         return nightStudyRepository.findAllByStatus(NightStudyStatus.PENDING).stream()
-                .map(NightStudyVo::of)
+                .map(NightStudyRes::of)
                 .toList();
     }
 
     @Transactional(readOnly = true)
-    public List<NightStudyVo> getValid() {
+    public List<NightStudyRes> getValid() {
         LocalDate now = ZonedDateTimeUtil.nowToLocalDate();
 
         return nightStudyRepository.findValidStudyByDate(now, NightStudyStatus.ALLOWED).stream()
-                .map(NightStudyVo::of)
+                .map(NightStudyRes::of)
                 .toList();
     }
 
