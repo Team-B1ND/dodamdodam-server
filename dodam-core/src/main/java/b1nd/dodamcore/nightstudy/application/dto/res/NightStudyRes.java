@@ -6,6 +6,7 @@ import b1nd.dodamcore.nightstudy.domain.enums.NightStudyStatus;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 
 public record NightStudyRes(Long id,
                             String content,
@@ -15,6 +16,12 @@ public record NightStudyRes(Long id,
                             String place,
                             LocalDate startAt, LocalDate endAt,
                             LocalDateTime createdAt, LocalDateTime modifiedAt) {
+    public static List<NightStudyRes> of(List<NightStudy> nightStudies) {
+        return nightStudies.stream()
+                .map(NightStudyRes::of)
+                .toList();
+    }
+
     public static NightStudyRes of(NightStudy nightStudy) {
         return new NightStudyRes(
                 nightStudy.getId(),

@@ -74,25 +74,25 @@ public class NightStudyService {
                 .orElseThrow(StudentNotFoundException::new);
         LocalDate now = ZonedDateTimeUtil.nowToLocalDate();
 
-        return nightStudyRepository.findAllByStudentAndEndAtGreaterThanEqual(student, now).stream()
-                .map(NightStudyRes::of)
-                .toList();
+        return NightStudyRes.of(
+                nightStudyRepository.findAllByStudentAndEndAtGreaterThanEqual(student, now)
+        );
     }
 
     @Transactional(readOnly = true)
     public List<NightStudyRes> getPending() {
-        return nightStudyRepository.findAllByStatus(NightStudyStatus.PENDING).stream()
-                .map(NightStudyRes::of)
-                .toList();
+        return NightStudyRes.of(
+                nightStudyRepository.findAllByStatus(NightStudyStatus.PENDING)
+        );
     }
 
     @Transactional(readOnly = true)
     public List<NightStudyRes> getValid() {
         LocalDate now = ZonedDateTimeUtil.nowToLocalDate();
 
-        return nightStudyRepository.findValidStudyByDate(now, NightStudyStatus.ALLOWED).stream()
-                .map(NightStudyRes::of)
-                .toList();
+        return NightStudyRes.of(
+                nightStudyRepository.findValidStudyByDate(now, NightStudyStatus.ALLOWED)
+        );
     }
 
 }
