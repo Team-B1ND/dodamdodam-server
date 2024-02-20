@@ -53,7 +53,7 @@ final class DodamTokenClient implements TokenClient {
                 jwtProperties.getTokenServer() + tokenProperties.getVerify(),
                         new Token(token),
                 TokenInfoRes.class
-                ).toFuture().join();
+                ).block();
     }
 
     private CompletableFuture<String> issueToken(String userId, MemberRole role, String url) {
@@ -63,7 +63,7 @@ final class DodamTokenClient implements TokenClient {
                                 jwtProperties.getTokenServer() + url,
                                 new TokenReq(userId, role.getNumber(), 0),
                                 TokenRes.class
-                        ).toFuture().join()
+                        ).block()
                 ).data().token()
         );
     }

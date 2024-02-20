@@ -4,9 +4,9 @@ import b1nd.dodaminfra.webclient.exception.WebClientException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Component;
+import org.springframework.web.reactive.function.BodyExtractors;
 import org.springframework.web.reactive.function.client.ClientResponse;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
@@ -22,7 +22,7 @@ public class WebClientSupport {
     private final WebClient webClient;
 
     public <T> Mono<T> get(String url, Class<T> responseDtoClass, String... headers) {
-        return webClient.method(HttpMethod.GET)
+        return webClient.get()
                 .uri(url)
                 .headers(convertStringToHttpHeaders(headers))
                 .retrieve()
@@ -30,11 +30,11 @@ public class WebClientSupport {
                 .bodyToMono(responseDtoClass);
     }
 
-    public <T, V> Mono<T> post(String url, V requestDto, Class<T> responseDtoClass, String... headers) {
-        return webClient.method(HttpMethod.POST)
+    public <T, V> Mono<T> post(String url, V body, Class<T> responseDtoClass, String... headers) {
+        return webClient.post()
                 .uri(url)
                 .headers(convertStringToHttpHeaders(headers))
-                .bodyValue(requestDto)
+                .bodyValue(body)
                 .retrieve()
                 .onStatus(HttpStatusCode::isError, onError())
                 .bodyToMono(responseDtoClass);
@@ -43,7 +43,7 @@ public class WebClientSupport {
     private Function<ClientResponse, Mono<? extends Throwable>> onError() {
         return response -> {
             log.error("WebClient Error Status : " + response.statusCode());
-            log.error("WebClient Error Body : " + response.bodyToMono(Object.class).block());
+            log.error("WebClient Error Body : " + response.body(BodyExtractors.toMono(ClientResponse.class)));
 
             return Mono.error(WebClientException::new);
         };
