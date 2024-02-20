@@ -75,14 +75,14 @@ public class NightStudyService {
         LocalDate now = ZonedDateTimeUtil.nowToLocalDate();
 
         return NightStudyRes.of(
-                nightStudyRepository.findAllByStudentAndEndAtGreaterThanEqual(student, now)
+                nightStudyRepository.findByStudentAndEndAtGreaterThanEqual(student, now)
         );
     }
 
     @Transactional(readOnly = true)
     public List<NightStudyRes> getPending() {
         return NightStudyRes.of(
-                nightStudyRepository.findAllByStatus(NightStudyStatus.PENDING)
+                nightStudyRepository.findByStatus(NightStudyStatus.PENDING)
         );
     }
 

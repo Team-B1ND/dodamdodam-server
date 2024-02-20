@@ -33,14 +33,14 @@ public class NightStudyController {
         return Response.ok("심야자습 취소 성공");
     }
 
-    @PatchMapping("/{id}/allowed")
+    @PatchMapping("/{id}/allow")
     public Response allow(@PathVariable Long id) {
         nightStudyService.modifyStatus(id, NightStudyStatus.ALLOWED);
 
         return Response.ok("심야자습 승인 성공");
     }
 
-    @PatchMapping("/{id}/rejected")
+    @PatchMapping("/{id}/reject")
     public Response reject(@PathVariable Long id) {
         nightStudyService.modifyStatus(id, NightStudyStatus.REJECTED);
 
