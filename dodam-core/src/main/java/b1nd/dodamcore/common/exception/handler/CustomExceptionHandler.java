@@ -17,6 +17,9 @@ public class CustomExceptionHandler {
 
     @ExceptionHandler(CustomException.class)
     protected ResponseEntity handleCustomException(CustomException e){
+        log.error("Exception Status : {}", e.getExceptionCode().getHttpStatus());
+        log.error("Exception Message : {}", e.getExceptionCode().getMessage());
+
         return ErrorResponseEntity.responseEntity(e.getExceptionCode());
     }
 
@@ -44,8 +47,6 @@ public class CustomExceptionHandler {
 
     @ExceptionHandler(HttpMessageNotReadableException.class)
     protected ResponseEntity handleHttpMessageNotReadableException(HttpMessageNotReadableException e) {
-        log.error(e.toString());
-
         return ResponseEntity
                 .status(400)
                 .body(ErrorResponseEntity.builder()
@@ -58,6 +59,7 @@ public class CustomExceptionHandler {
     @ExceptionHandler(Exception.class)
     protected ResponseEntity handleException(Exception e){
         log.error(e.toString());
+
         return ResponseEntity
                 .status(500)
                 .body(ErrorResponseEntity.builder()
