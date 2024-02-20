@@ -1,4 +1,4 @@
-package b1nd.dodaminfra.security.token;
+package b1nd.dodaminfra.token;
 
 import b1nd.dodamcore.auth.application.dto.res.LoginRes;
 import b1nd.dodamcore.auth.application.TokenClient;
@@ -19,7 +19,7 @@ import java.util.concurrent.CompletableFuture;
 @Component
 @Slf4j
 @RequiredArgsConstructor
-final class TokenClientImpl implements TokenClient {
+final class DodamTokenClient implements TokenClient {
 
     private final WebClientSupport webClient;
     private final JwtProperties jwtProperties;
@@ -53,7 +53,7 @@ final class TokenClientImpl implements TokenClient {
                 jwtProperties.getTokenServer() + tokenProperties.getVerify(),
                         new Token(token),
                 TokenInfoRes.class
-                ).getBody();
+                ).toFuture().join();
     }
 
     private CompletableFuture<String> issueToken(String userId, MemberRole role, String url) {
@@ -63,7 +63,7 @@ final class TokenClientImpl implements TokenClient {
                                 jwtProperties.getTokenServer() + url,
                                 new TokenReq(userId, role.getNumber(), 0),
                                 TokenRes.class
-                        ).getBody()
+                        ).toFuture().join()
                 ).data().token()
         );
     }

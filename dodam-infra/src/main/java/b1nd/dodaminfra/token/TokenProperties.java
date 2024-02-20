@@ -1,4 +1,4 @@
-package b1nd.dodaminfra.security.token;
+package b1nd.dodaminfra.token;
 
 import lombok.Getter;
 import lombok.Setter;

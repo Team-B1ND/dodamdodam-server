@@ -1,13 +1,15 @@
-package b1nd.dodaminfra.security.token;
+package b1nd.dodaminfra.token;
 
 import jakarta.servlet.http.HttpServletRequest;
 import org.apache.logging.log4j.util.Strings;
 
 import java.util.Enumeration;
 
-abstract class TokenExtractor {
+class TokenExtractor {
 
-    static final String AUTHORIZATION = "Authorization";
+    private static final String AUTHORIZATION = "Authorization";
+
+    private TokenExtractor() {}
 
     static String extract(HttpServletRequest request, String type) {
         Enumeration<String> headers = request.getHeaders(AUTHORIZATION);
@@ -21,4 +23,5 @@ abstract class TokenExtractor {
 
         return Strings.EMPTY;
     }
+
 }
