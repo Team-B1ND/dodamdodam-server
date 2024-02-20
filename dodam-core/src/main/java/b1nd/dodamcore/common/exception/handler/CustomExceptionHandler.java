@@ -65,7 +65,7 @@ public class CustomExceptionHandler {
                 .body(ErrorResponseEntity.builder()
                         .status(GlobalExceptionCode.INTERNAL_SERVER.getStatus().value())
                         .code(GlobalExceptionCode.INTERNAL_SERVER.name())
-                        .message(e.getMessage())
+                        .message(GlobalExceptionCode.INTERNAL_SERVER.getMessage())
                         .build());
     }
 }
