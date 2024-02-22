@@ -16,7 +16,7 @@ public class Scheduler {
     private final RedisUtil redisUtil;
 
     @Scheduled(cron = "0 0 7 1 * ?", zone = "Asia/Seoul")
-    public void setAttendanceJob() {
+    public void flushAllMealData() {
         try {
             log.info("<<<<<<<<<< flushMealData Start {} >>>>>>>>>>", ZonedDateTime.now());
             redisUtil.flushAllMealData();
