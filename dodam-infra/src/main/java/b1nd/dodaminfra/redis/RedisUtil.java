@@ -7,21 +7,21 @@ import org.springframework.stereotype.Component;
 public class RedisUtil {
 
     public void flushAllMealData() {
-        flushAllMealOfDay();
-        flushAllMealOfMonth();
-        flushAllCalorieOfDay();
-        flushAllCalorieOfMonth();
+        flushMealOfDay();
+        flushMealOfMonth();
+        flushCalorieOfDay();
+        flushCalorieOfMonth();
     }
 
     @CacheEvict(value = "meal-of-day", allEntries = true, cacheManager = "redisCacheManager")
-    public void flushAllMealOfDay() {}
+    public void flushMealOfDay() {}
 
     @CacheEvict(value = "meal-of-month", allEntries = true, cacheManager = "redisCacheManager")
-    public void flushAllMealOfMonth() {}
+    public void flushMealOfMonth() {}
 
     @CacheEvict(value = "calorie-of-day", allEntries = true, cacheManager = "redisCacheManager")
-    public void flushAllCalorieOfDay() {}
+    public void flushCalorieOfDay() {}
 
     @CacheEvict(value = "calorie-of-month", allEntries = true, cacheManager = "redisCacheManager")
-    public void flushAllCalorieOfMonth() {}
+    public void flushCalorieOfMonth() {}
 }
