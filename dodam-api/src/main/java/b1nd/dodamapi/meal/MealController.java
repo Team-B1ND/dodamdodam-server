@@ -53,6 +53,6 @@ public class MealController {
             @RequestParam(name = "month") int month
     ) {
         List<Meal> calories = mealService.getCalorieOfMonth(year, month);
-        return ResponseData.ok("급식 열량 조회 성공", calories);
+        return ResponseData.ok("한달 급식 열량 조회 성공", calories);
     }
 }
