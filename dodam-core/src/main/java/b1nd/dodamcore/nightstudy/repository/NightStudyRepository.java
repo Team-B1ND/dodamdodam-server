@@ -3,6 +3,8 @@ package b1nd.dodamcore.nightstudy.repository;
 import b1nd.dodamcore.member.domain.entity.Student;
 import b1nd.dodamcore.nightstudy.domain.entity.NightStudy;
 import b1nd.dodamcore.nightstudy.domain.enums.NightStudyStatus;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -15,7 +17,21 @@ import java.util.List;
 @Repository
 public interface NightStudyRepository extends JpaRepository<NightStudy, Long> {
 
-    boolean existsByStudentAndStatusNotAndStartAtLessThanEqualAndEndAtGreaterThanEqual(Student student, NightStudyStatus status, LocalDate now, LocalDate now2);
+    default boolean existsValidByStudentAndDate(Student student, LocalDate startAt, LocalDate endAt) {
+        return findValidStudyByStudentAndDate(
+                student, startAt, endAt, NightStudyStatus.REJECTED, PageRequest.of(0, 1)
+        ).size() != 0;
+    }
+
+    @Query("select n from NightStudy n " +
+            "where n.student = :student and " +
+            "(:startAt between n.startAt and n.endAt or :endAt between n.startAt and n.endAt) " +
+            "and n.status <> :status")
+    List<NightStudy> findValidStudyByStudentAndDate(@Param("student") Student student,
+                                              @Param("startAt") LocalDate startAt,
+                                              @Param("endAt") LocalDate endAt,
+                                              @Param("status") NightStudyStatus status,
+                                              Pageable pageable);
 
     @EntityGraph(attributePaths = {"student", "student.member"})
     List<NightStudy> findByStudentAndEndAtGreaterThanEqual(Student student, LocalDate now);

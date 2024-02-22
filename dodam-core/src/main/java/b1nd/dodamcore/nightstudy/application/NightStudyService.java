@@ -35,11 +35,8 @@ public class NightStudyService {
     public void apply(ApplyNightStudyReq req) {
         Student student = studentRepository.findByMember(memberSessionHolder.current())
                 .orElseThrow(StudentNotFoundException::new);
-        LocalDate now = ZonedDateTimeUtil.nowToLocalDate();
 
-        if(nightStudyRepository.existsByStudentAndStatusNotAndStartAtLessThanEqualAndEndAtGreaterThanEqual
-                (student, NightStudyStatus.REJECTED, now, now)
-        ) {
+        if(nightStudyRepository.existsValidByStudentAndDate(student, req.startAt(), req.endAt())) {
             throw new NightStudyDuplicateException();
         }
 
