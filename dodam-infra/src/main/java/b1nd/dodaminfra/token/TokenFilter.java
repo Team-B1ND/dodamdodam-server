@@ -1,4 +1,4 @@
-package b1nd.dodaminfra.security.token;
+package b1nd.dodaminfra.token;
 
 import b1nd.dodamcore.auth.application.TokenClient;
 import b1nd.dodamcore.member.application.MemberService;
@@ -17,18 +17,18 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 
-import static b1nd.dodaminfra.security.token.TokenExtractor.*;
-
 @Component
 @RequiredArgsConstructor
 public class TokenFilter extends OncePerRequestFilter {
+
+    private static final String TOKEN_TYPE = "Bearer";
 
     private final TokenClient tokenClient;
     private final MemberService memberService;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        String token = extract(request, "Bearer");
+        String token = TokenExtractor.extract(request, TOKEN_TYPE);
 
         if (!token.isEmpty()) {
             String memberId = tokenClient.getMemberIdByToken(token);

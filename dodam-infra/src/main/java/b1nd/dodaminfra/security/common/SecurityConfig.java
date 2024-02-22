@@ -1,6 +1,6 @@
 package b1nd.dodaminfra.security.common;
 
-import b1nd.dodaminfra.security.token.TokenFilter;
+import b1nd.dodaminfra.token.TokenFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -48,8 +48,12 @@ class SecurityConfig {
                 .requestMatchers(POST, "/night-study").hasRole("STUDENT")
                 .requestMatchers(DELETE, "/night-study/**").hasRole("STUDENT")
                 .requestMatchers(GET, "/night-study/my").hasRole("STUDENT")
-                .requestMatchers(GET, "/night-study/**").hasAnyRole("TEACHER", "ADMIN")
-                .requestMatchers(PATCH, "/night-study/**").hasAnyRole("TEACHER", "ADMIN")
+                .requestMatchers("/night-study/**").hasAnyRole("TEACHER", "ADMIN")
+
+                .requestMatchers(POST, "/out-going").hasRole("STUDENT")
+                .requestMatchers(DELETE, "/out-going/**").hasRole("STUDENT")
+                .requestMatchers(GET, "/out-going/my").hasRole("STUDENT")
+                .requestMatchers("/out-going/**").hasAnyRole("TEACHER", "ADMIN")
 
                 .anyRequest().authenticated();
 

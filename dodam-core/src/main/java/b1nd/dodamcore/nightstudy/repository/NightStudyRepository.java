@@ -18,10 +18,10 @@ public interface NightStudyRepository extends JpaRepository<NightStudy, Long> {
     boolean existsByStudentAndStatusNotAndStartAtLessThanEqualAndEndAtGreaterThanEqual(Student student, NightStudyStatus status, LocalDate now, LocalDate now2);
 
     @EntityGraph(attributePaths = {"student", "student.member"})
-    List<NightStudy> findAllByStudentAndEndAtGreaterThanEqual(Student student, LocalDate now);
+    List<NightStudy> findByStudentAndEndAtGreaterThanEqual(Student student, LocalDate now);
 
     @EntityGraph(attributePaths = {"student", "student.member"})
-    List<NightStudy> findAllByStatus(NightStudyStatus status);
+    List<NightStudy> findByStatus(NightStudyStatus status);
 
     @EntityGraph(attributePaths = {"student", "student.member"})
     @Query("select n from NightStudy n where n.endAt >= :now and n.startAt <= :now and n.status = :status")

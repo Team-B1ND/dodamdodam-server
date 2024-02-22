@@ -22,4 +22,8 @@ public class Response {
     public static Response created(String message) {
         return new Response(HttpStatus.CREATED.value(), message);
     }
+
+    public static Response noContent(String message) {
+        return new Response(HttpStatus.NO_CONTENT.value(), message);
+    }
 }

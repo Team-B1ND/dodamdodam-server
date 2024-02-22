@@ -96,7 +96,7 @@ public class NightStudy extends BaseEntity {
     }
 
     private void isInvalidStudyPeriod(LocalDate startAt, LocalDate endAt) {
-        if(startAt.plusDays(13L).isBefore(endAt)) {
+        if(startAt.isAfter(endAt) || startAt.plusDays(13L).isBefore(endAt)) {
             throw new InvalidNightStudyPeriodException();
         }
     }

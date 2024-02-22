@@ -5,7 +5,7 @@ import b1nd.dodamapi.common.response.ResponseData;
 import b1nd.dodamcore.nightstudy.application.NightStudyService;
 import b1nd.dodamcore.nightstudy.application.dto.req.ApplyNightStudyReq;
 import b1nd.dodamcore.nightstudy.domain.enums.NightStudyStatus;
-import b1nd.dodamcore.nightstudy.domain.vo.NightStudyVo;
+import b1nd.dodamcore.nightstudy.application.dto.res.NightStudyRes;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -48,17 +48,17 @@ public class NightStudyController {
     }
 
     @GetMapping
-    public ResponseData<List<NightStudyVo>> getValid() {
+    public ResponseData<List<NightStudyRes>> getValid() {
         return ResponseData.ok("유요한 심야자습 조회 성공", nightStudyService.getValid());
     }
 
     @GetMapping("/my")
-    public ResponseData<List<NightStudyVo>> getMy() {
+    public ResponseData<List<NightStudyRes>> getMy() {
         return ResponseData.ok("내 심야자습 조회 성공", nightStudyService.getMy());
     }
 
     @GetMapping("/pending")
-    public ResponseData<List<NightStudyVo>> getPending() {
+    public ResponseData<List<NightStudyRes>> getPending() {
         return ResponseData.ok("대기중인 심야자습 조회 성공", nightStudyService.getPending());
     }
 
