@@ -16,7 +16,7 @@ import java.util.*;
 
 @Service
 @RequiredArgsConstructor
-@Transactional(readOnly = true)
+@Transactional
 public class MealService {
 
     private final MealClient mealClient;
