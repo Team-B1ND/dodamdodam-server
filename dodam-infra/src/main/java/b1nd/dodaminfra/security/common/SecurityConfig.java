@@ -19,6 +19,10 @@ import static org.springframework.http.HttpMethod.*;
 @RequiredArgsConstructor
 class SecurityConfig {
 
+    private static final String STUDENT = "STUDENT";
+    private static final String TEACHER = "TEACHER";
+    private static final String ADMIN = "ADMIN";
+
     private final TokenFilter tokenFilter;
 
     @Bean
@@ -36,20 +40,32 @@ class SecurityConfig {
                 .requestMatchers(POST, "/auth/**").permitAll()
 
                 .requestMatchers(POST, "/member/**").permitAll()
-          
-                .requestMatchers(GET, "/bus").hasAnyRole("STUDENT", "TEACHER")
-                .requestMatchers("/bus/apply/**").hasRole("STUDENT")
-                .requestMatchers("/bus/**").hasRole("TEACHER")
 
-                .requestMatchers(POST, "/night-study").hasRole("STUDENT")
-                .requestMatchers(DELETE, "/night-study/**").hasRole("STUDENT")
-                .requestMatchers(GET, "/night-study/my").hasRole("STUDENT")
-                .requestMatchers("/night-study/**").hasAnyRole("TEACHER", "ADMIN")
+                .requestMatchers(GET, "/bus").hasAnyRole(STUDENT, TEACHER)
+                .requestMatchers("/bus/apply/**").hasRole(STUDENT)
+                .requestMatchers("/bus/**").hasRole(TEACHER)
 
-                .requestMatchers(POST, "/out-going").hasRole("STUDENT")
-                .requestMatchers(DELETE, "/out-going/**").hasRole("STUDENT")
-                .requestMatchers(GET, "/out-going/my").hasRole("STUDENT")
-                .requestMatchers("/out-going/**").hasAnyRole("TEACHER", "ADMIN")
+                .requestMatchers(POST, "/night-study").hasRole(STUDENT)
+                .requestMatchers(DELETE, "/night-study/**").hasRole(STUDENT)
+                .requestMatchers(GET, "/night-study/my").hasRole(STUDENT)
+                .requestMatchers("/night-study/**").hasAnyRole(TEACHER, ADMIN)
+
+                .requestMatchers(POST, "/out-going").hasRole(STUDENT)
+                .requestMatchers(DELETE, "/out-going/**").hasRole(STUDENT)
+                .requestMatchers(GET, "/out-going/my").hasRole(STUDENT)
+                .requestMatchers("/out-going/**").hasAnyRole(TEACHER, ADMIN)
+
+                .requestMatchers(POST, "/out-sleeping").hasRole(STUDENT)
+                .requestMatchers(DELETE, "/out-sleeping/**").hasRole(STUDENT)
+                .requestMatchers(GET, "/out-sleeping/my").hasRole(STUDENT)
+                .requestMatchers("/out-sleeping/**").hasAnyRole(TEACHER, ADMIN)
+
+                .requestMatchers(GET, "/point/my/**").hasRole(STUDENT)
+                .requestMatchers(GET, "/point/score/my/**").hasRole(STUDENT)
+                .requestMatchers("/point/**").hasAnyRole(TEACHER, ADMIN)
+
+
+                .requestMatchers("/sms/**").permitAll()
 
                 .anyRequest().authenticated();
 
