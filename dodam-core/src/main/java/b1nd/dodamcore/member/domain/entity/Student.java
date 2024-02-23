@@ -37,8 +37,7 @@ public class Student {
     }
 
     @Builder
-    public Student(Integer id, Member member, int grade, int room, int number) {
-        this.id = id;
+    public Student(Member member, int grade, int room, int number) {
         this.member = member;
         this.grade = grade;
         this.room = room;
