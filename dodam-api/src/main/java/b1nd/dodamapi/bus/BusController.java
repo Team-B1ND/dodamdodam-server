@@ -27,8 +27,8 @@ public class BusController {
 
     @GetMapping("/list")
     public ResponseData<List<BusRes>> getBuses(
-            @RequestParam(name = "page") int page,
-            @RequestParam(name = "limit") int limit
+            @RequestParam int page,
+            @RequestParam int limit
     ) {
         List<BusRes> buses = busService.getBuses(page, limit);
         return ResponseData.ok("버스 조회 성공", buses);
@@ -36,9 +36,9 @@ public class BusController {
 
     @GetMapping("/date")
     public ResponseData<List<BusRes>> getBusesByDate(
-            @RequestParam("year") int year,
-            @RequestParam("month") int month,
-            @RequestParam("day") int day
+            @RequestParam int year,
+            @RequestParam int month,
+            @RequestParam int day
     ) {
         List<BusRes> buses = busService.getBusesByDate(year, month, day);
         return ResponseData.ok("해당 날짜의 버스 조회 성공", buses);

@@ -64,8 +64,9 @@ class SecurityConfig {
                 .requestMatchers(GET, "/point/score/my/**").hasRole(STUDENT)
                 .requestMatchers("/point/**").hasAnyRole(TEACHER, ADMIN)
 
-
-                .requestMatchers("/sms/**").permitAll()
+                .requestMatchers(POST, "/schedule").hasAnyRole(TEACHER, ADMIN)
+                .requestMatchers(PATCH, "/schedule/**").hasAnyRole(TEACHER, ADMIN)
+                .requestMatchers(DELETE, "/schedule/**").hasAnyRole(TEACHER, ADMIN)
 
                 .anyRequest().authenticated();
 

@@ -8,15 +8,19 @@ import java.util.Objects;
 
 @Getter
 @RequiredArgsConstructor
-public enum SchoolPlace {
+public enum TargetGrade {
 
-    PROGRAMMING_1("프로그래밍1실");
+    GRADE_1("1학년"),
+    GRADE_2("2학년"),
+    GRADE_3("3학년"),
+    GRADE_ALL("전교생"),
+    GRADE_ETC("기타");
 
-    private final String place;
+    private final String grade;
 
-    public static SchoolPlace of(String place) {
+    public static TargetGrade of(String grade) {
         return Arrays.stream(values())
-                .filter(value -> Objects.equals(value.place, place))
+                .filter(value -> Objects.equals(value.grade, grade))
                 .findAny()
                 .orElseThrow(IllegalArgumentException::new);
     }

@@ -32,12 +32,12 @@ spring:
 redis:
   master:
     host: ${REDIS_MASTER_HOST}
-    port: ${REDIS_PORT}
+    port: ${REDIS_MASTER_PORT}
   slaves:
     - host: ${REDIS_SLAVE_1_HOST}
-      port: ${REDIS_PORT}
+      port: ${REDIS_SLAVE_1_PORT}
     - host: ${REDIS_SLAVE_2_HOST}
-      port: ${REDIS_PORT}
+      port: ${REDIS_SLAVE_2_PORT}
 
 logging.level:
   org.springframework.boot.autoconfigure: ERROR
