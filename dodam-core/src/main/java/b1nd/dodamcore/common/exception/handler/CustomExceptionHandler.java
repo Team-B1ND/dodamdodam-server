@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -43,6 +44,17 @@ public class CustomExceptionHandler {
                         .message(message.substring(0, message.length() - 2))
                         .build()
                 );
+    }
+
+    @ExceptionHandler(MissingServletRequestParameterException.class)
+    protected ResponseEntity handleMissingServletRequestParameterException(MissingServletRequestParameterException e) {
+        return ResponseEntity
+                .status(400)
+                .body(ErrorResponseEntity.builder()
+                        .status(GlobalExceptionCode.PARAMETER_NOT_FOUND.getStatus().value())
+                        .code(GlobalExceptionCode.PARAMETER_NOT_FOUND.name())
+                        .message(GlobalExceptionCode.PARAMETER_NOT_FOUND.getMessage())
+                        .build());
     }
 
     @ExceptionHandler(HttpMessageNotReadableException.class)

@@ -4,12 +4,10 @@ import b1nd.dodamapi.common.response.Response;
 import b1nd.dodamcore.member.application.MemberService;
 import b1nd.dodamcore.member.application.dto.req.StudentJoinReq;
 import b1nd.dodamcore.member.application.dto.req.TeacherJoinReq;
+import b1nd.dodamcore.member.domain.enums.AuthStatus;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping(value = "/member")
@@ -29,4 +27,17 @@ public class MemberController {
         memberService.joinTeacher(teacherJoinReq);
         return Response.ok("선생님 회원가입 성공");
     }
+
+    @PatchMapping("/{id}/active")
+    public Response active(@PathVariable("id") String id) {
+        memberService.modifyStatus(id, AuthStatus.ACTIVE);
+        return Response.ok("멤버 활성화 성공");
+    }
+
+    @PatchMapping("/{id}/deactivate")
+    public Response deactivate(@PathVariable("id") String id) {
+        memberService.modifyStatus(id, AuthStatus.DEACTIVATE);
+        return Response.ok("멤버 비활성화 성공");
+    }
+
 }
