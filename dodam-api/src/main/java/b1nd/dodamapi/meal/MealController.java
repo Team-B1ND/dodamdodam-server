@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
-@RequestMapping(value = "/meal")
+@RequestMapping("/meal")
 @RequiredArgsConstructor
 public class MealController {
 

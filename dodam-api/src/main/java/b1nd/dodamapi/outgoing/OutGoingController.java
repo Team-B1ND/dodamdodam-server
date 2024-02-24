@@ -14,7 +14,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 @RestController
-@RequestMapping(value = "/out-going")
+@RequestMapping("/out-going")
 @RequiredArgsConstructor
 public class OutGoingController {
 

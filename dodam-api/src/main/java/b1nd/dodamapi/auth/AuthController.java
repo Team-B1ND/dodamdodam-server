@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.concurrent.CompletableFuture;
 
 @RestController
-@RequestMapping(value = "/auth")
+@RequestMapping("/auth")
 @RequiredArgsConstructor
 public class AuthController {
 
