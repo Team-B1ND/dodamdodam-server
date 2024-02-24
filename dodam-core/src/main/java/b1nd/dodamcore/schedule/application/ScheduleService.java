@@ -29,8 +29,6 @@ public class ScheduleService {
     @Transactional(rollbackFor = Exception.class)
     public void createSchedule(ScheduleReq createScheduleReq) {
         Schedule schedule = createScheduleReq.mapToSchedule();
-        schedule.setScheduleType();
-
         scheduleRepository.save(schedule);
     }
 
