@@ -73,7 +73,7 @@ cloud:
       auto: false
     region:
       static: ${S3_REGION}
-    s3:
+    storage:
       endpoint: ${S3_ENDPOINT}
       bucket: ${S3_BUCKET}
 
