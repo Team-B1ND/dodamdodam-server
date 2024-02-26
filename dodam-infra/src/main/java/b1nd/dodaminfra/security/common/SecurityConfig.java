@@ -68,6 +68,10 @@ class SecurityConfig {
                 .requestMatchers(PATCH, "/schedule/**").hasAnyRole(TEACHER, ADMIN)
                 .requestMatchers(DELETE, "/schedule/**").hasAnyRole(TEACHER, ADMIN)
 
+                .requestMatchers(POST, "/banner").hasRole(ADMIN)
+                .requestMatchers(PATCH, "/banner/**").hasRole(ADMIN)
+                .requestMatchers(DELETE, "/banner/**").hasRole(ADMIN)
+
                 .anyRequest().authenticated();
 
         return http.build();

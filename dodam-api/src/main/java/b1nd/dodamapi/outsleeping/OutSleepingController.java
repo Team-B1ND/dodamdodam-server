@@ -14,7 +14,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 @RestController
-@RequestMapping(value = "/out-sleeping")
+@RequestMapping("/out-sleeping")
 @RequiredArgsConstructor
 public class OutSleepingController {
 

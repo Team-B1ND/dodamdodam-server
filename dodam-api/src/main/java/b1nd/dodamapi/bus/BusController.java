@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping(value = "/bus")
+@RequestMapping("/bus")
 @RequiredArgsConstructor
 public class BusController {
 

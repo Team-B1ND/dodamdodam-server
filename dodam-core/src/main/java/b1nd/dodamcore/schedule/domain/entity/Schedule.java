@@ -27,7 +27,6 @@ public class Schedule {
     @NotNull
     private String name;
 
-    @NotNull
     @Enumerated(value = EnumType.STRING)
     private SchoolPlace place;
 
@@ -50,21 +49,18 @@ public class Schedule {
     private Set<TargetGrade> targetGrades;
 
     @Builder
-    public Schedule(String name, SchoolPlace place, LocalDate startDate, LocalDate endDate, Set<TargetGrade> targetGrades) {
+    public Schedule(String name, String place, LocalDate startDate, LocalDate endDate, Set<TargetGrade> targetGrades) {
         this.name = name;
-        this.place = place;
+        this.place = (place == null) ? null : SchoolPlace.of(place);
         this.startDate = startDate;
         this.endDate = endDate;
         this.targetGrades = targetGrades;
-    }
-
-    public void setScheduleType() {
         this.type = (this.place == null) ? ScheduleType.HOLIDAY : ScheduleType.ACADEMIC;
     }
 
     public void updateSchedule(String name, String place, LocalDate startDate, LocalDate endDate, Set<TargetGrade> targetGrades) {
         this.name = name;
-        this.place = SchoolPlace.of(place);
+        this.place = (place == null) ? null : SchoolPlace.of(place);
         this.startDate = startDate;
         this.endDate = endDate;
         this.targetGrades = targetGrades;

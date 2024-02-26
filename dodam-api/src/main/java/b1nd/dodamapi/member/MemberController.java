@@ -10,7 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping(value = "/member")
+@RequestMapping("/member")
 @RequiredArgsConstructor
 public class MemberController {
 
