@@ -1,6 +1,5 @@
 package b1nd.dodamcore.schedule.application.dto.req;
 
-import b1nd.dodamcore.common.enums.SchoolPlace;
 import b1nd.dodamcore.common.enums.TargetGrade;
 import b1nd.dodamcore.schedule.domain.entity.Schedule;
 import jakarta.validation.constraints.NotEmpty;
