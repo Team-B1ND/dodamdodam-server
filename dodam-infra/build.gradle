@@ -6,6 +6,8 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-data-redis'
     implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
 
+    implementation 'org.json:json:20220320'
+
     compileOnly 'org.apache.tomcat.embed:tomcat-embed-core:10.1.7'
 }
 
