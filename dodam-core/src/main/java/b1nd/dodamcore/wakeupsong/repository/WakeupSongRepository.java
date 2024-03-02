@@ -24,5 +24,4 @@ public interface WakeupSongRepository extends JpaRepository<WakeupSong, Integer>
     List<WakeupSong> findAllByMember_IdAndStatus(String memberId, WakeupSongStatus status);
 
     boolean existsByMember_IdAndCreatedAtAfter(String memberId, LocalDateTime createdAt);
-//    void deleteByApplyingMember(Member member);
 }
