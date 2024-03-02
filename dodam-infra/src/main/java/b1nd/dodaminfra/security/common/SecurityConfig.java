@@ -41,6 +41,8 @@ class SecurityConfig {
 
                 .requestMatchers(POST, "/member/**").permitAll()
 
+                .requestMatchers(GET, "/conference").permitAll()
+
                 .requestMatchers(GET, "/bus").hasAnyRole(STUDENT, TEACHER)
                 .requestMatchers("/bus/apply/**").hasRole(STUDENT)
                 .requestMatchers("/bus/**").hasRole(TEACHER)

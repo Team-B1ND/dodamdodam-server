@@ -60,9 +60,16 @@ app:
     id: ${GABIA_ID}
     apiKey: ${GABIA_API_KEY}
     refKey: ${GABIA_REF_KEY}
+    tokenUrl: ${GABIA_TOKEN_URL}
+    smsUrl: ${GABIA_SMS_URL}
+    lmsUrl: ${GABIA_LMS_URL}
+    sender: ${GABIA_SMS_SENDER}
+    subject: ${GABIA_SMS_SUBJECT}
   neis:
     apiKey: ${NEIS_KEY}
     url: ${NEIS_URL}
+  codenary:
+    url: ${CODENARY_URL}
 
 cloud:
   aws:
