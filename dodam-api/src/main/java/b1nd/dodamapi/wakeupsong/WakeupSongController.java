@@ -5,6 +5,7 @@ import b1nd.dodamapi.common.response.ResponseData;
 import b1nd.dodamcore.wakeupsong.application.WakeupSongService;
 import b1nd.dodamcore.wakeupsong.application.dto.req.ApplyWakeupSongBySearchReq;
 import b1nd.dodamcore.wakeupsong.application.dto.req.ApplyWakeupSongReq;
+import b1nd.dodamcore.wakeupsong.application.dto.res.ChartRes;
 import b1nd.dodamcore.wakeupsong.application.dto.res.WakeupSongRes;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -76,5 +77,11 @@ public class WakeupSongController {
     public Response deleteMyWakeupSong(@PathVariable int id) {
         wakeupSongService.deleteMyWakeupSong(id);
         return Response.ok("기상송 신청 취소 성공");
+    }
+
+    @GetMapping("/chart")
+    public ResponseData<List<ChartRes>> getChart() {
+        List<ChartRes> chartRoList = wakeupSongService.getChartList();
+        return ResponseData.ok("차트 조회 성공", chartRoList);
     }
 }

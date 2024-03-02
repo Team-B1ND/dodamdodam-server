@@ -4,6 +4,7 @@ import b1nd.dodamcore.common.util.ZonedDateTimeUtil;
 import b1nd.dodamcore.member.application.MemberSessionHolder;
 import b1nd.dodamcore.member.domain.entity.Member;
 import b1nd.dodamcore.wakeupsong.application.dto.req.ApplyWakeupSongBySearchReq;
+import b1nd.dodamcore.wakeupsong.application.dto.res.ChartRes;
 import b1nd.dodamcore.wakeupsong.application.dto.res.WakeupSongRes;
 import b1nd.dodamcore.wakeupsong.application.dto.res.YoutubeApiRes;
 import b1nd.dodamcore.wakeupsong.domain.entity.WakeupSong;
@@ -27,6 +28,7 @@ public class WakeupSongService {
 
     private final WakeupSongRepository wakeupSongRepository;
     private final WakeupSongClient wakeupSongClient;
+    private final ChartClient chartClient;
     private final MemberSessionHolder memberSessionHolder;
 
     public List<WakeupSongRes> getAllowedWakeupSongByPlayDate(int year, int month, int day) {
@@ -120,5 +122,9 @@ public class WakeupSongService {
         wakeupSong.isApplicant(memberSessionHolder.current());
 
         wakeupSongRepository.delete(wakeupSong);
+    }
+
+    public List<ChartRes> getChartList() {
+        return chartClient.getList().join();
     }
 }
