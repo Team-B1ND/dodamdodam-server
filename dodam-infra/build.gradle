@@ -7,6 +7,7 @@ dependencies {
     implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
 
     implementation 'org.json:json:20220320'
+    implementation 'org.jsoup:jsoup:1.14.2'
 
     compileOnly 'org.apache.tomcat.embed:tomcat-embed-core:10.1.7'
 }
