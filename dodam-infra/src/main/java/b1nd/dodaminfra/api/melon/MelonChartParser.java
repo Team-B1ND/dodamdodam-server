@@ -19,8 +19,11 @@ final class MelonChartParser {
 
         for (int i = 0; i < 50; i++) {
             Element element50 = elements50.get(i);
-            Element element100 = elements100.get(i);
             charts.add(createChartRes(element50));
+        }
+
+        for (int i = 0; i < 50; i++) {
+            Element element100 = elements100.get(i);
             charts.add(createChartRes(element100));
         }
 
