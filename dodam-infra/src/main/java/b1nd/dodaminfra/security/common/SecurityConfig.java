@@ -43,6 +43,7 @@ class SecurityConfig {
                 
                 .requestMatchers(POST, "/auth/**").permitAll()
 
+                .requestMatchers(POST, "/member/broadcast-club-member").hasRole(ADMIN)
                 .requestMatchers(POST, "/member/**").permitAll()
 
                 .requestMatchers(GET, "/conference").permitAll()
@@ -79,8 +80,6 @@ class SecurityConfig {
                 .requestMatchers(POST, "/banner").hasRole(ADMIN)
                 .requestMatchers(PATCH, "/banner/**").hasRole(ADMIN)
                 .requestMatchers(DELETE, "/banner/**").hasRole(ADMIN)
-
-                .requestMatchers("/broadcast-club-member").hasRole(ADMIN)
 
                 .anyRequest().authenticated();
 
