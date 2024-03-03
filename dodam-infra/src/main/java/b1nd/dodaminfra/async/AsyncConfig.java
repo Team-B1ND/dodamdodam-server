@@ -1,6 +1,5 @@
 package b1nd.dodaminfra.async;
 
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.AsyncConfigurer;
 import org.springframework.scheduling.annotation.EnableAsync;
@@ -13,8 +12,8 @@ import java.util.concurrent.ThreadPoolExecutor;
 @EnableAsync
 class AsyncConfig implements AsyncConfigurer {
 
-    @Bean
-    public Executor asyncExecutor() {
+    @Override
+    public Executor getAsyncExecutor() {
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
         executor.setCorePoolSize(20);
         executor.setMaxPoolSize(50);

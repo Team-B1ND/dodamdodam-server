@@ -1,4 +1,4 @@
-package b1nd.dodaminfra.conference;
+package b1nd.dodaminfra.api.conference;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -9,7 +9,7 @@ import org.springframework.context.annotation.Configuration;
 @Setter
 @Configuration
 @ConfigurationProperties(prefix = "app.codenary")
-public class CodenaryProperties {
+class CodenaryProperties {
 
     private String url;
 

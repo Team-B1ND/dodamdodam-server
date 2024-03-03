@@ -1,13 +1,16 @@
 package b1nd.dodamcore.member.application;
 
 import b1nd.dodamcore.auth.application.PasswordEncoder;
-import b1nd.dodamcore.member.application.dto.req.StudentJoinReq;
-import b1nd.dodamcore.member.application.dto.req.TeacherJoinReq;
+import b1nd.dodamcore.member.application.dto.req.ApplyBroadcastClubMemberReq;
+import b1nd.dodamcore.member.application.dto.req.JoinStudentReq;
+import b1nd.dodamcore.member.application.dto.req.JoinTeacherReq;
+import b1nd.dodamcore.member.domain.entity.BroadcastClubMember;
 import b1nd.dodamcore.member.domain.entity.Member;
 import b1nd.dodamcore.member.domain.entity.Student;
 import b1nd.dodamcore.member.domain.enums.AuthStatus;
 import b1nd.dodamcore.member.domain.event.StudentRegisteredEvent;
 import b1nd.dodamcore.member.domain.exception.MemberDuplicateException;
+import b1nd.dodamcore.member.repository.BroadcastClubMemberRepository;
 import b1nd.dodamcore.member.repository.MemberRepository;
 import b1nd.dodamcore.member.repository.StudentRepository;
 import b1nd.dodamcore.member.repository.TeacherRepository;
@@ -25,6 +28,7 @@ public class MemberService {
     private final MemberRepository memberRepository;
     private final StudentRepository studentRepository;
     private final TeacherRepository teacherRepository;
+    private final BroadcastClubMemberRepository broadcastClubMemberRepository;
     private final ApplicationEventPublisher applicationEventPublisher;
 
     public Member getById(String id) {
@@ -33,7 +37,7 @@ public class MemberService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public void joinStudent(StudentJoinReq studentJoinReq) {
+    public void joinStudent(JoinStudentReq studentJoinReq) {
 
         String encryptedPassword = checkExistMember(studentJoinReq.id(), studentJoinReq.pw());
 
@@ -44,7 +48,7 @@ public class MemberService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public void joinTeacher(TeacherJoinReq teacherJoinReq) {
+    public void joinTeacher(JoinTeacherReq teacherJoinReq) {
 
         String encryptedPassword = checkExistMember(teacherJoinReq.id(), teacherJoinReq.pw());
 
@@ -53,9 +57,26 @@ public class MemberService {
     }
 
     @Transactional(rollbackFor = Exception.class)
+    public void applyBroadcastClubMember(ApplyBroadcastClubMemberReq req) {
+        Member member = getById(req.id());
+
+        if(!isBroadcastClubMember(member)) {
+            broadcastClubMemberRepository.save(
+                    BroadcastClubMember.builder()
+                            .member(member)
+                            .build()
+            );
+        }
+    }
+
+    @Transactional(rollbackFor = Exception.class)
     public void modifyStatus(String id, AuthStatus status) {
         Member member = getById(id);
         member.updateStatus(status);
+    }
+
+    public boolean isBroadcastClubMember(Member member) {
+        return broadcastClubMemberRepository.existsByMember(member);
     }
 
     private String checkExistMember(String id, String pw) {
