@@ -7,7 +7,7 @@ import b1nd.dodamcore.member.domain.enums.MemberRole;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
 
-public record TeacherJoinReq(@NotEmpty String id, @NotEmpty String pw, @NotEmpty String name, @NotEmpty @Email String email,
+public record JoinTeacherReq(@NotEmpty String id, @NotEmpty String pw, @NotEmpty String name, @NotEmpty @Email String email,
                              @NotEmpty String phone, @NotEmpty String tel, @NotEmpty String position) {
 
     public Member mapToMember(String encodedPw) {
