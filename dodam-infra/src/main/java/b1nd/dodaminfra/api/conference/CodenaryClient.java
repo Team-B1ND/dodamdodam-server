@@ -1,4 +1,4 @@
-package b1nd.dodaminfra.conference;
+package b1nd.dodaminfra.api.conference;
 
 import b1nd.dodamcore.common.util.ZonedDateTimeUtil;
 import b1nd.dodamcore.conference.application.ConferenceClient;
@@ -13,7 +13,7 @@ import java.util.concurrent.CompletableFuture;
 
 @Component
 @RequiredArgsConstructor
-public class CodenaryClient implements ConferenceClient {
+final class CodenaryClient implements ConferenceClient {
 
     private final WebClientSupport webClient;
     private final CodenaryProperties properties;
