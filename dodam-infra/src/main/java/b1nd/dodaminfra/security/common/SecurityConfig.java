@@ -1,5 +1,6 @@
 package b1nd.dodaminfra.security.common;
 
+import b1nd.dodaminfra.wakeupsong.WakeupSongFilter;
 import b1nd.dodaminfra.token.TokenFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -7,6 +8,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.access.intercept.AuthorizationFilter;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
@@ -24,6 +26,7 @@ class SecurityConfig {
     private static final String ADMIN = "ADMIN";
 
     private final TokenFilter tokenFilter;
+    private final WakeupSongFilter wakeupSongFilter;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -34,6 +37,7 @@ class SecurityConfig {
                 .and()
                 .csrf().disable()
                 .addFilterAfter(tokenFilter, UsernamePasswordAuthenticationFilter.class)
+                .addFilterAfter(wakeupSongFilter, AuthorizationFilter.class)
 
                 .authorizeHttpRequests()
                 
@@ -75,6 +79,8 @@ class SecurityConfig {
                 .requestMatchers(POST, "/banner").hasRole(ADMIN)
                 .requestMatchers(PATCH, "/banner/**").hasRole(ADMIN)
                 .requestMatchers(DELETE, "/banner/**").hasRole(ADMIN)
+
+                .requestMatchers("/broadcast-club-member").hasRole(ADMIN)
 
                 .anyRequest().authenticated();
 
