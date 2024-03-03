@@ -6,6 +6,7 @@ import b1nd.dodamcore.conference.application.dto.res.ConferenceRes;
 import b1nd.dodaminfra.webclient.WebClientSupport;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+import reactor.core.publisher.Mono;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -24,7 +25,7 @@ final class CodenaryClient implements ConferenceClient {
         String url = String.format(properties.getUrl(), date.getYear(), date.getMonthValue());
 
         return webClient.get(url, String.class)
-                .map(CodenaryItemParser::parse)
+                .flatMap(json -> Mono.fromCallable(() -> CodenaryItemParser.parse(json)))
                 .toFuture();
     }
 
