@@ -1,6 +1,7 @@
 package b1nd.dodamcore.point.application;
 
 import b1nd.dodamcore.member.application.MemberSessionHolder;
+import b1nd.dodamcore.member.domain.entity.Member;
 import b1nd.dodamcore.member.domain.entity.Student;
 import b1nd.dodamcore.member.domain.entity.Teacher;
 import b1nd.dodamcore.member.domain.event.StudentRegisteredEvent;
@@ -14,6 +15,8 @@ import b1nd.dodamcore.point.domain.entity.Point;
 import b1nd.dodamcore.point.domain.entity.PointReason;
 import b1nd.dodamcore.point.domain.entity.PointScore;
 import b1nd.dodamcore.point.domain.enums.PointType;
+import b1nd.dodamcore.point.domain.event.PointCanceledEvent;
+import b1nd.dodamcore.point.domain.event.PointIssuedEvent;
 import b1nd.dodamcore.point.domain.exception.PointNotFoundException;
 import b1nd.dodamcore.point.domain.exception.PointReasonNotFoundException;
 import b1nd.dodamcore.point.domain.exception.PointScoreNotFoundException;
@@ -21,6 +24,7 @@ import b1nd.dodamcore.point.repository.PointReasonRepository;
 import b1nd.dodamcore.point.repository.PointRepository;
 import b1nd.dodamcore.point.repository.PointScoreRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -39,6 +43,7 @@ public class PointService {
     private final StudentRepository studentRepository;
     private final TeacherRepository teacherRepository;
     private final MemberSessionHolder memberSessionHolder;
+    private final ApplicationEventPublisher applicationEventPublisher;
 
     @Transactional
     public void issue(IssuePointReq req) {
@@ -60,6 +65,8 @@ public class PointService {
         );
 
         scoreRepository.getByStudentIn(students).forEach(s -> s.issue(reason));
+
+        publishIssuedEvent(students, reason);
     }
 
     @Transactional
@@ -70,6 +77,9 @@ public class PointService {
                 .orElseThrow(PointScoreNotFoundException::new);
 
         score.cancel(point.getReason());
+
+        publishCanceledEvent(point.getReason(), point.getStudent().getMember());
+
         pointRepository.delete(point);
     }
 
@@ -119,10 +129,24 @@ public class PointService {
                 .build());
     }
 
-    private void publishPointIssuedEvent() {
+    private void publishIssuedEvent(List<Student> students, PointReason reason) {
+        students.forEach(
+                student -> applicationEventPublisher.publishEvent(
+                        new PointIssuedEvent(
+                                PointSMSHelper.getMessage(reason, student.getMember().getName(), "발급"),
+                                student.getMember().getPhone()
+                        )
+                )
+        );
     }
 
-    private void publishPointCanceledEvent() {
+    private void publishCanceledEvent(PointReason reason, Member member) {
+        applicationEventPublisher.publishEvent(
+                new PointCanceledEvent(
+                        PointSMSHelper.getMessage(reason, member.getName(), "취소"),
+                        member.getPhone()
+                )
+        );
     }
 
 }
