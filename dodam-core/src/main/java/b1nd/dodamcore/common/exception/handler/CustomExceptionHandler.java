@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.FieldError;
+import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -65,6 +66,17 @@ public class CustomExceptionHandler {
                         .status(GlobalExceptionCode.PARAMETER_NOT_FOUND.getStatus().value())
                         .code(GlobalExceptionCode.PARAMETER_NOT_FOUND.name())
                         .message(GlobalExceptionCode.PARAMETER_NOT_FOUND.getMessage())
+                        .build());
+    }
+
+    @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
+    protected ResponseEntity handleHttpRequestMethodNotSupportedException(HttpRequestMethodNotSupportedException e) {
+        return ResponseEntity
+                .status(400)
+                .body(ErrorResponseEntity.builder()
+                        .status(GlobalExceptionCode.METHOD_NOT_SUPPORTED.getStatus().value())
+                        .code(GlobalExceptionCode.METHOD_NOT_SUPPORTED.name())
+                        .message(GlobalExceptionCode.METHOD_NOT_SUPPORTED.getMessage())
                         .build());
     }
 
