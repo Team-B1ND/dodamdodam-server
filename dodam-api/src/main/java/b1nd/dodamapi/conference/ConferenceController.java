@@ -1,13 +1,12 @@
 package b1nd.dodamapi.conference;
 
 import b1nd.dodamcore.conference.application.ConferenceService;
-import b1nd.dodamcore.conference.application.dto.res.ConferenceRes;
+import b1nd.dodamcore.conference.application.dto.res.ConferenceListRes;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 @RestController
@@ -18,7 +17,7 @@ public class ConferenceController {
     private final ConferenceService conferenceService;
 
     @GetMapping
-    public CompletableFuture<List<ConferenceRes>> get() {
+    public CompletableFuture<ConferenceListRes> get() {
         return conferenceService.get();
     }
 
