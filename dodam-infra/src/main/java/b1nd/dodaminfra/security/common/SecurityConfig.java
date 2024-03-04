@@ -48,7 +48,7 @@ class SecurityConfig {
 
                 .requestMatchers(GET, "/conference").permitAll()
 
-                .requestMatchers("/wakeup-song").permitAll()
+                .requestMatchers("/wakeup-song/**").permitAll()
 
                 .requestMatchers(GET, "/bus").hasAnyRole(STUDENT, TEACHER)
                 .requestMatchers("/bus/apply/**").hasRole(STUDENT)
