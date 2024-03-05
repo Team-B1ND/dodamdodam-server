@@ -1,5 +1,6 @@
 package b1nd.dodaminfra.token;
 
+import b1nd.dodamcore.auth.application.dto.req.ReissueTokenReq;
 import b1nd.dodamcore.auth.application.dto.res.LoginRes;
 import b1nd.dodamcore.auth.application.TokenClient;
 import b1nd.dodamcore.auth.application.dto.res.TokenInfoRes;
@@ -34,12 +35,9 @@ final class DodamTokenClient implements TokenClient {
     }
 
     @Override
-    public String reissueAccessToken(String refreshToken) {
-        TokenInfoRes.TokenInfo token = verifyToken(refreshToken).data();
-
-        MemberRole role = MemberRole.of(token.accessLevel());
-
-        return issueToken(token.memberId(), role, tokenProperties.getGenerate()).join();
+    public CompletableFuture<String> reissueToken(ReissueTokenReq req) {
+        return CompletableFuture.supplyAsync(() -> verifyToken(req.refreshToken()).data())
+                .thenCompose(res -> issueToken(res.memberId(), MemberRole.of(res.accessLevel()), tokenProperties.getGenerate()));
     }
 
     @Override
