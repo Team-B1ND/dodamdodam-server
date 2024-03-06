@@ -14,7 +14,8 @@ import java.util.Objects;
 @RequiredArgsConstructor
 public enum SchoolPlace {
 
-    PROGRAMMING_1("프로그래밍1실");
+    PROGRAMMING_1("프로그래밍1실"),
+    PROGRAMMING_2("프로그래밍2실");
 
     private final String place;
 
