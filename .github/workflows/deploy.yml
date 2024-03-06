@@ -58,7 +58,7 @@ jobs:
         cloud.aws.credentials.access-key: ${{ secrets.S3_ACCESS_KEY }}
         cloud.aws.credentials.secret-key: ${{ secrets.S3_SECRET_KEY }}
         cloud.aws.region.static: ${{ secrets.S3_REGION }}
-        cloud.aws.storage.endpoint-key: ${{ secrets.S3_ENDPOINT }}
+        cloud.aws.storage.endpoint: ${{ secrets.S3_ENDPOINT }}
         cloud.aws.storage.bucket: ${{ secrets.S3_BUCKET }}
 
     - name: Build with Gradle
