@@ -71,7 +71,6 @@ jobs:
         docker push ${{ secrets.DOCKERHUB_USERNAME }}/dodamdodam:latest
 
   deploy:
-    if: github.ref == 'refs/heads/main'
     needs: build
     runs-on: ubuntu-latest
     steps:
