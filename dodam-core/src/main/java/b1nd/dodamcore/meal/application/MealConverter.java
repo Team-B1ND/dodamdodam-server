@@ -1,6 +1,5 @@
 package b1nd.dodamcore.meal.application;
 
-import b1nd.dodamcore.meal.application.dto.Food;
 import b1nd.dodamcore.meal.application.dto.FoodDetail;
 
 import java.util.ArrayList;
@@ -31,13 +30,13 @@ public class MealConverter {
         return parseFoods(originalString
                 .replaceAll("\\*", "")
                 .replaceAll("<br/>", ",")
-                .replaceAll("\\s{2,}", " ")
+                .replaceAll(" ", "")
                 .split(",\\s*"));
     }
 
     private static List<FoodDetail> parseFoods(String[] items) {
         List<FoodDetail> details = new ArrayList<>();
-        Pattern pattern = Pattern.compile("(.+?) \\((\\d+(?:\\.\\d+)*)\\)");
+        Pattern pattern = Pattern.compile("(.+?)\\(([\\d.]+)\\)");
 
         for (String item : items) {
             Matcher matcher = pattern.matcher(item);
