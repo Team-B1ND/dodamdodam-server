@@ -3,6 +3,7 @@ package b1nd.dodamapi.meal;
 import b1nd.dodamapi.common.response.ResponseData;
 import b1nd.dodamcore.meal.application.MealService;
 import b1nd.dodamcore.meal.application.dto.Meal;
+import b1nd.dodamcore.meal.application.dto.NewMeal;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,6 +18,16 @@ import java.util.List;
 public class MealController {
 
     private final MealService mealService;
+
+    @GetMapping("/new")
+    public ResponseData<NewMeal> getNewMeal(
+            @RequestParam int year,
+            @RequestParam int month,
+            @RequestParam int day
+    ) {
+        NewMeal meal = mealService.getMealWithCalorie(year, month, day);
+        return ResponseData.ok("급식 조회 성공", meal);
+    }
 
     @GetMapping
     public ResponseData<Meal> getMeal(
