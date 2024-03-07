@@ -53,15 +53,10 @@ public class RedisConfig {
         Map<String, RedisCacheConfiguration> cacheConfigurations = new HashMap<>();
 
         // day
-        cacheConfigurations.put("meal-of-day", RedisCacheConfiguration.defaultCacheConfig()
+        cacheConfigurations.put("meal-day", RedisCacheConfiguration.defaultCacheConfig()
                 .entryTtl(Duration.ofSeconds(DAY_EXPIRE_SECONDS)));
-        cacheConfigurations.put("calorie-of-day", RedisCacheConfiguration.defaultCacheConfig()
-                .entryTtl(Duration.ofSeconds(DAY_EXPIRE_SECONDS)));
-
         // month
-        cacheConfigurations.put("meal-of-month", RedisCacheConfiguration.defaultCacheConfig()
-                .entryTtl(Duration.ofSeconds(MONTH_EXPIRE_SECONDS)));
-        cacheConfigurations.put("calorie-of-month", RedisCacheConfiguration.defaultCacheConfig()
+        cacheConfigurations.put("meal-month", RedisCacheConfiguration.defaultCacheConfig()
                 .entryTtl(Duration.ofSeconds(MONTH_EXPIRE_SECONDS)));
 
         return RedisCacheManager.RedisCacheManagerBuilder

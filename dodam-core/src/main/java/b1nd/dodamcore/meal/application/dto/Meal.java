@@ -23,19 +23,19 @@ public class Meal implements Serializable {
     @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate date;
 
-    private String breakfast;
+    private Food breakfast;
 
-    private String lunch;
+    private Food lunch;
 
-    private String dinner;
+    private Food dinner;
 
-    public void setBreakfast(String breakfast) {
+    public void setBreakfast(Food breakfast) {
         this.breakfast = breakfast;
     }
-    public void setLunch(String lunch) {
+    public void setLunch(Food lunch) {
         this.lunch = lunch;
     }
-    public void setDinner(String dinner) {
+    public void setDinner(Food dinner) {
         this.dinner = dinner;
     }
 }
