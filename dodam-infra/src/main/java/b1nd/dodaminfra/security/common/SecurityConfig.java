@@ -1,5 +1,6 @@
 package b1nd.dodaminfra.security.common;
 
+import b1nd.dodamcore.common.exception.GlobalExceptionCode;
 import b1nd.dodaminfra.token.TokenExceptionFilter;
 import b1nd.dodaminfra.wakeupsong.WakeupSongFilter;
 import b1nd.dodaminfra.token.TokenFilter;
@@ -31,6 +32,7 @@ class SecurityConfig {
     private final TokenFilter tokenFilter;
     private final TokenExceptionFilter tokenExceptionFilter;
     private final WakeupSongFilter wakeupSongFilter;
+    private final ErrorResponseSender errorResponseSender;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -91,6 +93,7 @@ class SecurityConfig {
                 .anyRequest().authenticated()
                 .and()
                 .exceptionHandling()
+                .accessDeniedHandler((req, res, e) -> errorResponseSender.send(res, GlobalExceptionCode.INVALID_ROLE))
                 .authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED));
 
         return http.build();
