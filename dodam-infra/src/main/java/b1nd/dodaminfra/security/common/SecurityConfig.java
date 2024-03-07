@@ -55,7 +55,7 @@ class SecurityConfig {
 
                 .requestMatchers("/wakeup-song/**").permitAll()
 
-                .requestMatchers(GET, "/bus").hasAnyRole(STUDENT, TEACHER)
+                .requestMatchers(GET, "/bus").permitAll()
                 .requestMatchers("/bus/apply/**").hasRole(STUDENT)
                 .requestMatchers("/bus/**").hasRole(TEACHER)
 
