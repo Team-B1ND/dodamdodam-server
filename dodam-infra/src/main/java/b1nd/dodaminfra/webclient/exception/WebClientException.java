@@ -9,8 +9,8 @@ public final class WebClientException extends CustomException {
         super(
                 switch (code) {
                     case 400 -> GlobalExceptionCode.TOKEN_NOT_PROVIDED;
-                    case 401 -> GlobalExceptionCode.TOKEN_EXPIRED;
-                    case 403 -> GlobalExceptionCode.INVALID_TOKEN;
+                    case 401, 500 -> GlobalExceptionCode.INVALID_TOKEN;
+                    case 410 -> GlobalExceptionCode.TOKEN_EXPIRED;
                     default -> GlobalExceptionCode.INTERNAL_SERVER;
                 }
         );
