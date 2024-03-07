@@ -1,4 +1,4 @@
-package b1nd.dodaminfra.api.conference;
+package b1nd.dodaminfra.api.codenary;
 
 import b1nd.dodamcore.conference.application.dto.res.ConferenceRes;
 import org.json.JSONArray;

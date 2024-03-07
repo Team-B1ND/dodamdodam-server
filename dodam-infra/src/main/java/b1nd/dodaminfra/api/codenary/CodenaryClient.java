@@ -1,4 +1,4 @@
-package b1nd.dodaminfra.api.conference;
+package b1nd.dodaminfra.api.codenary;
 
 import b1nd.dodamcore.common.util.ZonedDateTimeUtil;
 import b1nd.dodamcore.conference.application.ConferenceClient;

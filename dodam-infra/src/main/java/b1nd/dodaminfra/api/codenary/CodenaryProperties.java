@@ -1,4 +1,4 @@
-package b1nd.dodaminfra.api.conference;
+package b1nd.dodaminfra.api.codenary;
 
 import lombok.Getter;
 import lombok.Setter;
