@@ -1,5 +1,6 @@
 package b1nd.dodaminfra.security.common;
 
+import b1nd.dodaminfra.token.TokenExceptionFilter;
 import b1nd.dodaminfra.wakeupsong.WakeupSongFilter;
 import b1nd.dodaminfra.token.TokenFilter;
 import lombok.RequiredArgsConstructor;
@@ -26,6 +27,7 @@ class SecurityConfig {
     private static final String ADMIN = "ADMIN";
 
     private final TokenFilter tokenFilter;
+    private final TokenExceptionFilter tokenExceptionFilter;
     private final WakeupSongFilter wakeupSongFilter;
 
     @Bean
@@ -37,6 +39,7 @@ class SecurityConfig {
                 .and()
                 .csrf().disable()
                 .addFilterAfter(tokenFilter, UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(tokenExceptionFilter, TokenFilter.class)
                 .addFilterAfter(wakeupSongFilter, AuthorizationFilter.class)
 
                 .authorizeHttpRequests()
@@ -47,6 +50,8 @@ class SecurityConfig {
                 .requestMatchers(POST, "/member/**").permitAll()
 
                 .requestMatchers(GET, "/conference").permitAll()
+
+                .requestMatchers(GET, "/meal/**").permitAll()
 
                 .requestMatchers("/wakeup-song/**").permitAll()
 

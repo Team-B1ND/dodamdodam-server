@@ -57,7 +57,7 @@ public class WebClientSupport {
             log.error("WebClient Error Status : " + response.statusCode());
             log.error("WebClient Error Body : " + response.body(BodyExtractors.toMono(ClientResponse.class)));
 
-            return Mono.error(WebClientException::new);
+            throw new WebClientException(response.statusCode().value());
         };
     }
 
