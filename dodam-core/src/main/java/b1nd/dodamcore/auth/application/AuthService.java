@@ -7,21 +7,36 @@ import b1nd.dodamcore.auth.application.dto.res.ReissueTokenRes;
 import b1nd.dodamcore.member.domain.entity.Member;
 import b1nd.dodamcore.member.domain.exception.MemberNotFoundException;
 import b1nd.dodamcore.member.repository.MemberRepository;
-import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Executor;
 
 @Service
+@Slf4j
 @Transactional(readOnly = true)
-@RequiredArgsConstructor
 public class AuthService {
 
     private final MemberRepository memberRepository;
     private final TokenClient tokenClient;
     private final PasswordEncoder passwordEncoder;
+    private final Executor executor;
+
+    @Autowired
+    public AuthService(MemberRepository memberRepository,
+                       TokenClient tokenClient,
+                       PasswordEncoder passwordEncoder,
+                       @Qualifier("asyncExecutor") Executor executor) {
+        this.memberRepository = memberRepository;
+        this.tokenClient = tokenClient;
+        this.passwordEncoder = passwordEncoder;
+        this.executor = executor;
+    }
 
     public CompletableFuture<LoginRes> login(LoginReq req) {
         Member member = memberRepository.findById(req.id())
@@ -29,8 +44,8 @@ public class AuthService {
 
         member.login(req.pw(), passwordEncoder);
 
-        return CompletableFuture.supplyAsync(() -> member)
-                .thenCompose(tokenClient::issueTokens);
+        return CompletableFuture.supplyAsync(() -> member, executor)
+                .thenComposeAsync(tokenClient::issueTokens, executor);
     }
 
     @Async
