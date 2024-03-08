@@ -1,5 +1,7 @@
 package b1nd.dodaminfra.webclient;
 
+import b1nd.dodamcore.common.exception.GlobalExceptionCode;
+import b1nd.dodamcore.common.exception.custom.CustomException;
 import b1nd.dodaminfra.webclient.exception.WebClientException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -62,6 +64,10 @@ public class WebClientSupport {
     }
 
     private Consumer<HttpHeaders> convertStringToHttpHeaders(String... headers) {
+        if(headers.length % 2 != 0) {
+            throw new CustomException(GlobalExceptionCode.INTERNAL_SERVER);
+        }
+
         return httpHeaders -> {
             for(int i = 0; i<headers.length; i+=2) {
                 httpHeaders.add(headers[i], headers[i+1]);
