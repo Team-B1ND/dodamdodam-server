@@ -10,10 +10,8 @@ import b1nd.dodamcore.member.domain.entity.Student;
 import b1nd.dodamcore.member.domain.enums.AuthStatus;
 import b1nd.dodamcore.member.domain.event.StudentRegisteredEvent;
 import b1nd.dodamcore.member.domain.exception.MemberDuplicateException;
-import b1nd.dodamcore.member.repository.BroadcastClubMemberRepository;
-import b1nd.dodamcore.member.repository.MemberRepository;
-import b1nd.dodamcore.member.repository.StudentRepository;
-import b1nd.dodamcore.member.repository.TeacherRepository;
+import b1nd.dodamcore.member.domain.exception.MemberNotFoundException;
+import b1nd.dodamcore.member.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
@@ -33,7 +31,7 @@ public class MemberService {
 
     public Member getById(String id) {
         return memberRepository.findById(id)
-                .orElseThrow(RuntimeException::new);
+                .orElseThrow(MemberNotFoundException::new);
     }
 
     @Transactional(rollbackFor = Exception.class)

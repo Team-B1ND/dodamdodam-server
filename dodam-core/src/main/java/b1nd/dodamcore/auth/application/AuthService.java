@@ -7,8 +7,6 @@ import b1nd.dodamcore.auth.application.dto.res.ReissueTokenRes;
 import b1nd.dodamcore.member.domain.entity.Member;
 import b1nd.dodamcore.member.domain.exception.MemberNotFoundException;
 import b1nd.dodamcore.member.repository.MemberRepository;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -18,7 +16,6 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 
 @Service
-@Slf4j
 @Transactional(readOnly = true)
 public class AuthService {
 
@@ -27,7 +24,6 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
     private final Executor executor;
 
-    @Autowired
     public AuthService(MemberRepository memberRepository,
                        TokenClient tokenClient,
                        PasswordEncoder passwordEncoder,

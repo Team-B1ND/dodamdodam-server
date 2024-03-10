@@ -13,6 +13,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 @Slf4j
 @RestControllerAdvice
@@ -20,8 +21,8 @@ public class CustomExceptionHandler {
 
     @ExceptionHandler(CustomException.class)
     protected ResponseEntity handleCustomException(CustomException e){
-        log.error("Exception Status : {}", e.getExceptionCode().getHttpStatus());
-        log.error("Exception Message : {}", e.getExceptionCode().getMessage());
+        log.error("CustomException Status : {}", e.getExceptionCode().getHttpStatus());
+        log.error("CustomException Message : {}", e.getExceptionCode().getMessage());
 
         return ErrorResponseEntity.responseEntity(e.getExceptionCode());
     }
@@ -89,6 +90,17 @@ public class CustomExceptionHandler {
                         .status(GlobalExceptionCode.MEDIA_TYPE_NOT_SUPPORTED.getStatus().value())
                         .code(GlobalExceptionCode.MEDIA_TYPE_NOT_SUPPORTED.name())
                         .message(GlobalExceptionCode.MEDIA_TYPE_NOT_SUPPORTED.getMessage())
+                        .build());
+    }
+
+    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
+    protected ResponseEntity handleMethodArgumentTypeMismatchException() {
+        return ResponseEntity
+                .status(400)
+                .body(ErrorResponseEntity.builder()
+                        .status(GlobalExceptionCode.MEDIA_TYPE_MISS_MATCHED.getStatus().value())
+                        .code(GlobalExceptionCode.MEDIA_TYPE_MISS_MATCHED.name())
+                        .message(GlobalExceptionCode.MEDIA_TYPE_MISS_MATCHED.getMessage())
                         .build());
     }
 
