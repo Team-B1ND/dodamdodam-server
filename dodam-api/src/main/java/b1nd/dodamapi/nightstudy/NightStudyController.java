@@ -47,6 +47,13 @@ public class NightStudyController {
         return Response.ok("심야자습 거절 성공");
     }
 
+    @PatchMapping("/{id}/revert")
+    public Response revert(@PathVariable Long id) {
+        nightStudyService.modifyStatus(id, NightStudyStatus.PENDING);
+
+        return Response.ok("심야자습 대기 성공");
+    }
+
     @GetMapping
     public ResponseData<List<NightStudyRes>> getValid() {
         return ResponseData.ok("유요한 심야자습 조회 성공", nightStudyService.getValid());

@@ -41,6 +41,13 @@ public class OutGoingController {
         return Response.noContent("외출 거절 성공");
     }
 
+    @PatchMapping("/{id}/revert")
+    public Response revert(@PathVariable Long id) {
+        outGoingService.modifyStatus(id, OutGoingStatus.PENDING);
+
+        return Response.noContent("외출 대기 성공");
+    }
+
     @DeleteMapping("/{id}")
     public Response cancel(@PathVariable Long id) {
         outGoingService.cancel(id);

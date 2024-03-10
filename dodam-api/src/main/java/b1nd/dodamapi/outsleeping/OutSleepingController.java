@@ -41,6 +41,13 @@ public class OutSleepingController {
         return Response.noContent("외박 거절 성공");
     }
 
+    @PatchMapping("/{id}/revert")
+    public Response revert(@PathVariable Long id) {
+        outSleepingService.modifyStatus(id, OutSleepingStatus.PENDING);
+
+        return Response.noContent("외박 대기 성공");
+    }
+
     @DeleteMapping("/{id}")
     public Response cancel(@PathVariable Long id) {
         outSleepingService.cancel(id);
