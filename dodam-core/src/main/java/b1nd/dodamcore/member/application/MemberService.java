@@ -4,9 +4,8 @@ import b1nd.dodamcore.auth.application.PasswordEncoder;
 import b1nd.dodamcore.member.application.dto.req.ApplyBroadcastClubMemberReq;
 import b1nd.dodamcore.member.application.dto.req.JoinStudentReq;
 import b1nd.dodamcore.member.application.dto.req.JoinTeacherReq;
-import b1nd.dodamcore.member.domain.entity.BroadcastClubMember;
-import b1nd.dodamcore.member.domain.entity.Member;
-import b1nd.dodamcore.member.domain.entity.Student;
+import b1nd.dodamcore.member.application.dto.res.MemberInfoRes;
+import b1nd.dodamcore.member.domain.entity.*;
 import b1nd.dodamcore.member.domain.enums.AuthStatus;
 import b1nd.dodamcore.member.domain.event.StudentRegisteredEvent;
 import b1nd.dodamcore.member.domain.exception.MemberDuplicateException;
@@ -17,12 +16,15 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class MemberService {
 
     private final PasswordEncoder passwordEncoder;
+    private final MemberSessionHolder sessionHolder;
     private final MemberRepository memberRepository;
     private final StudentRepository studentRepository;
     private final TeacherRepository teacherRepository;
@@ -71,6 +73,28 @@ public class MemberService {
     public void modifyStatus(String id, AuthStatus status) {
         Member member = getById(id);
         member.updateStatus(status);
+    }
+
+    public MemberInfoRes getMyInfo() {
+        Member member = sessionHolder.current();
+        Student student = studentRepository.findByMember(member)
+                .orElse(null);
+        Teacher teacher = teacherRepository.findByMember(member)
+                .orElse(null);
+
+        return MemberInfoRes.of(member, student, teacher);
+    }
+
+    public List<MemberInfoRes> getAllInfo() {
+        return memberRepository.findAll()
+                .parallelStream()
+                .map(member -> {
+                            Student student = studentRepository.findByMember(member)
+                                    .orElse(null);
+                            Teacher teacher = teacherRepository.findByMember(member)
+                                    .orElse(null);
+                            return MemberInfoRes.of(member, student, teacher);
+                }).toList();
     }
 
     public boolean isBroadcastClubMember(Member member) {
