@@ -1,14 +1,18 @@
 package b1nd.dodamapi.member;
 
 import b1nd.dodamapi.common.response.Response;
+import b1nd.dodamapi.common.response.ResponseData;
 import b1nd.dodamcore.member.application.MemberService;
 import b1nd.dodamcore.member.application.dto.req.ApplyBroadcastClubMemberReq;
 import b1nd.dodamcore.member.application.dto.req.JoinStudentReq;
 import b1nd.dodamcore.member.application.dto.req.JoinTeacherReq;
+import b1nd.dodamcore.member.application.dto.res.MemberInfoRes;
 import b1nd.dodamcore.member.domain.enums.AuthStatus;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/member")
@@ -45,6 +49,16 @@ public class MemberController {
     public Response deactivate(@PathVariable("id") String id) {
         memberService.modifyStatus(id, AuthStatus.DEACTIVATE);
         return Response.ok("멤버 비활성화 성공");
+    }
+
+    @GetMapping("/my")
+    public ResponseData<MemberInfoRes> getMyInfo() {
+        return ResponseData.ok("내 정보 조회 성공", memberService.getMyInfo());
+    }
+
+    @GetMapping("/all")
+    public ResponseData<List<MemberInfoRes>> getAll() {
+        return ResponseData.ok("모든 멤버 정보 조회 성공", memberService.getAllInfo());
     }
 
 }
