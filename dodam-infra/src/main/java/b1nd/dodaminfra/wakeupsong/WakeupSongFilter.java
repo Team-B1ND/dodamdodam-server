@@ -68,7 +68,7 @@ public class WakeupSongFilter extends OncePerRequestFilter {
     }
 
     private boolean isNotBroadcastClubMemberAndAdmin(Member member) {
-        return !MemberRole.ADMIN.equals(member.getRole()) && !memberService.isBroadcastClubMember(member);
+        return !MemberRole.ADMIN.equals(member.getRole()) && !memberService.checkBroadcastClubMember(member);
     }
 
 }
