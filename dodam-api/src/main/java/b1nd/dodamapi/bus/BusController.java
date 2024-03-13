@@ -44,7 +44,7 @@ public class BusController {
         return ResponseData.ok("해당 날짜의 버스 조회 성공", buses);
     }
 
-    @GetMapping(value = "/apply")
+    @GetMapping("/apply")
     public ResponseData<Bus> getAppliedBus() {
         Bus bus = busService.getAppliedBus();
         return ResponseData.ok("신청한 버스 조회 성공", bus);
@@ -83,7 +83,7 @@ public class BusController {
         return Response.ok("버스 신청 수정 성공");
     }
 
-    @DeleteMapping(value = "/apply/{id}")
+    @DeleteMapping("/apply/{id}")
     public Response cancelAppliedBus(@PathVariable int id) {
         busService.cancelAppliedBus(id);
         return Response.ok("버스 탑승 취소 성공");

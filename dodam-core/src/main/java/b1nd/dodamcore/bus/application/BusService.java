@@ -95,7 +95,7 @@ public class BusService {
         Bus bus = busRepository.findById(id)
                 .orElseThrow(BusNotFoundException::new);
 
-        if(bus.getLeaveTime().isAfter(ZonedDateTimeUtil.nowToLocalDateTime())) {
+        if(bus.getLeaveTime().isBefore(ZonedDateTimeUtil.nowToLocalDateTime())) {
             throw new BusPeriodExpiredException();
         }
 
