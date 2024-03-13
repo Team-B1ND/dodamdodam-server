@@ -63,7 +63,7 @@ public class MemberController {
 
     @GetMapping("/check/broadcast-club-member")
     public ResponseData<Boolean> checkBroadcastClubMember() {
-        return ResponseData.ok("방소부원 확인 성공", memberService.checkBroadcastClubMember());
+        return ResponseData.ok("방송부원 확인 성공", memberService.checkBroadcastClubMember());
     }
 
 }
