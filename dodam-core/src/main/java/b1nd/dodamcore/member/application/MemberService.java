@@ -60,7 +60,7 @@ public class MemberService {
     public void applyBroadcastClubMember(ApplyBroadcastClubMemberReq req) {
         Member member = getById(req.id());
 
-        if(!isBroadcastClubMember(member)) {
+        if(!checkBroadcastClubMember(member)) {
             broadcastClubMemberRepository.save(
                     BroadcastClubMember.builder()
                             .member(member)
@@ -89,16 +89,20 @@ public class MemberService {
         return memberRepository.findAll()
                 .parallelStream()
                 .map(member -> {
-                            Student student = studentRepository.findByMember(member)
-                                    .orElse(null);
-                            Teacher teacher = teacherRepository.findByMember(member)
-                                    .orElse(null);
-                            return MemberInfoRes.of(member, student, teacher);
+                    Student student = studentRepository.findByMember(member)
+                            .orElse(null);
+                    Teacher teacher = teacherRepository.findByMember(member)
+                            .orElse(null);
+                    return MemberInfoRes.of(member, student, teacher);
                 }).toList();
     }
 
-    public boolean isBroadcastClubMember(Member member) {
+    public boolean checkBroadcastClubMember(Member member) {
         return broadcastClubMemberRepository.existsByMember(member);
+    }
+
+    public boolean checkBroadcastClubMember() {
+        return checkBroadcastClubMember(sessionHolder.current());
     }
 
     private String checkExistMember(String id, String pw) {
