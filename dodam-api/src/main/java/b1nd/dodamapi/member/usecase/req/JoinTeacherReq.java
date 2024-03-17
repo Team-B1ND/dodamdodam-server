@@ -1,4 +1,4 @@
-package b1nd.dodamcore.member.application.dto.req;
+package b1nd.dodamapi.member.usecase.req;
 
 import b1nd.dodamcore.member.domain.entity.Member;
 import b1nd.dodamcore.member.domain.entity.Teacher;

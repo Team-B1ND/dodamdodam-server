@@ -1,4 +1,4 @@
-package b1nd.dodamcore.member.application.dto.res;
+package b1nd.dodamcore.member.domain.vo;
 
 import b1nd.dodamcore.member.domain.entity.Student;
 

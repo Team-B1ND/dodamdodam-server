@@ -1,6 +1,6 @@
 package b1nd.dodamcore.nightstudy.application.dto.res;
 
-import b1nd.dodamcore.member.application.dto.res.StudentRes;
+import b1nd.dodamcore.member.domain.vo.StudentRes;
 import b1nd.dodamcore.nightstudy.domain.entity.NightStudy;
 import b1nd.dodamcore.nightstudy.domain.enums.NightStudyStatus;
 

@@ -1,119 +1,62 @@
 package b1nd.dodamcore.member.application;
 
-import b1nd.dodamcore.auth.application.PasswordEncoder;
-import b1nd.dodamcore.member.application.dto.req.ApplyBroadcastClubMemberReq;
-import b1nd.dodamcore.member.application.dto.req.JoinStudentReq;
-import b1nd.dodamcore.member.application.dto.req.JoinTeacherReq;
-import b1nd.dodamcore.member.application.dto.res.MemberInfoRes;
 import b1nd.dodamcore.member.domain.entity.*;
-import b1nd.dodamcore.member.domain.enums.AuthStatus;
-import b1nd.dodamcore.member.domain.event.StudentRegisteredEvent;
-import b1nd.dodamcore.member.domain.exception.MemberDuplicateException;
 import b1nd.dodamcore.member.domain.exception.MemberNotFoundException;
 import b1nd.dodamcore.member.repository.*;
 import lombok.RequiredArgsConstructor;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class MemberService {
 
-    private final PasswordEncoder passwordEncoder;
-    private final MemberSessionHolder sessionHolder;
     private final MemberRepository memberRepository;
     private final StudentRepository studentRepository;
     private final TeacherRepository teacherRepository;
     private final BroadcastClubMemberRepository broadcastClubMemberRepository;
-    private final ApplicationEventPublisher applicationEventPublisher;
 
-    public Member getById(String id) {
-        return memberRepository.findById(id)
-                .orElseThrow(MemberNotFoundException::new);
+    public void save(Member member, Student student) {
+        memberRepository.save(member);
+        studentRepository.save(student);
     }
 
-    @Transactional(rollbackFor = Exception.class)
-    public void joinStudent(JoinStudentReq studentJoinReq) {
-
-        String encryptedPassword = checkExistMember(studentJoinReq.id(), studentJoinReq.pw());
-
-        Member savedMember = memberRepository.save(studentJoinReq.mapToMember(encryptedPassword));
-        Student student = studentRepository.save(studentJoinReq.mapToStudent(savedMember));
-
-        publishStudentRegisteredEvent(student);
+    public void save(Member member, Teacher teacher) {
+        memberRepository.save(member);
+        teacherRepository.save(teacher);
     }
 
-    @Transactional(rollbackFor = Exception.class)
-    public void joinTeacher(JoinTeacherReq teacherJoinReq) {
-
-        String encryptedPassword = checkExistMember(teacherJoinReq.id(), teacherJoinReq.pw());
-
-        Member savedMember = memberRepository.save(teacherJoinReq.mapToMember(encryptedPassword));
-        teacherRepository.save(teacherJoinReq.mapToTeacher(savedMember));
+    public void save(BroadcastClubMember broadcastClubMember) {
+        broadcastClubMemberRepository.save(broadcastClubMember);
     }
 
-    @Transactional(rollbackFor = Exception.class)
-    public void applyBroadcastClubMember(ApplyBroadcastClubMemberReq req) {
-        Member member = getById(req.id());
-
-        if(!checkBroadcastClubMember(member)) {
-            broadcastClubMemberRepository.save(
-                    BroadcastClubMember.builder()
-                            .member(member)
-                            .build()
-            );
-        }
-    }
-
-    @Transactional(rollbackFor = Exception.class)
-    public void modifyStatus(String id, AuthStatus status) {
-        Member member = getById(id);
-        member.updateStatus(status);
-    }
-
-    public MemberInfoRes getMyInfo() {
-        Member member = sessionHolder.current();
-        Student student = studentRepository.findByMember(member)
-                .orElse(null);
-        Teacher teacher = teacherRepository.findByMember(member)
-                .orElse(null);
-
-        return MemberInfoRes.of(member, student, teacher);
-    }
-
-    public List<MemberInfoRes> getAllInfo() {
-        return memberRepository.findAll()
-                .parallelStream()
-                .map(member -> {
-                    Student student = studentRepository.findByMember(member)
-                            .orElse(null);
-                    Teacher teacher = teacherRepository.findByMember(member)
-                            .orElse(null);
-                    return MemberInfoRes.of(member, student, teacher);
-                }).toList();
+    public boolean checkIdDuplication(String id) {
+        return memberRepository.existsById(id);
     }
 
     public boolean checkBroadcastClubMember(Member member) {
         return broadcastClubMemberRepository.existsByMember(member);
     }
 
-    public boolean checkBroadcastClubMember() {
-        return checkBroadcastClubMember(sessionHolder.current());
+    public Member getById(String id) {
+        return memberRepository.findById(id)
+                .orElseThrow(MemberNotFoundException::new);
     }
 
-    private String checkExistMember(String id, String pw) {
-        if (memberRepository.existsById(id)) {
-            throw new MemberDuplicateException();
-        }
-        return passwordEncoder.encode(pw);
+    public List<Member> getAll() {
+        return memberRepository.findAll();
     }
 
-    private void publishStudentRegisteredEvent(Student student) {
-        applicationEventPublisher.publishEvent(new StudentRegisteredEvent(student));
+    public Optional<Student> getStudentByMember(Member member) {
+        return studentRepository.findByMember(member);
+    }
+
+    public Optional<Teacher> getTeacherByMember(Member member) {
+        return teacherRepository.findByMember(member);
     }
 
 }
