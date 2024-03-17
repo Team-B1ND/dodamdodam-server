@@ -47,16 +47,20 @@ public class MemberService {
                 .orElseThrow(MemberNotFoundException::new);
     }
 
-    public List<Member> getAll() {
-        return memberRepository.findAll();
-    }
-
     public Optional<Student> getStudentByMember(Member member) {
         return studentRepository.findByMember(member);
     }
 
     public Optional<Teacher> getTeacherByMember(Member member) {
         return teacherRepository.findByMember(member);
+    }
+
+    public List<Member> searchByName(String name) {
+        return memberRepository.findByNameContains(name);
+    }
+
+    public List<Member> getAll() {
+        return memberRepository.findAll();
     }
 
 }
