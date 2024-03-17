@@ -1,6 +1,6 @@
 package b1nd.dodamcore.point.application.dto.res;
 
-import b1nd.dodamcore.member.application.dto.res.StudentRes;
+import b1nd.dodamcore.member.domain.vo.StudentRes;
 import b1nd.dodamcore.point.domain.entity.Point;
 
 import java.time.LocalDate;

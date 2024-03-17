@@ -1,6 +1,6 @@
 package b1nd.dodamcore.outgoing.application.dto.res;
 
-import b1nd.dodamcore.member.application.dto.res.StudentRes;
+import b1nd.dodamcore.member.domain.vo.StudentRes;
 import b1nd.dodamcore.outgoing.domain.entity.OutGoing;
 import b1nd.dodamcore.outgoing.domain.enums.OutGoingStatus;
 

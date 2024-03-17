@@ -1,6 +1,6 @@
 package b1nd.dodamcore.outsleeping.application.dto.res;
 
-import b1nd.dodamcore.member.application.dto.res.StudentRes;
+import b1nd.dodamcore.member.domain.vo.StudentRes;
 import b1nd.dodamcore.outsleeping.domain.entity.OutSleeping;
 import b1nd.dodamcore.outsleeping.domain.enums.OutSleepingStatus;
 
