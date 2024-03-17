@@ -52,6 +52,11 @@ public class MemberController {
         return queryUseCase.getMyInfo();
     }
 
+    @GetMapping("/search")
+    public ResponseData<List<MemberInfoRes>> searchByName(@RequestParam String name) {
+        return queryUseCase.searchByName(name);
+    }
+
     @GetMapping("/all")
     public ResponseData<List<MemberInfoRes>> getAll() {
         return queryUseCase.getAll();

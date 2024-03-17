@@ -25,6 +25,12 @@ public class MemberQueryUseCase {
         return ResponseData.ok("내 정보 조회 성공", getInfo(sessionHolder.current()));
     }
 
+    public ResponseData<List<MemberInfoRes>> searchByName(String name) {
+        return ResponseData.ok("이름으로 검색 성공", service.searchByName(name).parallelStream()
+                .map(this::getInfo)
+                .toList());
+    }
+
     public ResponseData<List<MemberInfoRes>> getAll() {
         return ResponseData.ok("모든 멤버 정보 조회 성공", service.getAll().parallelStream()
                 .map(this::getInfo)

@@ -20,5 +20,6 @@ public interface MemberRepository extends JpaRepository<Member, String> {
 
     List<Member> findByStatus(AuthStatus status);
 
-    //Optional<Member> findByStudent(Student student);
+    List<Member> findByNameContains(String name);
+
 }

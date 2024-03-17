@@ -60,12 +60,16 @@ public class MemberCommandUseCase {
 
     public Response apply(ApplyBroadcastClubMemberReq req) {
         Member member = sessionHolder.current();
-        if(service.checkBroadcastClubMember(member)) {
-            throw new BroadcastClubMemberDuplicateException();
-        }
+        checkBroadcastClubMemberDuplication(member);
 
         service.save(req.toEntity(member));
         return Response.created("방송부원 등록 성공");
+    }
+
+    private void checkBroadcastClubMemberDuplication(Member member) {
+        if(service.checkBroadcastClubMember(member)) {
+            throw new BroadcastClubMemberDuplicateException();
+        }
     }
 
     public Response active(String id) {
