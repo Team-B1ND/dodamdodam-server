@@ -14,7 +14,8 @@ public enum MemberExceptionCode implements ExceptionCode {
     PARENT_NOT_FOUND(HttpStatus.NOT_FOUND, "없는 부모님 정보"),
     TEACHER_NOT_FOUND(HttpStatus.NOT_FOUND, "없는 선생님"),
     MEMBER_DUPLICATION(HttpStatus.CONFLICT, "이미 존재하는 멤버"),
-    PARENT_MAX_EXCEEDED(HttpStatus.CONFLICT, "부모님은 1명만 등록 가능");
+    BROADCAST_CLUB_MEMBER_DUPLICATION(HttpStatus.CONFLICT, "이미 존재하는 방송부원")
+    ;
 
     private final HttpStatus status;
     private final String message;
