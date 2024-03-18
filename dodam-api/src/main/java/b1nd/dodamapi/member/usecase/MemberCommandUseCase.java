@@ -58,7 +58,7 @@ public class MemberCommandUseCase {
     }
 
     public Response apply(ApplyBroadcastClubMemberReq req) {
-        Member member = sessionHolder.current();
+        Member member = service.getById(req.id());
         checkBroadcastClubMemberDuplication(member);
 
         service.save(req.toEntity(member));
