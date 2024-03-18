@@ -2,6 +2,7 @@ package b1nd.dodamcore.member.domain.entity;
 
 import b1nd.dodamcore.auth.application.PasswordEncoder;
 import b1nd.dodamcore.common.entity.BaseEntity;
+import b1nd.dodamcore.common.util.ModifyUtil;
 import b1nd.dodamcore.member.domain.enums.AuthStatus;
 import b1nd.dodamcore.member.domain.enums.MemberRole;
 import b1nd.dodamcore.member.domain.exception.DeactivateMemberException;
@@ -57,17 +58,18 @@ public class Member extends BaseEntity {
         return this;
     }
 
-    public void updatePw(String pw) {
-        this.pw = pw;
+    public void updatePw(String pw, PasswordEncoder passwordEncoder) {
+        this.pw = passwordEncoder.encode(pw);
     }
 
     public void updateStatus(AuthStatus status) {
         this.status = status;
     }
 
-    public void updateInfo(String imageUrl, String email) {
-        this.profileImage = imageUrl;
-        this.email = email;
+    public void updateInfo(String name, String email, String profileImage) {
+        this.name = ModifyUtil.modifyIfNotNull(name, this.name);
+        this.email = ModifyUtil.modifyIfNotNull(email, this.email);
+        this.profileImage = ModifyUtil.modifyIfNotNull(profileImage, this.profileImage);
     }
 
     @Builder

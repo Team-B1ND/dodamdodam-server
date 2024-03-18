@@ -1,6 +1,7 @@
 package b1nd.dodamcore.member.application;
 
 import b1nd.dodamcore.member.domain.entity.*;
+import b1nd.dodamcore.member.domain.enums.AuthStatus;
 import b1nd.dodamcore.member.domain.exception.MemberNotFoundException;
 import b1nd.dodamcore.member.repository.*;
 import lombok.RequiredArgsConstructor;
@@ -57,6 +58,10 @@ public class MemberService {
 
     public List<Member> searchByName(String name) {
         return memberRepository.findByNameContains(name);
+    }
+
+    public List<Member> getByStatus(AuthStatus status) {
+        return memberRepository.findByStatus(status);
     }
 
     public List<Member> getAll() {
