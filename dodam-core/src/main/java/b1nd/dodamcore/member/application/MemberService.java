@@ -31,6 +31,10 @@ public class MemberService {
         teacherRepository.save(teacher);
     }
 
+    public void save(Member member) {
+        memberRepository.save(member);
+    }
+
     public void save(BroadcastClubMember broadcastClubMember) {
         broadcastClubMemberRepository.save(broadcastClubMember);
     }

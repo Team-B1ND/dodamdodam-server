@@ -58,7 +58,7 @@ public class MemberCommandUseCase {
     }
 
     public Response apply(ApplyBroadcastClubMemberReq req) {
-        Member member = sessionHolder.current();
+        Member member = service.getById(req.id());
         checkBroadcastClubMemberDuplication(member);
 
         service.save(req.toEntity(member));
@@ -90,6 +90,7 @@ public class MemberCommandUseCase {
         Member member = sessionHolder.current();
         member.updatePw(req.password(), passwordEncoder);
 
+        service.save(member);
         return Response.noContent("비밀번호 수정 성공");
     }
 
@@ -97,6 +98,7 @@ public class MemberCommandUseCase {
         Member member = sessionHolder.current();
         member.updateInfo(req.name(), req.email(), req.profileImage());
 
+        service.save(member);
         return Response.noContent("내 정보 수정 성공");
     }
 
