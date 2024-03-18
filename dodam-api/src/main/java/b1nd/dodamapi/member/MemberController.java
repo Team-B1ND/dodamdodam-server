@@ -4,9 +4,7 @@ import b1nd.dodamapi.common.response.Response;
 import b1nd.dodamapi.common.response.ResponseData;
 import b1nd.dodamapi.member.usecase.MemberCommandUseCase;
 import b1nd.dodamapi.member.usecase.MemberQueryUseCase;
-import b1nd.dodamapi.member.usecase.req.ApplyBroadcastClubMemberReq;
-import b1nd.dodamapi.member.usecase.req.JoinStudentReq;
-import b1nd.dodamapi.member.usecase.req.JoinTeacherReq;
+import b1nd.dodamapi.member.usecase.req.*;
 import b1nd.dodamcore.member.domain.vo.MemberInfoRes;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -33,18 +31,38 @@ public class MemberController {
     }
 
     @PostMapping("/broadcast-club-member")
-    public Response apply(@RequestBody ApplyBroadcastClubMemberReq req) {
+    public Response apply(@RequestBody @Valid ApplyBroadcastClubMemberReq req) {
         return commandUseCase.apply(req);
     }
 
-    @PatchMapping("/{id}/active")
+    @PatchMapping("/active/{id}")
     public Response active(@PathVariable("id") String id) {
         return commandUseCase.active(id);
     }
 
-    @PatchMapping("/{id}/deactivate")
+    @PatchMapping("/deactivate/{id}")
     public Response deactivate(@PathVariable("id") String id) {
         return commandUseCase.deactivate(id);
+    }
+
+    @PatchMapping("/password")
+    public Response updatePassword(@RequestBody @Valid UpdatePasswordReq req) {
+        return commandUseCase.updatePassword(req);
+    }
+
+    @PatchMapping("/info")
+    public Response updateMyInfo(@RequestBody UpdateMemberInfoReq req) {
+        return commandUseCase.updateMyInfo(req);
+    }
+
+    @PatchMapping("/student/info")
+    public Response updateStudentInfo(@RequestBody UpdateStudentInfoReq req) {
+        return commandUseCase.updateStudentInfo(req);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseData<MemberInfoRes> getById(@PathVariable String id) {
+        return queryUseCase.getById(id);
     }
 
     @GetMapping("/my")
@@ -55,6 +73,11 @@ public class MemberController {
     @GetMapping("/search")
     public ResponseData<List<MemberInfoRes>> searchByName(@RequestParam String name) {
         return queryUseCase.searchByName(name);
+    }
+
+    @GetMapping("/deactivate")
+    public ResponseData<List<MemberInfoRes>> getDeactivateMembers() {
+        return queryUseCase.getDeactivateMembers();
     }
 
     @GetMapping("/all")

@@ -1,5 +1,6 @@
 package b1nd.dodamcore.member.domain.entity;
 
+import b1nd.dodamcore.common.util.ModifyUtil;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
@@ -30,10 +31,10 @@ public class Student {
     @NotNull
     private int number;
 
-    public void updateStudentInfo(int grade, int room, int number) {
-        this.grade = grade;
-        this.room = room;
-        this.number = number;
+    public void updateInfo(Integer grade, Integer room, Integer number) {
+        this.grade = ModifyUtil.modifyIfNotNull(grade, this.grade);
+        this.room = ModifyUtil.modifyIfNotNull(room, this.room);
+        this.number = ModifyUtil.modifyIfNotNull(number, this.number);
     }
 
     @Builder

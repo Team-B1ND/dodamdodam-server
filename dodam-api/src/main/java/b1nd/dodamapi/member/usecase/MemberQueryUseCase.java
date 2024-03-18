@@ -6,6 +6,7 @@ import b1nd.dodamcore.member.application.MemberSessionHolder;
 import b1nd.dodamcore.member.domain.entity.Member;
 import b1nd.dodamcore.member.domain.entity.Student;
 import b1nd.dodamcore.member.domain.entity.Teacher;
+import b1nd.dodamcore.member.domain.enums.AuthStatus;
 import b1nd.dodamcore.member.domain.vo.MemberInfoRes;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -21,12 +22,22 @@ public class MemberQueryUseCase {
     private final MemberService service;
     private final MemberSessionHolder sessionHolder;
 
+    public ResponseData<MemberInfoRes> getById(String id) {
+        return ResponseData.ok("Id로 멤버 조회 성공", getInfo(service.getById(id)));
+    }
+
     public ResponseData<MemberInfoRes> getMyInfo() {
         return ResponseData.ok("내 정보 조회 성공", getInfo(sessionHolder.current()));
     }
 
     public ResponseData<List<MemberInfoRes>> searchByName(String name) {
         return ResponseData.ok("이름으로 검색 성공", service.searchByName(name).parallelStream()
+                .map(this::getInfo)
+                .toList());
+    }
+
+    public ResponseData<List<MemberInfoRes>> getDeactivateMembers() {
+        return ResponseData.ok("비활성화된 멤버 조회 성공", service.getByStatus(AuthStatus.DEACTIVATE).parallelStream()
                 .map(this::getInfo)
                 .toList());
     }
