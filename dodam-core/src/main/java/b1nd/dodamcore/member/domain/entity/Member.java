@@ -66,9 +66,10 @@ public class Member extends BaseEntity {
         this.status = status;
     }
 
-    public void updateInfo(String name, String email, String profileImage) {
+    public void updateInfo(String name, String email, String phone, String profileImage) {
         this.name = ModifyUtil.modifyIfNotNull(name, this.name);
         this.email = ModifyUtil.modifyIfNotNull(email, this.email);
+        this.phone = ModifyUtil.modifyIfNotNull(phone, this.phone);
         this.profileImage = ModifyUtil.modifyIfNotNull(profileImage, this.profileImage);
     }
 

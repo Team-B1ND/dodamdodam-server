@@ -96,7 +96,7 @@ public class MemberCommandUseCase {
 
     public Response updateMyInfo(UpdateMemberInfoReq req) {
         Member member = sessionHolder.current();
-        member.updateInfo(req.name(), req.email(), req.profileImage());
+        member.updateInfo(req.name(), req.email(), req.phone(), req.profileImage());
 
         service.save(member);
         return Response.noContent("내 정보 수정 성공");
