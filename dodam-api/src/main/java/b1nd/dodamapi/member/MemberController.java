@@ -51,8 +51,8 @@ public class MemberController {
     }
 
     @PatchMapping("/info")
-    public Response updateMyInfo(@RequestBody UpdateMemberInfoReq req) {
-        return commandUseCase.updateMyInfo(req);
+    public Response updateMemberInfo(@RequestBody UpdateMemberInfoReq req) {
+        return commandUseCase.updateMemberInfo(req);
     }
 
     @PatchMapping("/student/info")

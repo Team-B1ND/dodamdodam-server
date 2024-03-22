@@ -3,6 +3,7 @@ package b1nd.dodaminfra.token;
 import b1nd.dodamcore.auth.application.TokenClient;
 import b1nd.dodamcore.member.application.MemberService;
 import b1nd.dodamcore.member.domain.entity.Member;
+import b1nd.dodamcore.member.domain.exception.MemberNotFoundException;
 import b1nd.dodaminfra.security.common.MemberDetails;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -30,16 +31,32 @@ public class TokenFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         String token = TokenExtractor.extract(request, TOKEN_TYPE);
 
-        if (!token.isEmpty()) {
-            String memberId = tokenClient.getMemberIdByToken(token);
-            Member member = memberService.getById(memberId);
-            MemberDetails details = new MemberDetails(member);
-
-            Authentication authentication = new UsernamePasswordAuthenticationToken(details, null, details.getAuthorities());
-            SecurityContextHolder.getContext().setAuthentication(authentication);
+        if(!token.isEmpty()) {
+            setAuthentication(token);
         }
 
         filterChain.doFilter(request, response);
+    }
+
+    private void setAuthentication(String token) {
+        SecurityContextHolder.getContext().setAuthentication(
+                createAuthentication(token)
+        );
+    }
+
+    private Authentication createAuthentication(String token) {
+        MemberDetails details = getMemberDetails(token);
+        return new UsernamePasswordAuthenticationToken(details, null, details.getAuthorities());
+    }
+
+    private MemberDetails getMemberDetails(String token) {
+        String id = tokenClient.getMemberIdByToken(token);
+        return new MemberDetails(getMemberById(id));
+    }
+
+    private Member getMemberById(String id) {
+        return memberService.getMemberById(id)
+                .orElseThrow(MemberNotFoundException::new);
     }
 
 }
