@@ -53,13 +53,7 @@ public class BusService {
     }
 
     public List<BusRes> getBusesByDate(int year, int month, int day) {
-
-        String yearStr = String.format("%04d", year);
-        String monthStr = String.format("%02d", month);
-        String dayStr = String.format("%02d", day);
-
-        List<Bus> buses = busRepository.findAllByLeaveTime(LocalDate.parse(yearStr + "-" + monthStr + "-" + dayStr));
-
+        List<Bus> buses = busRepository.findAllByLeaveTime(LocalDate.of(year, month, day));
         return parseToBusList(buses);
     }
 
