@@ -4,6 +4,7 @@ import b1nd.dodamcore.common.enums.TargetGrade;
 import b1nd.dodamcore.common.util.ModifyUtil;
 import b1nd.dodamcore.common.util.ZonedDateTimeUtil;
 import b1nd.dodamcore.schedule.application.dto.req.ScheduleReq;
+import b1nd.dodamcore.schedule.application.dto.res.ScheduleRes;
 import b1nd.dodamcore.schedule.domain.entity.Schedule;
 import b1nd.dodamcore.schedule.domain.exception.ScheduleNotFoundException;
 import b1nd.dodamcore.schedule.repository.ScheduleRepository;
@@ -64,7 +65,7 @@ public class ScheduleService {
         return scheduleRepository.findAllByOrderByIdDesc(pageRequest);
     }
 
-    public List<Schedule> getScheduleByDate(LocalDate startDate, LocalDate endDate) {
+    public List<Schedule> getScheduleByPeriod(LocalDate startDate, LocalDate endDate) {
         return scheduleRepository.findByDateBetween(startDate, endDate);
     }
 
@@ -74,5 +75,10 @@ public class ScheduleService {
 
     public List<Schedule> getTodaySchedule() {
         return scheduleRepository.findByDate(ZonedDateTimeUtil.nowToLocalDate());
+    }
+
+    public List<ScheduleRes> getScheduleByDate(int year, int month, int day) {
+        return scheduleRepository.findByDate(LocalDate.of(year, month, day))
+                .stream().map(ScheduleRes::of).collect(Collectors.toList());
     }
 }

@@ -4,6 +4,7 @@ import b1nd.dodamapi.common.response.Response;
 import b1nd.dodamapi.common.response.ResponseData;
 import b1nd.dodamcore.schedule.application.ScheduleService;
 import b1nd.dodamcore.schedule.application.dto.req.ScheduleReq;
+import b1nd.dodamcore.schedule.application.dto.res.ScheduleRes;
 import b1nd.dodamcore.schedule.domain.entity.Schedule;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -56,7 +57,7 @@ public class ScheduleController {
             @RequestParam LocalDate startDate,
             @RequestParam LocalDate endDate
     ) {
-        List<Schedule> scheduleList = scheduleService.getScheduleByDate(startDate, endDate);
+        List<Schedule> scheduleList = scheduleService.getScheduleByPeriod(startDate, endDate);
         return ResponseData.ok("기간 내의 일정 조회 성공", scheduleList);
     }
 
@@ -72,5 +73,15 @@ public class ScheduleController {
     public ResponseData<List<Schedule>> getTodaySchedule() {
         List<Schedule> scheduleList = scheduleService.getTodaySchedule();
         return ResponseData.ok("오늘 일정 조회 성공", scheduleList);
+    }
+
+    @GetMapping("/date")
+    public ResponseData<List<ScheduleRes>> getScheduleByDate(
+            @RequestParam int year,
+            @RequestParam int month,
+            @RequestParam int day
+    ) {
+        List<ScheduleRes> scheduleList = scheduleService.getScheduleByDate(year, month, day);
+        return ResponseData.ok("해당 날짜의 일정 조회 성공", scheduleList);
     }
 }
