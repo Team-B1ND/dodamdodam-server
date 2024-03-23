@@ -60,21 +60,25 @@ public class ScheduleService {
         }
     }
 
-    public List<Schedule> getSchedules(int page, int limit) {
+    public List<ScheduleRes> getSchedules(int page, int limit) {
         PageRequest pageRequest = PageRequest.of(page - 1, limit);
-        return scheduleRepository.findAllByOrderByIdDesc(pageRequest);
+        return scheduleRepository.findAllByOrderByIdDesc(pageRequest)
+                .stream().map(ScheduleRes::of).collect(Collectors.toList());
     }
 
-    public List<Schedule> getScheduleByPeriod(LocalDate startDate, LocalDate endDate) {
-        return scheduleRepository.findByDateBetween(startDate, endDate);
+    public List<ScheduleRes> getScheduleByPeriod(LocalDate startDate, LocalDate endDate) {
+        return scheduleRepository.findByDateBetween(startDate, endDate)
+                .stream().map(ScheduleRes::of).collect(Collectors.toList());
     }
 
-    public List<Schedule> getScheduleByKeyword(String keyword) {
-        return scheduleRepository.findByNameContaining(keyword);
+    public List<ScheduleRes> getScheduleByKeyword(String keyword) {
+        return scheduleRepository.findByNameContaining(keyword)
+                .stream().map(ScheduleRes::of).collect(Collectors.toList());
     }
 
-    public List<Schedule> getTodaySchedule() {
-        return scheduleRepository.findByDate(ZonedDateTimeUtil.nowToLocalDate());
+    public List<ScheduleRes> getTodaySchedule() {
+        return scheduleRepository.findByDate(ZonedDateTimeUtil.nowToLocalDate())
+                .stream().map(ScheduleRes::of).collect(Collectors.toList());
     }
 
     public List<ScheduleRes> getScheduleByDate(int year, int month, int day) {

@@ -5,7 +5,6 @@ import b1nd.dodamapi.common.response.ResponseData;
 import b1nd.dodamcore.schedule.application.ScheduleService;
 import b1nd.dodamcore.schedule.application.dto.req.ScheduleReq;
 import b1nd.dodamcore.schedule.application.dto.res.ScheduleRes;
-import b1nd.dodamcore.schedule.domain.entity.Schedule;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -44,34 +43,34 @@ public class ScheduleController {
     }
 
     @GetMapping//테이블뷰로보기 - Teacher
-    public ResponseData<List<Schedule>> getSchedules(
+    public ResponseData<List<ScheduleRes>> getSchedules(
             @RequestParam int page,
             @RequestParam int limit
     ) {
-        List<Schedule> scheduleList = scheduleService.getSchedules(page, limit);
+        List<ScheduleRes> scheduleList = scheduleService.getSchedules(page, limit);
         return ResponseData.ok("일정 조회 성공", scheduleList);
     }
 
     @GetMapping("/search")
-    public ResponseData<List<Schedule>> getScheduleByDate(
+    public ResponseData<List<ScheduleRes>> getScheduleByDate(
             @RequestParam LocalDate startDate,
             @RequestParam LocalDate endDate
     ) {
-        List<Schedule> scheduleList = scheduleService.getScheduleByPeriod(startDate, endDate);
+        List<ScheduleRes> scheduleList = scheduleService.getScheduleByPeriod(startDate, endDate);
         return ResponseData.ok("기간 내의 일정 조회 성공", scheduleList);
     }
 
     @GetMapping("/search/keyword")
-    public ResponseData<List<Schedule>> getScheduleByKeyword(
+    public ResponseData<List<ScheduleRes>> getScheduleByKeyword(
             @RequestParam("keyword") String keyword
     ) {
-        List<Schedule> scheduleList = scheduleService.getScheduleByKeyword(keyword);
+        List<ScheduleRes> scheduleList = scheduleService.getScheduleByKeyword(keyword);
         return ResponseData.ok("해당 키워드의 일정 조회 성공", scheduleList);
     }
 
     @GetMapping("/today")
-    public ResponseData<List<Schedule>> getTodaySchedule() {
-        List<Schedule> scheduleList = scheduleService.getTodaySchedule();
+    public ResponseData<List<ScheduleRes>> getTodaySchedule() {
+        List<ScheduleRes> scheduleList = scheduleService.getTodaySchedule();
         return ResponseData.ok("오늘 일정 조회 성공", scheduleList);
     }
 
