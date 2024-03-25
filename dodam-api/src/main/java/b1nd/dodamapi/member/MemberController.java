@@ -35,6 +35,11 @@ public class MemberController {
         return commandUseCase.apply(req);
     }
 
+    @DeleteMapping("/{id}")
+    public Response delete(@PathVariable String id) {
+        return commandUseCase.delete(id);
+    }
+
     @PatchMapping("/active/{id}")
     public Response active(@PathVariable("id") String id) {
         return commandUseCase.active(id);

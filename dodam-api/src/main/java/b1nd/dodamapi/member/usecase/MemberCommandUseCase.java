@@ -9,6 +9,7 @@ import b1nd.dodamcore.member.domain.entity.Member;
 import b1nd.dodamcore.member.domain.entity.Student;
 import b1nd.dodamcore.member.domain.enums.AuthStatus;
 import b1nd.dodamcore.member.domain.event.StudentRegisteredEvent;
+import b1nd.dodamcore.member.domain.exception.ActiveMemberException;
 import b1nd.dodamcore.member.domain.exception.BroadcastClubMemberDuplicateException;
 import b1nd.dodamcore.member.domain.exception.MemberDuplicateException;
 import b1nd.dodamcore.member.domain.exception.MemberNotFoundException;
@@ -76,6 +77,20 @@ public class MemberCommandUseCase {
     private void throwExceptionWhenMemberIsBroadcastClubMember(Member member) {
         if(service.checkBroadcastClubMember(member)) {
             throw new BroadcastClubMemberDuplicateException();
+        }
+    }
+
+    public Response delete(String id) {
+        Member member = getMemberById(id);
+        throwExceptionWhenAuthStatusIsActive(member);
+
+        service.delete(member);
+        return Response.noContent("멤버 삭제 성공");
+    }
+
+    private void throwExceptionWhenAuthStatusIsActive(Member member) {
+        if(member.isActive()) {
+            throw new ActiveMemberException();
         }
     }
 

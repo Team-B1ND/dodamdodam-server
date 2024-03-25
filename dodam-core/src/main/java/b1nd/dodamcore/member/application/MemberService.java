@@ -38,6 +38,12 @@ public class MemberService {
         return broadcastClubMemberRepository.save(broadcastClubMember);
     }
 
+    public void delete(Member member) {
+        studentRepository.deleteByMember(member);
+        teacherRepository.deleteByMember(member);
+        memberRepository.delete(member);
+    }
+
     public boolean checkIdDuplication(String id) {
         return memberRepository.existsById(id);
     }

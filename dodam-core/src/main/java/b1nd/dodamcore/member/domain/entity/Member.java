@@ -73,6 +73,10 @@ public class Member extends BaseEntity {
         this.profileImage = ModifyUtil.modifyIfNotNull(profileImage, this.profileImage);
     }
 
+    public boolean isActive() {
+        return AuthStatus.ACTIVE == status;
+    }
+
     @Builder
     public Member(String id, String pw, String name, String email, MemberRole role, AuthStatus status, String profileImage, String phone) {
         this.id = id;
