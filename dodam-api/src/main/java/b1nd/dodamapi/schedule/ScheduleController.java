@@ -35,9 +35,7 @@ public class ScheduleController {
     }
 
     @DeleteMapping("/{id}")
-    public Response deleteSchedule(
-            @PathVariable int id
-    ) {
+    public Response deleteSchedule(@PathVariable int id) {
         scheduleService.deleteSchedule(id);
         return Response.ok("일정 삭제 성공");
     }
@@ -61,9 +59,7 @@ public class ScheduleController {
     }
 
     @GetMapping("/search/keyword")
-    public ResponseData<List<ScheduleRes>> getScheduleByKeyword(
-            @RequestParam("keyword") String keyword
-    ) {
+    public ResponseData<List<ScheduleRes>> getScheduleByKeyword(@RequestParam("keyword") String keyword) {
         List<ScheduleRes> scheduleList = scheduleService.getScheduleByKeyword(keyword);
         return ResponseData.ok("해당 키워드의 일정 조회 성공", scheduleList);
     }

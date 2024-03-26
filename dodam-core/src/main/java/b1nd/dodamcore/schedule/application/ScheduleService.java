@@ -9,7 +9,6 @@ import b1nd.dodamcore.schedule.domain.entity.Schedule;
 import b1nd.dodamcore.schedule.domain.exception.ScheduleNotFoundException;
 import b1nd.dodamcore.schedule.repository.ScheduleRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -53,11 +52,11 @@ public class ScheduleService {
 
     @Transactional(rollbackFor = Exception.class)
     public void deleteSchedule(int id) {
-        try {
-            scheduleRepository.deleteById(id);
-        } catch (EmptyResultDataAccessException e) {
-            throw new ScheduleNotFoundException();
-        }
+
+        Schedule schedule = scheduleRepository.findById(id)
+                .orElseThrow(ScheduleNotFoundException::new);
+
+        scheduleRepository.delete(schedule);
     }
 
     public List<ScheduleRes> getSchedules(int page, int limit) {

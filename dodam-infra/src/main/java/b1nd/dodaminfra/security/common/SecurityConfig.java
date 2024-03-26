@@ -97,6 +97,10 @@ class SecurityConfig {
                 .requestMatchers(PATCH, "/banner/**").hasRole(ADMIN)
                 .requestMatchers(DELETE, "/banner/**").hasRole(ADMIN)
 
+                .requestMatchers(POST, "/recruit").hasRole(TEACHER)
+                .requestMatchers(PATCH, "/recruit/**").hasRole(TEACHER)
+                .requestMatchers(DELETE, "/recruit/**").hasRole(TEACHER)
+
                 .anyRequest().authenticated()
                 .and()
                 .exceptionHandling()

@@ -7,7 +7,6 @@ import b1nd.dodamcore.banner.domain.exception.BannerNotFoundException;
 import b1nd.dodamcore.banner.repository.BannerRepository;
 import b1nd.dodamcore.common.util.ModifyUtil;
 import lombok.RequiredArgsConstructor;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -42,11 +41,11 @@ public class BannerService {
 
     @Transactional(rollbackFor = Exception.class)
     public void deleteBanner(int id) {
-        try {
-            bannerRepository.deleteById(id);
-        } catch (EmptyResultDataAccessException e) {
-            throw new BannerNotFoundException();
-        }
+
+        Banner banner = bannerRepository.findById(id)
+                .orElseThrow(BannerNotFoundException::new);
+
+        bannerRepository.delete(banner);
     }
 
     @Transactional(rollbackFor = Exception.class)

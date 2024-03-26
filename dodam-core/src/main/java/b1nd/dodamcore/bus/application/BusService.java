@@ -14,7 +14,6 @@ import b1nd.dodamcore.member.application.MemberSessionHolder;
 import b1nd.dodamcore.member.domain.entity.Student;
 import b1nd.dodamcore.member.repository.StudentRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -104,11 +103,11 @@ public class BusService {
 
     @Transactional(rollbackFor = Exception.class)
     public void deleteBus(int id) {
-        try {
-            busRepository.deleteById(id);
-        } catch (EmptyResultDataAccessException e) {
-            throw new BusNotFoundException();
-        }
+
+        Bus bus = busRepository.findById(id)
+                .orElseThrow(BusNotFoundException::new);
+
+        busRepository.delete(bus);
     }
 
     @Transactional(rollbackFor = Exception.class)
