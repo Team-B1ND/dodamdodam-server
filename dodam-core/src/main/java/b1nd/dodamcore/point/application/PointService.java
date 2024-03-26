@@ -87,7 +87,7 @@ public class PointService {
     public List<PointRes> getMyByPointType(PointType type) {
         Student student = studentRepository.getByMember(memberSessionHolder.current());
 
-        return pointRepository.findByStudent(student).stream()
+        return pointRepository.findByStudent(student).parallelStream()
                 .filter(p -> type == p.getReason().getPointType())
                 .map(PointRes::of)
                 .toList();
