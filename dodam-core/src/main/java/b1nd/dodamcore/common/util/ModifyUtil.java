@@ -11,5 +11,9 @@ public final class ModifyUtil {
     public static int modifyIfNotZero(int newValue, int defaultValue) {
         return newValue != 0 ? newValue : defaultValue;
     }
+
+    public static Integer modifyIfNotZeroPermitNull(Integer newValue, Integer defaultValue) {
+        return newValue == null || newValue != 0 ? newValue : defaultValue;
+    }
 }
 

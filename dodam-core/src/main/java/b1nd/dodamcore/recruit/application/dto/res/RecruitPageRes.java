@@ -17,13 +17,11 @@ public record RecruitPageRes(List<RecruitListRes> recruitList, Integer nextPage)
                         recruit.getLocation(),
                         recruit.getDuty(),
                         recruit.getEtc(),
-                        recruit.getPersonnel(),
-                        recruit.getImage()
+                        recruit.getPersonnel()
                 )).collect(Collectors.toList()),
                 nextPage);
     }
 
-    public record RecruitListRes(int id, String writer, String name, String location, String duty,
-                             String etc, int personnel, String image) {
+    public record RecruitListRes(int id, String writer, String name, String location, String duty, String etc, Integer personnel) {
     }
 }

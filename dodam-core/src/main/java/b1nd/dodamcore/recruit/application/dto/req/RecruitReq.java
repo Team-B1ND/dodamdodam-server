@@ -5,14 +5,13 @@ import b1nd.dodamcore.recruit.application.dto.Pdf;
 import b1nd.dodamcore.recruit.domain.entity.Recruit;
 import b1nd.dodamcore.recruit.domain.entity.RecruitFile;
 import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 public record RecruitReq(@NotEmpty String name, @NotEmpty String location, @NotEmpty String duty,
-                         String etc, @Positive @NotNull int personnel, @NotEmpty String image, List<Pdf> pdfs) {
+                         String etc, @Positive Integer personnel, List<Pdf> pdfs) {
 
     public Recruit mapToRecruit(Member member) {
         Recruit recruit = Recruit.builder()
@@ -22,7 +21,6 @@ public record RecruitReq(@NotEmpty String name, @NotEmpty String location, @NotE
                 .duty(duty)
                 .etc(etc)
                 .personnel(personnel)
-                .image(image)
                 .build();
 
         pdfs.forEach(pdf -> recruit.addRecruitFile(

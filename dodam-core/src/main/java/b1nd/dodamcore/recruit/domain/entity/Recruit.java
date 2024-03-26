@@ -37,24 +37,19 @@ public class Recruit extends BaseEntity {
     @Column(columnDefinition = "LONGTEXT")
     private String etc; //추가 내용
 
-    @NotNull
-    private int personnel; //모집 인원
-
-    @NotNull
-    private String image; //채용 공고 이미지
+    private Integer personnel; //모집 인원
 
     @OneToMany(mappedBy = "recruit", cascade = CascadeType.ALL)
     private List<RecruitFile> recruitFiles = new ArrayList<>();
 
     @Builder
-    public Recruit(Member writer, String name, String location, String duty, String etc, int personnel, String image) {
+    public Recruit(Member writer, String name, String location, String duty, String etc, Integer personnel) {
         this.writer = writer;
         this.name = name;
         this.location = location;
         this.duty = duty;
         this.etc = etc;
         this.personnel = personnel;
-        this.image = image;
     }
 
     public void addRecruitFile(RecruitFile recruitFile) {
@@ -62,13 +57,12 @@ public class Recruit extends BaseEntity {
         recruitFile.setRecruit(this);
     }
 
-    public void updateRecruit(String name, String location, String duty, String etc, int personnel, String image, List<RecruitFile> recruitFiles) {
+    public void updateRecruit(String name, String location, String duty, String etc, Integer personnel, List<RecruitFile> recruitFiles) {
         this.name = name;
         this.location = location;
         this.duty = duty;
         this.etc = etc;
         this.personnel = personnel;
-        this.image = image;
         this.recruitFiles = recruitFiles;
     }
 }
