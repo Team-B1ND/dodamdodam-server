@@ -2,7 +2,6 @@ package b1nd.dodamcore.member.application;
 
 import b1nd.dodamcore.member.domain.entity.*;
 import b1nd.dodamcore.member.domain.enums.AuthStatus;
-import b1nd.dodamcore.member.domain.exception.MemberNotFoundException;
 import b1nd.dodamcore.member.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -21,22 +20,28 @@ public class MemberService {
     private final TeacherRepository teacherRepository;
     private final BroadcastClubMemberRepository broadcastClubMemberRepository;
 
-    public void save(Member member, Student student) {
-        memberRepository.save(member);
-        studentRepository.save(student);
+    public Member save(Member member) {
+        return memberRepository.save(member);
     }
 
-    public void save(Member member, Teacher teacher) {
-        memberRepository.save(member);
-        teacherRepository.save(teacher);
+    public Student save(Student student) {
+        memberRepository.save(student.getMember());
+        return studentRepository.save(student);
     }
 
-    public void save(Member member) {
-        memberRepository.save(member);
+    public Teacher save(Teacher teacher) {
+        memberRepository.save(teacher.getMember());
+        return teacherRepository.save(teacher);
     }
 
-    public void save(BroadcastClubMember broadcastClubMember) {
-        broadcastClubMemberRepository.save(broadcastClubMember);
+    public BroadcastClubMember save(BroadcastClubMember broadcastClubMember) {
+        return broadcastClubMemberRepository.save(broadcastClubMember);
+    }
+
+    public void delete(Member member) {
+        studentRepository.deleteByMember(member);
+        teacherRepository.deleteByMember(member);
+        memberRepository.delete(member);
     }
 
     public boolean checkIdDuplication(String id) {
@@ -47,9 +52,8 @@ public class MemberService {
         return broadcastClubMemberRepository.existsByMember(member);
     }
 
-    public Member getById(String id) {
-        return memberRepository.findById(id)
-                .orElseThrow(MemberNotFoundException::new);
+    public Optional<Member> getMemberById(String id) {
+        return memberRepository.findById(id);
     }
 
     public Optional<Student> getStudentByMember(Member member) {
@@ -66,10 +70,6 @@ public class MemberService {
 
     public List<Member> getByStatus(AuthStatus status) {
         return memberRepository.findByStatus(status);
-    }
-
-    public List<Member> getAll() {
-        return memberRepository.findAll();
     }
 
 }

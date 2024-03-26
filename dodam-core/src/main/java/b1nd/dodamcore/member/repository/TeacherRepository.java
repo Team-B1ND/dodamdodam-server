@@ -11,6 +11,8 @@ import java.util.Optional;
 @Repository
 public interface TeacherRepository extends JpaRepository<Teacher, Integer> {
 
+    void deleteByMember(Member member);
+
     Optional<Teacher> findByMember(Member member);
 
     default Teacher getByMember(Member member) {
