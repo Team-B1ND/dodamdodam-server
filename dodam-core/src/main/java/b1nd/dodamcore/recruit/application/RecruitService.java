@@ -68,6 +68,7 @@ public class RecruitService {
                 ModifyUtil.modifyIfNotNull(dto.duty(), recruit.getDuty()),
                 dto.etc(),
                 ModifyUtil.modifyIfNotZeroPermitNull(dto.personnel(), recruit.getPersonnel()),
+                ModifyUtil.modifyIfNotNull(dto.image(), recruit.getImage()),
                 dto.updateRecruitFile(recruit)
         );
     }

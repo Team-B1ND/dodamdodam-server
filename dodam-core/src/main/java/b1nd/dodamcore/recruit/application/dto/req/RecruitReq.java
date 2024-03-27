@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public record RecruitReq(@NotEmpty String name, @NotEmpty String location, @NotEmpty String duty,
-                         String etc, @Positive Integer personnel, List<Pdf> pdfs) {
+                         String etc, @Positive Integer personnel, @NotEmpty String image, List<Pdf> pdfs) {
 
     public Recruit mapToRecruit(Member member) {
         Recruit recruit = Recruit.builder()
@@ -21,6 +21,7 @@ public record RecruitReq(@NotEmpty String name, @NotEmpty String location, @NotE
                 .duty(duty)
                 .etc(etc)
                 .personnel(personnel)
+                .image(image)
                 .build();
 
         pdfs.forEach(pdf -> recruit.addRecruitFile(
