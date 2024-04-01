@@ -7,6 +7,7 @@ import b1nd.dodamcore.wakeupsong.application.dto.req.ApplyWakeupSongBySearchReq;
 import b1nd.dodamcore.wakeupsong.application.dto.res.ChartRes;
 import b1nd.dodamcore.wakeupsong.application.dto.res.WakeupSongRes;
 import b1nd.dodamcore.wakeupsong.application.dto.res.YoutubeApiRes;
+import b1nd.dodamcore.wakeupsong.application.dto.res.YoutubeRes;
 import b1nd.dodamcore.wakeupsong.domain.entity.WakeupSong;
 import b1nd.dodamcore.wakeupsong.domain.enums.WakeupSongStatus;
 import b1nd.dodamcore.wakeupsong.domain.exception.WakeupSongAlreadyCreatedException;
@@ -18,8 +19,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -86,8 +91,34 @@ public class WakeupSongService {
 
     @Transactional(rollbackFor = Exception.class)
     public void createWakeupSongByYoutubeSearch(ApplyWakeupSongBySearchReq req) {
-        String videoId = wakeupSongClient.searchVideoByKeyword(req.title(), req.artist()).getItems().get(0).getId().getVideoId();
+        String videoId = wakeupSongClient.searchVideoByKeyword(req.title() + " " + req.artist(), 1).getItems().get(0).getId().getVideoId();
         createWakeupSong("https://www.youtube.com/watch?v=" + videoId);
+    }
+
+    public List<YoutubeRes> getYoutubeList(String keyword) {
+
+        List<String> videoIdList = new ArrayList<>(wakeupSongClient.searchVideoByKeyword(keyword, 6).getItems().stream()
+                .map(item -> item.getId().getVideoId()).toList());
+
+        videoIdList.removeAll(Collections.singletonList(null));
+        if (videoIdList.size() == 6) videoIdList.remove(videoIdList.size() - 1);
+
+        List<YoutubeApiRes.Snippet> snippets = videoIdList.stream()
+                .map(videoId -> wakeupSongClient.getVideo(videoId).getItems().get(0).getSnippet()).toList();
+
+        AtomicInteger index = new AtomicInteger();
+        return snippets.stream()
+                .map(snippet -> getYoutubeRes(snippet, videoIdList.get(index.getAndIncrement()))).collect(Collectors.toList());
+    }
+
+    private YoutubeRes getYoutubeRes(YoutubeApiRes.Snippet snippet, String videoId) {
+        return new YoutubeRes(
+                snippet.getTitle(),
+                videoId,
+                "https://www.youtube.com/watch?v=" + videoId,
+                snippet.getChannelTitle(),
+                getThumbnailUrl(snippet).getUrl()
+        );
     }
 
     @Transactional(rollbackFor = Exception.class)
