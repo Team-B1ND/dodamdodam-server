@@ -7,6 +7,6 @@ public record TeacherRes(String name, String tel, String position) {
         if(teacher == null) {
             return null;
         }
-        return new TeacherRes(teacher.getTel(), teacher.getMember().getName(), teacher.getPosition());
+        return new TeacherRes(teacher.getMember().getName(), teacher.getTel(), teacher.getPosition());
     }
 }
