@@ -7,7 +7,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 public record WakeupSongRes(int id,
-                            String thumbnailUrl,
+                            String thumbnail,
                             String videoTitle, String videoId, String videoUrl,
                             String channelTitle,
                             WakeupSongStatus status,
