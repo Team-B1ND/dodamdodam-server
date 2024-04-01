@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 @RestController
 @RequestMapping("/conference")
@@ -18,8 +19,9 @@ public class ConferenceController {
     private final ConferenceService conferenceService;
 
     @GetMapping
-    public ResponseData<List<ConferenceRes>> get() {
-        return ResponseData.ok("컨퍼런스 조회 성공", conferenceService.get().join());
+    public CompletableFuture<ResponseData<List<ConferenceRes>>> get() {
+        return conferenceService.get()
+                .thenApply(res -> ResponseData.ok("컨퍼런스 조회 성공", res));
     }
 
 }
