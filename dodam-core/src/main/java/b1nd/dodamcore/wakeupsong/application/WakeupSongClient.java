@@ -7,5 +7,5 @@ public interface WakeupSongClient {
 
     YoutubeApiRes getVideo(String videoId);
 
-    YoutubeSearchApiRes searchVideoByKeyword(String title, String artist);
+    YoutubeSearchApiRes searchVideoByKeyword(String keyword, int size);
 }

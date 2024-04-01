@@ -7,6 +7,7 @@ import b1nd.dodamcore.wakeupsong.application.dto.req.ApplyWakeupSongBySearchReq;
 import b1nd.dodamcore.wakeupsong.application.dto.req.ApplyWakeupSongReq;
 import b1nd.dodamcore.wakeupsong.application.dto.res.ChartRes;
 import b1nd.dodamcore.wakeupsong.application.dto.res.WakeupSongRes;
+import b1nd.dodamcore.wakeupsong.application.dto.res.YoutubeRes;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -55,6 +56,12 @@ public class WakeupSongController {
         return () -> Response.created("유튜브 검색을 통한 기상송 신청 성공");
     }
 
+    @GetMapping("/search")
+    public ResponseData<List<YoutubeRes>> getYoutubeVideo(@RequestParam String keyword) {
+        List<YoutubeRes> videoList = wakeupSongService.getYoutubeList(keyword);
+        return ResponseData.ok("유튜브 검색을 통한 기상송 조회 성공", videoList);
+    }
+
     @PatchMapping("/allow/{id}")
     public Response allowWakeupSong(@PathVariable int id) {
         wakeupSongService.allowWakeupSong(id);
@@ -81,7 +88,7 @@ public class WakeupSongController {
 
     @GetMapping("/chart")
     public ResponseData<List<ChartRes>> getChart() {
-        List<ChartRes> chartRoList = wakeupSongService.getChartList();
-        return ResponseData.ok("차트 조회 성공", chartRoList);
+        List<ChartRes> chartList = wakeupSongService.getChartList();
+        return ResponseData.ok("차트 조회 성공", chartList);
     }
 }

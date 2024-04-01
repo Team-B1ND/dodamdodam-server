@@ -25,10 +25,10 @@ public class YoutubeClient implements WakeupSongClient {
     }
 
     @Override
-    public YoutubeSearchApiRes searchVideoByKeyword(String title, String artist) {
+    public YoutubeSearchApiRes searchVideoByKeyword(String keyword, int size) {
         return webClientSupport.get(
                 UriComponentsBuilder.fromUriString(youtubeProperties.url().getSearch())
-                        .build(youtubeProperties.getApiKey(), title + " " + artist).toString(),
+                        .build(youtubeProperties.getApiKey(), keyword, size).toString(),
                 YoutubeSearchApiRes.class
         ).block();
     }
