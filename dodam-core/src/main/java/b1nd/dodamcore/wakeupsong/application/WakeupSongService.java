@@ -19,12 +19,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -56,12 +52,7 @@ public class WakeupSongService {
 
     @Transactional(rollbackFor = Exception.class)
     public void createWakeupSong(String videoUrl) {
-
-        Member member = memberSessionHolder.current();
-
-        if (wakeupSongRepository.existsByMember_IdAndCreatedAtAfter(member.getId(), ZonedDateTimeUtil.nowToLocalDateTime().minusDays(7))) {
-            throw new WakeupSongAlreadyCreatedException();
-        }
+        Member member = verifyAlreadyApplied();
 
         String videoId;
         try {
@@ -72,6 +63,28 @@ public class WakeupSongService {
 
         YoutubeApiRes.Snippet snippet = wakeupSongClient.getVideo(videoId).getItems().get(0).getSnippet();
 
+        buildAndSaveWakeupSong(snippet, videoId, videoUrl, member);
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public void createWakeupSongByYoutubeSearch(ApplyWakeupSongBySearchReq req) {
+        Member member = verifyAlreadyApplied();
+
+        YoutubeApiRes.SearchItem searchItem = wakeupSongClient.searchVideoByKeyword(req.title() + " " + req.artist(), 1).getItems().get(0);
+
+        buildAndSaveWakeupSong(searchItem.getSnippet(), searchItem.getId().getVideoId(),
+                "https://www.youtube.com/watch?v=" + searchItem.getId().getVideoId(), member);
+    }
+
+    private Member verifyAlreadyApplied() {
+        Member member = memberSessionHolder.current();
+        if (wakeupSongRepository.existsByMember_IdAndCreatedAtAfter(member.getId(), ZonedDateTimeUtil.nowToLocalDateTime().minusDays(7))) {
+            throw new WakeupSongAlreadyCreatedException();
+        }
+        return member;
+    }
+
+    private void buildAndSaveWakeupSong(YoutubeApiRes.Snippet snippet, String videoId, String videoUrl, Member member) {
         WakeupSong wakeupSong = WakeupSong.builder()
                 .videoId(videoId)
                 .videoTitle(snippet.getTitle())
@@ -84,41 +97,24 @@ public class WakeupSongService {
         wakeupSongRepository.save(wakeupSong);
     }
 
+    public List<YoutubeRes> getYoutubeList(String keyword) {
+        return wakeupSongClient.searchVideoByKeyword(keyword, 5).getItems().stream()
+                .map(this::getYoutubeRes).toList();
+    }
+
+    private YoutubeRes getYoutubeRes(YoutubeApiRes.SearchItem item) {
+        return new YoutubeRes(
+                item.getSnippet().getTitle(),
+                item.getId().getVideoId(),
+                "https://www.youtube.com/watch?v=" + item.getId().getVideoId(),
+                item.getSnippet().getChannelTitle(),
+                getThumbnailUrl(item.getSnippet()).getUrl()
+        );
+    }
+
     private YoutubeApiRes.Thumbnail getThumbnailUrl(YoutubeApiRes.Snippet snippet) {
         Optional<YoutubeApiRes.Thumbnail> standard = Optional.ofNullable(snippet.getThumbnails().getStandard());
         return standard.orElseGet(() -> snippet.getThumbnails().getHigh());
-    }
-
-    @Transactional(rollbackFor = Exception.class)
-    public void createWakeupSongByYoutubeSearch(ApplyWakeupSongBySearchReq req) {
-        String videoId = wakeupSongClient.searchVideoByKeyword(req.title() + " " + req.artist(), 1).getItems().get(0).getId().getVideoId();
-        createWakeupSong("https://www.youtube.com/watch?v=" + videoId);
-    }
-
-    public List<YoutubeRes> getYoutubeList(String keyword) {
-
-        List<String> videoIdList = new ArrayList<>(wakeupSongClient.searchVideoByKeyword(keyword, 6).getItems().stream()
-                .map(item -> item.getId().getVideoId()).toList());
-
-        videoIdList.removeAll(Collections.singletonList(null));
-        if (videoIdList.size() == 6) videoIdList.remove(videoIdList.size() - 1);
-
-        List<YoutubeApiRes.Snippet> snippets = videoIdList.stream()
-                .map(videoId -> wakeupSongClient.getVideo(videoId).getItems().get(0).getSnippet()).toList();
-
-        AtomicInteger index = new AtomicInteger();
-        return snippets.stream()
-                .map(snippet -> getYoutubeRes(snippet, videoIdList.get(index.getAndIncrement()))).collect(Collectors.toList());
-    }
-
-    private YoutubeRes getYoutubeRes(YoutubeApiRes.Snippet snippet, String videoId) {
-        return new YoutubeRes(
-                snippet.getTitle(),
-                videoId,
-                "https://www.youtube.com/watch?v=" + videoId,
-                snippet.getChannelTitle(),
-                getThumbnailUrl(snippet).getUrl()
-        );
     }
 
     @Transactional(rollbackFor = Exception.class)
