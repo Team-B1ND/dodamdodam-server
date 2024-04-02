@@ -1,24 +1,40 @@
 package b1nd.dodamcore.wakeupsong.application.dto.res;
 
-import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.util.List;
 
-@Getter
-@AllArgsConstructor
 @NoArgsConstructor
+@Data
 public class YoutubeApiRes {
 
-    private List<Item> items;
+    @Getter
+    public static class Video {
+        private List<VideoItem> items;
+    }
 
     @Getter
-    public static class Item {
+    public static class Search {
+        private List<SearchItem> items;
+    }
+
+    @Getter
+    public static class VideoItem {
         String id;
         Snippet snippet;
-        ContentDetails contentDetails;
-        Thumbnails thumbnails;
+    }
+
+    @Getter
+    public static class SearchItem {
+        Id id;
+        Snippet snippet;
+    }
+
+    @Getter
+    public static class Id {
+        String videoId;
     }
 
     @Getter
@@ -41,11 +57,5 @@ public class YoutubeApiRes {
         String url;
         int width;
         int height;
-    }
-
-    @Getter
-    public static class ContentDetails {
-        String duration;
-        String dimension;
     }
 }
