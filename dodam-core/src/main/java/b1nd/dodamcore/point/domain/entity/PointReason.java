@@ -45,7 +45,7 @@ public class PointReason extends BaseEntity {
         this.pointType = pointType;
     }
 
-    public void modify(int score, String reason, ScoreType scoreType, PointType pointType) {
+    public void update(int score, String reason, ScoreType scoreType, PointType pointType) {
         this.score = modifyIfNotZero(score, this.score);
         this.reason = modifyIfNotNull(reason, this.reason);
         this.scoreType = modifyIfNotNull(scoreType, this.scoreType);
