@@ -1,4 +1,4 @@
-package b1nd.dodamcore.point.application.dto.req;
+package b1nd.dodamapi.point.usecase.req;
 
 import b1nd.dodamcore.point.domain.entity.PointReason;
 import b1nd.dodamcore.point.domain.enums.PointType;

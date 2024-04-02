@@ -1,4 +1,4 @@
-package b1nd.dodamcore.point.application.dto.res;
+package b1nd.dodamcore.point.domain.vo;
 
 import b1nd.dodamcore.member.domain.vo.StudentRes;
 import b1nd.dodamcore.point.domain.entity.PointScore;
