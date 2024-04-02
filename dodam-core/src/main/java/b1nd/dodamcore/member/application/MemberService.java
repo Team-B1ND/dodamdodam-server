@@ -2,6 +2,8 @@ package b1nd.dodamcore.member.application;
 
 import b1nd.dodamcore.member.domain.entity.*;
 import b1nd.dodamcore.member.domain.enums.AuthStatus;
+import b1nd.dodamcore.member.domain.exception.StudentNotFoundException;
+import b1nd.dodamcore.member.domain.exception.TeacherNotFoundException;
 import b1nd.dodamcore.member.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -19,6 +21,7 @@ public class MemberService {
     private final StudentRepository studentRepository;
     private final TeacherRepository teacherRepository;
     private final BroadcastClubMemberRepository broadcastClubMemberRepository;
+    private final MemberSessionHolder sessionHolder;
 
     public Member save(Member member) {
         return memberRepository.save(member);
@@ -56,20 +59,39 @@ public class MemberService {
         return memberRepository.findById(id);
     }
 
-    public Optional<Student> getStudentByMember(Member member) {
-        return studentRepository.findByMember(member);
-    }
-
-    public Optional<Teacher> getTeacherByMember(Member member) {
-        return teacherRepository.findByMember(member);
-    }
-
     public List<Member> searchByName(String name) {
         return memberRepository.findByNameContains(name);
     }
 
     public List<Member> getByStatus(AuthStatus status) {
         return memberRepository.findByStatus(status);
+    }
+
+    public Optional<Student> getStudentByMember(Member member) {
+        return studentRepository.findByMember(member);
+    }
+
+    public Student getStudentBy(Integer id) {
+        return studentRepository.findById(id)
+                .orElseThrow(StudentNotFoundException::new);
+    }
+
+    public Student getStudentFromSession() {
+        return studentRepository.findByMember(sessionHolder.current())
+                .orElseThrow(StudentNotFoundException::new);
+    }
+
+    public List<Student> getStudentsByIds(List<Integer> ids) {
+        return studentRepository.getByIds(ids);
+    }
+
+    public Optional<Teacher> getTeacherOrNullByMember(Member member) {
+        return teacherRepository.findByMember(member);
+    }
+
+    public Teacher getTeacherFromSession() {
+        return teacherRepository.findByMember(sessionHolder.current())
+                .orElseThrow(TeacherNotFoundException::new);
     }
 
 }

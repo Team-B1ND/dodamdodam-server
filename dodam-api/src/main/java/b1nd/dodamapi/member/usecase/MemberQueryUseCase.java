@@ -52,7 +52,7 @@ public class MemberQueryUseCase {
     private MemberInfoRes getMemberInfo(Member member) {
         Student student = service.getStudentByMember(member)
                 .orElse(null);
-        Teacher teacher = service.getTeacherByMember(member)
+        Teacher teacher = service.getTeacherOrNullByMember(member)
                 .orElse(null);
         return MemberInfoRes.of(member, student, teacher);
     }

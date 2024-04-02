@@ -1,4 +1,4 @@
-package b1nd.dodamapi.member;
+package b1nd.dodamapi.member.handler;
 
 import b1nd.dodamapi.common.response.Response;
 import b1nd.dodamapi.common.response.ResponseData;
