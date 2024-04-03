@@ -1,16 +1,11 @@
 package b1nd.dodamcore.point.application;
 
-import b1nd.dodamcore.point.application.dto.req.ModifyPointReasonReq;
-import b1nd.dodamcore.point.application.dto.req.RegisterPointReasonReq;
-import b1nd.dodamcore.point.application.dto.res.PointReasonRes;
 import b1nd.dodamcore.point.domain.entity.PointReason;
 import b1nd.dodamcore.point.domain.enums.PointType;
-import b1nd.dodamcore.point.domain.exception.PointReasonDuplicateException;
 import b1nd.dodamcore.point.domain.exception.PointReasonNotFoundException;
 import b1nd.dodamcore.point.repository.PointReasonRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -18,36 +13,27 @@ import java.util.List;
 @RequiredArgsConstructor
 public class PointReasonService {
 
-    private final PointReasonRepository reasonRepository;
+    private final PointReasonRepository repository;
 
-    @Transactional
-    public void register(RegisterPointReasonReq req) {
-        if(reasonRepository.existsByReason(req.reason())) {
-            throw new PointReasonDuplicateException();
-        }
-
-        reasonRepository.save(req.toEntity());
+    public void save(PointReason reason) {
+        repository.save(reason);
     }
 
-    @Transactional
-    public void delete(int id) {
-        //todo 해당 사유로 발급된 상벌점 처리 필요
-        reasonRepository.deleteById(id);
+    public void delete(PointReason reason) {
+        repository.delete(reason);
     }
 
-    @Transactional
-    public void modify(int id, ModifyPointReasonReq req) {
-        PointReason reason = reasonRepository.findById(id)
+    public boolean checkReasonDuplication(String reason) {
+        return repository.existsByReason(reason);
+    }
+
+    public PointReason getBy(Integer id) {
+        return repository.findById(id)
                 .orElseThrow(PointReasonNotFoundException::new);
-
-        reason.modify(req.score(), req.reason(), req.scoreType(), req.pointType());
     }
 
-    @Transactional(readOnly = true)
-    public List<PointReasonRes> getByPointType(PointType type) {
-        return reasonRepository.findByPointType(type).stream()
-                .map(PointReasonRes::of)
-                .toList();
+    public List<PointReason> getBy(PointType type) {
+        return repository.findByPointType(type);
     }
 
 }
