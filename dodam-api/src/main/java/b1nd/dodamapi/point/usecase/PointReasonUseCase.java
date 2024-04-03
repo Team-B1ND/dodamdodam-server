@@ -49,6 +49,7 @@ public class PointReasonUseCase {
         return Response.noContent("상벌점 사유 수정 성공");
     }
 
+    @Transactional(readOnly = true)
     public ResponseData<List<PointReasonRes>> getBy(PointType type) {
         List<PointReasonRes> result = service.getBy(type).parallelStream()
                 .map(PointReasonRes::of)
