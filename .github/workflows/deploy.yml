@@ -62,7 +62,7 @@ jobs:
         cloud.aws.storage.bucket: ${{ secrets.S3_BUCKET }}
 
     - name: Build with Gradle
-      run: ./gradlew :dodam-api:build -x test
+      run: ./gradlew :dodam-api:build -x test --parallel
       
     - name: Build Docker Image For Spring
       run: |
