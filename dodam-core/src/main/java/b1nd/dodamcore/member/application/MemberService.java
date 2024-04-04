@@ -28,12 +28,10 @@ public class MemberService {
     }
 
     public Student save(Student student) {
-        memberRepository.save(student.getMember());
         return studentRepository.save(student);
     }
 
     public Teacher save(Teacher teacher) {
-        memberRepository.save(teacher.getMember());
         return teacherRepository.save(teacher);
     }
 

@@ -32,11 +32,8 @@ public class MemberCommandUseCase {
     public Response join(JoinStudentReq req) {
         throwExceptionWhenIdIsDuplicate(req.id());
 
-        Student student = service.save(
-                req.mapToStudent(
-                        encodePw(req.pw())
-                )
-        );
+        Member member = service.save(req.mapToMember(encodePw(req.pw())));
+        Student student = service.save(req.mapToStudent(member));
         publishStudentRegisteredEvent(student);
         return Response.created("학생 회원가입 성공");
     }
@@ -48,11 +45,8 @@ public class MemberCommandUseCase {
     public Response join(JoinTeacherReq req) {
         throwExceptionWhenIdIsDuplicate(req.id());
 
-        service.save(
-                req.mapToTeacher(
-                        encodePw(req.pw())
-                )
-        );
+        Member member = service.save(req.mapToMember(encodePw(req.pw())));
+        service.save(req.mapToTeacher(member));
         return Response.created("선생님 회원가입 성공");
     }
 

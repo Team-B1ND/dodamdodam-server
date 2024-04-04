@@ -10,16 +10,16 @@ import jakarta.validation.constraints.NotNull;
 
 public record JoinStudentReq(@NotEmpty String id, @NotEmpty String pw, @NotEmpty String name, @NotEmpty @Email String email,
                              @NotEmpty String phone, @NotNull int grade, @NotNull int room, @NotNull int number) {
-    public Student mapToStudent(String encodedPw) {
+    public Student mapToStudent(Member member) {
         return Student.builder()
-                .member(mapToMember(encodedPw))
+                .member(member)
                 .grade(grade)
                 .room(room)
                 .number(number)
                 .build();
     }
 
-    private Member mapToMember(String encodedPw) {
+    public Member mapToMember(String encodedPw) {
         return Member.builder()
                 .id(id)
                 .pw(encodedPw)

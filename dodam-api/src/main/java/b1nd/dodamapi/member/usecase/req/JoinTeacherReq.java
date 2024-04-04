@@ -9,15 +9,15 @@ import jakarta.validation.constraints.NotEmpty;
 
 public record JoinTeacherReq(@NotEmpty String id, @NotEmpty String pw, @NotEmpty String name, @NotEmpty @Email String email,
                              @NotEmpty String phone, @NotEmpty String tel, @NotEmpty String position) {
-    public Teacher mapToTeacher(String encodedPw) {
+    public Teacher mapToTeacher(Member member) {
         return Teacher.builder()
-                .member(mapToMember(encodedPw))
+                .member(member)
                 .tel(tel)
                 .position(position)
                 .build();
     }
 
-    private Member mapToMember(String encodedPw) {
+    public Member mapToMember(String encodedPw) {
         return Member.builder()
                 .id(id)
                 .pw(encodedPw)
