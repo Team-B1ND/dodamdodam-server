@@ -4,6 +4,7 @@ import b1nd.dodamapi.common.response.Response;
 import b1nd.dodamapi.common.response.ResponseData;
 import b1nd.dodamcore.nightstudy.application.NightStudyService;
 import b1nd.dodamcore.nightstudy.application.dto.req.ApplyNightStudyReq;
+import b1nd.dodamcore.nightstudy.application.dto.req.RejectNightStudyReq;
 import b1nd.dodamcore.nightstudy.domain.enums.NightStudyStatus;
 import b1nd.dodamcore.nightstudy.application.dto.res.NightStudyRes;
 import jakarta.validation.Valid;
@@ -35,21 +36,21 @@ public class NightStudyController {
 
     @PatchMapping("/{id}/allow")
     public Response allow(@PathVariable Long id) {
-        nightStudyService.modifyStatus(id, NightStudyStatus.ALLOWED);
+        nightStudyService.modifyStatus(id, NightStudyStatus.ALLOWED, null);
 
         return Response.ok("심야자습 승인 성공");
     }
 
     @PatchMapping("/{id}/reject")
-    public Response reject(@PathVariable Long id) {
-        nightStudyService.modifyStatus(id, NightStudyStatus.REJECTED);
+    public Response reject(@PathVariable Long id, @RequestBody RejectNightStudyReq req) {
+        nightStudyService.modifyStatus(id, NightStudyStatus.REJECTED, req.rejectReason());
 
         return Response.ok("심야자습 거절 성공");
     }
 
     @PatchMapping("/{id}/revert")
     public Response revert(@PathVariable Long id) {
-        nightStudyService.modifyStatus(id, NightStudyStatus.PENDING);
+        nightStudyService.modifyStatus(id, NightStudyStatus.PENDING, null);
 
         return Response.ok("심야자습 대기 성공");
     }

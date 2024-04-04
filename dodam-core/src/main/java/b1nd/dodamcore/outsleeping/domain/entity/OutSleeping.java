@@ -46,6 +46,8 @@ public class OutSleeping extends BaseEntity {
     @JoinColumn(name = "fk_teacher_id")
     private Teacher teacher;
 
+    private String rejectReason;
+
     @Builder
     public OutSleeping(String reason, LocalDate startAt, LocalDate endAt, Student student) {
         isInvalidPeriod(startAt, endAt);
@@ -57,9 +59,10 @@ public class OutSleeping extends BaseEntity {
         this.student = student;
     }
 
-    public void modifyStatus(Teacher teacher, OutSleepingStatus status) {
+    public void modifyStatus(Teacher teacher, OutSleepingStatus status, String rejectReason) {
         this.status = status;
         this.teacher = teacher;
+        this.rejectReason = rejectReason;
     }
 
     public void isApplicant(Student student) {

@@ -55,6 +55,8 @@ public class NightStudy extends BaseEntity {
     @JoinColumn(name = "fk_teacher_id")
     private Teacher teacher;
 
+    private String rejectReason;
+
     @NotNull
     private LocalDate startAt;
 
@@ -78,9 +80,21 @@ public class NightStudy extends BaseEntity {
         this.endAt = endAt;
     }
 
-    public void modifyStatus(Teacher teacher, NightStudyStatus status) {
+    public NightStudy(Student student) {
+        this.content = "민규야 힘내. 힘규야 민내.";
+        this.doNeedPhone = false;
+        this.reasonForPhone = null;
+        this.place = SchoolPlace.PROGRAMMING_1;
+        this.status = NightStudyStatus.PENDING;
+        this.student = student;
+        this.startAt = LocalDate.now();
+        this.endAt = LocalDate.now();
+    }
+
+    public void modifyStatus(Teacher teacher, NightStudyStatus status, String rejectReason) {
         this.status = status;
         this.teacher = teacher;
+        this.rejectReason = rejectReason;
     }
 
     public void isApplicant(Student student) {

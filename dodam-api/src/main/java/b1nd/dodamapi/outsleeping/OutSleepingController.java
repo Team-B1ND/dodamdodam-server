@@ -4,6 +4,7 @@ import b1nd.dodamapi.common.response.Response;
 import b1nd.dodamapi.common.response.ResponseData;
 import b1nd.dodamcore.outsleeping.application.OutSleepingService;
 import b1nd.dodamcore.outsleeping.application.dto.req.ApplyOutSleepingReq;
+import b1nd.dodamcore.outsleeping.application.dto.req.RejectOutSleepingReq;
 import b1nd.dodamcore.outsleeping.application.dto.res.OutSleepingRes;
 import b1nd.dodamcore.outsleeping.domain.enums.OutSleepingStatus;
 import jakarta.validation.Valid;
@@ -29,21 +30,21 @@ public class OutSleepingController {
 
     @PatchMapping("/{id}/allow")
     public Response allow(@PathVariable Long id) {
-        outSleepingService.modifyStatus(id, OutSleepingStatus.ALLOWED);
+        outSleepingService.modifyStatus(id, OutSleepingStatus.ALLOWED, null);
 
         return Response.noContent("외박 승인 성공");
     }
 
     @PatchMapping("/{id}/reject")
-    public Response reject(@PathVariable Long id) {
-        outSleepingService.modifyStatus(id, OutSleepingStatus.REJECTED);
+    public Response reject(@PathVariable Long id, @RequestBody RejectOutSleepingReq req) {
+        outSleepingService.modifyStatus(id, OutSleepingStatus.REJECTED, req.rejectReason());
 
         return Response.noContent("외박 거절 성공");
     }
 
     @PatchMapping("/{id}/revert")
     public Response revert(@PathVariable Long id) {
-        outSleepingService.modifyStatus(id, OutSleepingStatus.PENDING);
+        outSleepingService.modifyStatus(id, OutSleepingStatus.PENDING, null);
 
         return Response.noContent("외박 대기 성공");
     }

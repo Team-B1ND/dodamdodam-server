@@ -38,11 +38,11 @@ public class OutGoingService {
     }
 
     @Transactional
-    public void modifyStatus(Long id, OutGoingStatus status) {
+    public void modifyStatus(Long id, OutGoingStatus status, String rejectReason) {
         Teacher teacher = teacherRepository.getByMember(memberSessionHolder.current());
         OutGoing outGoing = outGoingRepository.getById(id);
 
-        outGoing.modifyStatus(teacher, status);
+        outGoing.modifyStatus(teacher, status, rejectReason);
     }
 
     @Transactional

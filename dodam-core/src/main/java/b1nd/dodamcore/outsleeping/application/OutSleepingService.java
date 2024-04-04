@@ -36,11 +36,11 @@ public class OutSleepingService {
     }
 
     @Transactional
-    public void modifyStatus(Long id, OutSleepingStatus status) {
+    public void modifyStatus(Long id, OutSleepingStatus status, String rejectReason) {
         Teacher teacher = teacherRepository.getByMember(memberSessionHolder.current());
         OutSleeping outSleeping = outSleepingRepository.getById(id);
 
-        outSleeping.modifyStatus(teacher, status);
+        outSleeping.modifyStatus(teacher, status, rejectReason);
     }
 
     @Transactional

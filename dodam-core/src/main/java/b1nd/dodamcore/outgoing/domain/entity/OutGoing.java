@@ -46,6 +46,8 @@ public class OutGoing extends BaseEntity {
     @JoinColumn(name = "fk_teacher_id")
     private Teacher teacher;
 
+    private String rejectReason;
+
     @Builder
     public OutGoing(String reason, LocalDateTime startAt, LocalDateTime endAt, Student student) {
         isInvalidPeriod(startAt, endAt);
@@ -57,9 +59,10 @@ public class OutGoing extends BaseEntity {
         this.student = student;
     }
 
-    public void modifyStatus(Teacher teacher, OutGoingStatus status) {
+    public void modifyStatus(Teacher teacher, OutGoingStatus status, String rejectReason) {
         this.status = status;
         this.teacher = teacher;
+        this.rejectReason = rejectReason;
     }
 
     public void isApplicant(Student student) {

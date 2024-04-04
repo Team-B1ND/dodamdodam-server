@@ -2,6 +2,7 @@ package b1nd.dodamapi.outgoing;
 
 import b1nd.dodamapi.common.response.Response;
 import b1nd.dodamapi.common.response.ResponseData;
+import b1nd.dodamcore.outgoing.application.dto.req.RejectOutGoingReq;
 import b1nd.dodamcore.outgoing.application.dto.res.OutGoingRes;
 import b1nd.dodamcore.outgoing.domain.enums.OutGoingStatus;
 import b1nd.dodamcore.outgoing.application.OutGoingService;
@@ -29,21 +30,21 @@ public class OutGoingController {
 
     @PatchMapping("/{id}/allow")
     public Response allow(@PathVariable Long id) {
-        outGoingService.modifyStatus(id, OutGoingStatus.ALLOWED);
+        outGoingService.modifyStatus(id, OutGoingStatus.ALLOWED, null);
 
         return Response.noContent("외출 승인 성공");
     }
 
     @PatchMapping("/{id}/reject")
-    public Response reject(@PathVariable Long id) {
-        outGoingService.modifyStatus(id, OutGoingStatus.REJECTED);
+    public Response reject(@PathVariable Long id, @RequestBody RejectOutGoingReq req) {
+        outGoingService.modifyStatus(id, OutGoingStatus.REJECTED, req.rejectReason());
 
         return Response.noContent("외출 거절 성공");
     }
 
     @PatchMapping("/{id}/revert")
     public Response revert(@PathVariable Long id) {
-        outGoingService.modifyStatus(id, OutGoingStatus.PENDING);
+        outGoingService.modifyStatus(id, OutGoingStatus.PENDING, null);
 
         return Response.noContent("외출 대기 성공");
     }

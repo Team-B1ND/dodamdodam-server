@@ -56,13 +56,13 @@ public class NightStudyService {
     }
 
     @Transactional
-    public void modifyStatus(Long id, NightStudyStatus status) {
+    public void modifyStatus(Long id, NightStudyStatus status, String rejectReason) {
         NightStudy nightStudy = nightStudyRepository.findById(id)
                 .orElseThrow(NightStudyNotFoundException::new);
         Teacher teacher = teacherRepository.findByMember(memberSessionHolder.current())
                 .orElseThrow(TeacherNotFoundException::new);
 
-        nightStudy.modifyStatus(teacher, status);
+        nightStudy.modifyStatus(teacher, status, rejectReason);
     }
 
     @Transactional(readOnly = true)
