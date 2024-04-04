@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 public record OutGoingRes(Long id, String reason, OutGoingStatus status, LocalDateTime startAt, LocalDateTime endAt,
-                          StudentRes student, LocalDateTime createdAt, LocalDateTime modifiedAt) {
+                          StudentRes student, String rejectReason, LocalDateTime createdAt, LocalDateTime modifiedAt) {
     public static List<OutGoingRes> of(List<OutGoing> oList) {
         return oList.stream()
                 .map(OutGoingRes::of)
@@ -23,6 +23,7 @@ public record OutGoingRes(Long id, String reason, OutGoingStatus status, LocalDa
                 o.getStartAt(),
                 o.getEndAt(),
                 StudentRes.of(o.getStudent()),
+                o.getRejectReason(),
                 o.getCreatedAt(),
                 o.getModifiedAt()
         );

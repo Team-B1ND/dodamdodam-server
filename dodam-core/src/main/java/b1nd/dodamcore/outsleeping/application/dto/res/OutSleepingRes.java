@@ -15,6 +15,7 @@ public record OutSleepingRes(
         LocalDate startAt,
         LocalDate endAt,
         StudentRes student,
+        String rejectReason,
         LocalDateTime createdAt,
         LocalDateTime modifiedAt) {
     public static List<OutSleepingRes> of(List<OutSleeping> outSleepings) {
@@ -31,6 +32,7 @@ public record OutSleepingRes(
                 outSleeping.getStartAt(),
                 outSleeping.getEndAt(),
                 StudentRes.of(outSleeping.getStudent()),
+                outSleeping.getRejectReason(),
                 outSleeping.getCreatedAt(),
                 outSleeping.getModifiedAt()
         );

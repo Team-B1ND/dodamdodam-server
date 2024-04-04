@@ -14,6 +14,7 @@ public record NightStudyRes(Long id,
                             Boolean doNeedPhone, String reasonForPhone,
                             StudentRes student,
                             String place,
+                            String rejectReason,
                             LocalDate startAt, LocalDate endAt,
                             LocalDateTime createdAt, LocalDateTime modifiedAt) {
     public static List<NightStudyRes> of(List<NightStudy> nightStudies) {
@@ -30,6 +31,7 @@ public record NightStudyRes(Long id,
                 nightStudy.getDoNeedPhone(), nightStudy.getReasonForPhone(),
                 StudentRes.of(nightStudy.getStudent()),
                 nightStudy.getPlace().getPlace(),
+                nightStudy.getRejectReason(),
                 nightStudy.getStartAt(), nightStudy.getEndAt(),
                 nightStudy.getCreatedAt(), nightStudy.getModifiedAt()
         );
