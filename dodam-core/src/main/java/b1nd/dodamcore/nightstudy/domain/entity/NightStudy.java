@@ -80,17 +80,6 @@ public class NightStudy extends BaseEntity {
         this.endAt = endAt;
     }
 
-    public NightStudy(Student student) {
-        this.content = "민규야 힘내. 힘규야 민내.";
-        this.doNeedPhone = false;
-        this.reasonForPhone = null;
-        this.place = SchoolPlace.PROGRAMMING_1;
-        this.status = NightStudyStatus.PENDING;
-        this.student = student;
-        this.startAt = LocalDate.now();
-        this.endAt = LocalDate.now();
-    }
-
     public void modifyStatus(Teacher teacher, NightStudyStatus status, String rejectReason) {
         this.status = status;
         this.teacher = teacher;
