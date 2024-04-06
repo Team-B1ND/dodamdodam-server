@@ -56,6 +56,7 @@ class SecurityConfig {
                 .requestMatchers(GET, "/member/check/broadcast-club-member").hasAnyRole(STUDENT, ADMIN)
                 .requestMatchers(GET, "/member/**").hasAnyRole(TEACHER, ADMIN)
                 .requestMatchers(PATCH, "/member/active/**").hasRole(ADMIN)
+                .requestMatchers(PATCH, "/member/deactivate").authenticated()
                 .requestMatchers(PATCH, "/member/deactivate/**").hasRole(ADMIN)
                 .requestMatchers(PATCH, "/member/student/info").hasRole(STUDENT)
                 .requestMatchers(PATCH, "/member/**").authenticated()

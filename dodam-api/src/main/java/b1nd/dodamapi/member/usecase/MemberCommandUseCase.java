@@ -98,6 +98,12 @@ public class MemberCommandUseCase {
         return Response.ok("멤버 비활성화 성공");
     }
 
+    public Response deactivate() {
+        Member member = sessionHolder.current();
+        member.updateStatus(AuthStatus.DEACTIVATE);
+        return Response.ok("멤버 비활성화 성공");
+    }
+
     private void updateStatus(String id, AuthStatus status) {
         Member member = getMemberById(id);
         member.updateStatus(status);
