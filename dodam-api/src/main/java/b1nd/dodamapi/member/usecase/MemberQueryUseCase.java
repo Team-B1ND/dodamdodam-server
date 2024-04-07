@@ -7,7 +7,6 @@ import b1nd.dodamcore.member.domain.entity.Member;
 import b1nd.dodamcore.member.domain.entity.Student;
 import b1nd.dodamcore.member.domain.entity.Teacher;
 import b1nd.dodamcore.member.domain.enums.AuthStatus;
-import b1nd.dodamcore.member.domain.exception.MemberNotFoundException;
 import b1nd.dodamcore.member.domain.vo.MemberInfoRes;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -24,7 +23,7 @@ public class MemberQueryUseCase {
     private final MemberSessionHolder sessionHolder;
 
     public ResponseData<MemberInfoRes> getById(String id) {
-        return ResponseData.ok("Id로 멤버 조회 성공", getMemberInfo(getMemberById(id)));
+        return ResponseData.ok("Id로 멤버 조회 성공", getMemberInfo(service.getMemberBy(id)));
     }
 
     public ResponseData<MemberInfoRes> getMyInfo() {
@@ -62,13 +61,8 @@ public class MemberQueryUseCase {
     }
 
     public ResponseData<Boolean> checkBroadcastClubMember(String id) {
-        Member member = getMemberById(id);
+        Member member = service.getMemberBy(id);
         return ResponseData.ok("방송부원 확인 성공", service.checkBroadcastClubMember(member));
-    }
-
-    private Member getMemberById(String id) {
-        return service.getMemberById(id)
-                .orElseThrow(MemberNotFoundException::new);
     }
 
 }

@@ -2,8 +2,6 @@ package b1nd.dodaminfra.token;
 
 import b1nd.dodamcore.auth.application.TokenClient;
 import b1nd.dodamcore.member.application.MemberService;
-import b1nd.dodamcore.member.domain.entity.Member;
-import b1nd.dodamcore.member.domain.exception.MemberNotFoundException;
 import b1nd.dodaminfra.security.common.MemberDetails;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -51,12 +49,7 @@ public class TokenFilter extends OncePerRequestFilter {
 
     private MemberDetails getMemberDetails(String token) {
         String id = tokenClient.getMemberIdByToken(token);
-        return new MemberDetails(getMemberById(id));
-    }
-
-    private Member getMemberById(String id) {
-        return memberService.getMemberById(id)
-                .orElseThrow(MemberNotFoundException::new);
+        return new MemberDetails(memberService.getMemberBy(id));
     }
 
 }

@@ -4,7 +4,6 @@ import b1nd.dodamapi.common.response.Response;
 import b1nd.dodamapi.member.usecase.req.*;
 import b1nd.dodamcore.auth.application.PasswordEncoder;
 import b1nd.dodamcore.member.application.MemberService;
-import b1nd.dodamcore.member.application.MemberSessionHolder;
 import b1nd.dodamcore.member.domain.entity.Member;
 import b1nd.dodamcore.member.domain.entity.Student;
 import b1nd.dodamcore.member.domain.enums.AuthStatus;
@@ -25,7 +24,6 @@ import org.springframework.transaction.annotation.Transactional;
 public class MemberCommandUseCase {
 
     private final MemberService service;
-    private final MemberSessionHolder sessionHolder;
     private final PasswordEncoder passwordEncoder;
     private final ApplicationEventPublisher eventPublisher;
 
@@ -99,7 +97,7 @@ public class MemberCommandUseCase {
     }
 
     public Response deactivate() {
-        Member member = sessionHolder.current();
+        Member member = service.getMemberFromSession();
         member.updateStatus(AuthStatus.DEACTIVATE);
 
         service.save(member);
@@ -117,7 +115,7 @@ public class MemberCommandUseCase {
     }
 
     public Response updatePassword(UpdatePasswordReq req) {
-        Member member = sessionHolder.current();
+        Member member = service.getMemberFromSession();
         member.updatePw(req.password(), passwordEncoder);
 
         service.save(member);
@@ -125,7 +123,7 @@ public class MemberCommandUseCase {
     }
 
     public Response updateMemberInfo(UpdateMemberInfoReq req) {
-        Member member = sessionHolder.current();
+        Member member = service.getMemberFromSession();
         member.updateInfo(req.name(), req.email(), req.phone(), req.profileImage());
 
         service.save(member);
@@ -133,7 +131,7 @@ public class MemberCommandUseCase {
     }
 
     public Response updateStudentInfo(UpdateStudentInfoReq req) {
-        Student student = getStudentByMember(sessionHolder.current());
+        Student student = getStudentByMember(service.getMemberFromSession());
         student.updateInfo(req.grade(), req.room(), req.number());
 
         return Response.noContent("내 학생 정보 수정 성공");

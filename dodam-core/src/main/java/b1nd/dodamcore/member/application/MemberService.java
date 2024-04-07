@@ -2,6 +2,7 @@ package b1nd.dodamcore.member.application;
 
 import b1nd.dodamcore.member.domain.entity.*;
 import b1nd.dodamcore.member.domain.enums.AuthStatus;
+import b1nd.dodamcore.member.domain.exception.MemberNotFoundException;
 import b1nd.dodamcore.member.domain.exception.StudentNotFoundException;
 import b1nd.dodamcore.member.domain.exception.TeacherNotFoundException;
 import b1nd.dodamcore.member.repository.*;
@@ -55,6 +56,15 @@ public class MemberService {
 
     public Optional<Member> getMemberById(String id) {
         return memberRepository.findById(id);
+    }
+
+    public Member getMemberBy(String id) {
+        return memberRepository.findById(id)
+                .orElseThrow(MemberNotFoundException::new);
+    }
+
+    public Member getMemberFromSession() {
+        return sessionHolder.current();
     }
 
     public List<Member> searchByName(String name) {
