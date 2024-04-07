@@ -101,6 +101,8 @@ public class MemberCommandUseCase {
     public Response deactivate() {
         Member member = sessionHolder.current();
         member.updateStatus(AuthStatus.DEACTIVATE);
+
+        service.save(member);
         return Response.ok("멤버 비활성화 성공");
     }
 
