@@ -1,7 +1,7 @@
-package b1nd.dodamapi.conference;
+package b1nd.dodamapi.conference.handler;
 
 import b1nd.dodamapi.common.response.ResponseData;
-import b1nd.dodamcore.conference.application.ConferenceService;
+import b1nd.dodamapi.conference.usecase.ConferenceUseCase;
 import b1nd.dodamcore.conference.application.dto.res.ConferenceRes;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,12 +16,11 @@ import java.util.concurrent.CompletableFuture;
 @RequiredArgsConstructor
 public class ConferenceController {
 
-    private final ConferenceService conferenceService;
+    private final ConferenceUseCase useCase;
 
     @GetMapping
     public CompletableFuture<ResponseData<List<ConferenceRes>>> get() {
-        return conferenceService.get()
-                .thenApply(res -> ResponseData.ok("컨퍼런스 조회 성공", res));
+        return useCase.get();
     }
 
 }
