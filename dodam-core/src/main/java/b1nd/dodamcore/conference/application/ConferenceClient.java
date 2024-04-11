@@ -7,6 +7,6 @@ import java.util.concurrent.CompletableFuture;
 
 public interface ConferenceClient {
 
-    CompletableFuture<List<ConferenceRes>> get();
+    CompletableFuture<List<ConferenceRes>> getByMonth();
 
 }

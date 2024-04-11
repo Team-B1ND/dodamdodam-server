@@ -19,8 +19,8 @@ public class ConferenceController {
     private final ConferenceUseCase useCase;
 
     @GetMapping
-    public CompletableFuture<ResponseData<List<ConferenceRes>>> get() {
-        return useCase.get();
+    public CompletableFuture<ResponseData<List<ConferenceRes>>> getByMonth() {
+        return useCase.getByMonth();
     }
 
 }
