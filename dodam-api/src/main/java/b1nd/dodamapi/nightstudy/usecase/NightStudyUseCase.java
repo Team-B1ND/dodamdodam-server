@@ -83,26 +83,20 @@ public class NightStudyUseCase {
     public ResponseData<List<NightStudyRes>> getMy() {
         Student student = memberService.getStudentFromSession();
         LocalDate now = ZonedDateTimeUtil.nowToLocalDate();
-        List<NightStudyRes> result = nightStudyService.getMy(student, now).parallelStream()
-                .map(NightStudyRes::of)
-                .toList();
+        List<NightStudyRes> result = NightStudyRes.of(nightStudyService.getMy(student, now));
         return ResponseData.ok("내 심야자습 조회 성공", result);
     }
 
     @Transactional(readOnly = true)
     public ResponseData<List<NightStudyRes>> getPending() {
-        List<NightStudyRes> result = nightStudyService.getPending().parallelStream()
-                .map(NightStudyRes::of)
-                .toList();
+        List<NightStudyRes> result = NightStudyRes.of(nightStudyService.getPending());
         return ResponseData.ok("대기중인 심야자습 조회 성공", result);
     }
 
     @Transactional(readOnly = true)
     public ResponseData<List<NightStudyRes>> getValid() {
         LocalDate now = ZonedDateTimeUtil.nowToLocalDate();
-        List<NightStudyRes> result = nightStudyService.getValid(now).parallelStream()
-                .map(NightStudyRes::of)
-                .toList();
+        List<NightStudyRes> result = NightStudyRes.of(nightStudyService.getValid(now));
         return ResponseData.ok("승인된 심야자습 조회 성공", result);
     }
 
