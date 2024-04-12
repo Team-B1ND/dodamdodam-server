@@ -8,7 +8,6 @@ import b1nd.dodamcore.member.domain.entity.Teacher;
 import b1nd.dodamcore.nightstudy.domain.enums.NightStudyStatus;
 import b1nd.dodamcore.nightstudy.domain.exception.InvalidNightStudyPeriodException;
 import b1nd.dodamcore.nightstudy.domain.exception.NightStudyApplicationDurationPassedException;
-import b1nd.dodamcore.nightstudy.domain.exception.NotNightStudyApplicantException;
 import b1nd.dodamcore.nightstudy.domain.exception.ReasonForPhoneMissingException;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
@@ -86,10 +85,8 @@ public class NightStudy extends BaseEntity {
         this.rejectReason = rejectReason;
     }
 
-    public void isApplicant(Student student) {
-        if(this.student.getId() != student.getId()) {
-            throw new NotNightStudyApplicantException();
-        }
+    public boolean isApplicant(Student student) {
+        return this.student.getId() != student.getId();
     }
 
     private void isApplicationDuration() {

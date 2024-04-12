@@ -17,8 +17,9 @@ public class ConferenceUseCase {
     private final ConferenceClient client;
 
     @Async
-    public CompletableFuture<ResponseData<List<ConferenceRes>>> get() {
-        return client.get().thenApply(res -> ResponseData.ok("컨퍼런스 조회 성공", res));
+    public CompletableFuture<ResponseData<List<ConferenceRes>>> getByMonth() {
+        return client.getByMonth()
+                .thenApply(res -> ResponseData.ok("컨퍼런스 조회 성공", res));
     }
 
 }
