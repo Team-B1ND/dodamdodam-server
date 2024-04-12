@@ -94,6 +94,8 @@ class SecurityConfig {
                 .requestMatchers(PATCH, "/schedule/**").hasAnyRole(TEACHER, ADMIN)
                 .requestMatchers(DELETE, "/schedule/**").hasAnyRole(TEACHER, ADMIN)
 
+                .requestMatchers(GET, "/banner/{id}", "/banner/active").permitAll()
+                .requestMatchers(GET, "/banner").hasRole(ADMIN)
                 .requestMatchers(POST, "/banner").hasRole(ADMIN)
                 .requestMatchers(PATCH, "/banner/**").hasRole(ADMIN)
                 .requestMatchers(DELETE, "/banner/**").hasRole(ADMIN)

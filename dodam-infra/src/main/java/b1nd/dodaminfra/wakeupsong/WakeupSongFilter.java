@@ -34,21 +34,32 @@ public class WakeupSongFilter extends OncePerRequestFilter {
             final String method = request.getMethod();
             final Member member;
 
-            try {
-                member = memberSessionHolder.current();
-            } catch (Exception e) {
-                errorResponseSender.send(response, GlobalExceptionCode.TOKEN_NOT_PROVIDED);
-                return ;
+            if (needsMemberDetails(uri)) {
+                try {
+                    memberSessionHolder.current();
+                } catch (Exception e) {
+                    errorResponseSender.send(response, GlobalExceptionCode.TOKEN_NOT_PROVIDED);
+                    return ;
+                }
             }
 
-            if(isTeacher(member.getRole())) {
-                errorResponseSender.send(response, GlobalExceptionCode.INVALID_ROLE);
-                return ;
-            }
+            if (needsBroadcastClubMemberCheck(uri, method)) {
+                try {
+                    member = memberSessionHolder.current();
+                } catch (Exception e) {
+                    errorResponseSender.send(response, GlobalExceptionCode.TOKEN_NOT_PROVIDED);
+                    return ;
+                }
 
-            if(needsBroadcastClubMemberCheck(uri, method) && isNotBroadcastClubMemberAndAdmin(member)) {
-                errorResponseSender.send(response, GlobalExceptionCode.INVALID_ROLE);
-                return ;
+                if(isTeacher(member.getRole())) {
+                    errorResponseSender.send(response, GlobalExceptionCode.INVALID_ROLE);
+                    return ;
+                }
+
+                if(isNotBroadcastClubMemberAndAdmin(member)) {
+                    errorResponseSender.send(response, GlobalExceptionCode.INVALID_ROLE);
+                    return ;
+                }
             }
         }
 
@@ -61,6 +72,10 @@ public class WakeupSongFilter extends OncePerRequestFilter {
 
     private boolean isTeacher(MemberRole role) {
         return MemberRole.TEACHER.equals(role);
+    }
+
+    private boolean needsMemberDetails(String uri) {
+        return uri.contains("my");
     }
 
     private boolean needsBroadcastClubMemberCheck(String uri, String method) {
