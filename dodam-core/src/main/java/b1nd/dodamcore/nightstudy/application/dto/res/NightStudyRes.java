@@ -18,7 +18,7 @@ public record NightStudyRes(Long id,
                             LocalDate startAt, LocalDate endAt,
                             LocalDateTime createdAt, LocalDateTime modifiedAt) {
     public static List<NightStudyRes> of(List<NightStudy> nightStudies) {
-        return nightStudies.stream()
+        return nightStudies.parallelStream()
                 .map(NightStudyRes::of)
                 .toList();
     }

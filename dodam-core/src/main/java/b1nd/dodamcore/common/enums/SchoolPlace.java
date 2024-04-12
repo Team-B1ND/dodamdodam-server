@@ -15,7 +15,11 @@ import java.util.Objects;
 public enum SchoolPlace {
 
     PROGRAMMING_1("프로그래밍1실"),
-    PROGRAMMING_2("프로그래밍2실");
+    PROGRAMMING_2("프로그래밍2실"),
+    PROGRAMMING_3("프로그래밍3실"),
+    KOREAN("국어실"),
+    MATH("수학실"),
+    SOCIETY("사회실");
 
     private final String place;
 

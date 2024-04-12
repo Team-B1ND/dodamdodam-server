@@ -20,7 +20,7 @@ final class CodenaryClient implements ConferenceClient {
     private final CodenaryProperties properties;
 
     @Override
-    public CompletableFuture<List<ConferenceRes>> get() {
+    public CompletableFuture<List<ConferenceRes>> getByMonth() {
         LocalDate date = ZonedDateTimeUtil.nowToLocalDate();
         String url = String.format(properties.getUrl(), date.getYear(), date.getMonthValue());
 
