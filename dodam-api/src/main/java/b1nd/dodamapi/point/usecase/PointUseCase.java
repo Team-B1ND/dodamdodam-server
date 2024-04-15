@@ -58,8 +58,9 @@ public class PointUseCase {
     }
 
     private void saveScores(List<Student> students, PointReason reason) {
-        pointService.getScoresBy(students).parallelStream()
-                .map(s -> s.issue(reason));
+        pointService.getScoresBy(students).forEach(
+                s -> s.issue(reason)
+        );
     }
 
     private void publishPointIssuedEvents(List<Student> students, PointReason reason) {

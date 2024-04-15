@@ -43,12 +43,11 @@ public class PointScore extends BaseEntity {
         this.student = student;
     }
 
-    public boolean issue(PointReason reason) {
+    public void issue(PointReason reason) {
         switch (reason.getPointType()) {
             case DORMITORY -> dormitoryScore.issue(reason.getScoreType(), reason.getScore());
             case SCHOOL -> schoolScore.issue(reason.getScoreType(), reason.getScore());
         }
-        return true;
     }
 
     public void cancel(PointReason reason) {
