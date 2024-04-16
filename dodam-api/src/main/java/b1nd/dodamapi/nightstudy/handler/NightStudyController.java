@@ -3,7 +3,6 @@ package b1nd.dodamapi.nightstudy.handler;
 import b1nd.dodamapi.common.response.Response;
 import b1nd.dodamapi.common.response.ResponseData;
 import b1nd.dodamapi.nightstudy.usecase.NightStudyUseCase;
-import b1nd.dodamcore.nightstudy.application.NightStudyService;
 import b1nd.dodamcore.nightstudy.application.dto.req.ApplyNightStudyReq;
 import b1nd.dodamcore.nightstudy.application.dto.req.RejectNightStudyReq;
 import b1nd.dodamcore.nightstudy.application.dto.res.NightStudyRes;
@@ -20,7 +19,6 @@ import java.util.Optional;
 public class NightStudyController {
 
     private final NightStudyUseCase useCase;
-    private final NightStudyService nightStudyService;
 
     @PostMapping
     public Response apply(@RequestBody @Valid ApplyNightStudyReq req) {
