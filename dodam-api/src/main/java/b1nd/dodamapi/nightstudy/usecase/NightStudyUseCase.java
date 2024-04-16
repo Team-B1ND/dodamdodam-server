@@ -20,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 @Component
 @Transactional(rollbackFor = Exception.class)
@@ -63,8 +64,8 @@ public class NightStudyUseCase {
         return Response.noContent("심야자습 승인 성공");
     }
 
-    public Response reject(Long id, RejectNightStudyReq req) {
-        modifyStatus(id, NightStudyStatus.REJECTED, req.rejectReason());
+    public Response reject(Long id, Optional<RejectNightStudyReq> req) {
+        modifyStatus(id, NightStudyStatus.REJECTED, req.map(RejectNightStudyReq::rejectReason).orElse(null));
         return Response.noContent("심야자습 거절 성공");
     }
 

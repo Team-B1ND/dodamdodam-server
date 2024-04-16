@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/out-sleeping")
@@ -36,8 +37,8 @@ public class OutSleepingController {
     }
 
     @PatchMapping("/{id}/reject")
-    public Response reject(@PathVariable Long id, @RequestBody RejectOutSleepingReq req) {
-        outSleepingService.modifyStatus(id, OutSleepingStatus.REJECTED, req.rejectReason());
+    public Response reject(@PathVariable Long id, @RequestBody Optional<RejectOutSleepingReq> req) {
+        outSleepingService.modifyStatus(id, OutSleepingStatus.REJECTED, req.map(RejectOutSleepingReq::rejectReason).orElse(null));
 
         return Response.noContent("외박 거절 성공");
     }

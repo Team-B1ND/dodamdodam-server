@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/out-going")
@@ -36,8 +37,8 @@ public class OutGoingController {
     }
 
     @PatchMapping("/{id}/reject")
-    public Response reject(@PathVariable Long id, @RequestBody RejectOutGoingReq req) {
-        outGoingService.modifyStatus(id, OutGoingStatus.REJECTED, req.rejectReason());
+    public Response reject(@PathVariable Long id, @RequestBody Optional<RejectOutGoingReq> req) {
+        outGoingService.modifyStatus(id, OutGoingStatus.REJECTED, req.map(RejectOutGoingReq::rejectReason).orElse(null));
 
         return Response.noContent("외출 거절 성공");
     }

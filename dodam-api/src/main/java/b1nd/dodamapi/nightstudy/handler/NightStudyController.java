@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/night-study")
@@ -37,7 +38,7 @@ public class NightStudyController {
     }
 
     @PatchMapping("/{id}/reject")
-    public Response reject(@PathVariable Long id, @RequestBody RejectNightStudyReq req) {
+    public Response reject(@PathVariable Long id, @RequestBody Optional<RejectNightStudyReq> req) {
         return useCase.reject(id, req);
     }
 
