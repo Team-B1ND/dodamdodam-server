@@ -33,13 +33,13 @@ public interface NightStudyRepository extends JpaRepository<NightStudy, Long> {
                                               @Param("status") NightStudyStatus status,
                                               Pageable pageable);
 
-    @EntityGraph(attributePaths = {"student", "student.member"})
+    @EntityGraph(attributePaths = {"student.member"})
     List<NightStudy> findByStudentAndEndAtGreaterThanEqual(Student student, LocalDate now);
 
-    @EntityGraph(attributePaths = {"student", "student.member"})
+    @EntityGraph(attributePaths = {"student.member"})
     List<NightStudy> findByStatus(NightStudyStatus status);
 
-    @EntityGraph(attributePaths = {"student", "student.member"})
+    @EntityGraph(attributePaths = {"student.member"})
     @Query("select n from NightStudy n where n.endAt >= :now and n.startAt <= :now and n.status = :status")
     List<NightStudy> findAllowedStudyByDate(@Param("now") LocalDate now, @Param("status") NightStudyStatus status);
 

@@ -20,11 +20,11 @@ public interface OutSleepingRepository extends JpaRepository<OutSleeping, Long> 
                 .orElseThrow(OutSleepingNotFoundException::new);
     }
 
-    @EntityGraph(attributePaths = {"student", "student.member"})
+    @EntityGraph(attributePaths = {"student.member"})
     @Query("select o from OutSleeping o where :date between o.startAt and o.endAt")
     List<OutSleeping> findByDate(@Param("date") LocalDate date);
 
-    @EntityGraph(attributePaths = {"student", "student.member"})
+    @EntityGraph(attributePaths = {"student.member"})
     List<OutSleeping> findByStudentAndEndAtGreaterThanEqual(Student student, LocalDate now);
 
 }

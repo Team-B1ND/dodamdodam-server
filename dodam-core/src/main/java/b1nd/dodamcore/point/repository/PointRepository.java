@@ -11,7 +11,7 @@ import java.util.List;
 @Repository
 public interface PointRepository extends JpaRepository<Point, Integer> {
 
-    @EntityGraph(attributePaths = {"reason", "teacher.member"})
+    @EntityGraph(attributePaths = {"reason", "student.member", "teacher.member"})
     List<Point> findByStudent(Student student);
 
 }

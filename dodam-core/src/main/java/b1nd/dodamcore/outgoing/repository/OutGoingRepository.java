@@ -20,11 +20,11 @@ public interface OutGoingRepository extends JpaRepository<OutGoing, Long> {
                 .orElseThrow(OutGoingNotFoundException::new);
     }
 
-    @EntityGraph(attributePaths = {"student", "student.member"})
+    @EntityGraph(attributePaths = {"student.member"})
     @Query("select o from OutGoing o where o.endAt between :startOfTheDay and :endOfTheDay")
     List<OutGoing> findByDate(@Param("startOfTheDay")LocalDateTime startOfTheDay, @Param("endOfTheDay") LocalDateTime endOfTheDay);
 
-    @EntityGraph(attributePaths = {"student", "student.member"})
+    @EntityGraph(attributePaths = {"student.member"})
     List<OutGoing> findByStudentAndEndAtGreaterThanEqual(Student student, LocalDateTime now);
 
 }
