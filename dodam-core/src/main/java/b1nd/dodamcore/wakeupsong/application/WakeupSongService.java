@@ -1,5 +1,6 @@
 package b1nd.dodamcore.wakeupsong.application;
 
+import b1nd.dodamcore.common.util.HtmlConverter;
 import b1nd.dodamcore.common.util.ZonedDateTimeUtil;
 import b1nd.dodamcore.member.application.MemberSessionHolder;
 import b1nd.dodamcore.member.domain.entity.Member;
@@ -87,7 +88,7 @@ public class WakeupSongService {
     private void buildAndSaveWakeupSong(YoutubeApiRes.Snippet snippet, String videoId, String videoUrl, Member member) {
         WakeupSong wakeupSong = WakeupSong.builder()
                 .videoId(videoId)
-                .videoTitle(snippet.getTitle())
+                .videoTitle(HtmlConverter.of(snippet.getTitle()))
                 .videoUrl(videoUrl)
                 .channelTitle(snippet.getChannelTitle())
                 .thumbnailUrl(getThumbnailUrl(snippet).getUrl())
@@ -104,7 +105,7 @@ public class WakeupSongService {
 
     private YoutubeRes getYoutubeRes(YoutubeApiRes.SearchItem item) {
         return new YoutubeRes(
-                item.getSnippet().getTitle(),
+                HtmlConverter.of(item.getSnippet().getTitle()),
                 item.getId().getVideoId(),
                 "https://www.youtube.com/watch?v=" + item.getId().getVideoId(),
                 item.getSnippet().getChannelTitle(),
