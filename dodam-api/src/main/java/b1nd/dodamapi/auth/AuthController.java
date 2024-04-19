@@ -6,6 +6,8 @@ import b1nd.dodamcore.auth.application.dto.req.LoginReq;
 import b1nd.dodamcore.auth.application.dto.req.ReissueTokenReq;
 import b1nd.dodamcore.auth.application.dto.res.LoginRes;
 import b1nd.dodamcore.auth.application.dto.res.ReissueTokenRes;
+import b1nd.dodamcore.auth.application.dto.req.DAuthLoginReq;
+import b1nd.dodamcore.auth.application.dto.res.DAuthLoginRes;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -27,4 +29,8 @@ public class AuthController {
         return ResponseData.ok("토큰 재발급 성공", authService.reissue(req).join());
     }
 
+    @PostMapping("/v2/login")
+    public ResponseData<DAuthLoginRes> login(@RequestBody DAuthLoginReq req){
+        return ResponseData.ok("dauth 로그인 성공",authService.login(req));
+    }
 }
