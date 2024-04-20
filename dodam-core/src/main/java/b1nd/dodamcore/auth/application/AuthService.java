@@ -1,7 +1,9 @@
 package b1nd.dodamcore.auth.application;
 
+import b1nd.dodamcore.auth.application.dto.req.DAuthLoginReq;
 import b1nd.dodamcore.auth.application.dto.req.LoginReq;
 import b1nd.dodamcore.auth.application.dto.req.ReissueTokenReq;
+import b1nd.dodamcore.auth.application.dto.res.DAuthLoginRes;
 import b1nd.dodamcore.auth.application.dto.res.LoginRes;
 import b1nd.dodamcore.auth.application.dto.res.ReissueTokenRes;
 import b1nd.dodamcore.member.domain.entity.Member;
@@ -50,4 +52,11 @@ public class AuthService {
                 .thenApply(ReissueTokenRes::new);
     }
 
+    public DAuthLoginRes login(DAuthLoginReq req){
+        Member member = memberRepository.findById(req.id())
+                .orElseThrow(MemberNotFoundException::new);
+
+        member.login(req.pw(), passwordEncoder);
+        return new DAuthLoginRes(member);
+    }
 }
