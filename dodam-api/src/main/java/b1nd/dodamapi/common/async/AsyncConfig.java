@@ -1,4 +1,4 @@
-package b1nd.dodaminfra.async;
+package b1nd.dodamapi.common.async;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -20,7 +20,7 @@ class AsyncConfig {
         executor.setCorePoolSize(20);
         executor.setMaxPoolSize(50);
         executor.setQueueCapacity(100);
-        executor.setThreadNamePrefix("TASK-POOL");
+        executor.setThreadNamePrefix("ASYNC-TASK");
         executor.setRejectedExecutionHandler(new ThreadPoolExecutor.CallerRunsPolicy());
         executor.initialize();
         return executor;
