@@ -11,10 +11,10 @@ public interface TokenClient {
 
     CompletableFuture<LoginRes> issueTokens(Member member);
 
-    TokenInfoRes verifyToken(String token);
+    CompletableFuture<TokenInfoRes> verifyToken(String token);
 
     CompletableFuture<String> reissueToken(ReissueTokenReq req);
 
-    String getMemberIdByToken(String token);
+    CompletableFuture<String> getMemberIdByToken(String token);
 
 }

@@ -14,7 +14,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
-import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 
 @Component
@@ -36,34 +35,31 @@ final class DodamTokenClient implements TokenClient {
 
     @Override
     public CompletableFuture<String> reissueToken(ReissueTokenReq req) {
-        return CompletableFuture.supplyAsync(() -> verifyToken(req.refreshToken()).data())
-                .thenCompose(res -> issueToken(res.memberId(), MemberRole.of(res.accessLevel()), tokenProperties.getGenerate()));
+        return verifyToken(req.refreshToken())
+                .thenApply(TokenInfoRes::data)
+                .thenCompose(data -> issueToken(data.memberId(), MemberRole.of(data.accessLevel()), tokenProperties.getGenerate()));
     }
 
     @Override
-    public String getMemberIdByToken(String token) {
-        return verifyToken(token).data().memberId();
+    public CompletableFuture<String> getMemberIdByToken(String token) {
+        return verifyToken(token).thenApply(res -> res.data().memberId());
     }
 
     @Override
-    public TokenInfoRes verifyToken(String token) {
+    public CompletableFuture<TokenInfoRes> verifyToken(String token) {
         return webClient.post(
                 jwtProperties.getTokenServer() + tokenProperties.getVerify(),
-                        new Token(token),
+                new Token(token),
                 TokenInfoRes.class
-                ).block();
+        ).toFuture();
     }
 
     private CompletableFuture<String> issueToken(String userId, MemberRole role, String url) {
-        return CompletableFuture.supplyAsync(
-                () -> Objects.requireNonNull(
-                        webClient.post(
-                                jwtProperties.getTokenServer() + url,
-                                new TokenReq(userId, role.getNumber(), 0),
-                                TokenRes.class
-                        ).block()
-                ).data().token()
-        );
+        return webClient.post(
+                jwtProperties.getTokenServer() + url,
+                new TokenReq(userId, role.getNumber(), 0),
+                TokenRes.class
+        ).toFuture().thenApply(res -> res.data().token());
     }
 
 }
