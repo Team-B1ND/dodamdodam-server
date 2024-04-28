@@ -35,23 +35,22 @@ final class DodamTokenClient implements TokenClient {
 
     @Override
     public CompletableFuture<String> reissueToken(ReissueTokenReq req) {
-        return verifyToken(req.refreshToken())
-                .thenApply(TokenInfoRes::data)
+        return CompletableFuture.supplyAsync(() -> verifyToken(req.refreshToken()).data())
                 .thenCompose(data -> issueToken(data.memberId(), MemberRole.of(data.accessLevel()), tokenProperties.getGenerate()));
     }
 
     @Override
-    public CompletableFuture<String> getMemberIdByToken(String token) {
-        return verifyToken(token).thenApply(res -> res.data().memberId());
+    public String getMemberIdByToken(String token) {
+        return verifyToken(token).data().memberId();
     }
 
     @Override
-    public CompletableFuture<TokenInfoRes> verifyToken(String token) {
+    public TokenInfoRes verifyToken(String token) {
         return webClient.post(
                 jwtProperties.getTokenServer() + tokenProperties.getVerify(),
                 new Token(token),
                 TokenInfoRes.class
-        ).toFuture();
+        ).block();
     }
 
     private CompletableFuture<String> issueToken(String userId, MemberRole role, String url) {
