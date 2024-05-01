@@ -19,7 +19,7 @@ public class Scheduler {
     public void flushAllMealData() {
         try {
             log.info("<<<<<<<<<< flushMealData Start {} >>>>>>>>>>", ZonedDateTime.now());
-            redisUtil.flushAllMealData();
+            redisUtil.evictAllCacheValues();
         } catch (Exception e) {
             log.error("fail to process", e);
         }

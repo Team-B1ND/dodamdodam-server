@@ -1,19 +1,19 @@
 package b1nd.dodaminfra.redis;
 
-import org.springframework.cache.annotation.CacheEvict;
+import lombok.RequiredArgsConstructor;
+import org.springframework.cache.CacheManager;
 import org.springframework.stereotype.Component;
 
+import java.util.Objects;
+
 @Component
+@RequiredArgsConstructor
 public class RedisUtil {
 
-    public void flushAllMealData() {
-        flushMealOfDay();
-        flushMealOfMonth();
+    private final CacheManager cacheManager;
+
+    public void evictAllCacheValues() {
+        Objects.requireNonNull(cacheManager.getCache("meal-day")).clear();
+        Objects.requireNonNull(cacheManager.getCache("meal-month")).clear();
     }
-
-    @CacheEvict(value = "meal-day", allEntries = true, cacheManager = "redisCacheManager")
-    public void flushMealOfDay() {}
-
-    @CacheEvict(value = "meal-month", allEntries = true, cacheManager = "redisCacheManager")
-    public void flushMealOfMonth() {}
 }
