@@ -29,6 +29,5 @@ public interface PointScoreRepository extends JpaRepository<PointScore, Integer>
     }
 
     @EntityGraph(attributePaths = {"student.member"})
-    @Query("SELECT ps FROM PointScore ps JOIN ps.student s JOIN s.member m WHERE m.status = 'ACTIVE' ORDER BY s.grade, s.room, s.number")
     List<PointScore> findAll();
 }
