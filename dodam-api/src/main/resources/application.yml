@@ -25,8 +25,8 @@ spring:
       ddl-auto: none
     properties:
       hibernate:
-      show_sql: false
-      format_sql: true
+        show_sql: true
+        format_sql: true
   data:
     redis.repositories.enabled: false
 redis:

@@ -6,6 +6,7 @@ import b1nd.dodamcore.member.application.MemberService;
 import b1nd.dodamcore.member.domain.entity.Member;
 import b1nd.dodamcore.member.domain.entity.Student;
 import b1nd.dodamcore.member.domain.entity.Teacher;
+import b1nd.dodamcore.member.domain.enums.AuthStatus;
 import b1nd.dodamcore.point.application.PointReasonService;
 import b1nd.dodamcore.point.application.PointService;
 import b1nd.dodamapi.point.usecase.req.IssuePointReq;
@@ -112,6 +113,7 @@ public class PointUseCase {
 
     public ResponseData<List<PointScoreRes>> getAllScores(PointType type) {
         List<PointScoreRes> result = pointService.getAllScores().parallelStream()
+                .filter(score -> score.getStudent().getMember().getStatus() == AuthStatus.ACTIVE)
                 .map(score -> PointScoreRes.of(score, type))
                 .toList();
         return ResponseData.ok("모든 상벌점 점수 조회 성공", result);

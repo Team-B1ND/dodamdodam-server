@@ -5,6 +5,7 @@ import b1nd.dodamcore.point.domain.entity.PointScore;
 import b1nd.dodamcore.point.domain.exception.PointScoreNotFoundException;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -29,5 +30,4 @@ public interface PointScoreRepository extends JpaRepository<PointScore, Integer>
 
     @EntityGraph(attributePaths = {"student.member"})
     List<PointScore> findAll();
-
 }
