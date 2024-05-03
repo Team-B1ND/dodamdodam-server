@@ -30,7 +30,7 @@ public class MemberService {
 
     public Student save(Student student) {
         return studentRepository.save(student);
-    }
+    }   
 
     public Teacher save(Teacher teacher) {
         return teacherRepository.save(teacher);
