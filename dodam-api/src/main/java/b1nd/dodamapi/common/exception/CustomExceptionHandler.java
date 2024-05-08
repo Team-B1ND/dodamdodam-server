@@ -3,6 +3,8 @@ package b1nd.dodamapi.common.exception;
 import b1nd.dodamcore.common.exception.ErrorResponseEntity;
 import b1nd.dodamcore.common.exception.GlobalExceptionCode;
 import b1nd.dodamcore.common.exception.CustomException;
+import jakarta.servlet.http.HttpServletRequest;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -20,7 +22,10 @@ import java.util.List;
 
 @RestControllerAdvice
 @Slf4j
+@RequiredArgsConstructor
 public class CustomExceptionHandler {
+
+    private final ErrorNoticeSender errorNoticeSender;
 
     @ExceptionHandler(CustomException.class)
     protected ResponseEntity<ErrorResponseEntity> handleCustomException(CustomException e){
@@ -113,8 +118,8 @@ public class CustomExceptionHandler {
     }
 
     @ExceptionHandler(Exception.class)
-    protected ResponseEntity<ErrorResponseEntity> handleException(Exception e){
-        log.error(e.toString());
+    protected ResponseEntity<ErrorResponseEntity> handleException(Exception e, HttpServletRequest request){
+        errorNoticeSender.send(e, request);
 
         return ResponseEntity
                 .status(500)

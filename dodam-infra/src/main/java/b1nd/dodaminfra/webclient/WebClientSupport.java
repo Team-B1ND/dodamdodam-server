@@ -34,6 +34,17 @@ public class WebClientSupport {
                 .bodyToMono(responseDtoClass);
     }
 
+    public <V> void post(String url, V body, String... headers) {
+        webClient.post()
+                .uri(url)
+                .headers(convertStringToHttpHeaders(headers))
+                .bodyValue(body)
+                .retrieve()
+                .onStatus(HttpStatusCode::isError, onError())
+                .toBodilessEntity()
+                .subscribe();
+    }
+
     public <T, V> Mono<T> post(String url, V body, Class<T> responseClass, String... headers) {
         return webClient.post()
                 .uri(url)
