@@ -1,7 +1,7 @@
-package b1nd.dodaminfra.security.encrypt;
+package b1nd.dodaminfra.security;
 
 import b1nd.dodamcore.auth.application.PasswordEncoder;
-import b1nd.dodamcore.common.exception.custom.InternalServerException;
+import b1nd.dodamcore.common.exception.InternalServerException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 

@@ -1,6 +1,5 @@
-package b1nd.dodamcore.common.exception.custom;
+package b1nd.dodamcore.common.exception;
 
-import b1nd.dodamcore.common.exception.ExceptionCode;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;

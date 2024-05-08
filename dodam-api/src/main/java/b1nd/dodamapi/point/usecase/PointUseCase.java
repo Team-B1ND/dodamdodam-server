@@ -66,7 +66,7 @@ public class PointUseCase {
 
     private void publishPointIssuedEvents(List<Student> students, PointReason reason) {
         students.forEach(s -> eventPublisher.publishEvent(
-                PointSMSEventHelper.createIssuedEvent(s.getMember(), reason)
+                PointMessageMaker.createIssuedEvent(s.getMember(), reason)
         ));
     }
 
@@ -84,12 +84,11 @@ public class PointUseCase {
     }
 
     private void publishCanceledEvent(PointReason reason, Member member) {
-        eventPublisher.publishEvent(PointSMSEventHelper.createCanceledEvent(member, reason));
+        eventPublisher.publishEvent(PointMessageMaker.createCanceledEvent(member, reason));
     }
 
     public ResponseData<List<PointRes>> getMyPoints(PointType type) {
         Student student = memberService.getStudentFromSession();
-
         return ResponseData.ok("내 상벌점 조회 성공", getPointsBy(student, type));
     }
 

@@ -1,4 +1,4 @@
-package b1nd.dodaminfra.token;
+package b1nd.dodaminfra.api.dodamtoken;
 
 import b1nd.dodamcore.auth.application.dto.req.ReissueTokenReq;
 import b1nd.dodamcore.auth.application.dto.res.LoginRes;
@@ -23,7 +23,7 @@ final class DodamTokenClient implements TokenClient {
 
     private final WebClientSupport webClient;
     private final JwtProperties jwtProperties;
-    private final TokenProperties tokenProperties;
+    private final DodamTokenProperties tokenProperties;
 
     @Override
     public CompletableFuture<LoginRes> issueTokens(Member member) {

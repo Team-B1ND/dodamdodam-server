@@ -1,7 +1,7 @@
 package b1nd.dodaminfra.webclient;
 
 import b1nd.dodamcore.common.exception.GlobalExceptionCode;
-import b1nd.dodamcore.common.exception.custom.CustomException;
+import b1nd.dodamcore.common.exception.CustomException;
 import b1nd.dodaminfra.webclient.exception.WebClientException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -32,6 +32,17 @@ public class WebClientSupport {
                 .retrieve()
                 .onStatus(HttpStatusCode::isError, onError())
                 .bodyToMono(responseDtoClass);
+    }
+
+    public <V> void post(String url, V body, String... headers) {
+        webClient.post()
+                .uri(url)
+                .headers(convertStringToHttpHeaders(headers))
+                .bodyValue(body)
+                .retrieve()
+                .onStatus(HttpStatusCode::isError, onError())
+                .toBodilessEntity()
+                .subscribe();
     }
 
     public <T, V> Mono<T> post(String url, V body, Class<T> responseClass, String... headers) {

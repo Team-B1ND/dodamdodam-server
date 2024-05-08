@@ -1,4 +1,4 @@
-package b1nd.dodaminfra.api.melon;
+package b1nd.dodaminfra.api.discord;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -8,8 +8,8 @@ import org.springframework.context.annotation.Configuration;
 @Getter
 @Setter
 @Configuration
-@ConfigurationProperties(prefix = "app.melon")
-public class MelonProperties {
+@ConfigurationProperties(prefix = "app.discord")
+class DiscordProperties {
 
     private String url;
 

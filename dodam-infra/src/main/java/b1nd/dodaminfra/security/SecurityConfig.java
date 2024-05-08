@@ -1,6 +1,7 @@
-package b1nd.dodaminfra.security.common;
+package b1nd.dodaminfra.security;
 
 import b1nd.dodamcore.common.exception.GlobalExceptionCode;
+import b1nd.dodaminfra.security.common.ErrorResponseSender;
 import b1nd.dodaminfra.token.TokenExceptionFilter;
 import b1nd.dodaminfra.wakeupsong.WakeupSongFilter;
 import b1nd.dodaminfra.token.TokenFilter;
