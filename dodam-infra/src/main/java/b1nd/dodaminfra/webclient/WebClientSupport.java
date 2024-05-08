@@ -9,7 +9,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Component;
 import org.springframework.util.MultiValueMap;
-import org.springframework.web.reactive.function.BodyExtractors;
 import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.ClientResponse;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -67,9 +66,6 @@ public class WebClientSupport {
 
     private Function<ClientResponse, Mono<? extends Throwable>> onError() {
         return response -> {
-            log.error("WebClient Error Status : " + response.statusCode());
-            log.error("WebClient Error Body : " + response.body(BodyExtractors.toMono(ClientResponse.class)));
-
             throw new WebClientException(response.statusCode().value());
         };
     }
