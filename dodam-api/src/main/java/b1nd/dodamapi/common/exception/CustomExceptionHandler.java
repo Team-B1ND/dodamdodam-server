@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.FieldError;
+import org.springframework.validation.ObjectError;
 import org.springframework.web.HttpMediaTypeNotSupportedException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -15,12 +16,14 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
-@Slf4j
+import java.util.List;
+
 @RestControllerAdvice
+@Slf4j
 public class CustomExceptionHandler {
 
     @ExceptionHandler(CustomException.class)
-    protected ResponseEntity handleCustomException(CustomException e){
+    protected ResponseEntity<ErrorResponseEntity> handleCustomException(CustomException e){
         log.error("CustomException Status : {}", e.getExceptionCode().getHttpStatus());
         log.error("CustomException Message : {}", e.getExceptionCode().getMessage());
 
@@ -28,29 +31,34 @@ public class CustomExceptionHandler {
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    protected ResponseEntity handleValidException(MethodArgumentNotValidException e) {
-        StringBuilder message = new StringBuilder();
-        e.getBindingResult().getAllErrors().forEach(
-                error -> message
-                        .append(((FieldError) error).getField()).append(" ")
-                        .append(error.getDefaultMessage()).append(", ")
-        );
+    protected ResponseEntity<ErrorResponseEntity> handleValidException(MethodArgumentNotValidException e) {
+        String message = getValidExceptionMessages(e.getBindingResult().getAllErrors());
 
         log.error("Valid Fail Object : {}", e.getObjectName());
-        log.error("Valid Fail Message : \"{}\"", message.substring(0, message.length() - 2));
+        log.error("Valid Fail Message : \"{}\"", message);
 
         return ResponseEntity
                 .status(e.getStatusCode())
                 .body(ErrorResponseEntity.builder()
                         .status(e.getStatusCode().value())
                         .code(GlobalExceptionCode.PARAMETER_NOT_VALID.name())
-                        .message(message.substring(0, message.length() - 2))
+                        .message(message)
                         .build()
                 );
     }
 
+    private String getValidExceptionMessages(List<ObjectError> errors) {
+        StringBuilder message = new StringBuilder();
+        errors.forEach(
+                error -> message
+                        .append(((FieldError) error).getField()).append(" ")
+                        .append(error.getDefaultMessage()).append(", ")
+        );
+        return message.substring(0, message.length() - 2);
+    }
+
     @ExceptionHandler(MissingServletRequestParameterException.class)
-    protected ResponseEntity handleMissingServletRequestParameterException(MissingServletRequestParameterException e) {
+    protected ResponseEntity<ErrorResponseEntity> handleMissingServletRequestParameterException(MissingServletRequestParameterException e) {
         return ResponseEntity
                 .status(400)
                 .body(ErrorResponseEntity.builder()
@@ -61,7 +69,7 @@ public class CustomExceptionHandler {
     }
 
     @ExceptionHandler(HttpMessageNotReadableException.class)
-    protected ResponseEntity handleHttpMessageNotReadableException(HttpMessageNotReadableException e) {
+    protected ResponseEntity<ErrorResponseEntity> handleHttpMessageNotReadableException(HttpMessageNotReadableException e) {
         return ResponseEntity
                 .status(400)
                 .body(ErrorResponseEntity.builder()
@@ -72,7 +80,7 @@ public class CustomExceptionHandler {
     }
 
     @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
-    protected ResponseEntity handleHttpRequestMethodNotSupportedException(HttpRequestMethodNotSupportedException e) {
+    protected ResponseEntity<ErrorResponseEntity> handleHttpRequestMethodNotSupportedException(HttpRequestMethodNotSupportedException e) {
         return ResponseEntity
                 .status(400)
                 .body(ErrorResponseEntity.builder()
@@ -83,7 +91,7 @@ public class CustomExceptionHandler {
     }
 
     @ExceptionHandler(HttpMediaTypeNotSupportedException.class)
-    protected ResponseEntity handleHttpMediaTypeNotSupportedException() {
+    protected ResponseEntity<ErrorResponseEntity> handleHttpMediaTypeNotSupportedException() {
         return ResponseEntity
                 .status(400)
                 .body(ErrorResponseEntity.builder()
@@ -94,7 +102,7 @@ public class CustomExceptionHandler {
     }
 
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
-    protected ResponseEntity handleMethodArgumentTypeMismatchException() {
+    protected ResponseEntity<ErrorResponseEntity> handleMethodArgumentTypeMismatchException() {
         return ResponseEntity
                 .status(400)
                 .body(ErrorResponseEntity.builder()
@@ -105,7 +113,7 @@ public class CustomExceptionHandler {
     }
 
     @ExceptionHandler(Exception.class)
-    protected ResponseEntity handleException(Exception e){
+    protected ResponseEntity<ErrorResponseEntity> handleException(Exception e){
         log.error(e.toString());
 
         return ResponseEntity
