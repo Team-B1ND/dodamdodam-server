@@ -1,4 +1,4 @@
-package b1nd.dodaminfra.sms;
+package b1nd.dodaminfra.api.gabia;
 
 import b1nd.dodaminfra.webclient.WebClientSupport;
 import com.fasterxml.jackson.annotation.JsonProperty;

@@ -1,4 +1,4 @@
-package b1nd.dodaminfra.sms;
+package b1nd.dodaminfra.api.gabia;
 
 import b1nd.dodamcore.sms.application.SMSClient;
 import b1nd.dodamcore.sms.application.dto.req.SendSmsReq;

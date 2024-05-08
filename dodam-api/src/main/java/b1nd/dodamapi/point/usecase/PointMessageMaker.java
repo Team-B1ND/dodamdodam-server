@@ -7,7 +7,7 @@ import b1nd.dodamcore.point.domain.enums.ScoreType;
 import b1nd.dodamcore.point.domain.event.PointCanceledEvent;
 import b1nd.dodamcore.point.domain.event.PointIssuedEvent;
 
-final class PointSMSEventHelper {
+final class PointMessageMaker {
 
     public static PointIssuedEvent createIssuedEvent(Member member, PointReason reason) {
         return new PointIssuedEvent(

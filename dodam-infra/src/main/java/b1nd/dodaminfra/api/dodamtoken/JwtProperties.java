@@ -1,4 +1,4 @@
-package b1nd.dodaminfra.token;
+package b1nd.dodaminfra.api.dodamtoken;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -8,11 +8,10 @@ import org.springframework.context.annotation.Configuration;
 @Getter
 @Setter
 @Configuration
-@ConfigurationProperties("app.token")
-class TokenProperties {
+@ConfigurationProperties("app.jwt")
+class JwtProperties {
 
-    private String generate;
-    private String verify;
-    private String refresh;
+    private String issuer;
+    private String tokenServer;
 
 }

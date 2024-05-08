@@ -1,6 +1,5 @@
-package b1nd.dodamcore.common.exception.custom;
+package b1nd.dodamcore.common.exception;
 
-import b1nd.dodamcore.common.exception.GlobalExceptionCode;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 

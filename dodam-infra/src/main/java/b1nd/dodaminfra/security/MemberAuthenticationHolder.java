@@ -1,7 +1,8 @@
-package b1nd.dodaminfra.security.common;
+package b1nd.dodaminfra.security;
 
 import b1nd.dodamcore.member.application.MemberSessionHolder;
 import b1nd.dodamcore.member.domain.entity.Member;
+import b1nd.dodaminfra.security.common.MemberDetails;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 

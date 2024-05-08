@@ -1,4 +1,4 @@
-package b1nd.dodaminfra.sms;
+package b1nd.dodaminfra.api.gabia;
 
 import lombok.Getter;
 import lombok.Setter;

@@ -1,7 +1,7 @@
 package b1nd.dodaminfra.webclient;
 
 import b1nd.dodamcore.common.exception.GlobalExceptionCode;
-import b1nd.dodamcore.common.exception.custom.CustomException;
+import b1nd.dodamcore.common.exception.CustomException;
 import b1nd.dodaminfra.webclient.exception.WebClientException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

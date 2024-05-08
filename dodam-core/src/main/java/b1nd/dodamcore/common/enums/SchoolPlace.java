@@ -1,7 +1,7 @@
 package b1nd.dodamcore.common.enums;
 
 import b1nd.dodamcore.common.exception.ExceptionCode;
-import b1nd.dodamcore.common.exception.custom.CustomException;
+import b1nd.dodamcore.common.exception.CustomException;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;

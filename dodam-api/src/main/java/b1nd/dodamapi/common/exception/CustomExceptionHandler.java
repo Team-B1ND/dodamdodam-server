@@ -1,8 +1,8 @@
-package b1nd.dodamcore.common.exception.handler;
+package b1nd.dodamapi.common.exception;
 
 import b1nd.dodamcore.common.exception.ErrorResponseEntity;
 import b1nd.dodamcore.common.exception.GlobalExceptionCode;
-import b1nd.dodamcore.common.exception.custom.CustomException;
+import b1nd.dodamcore.common.exception.CustomException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -116,4 +116,5 @@ public class CustomExceptionHandler {
                         .message(GlobalExceptionCode.INTERNAL_SERVER.getMessage())
                         .build());
     }
+
 }
