@@ -18,8 +18,11 @@ public class RecruitController {
     private final RecruitService recruitService;
 
     @GetMapping
-    public ResponseData<RecruitPageRes> getRecruits(@RequestParam(name = "page") int page) {
-        RecruitPageRes recruitList = recruitService.getRecruitsByPaging(page);
+    public ResponseData<RecruitPageRes> getRecruits(
+            @RequestParam(name = "page") int page,
+            @RequestParam(name = "size") int size
+    ) {
+        RecruitPageRes recruitList = recruitService.getRecruitsByPaging(page, size);
         return ResponseData.ok("채용 의뢰서 조회 성공", recruitList);
     }
 

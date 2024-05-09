@@ -26,9 +26,9 @@ public class RecruitService {
     private final RecruitFileRepository recruitFileRepository;
     private final MemberSessionHolder memberSessionHolder;
 
-    public RecruitPageRes getRecruitsByPaging(int page) {
+    public RecruitPageRes getRecruitsByPaging(int page, int size) {
 
-        Pageable pageRequest = PageRequest.of(page - 1, 10);
+        Pageable pageRequest = PageRequest.of(page - 1, size);
         Page<Recruit> recruitList = recruitRepository.findAllByOrderByIdDesc(pageRequest);
 
         int pageNum = recruitList.getTotalPages() - recruitList.getNumber();
