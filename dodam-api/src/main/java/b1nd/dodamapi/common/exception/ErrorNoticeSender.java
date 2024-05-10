@@ -1,7 +1,6 @@
 package b1nd.dodamapi.common.exception;
 
 import b1nd.dodamcore.notice.NoticeClient;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
@@ -17,16 +16,16 @@ public class ErrorNoticeSender {
     private final NoticeClient client;
 
     @Async
-    public void send(Exception e, HttpServletRequest request) {
+    public void send(Exception e, RequestInfo request) {
         LocalDateTime now = LocalDateTime.now();
-        String clientInfo = getClientInfo(request);
-        String endpoint = getEndpoint(request);
+        String endpoint = getEndpoint(request.method(), request.uri(), request.query());
         String title = "🚨 OMG";
         String description = "### 🕖 Time\n"
                 + now
                 + "\n"
-                + "### 🤔 Client"
-                + clientInfo
+                + "### 🤔 Client\n"
+                + request.remoteHost()
+                + "\n"
                 + "### 🔗 Endpoint\n"
                 + endpoint
                 + "\n"
@@ -38,16 +37,11 @@ public class ErrorNoticeSender {
         client.notice("", title, description);
     }
 
-    private String getClientInfo(HttpServletRequest request) {
-        return request.getRemoteHost();
-    }
+    private String getEndpoint(String method, String uri, String query) {
+        String endpoint = method + " " + uri;
 
-    private String getEndpoint(HttpServletRequest request) {
-        String endpoint = request.getMethod() + " " + request.getRequestURI();
-
-        String queryString = request.getQueryString();
-        if (queryString != null) {
-            endpoint += "?" + queryString;
+        if (query != null) {
+            endpoint += "?" + query;
         }
 
         return endpoint;
@@ -61,3 +55,5 @@ public class ErrorNoticeSender {
     }
 
 }
+
+record RequestInfo(String method, String uri, String query, String remoteHost) {}

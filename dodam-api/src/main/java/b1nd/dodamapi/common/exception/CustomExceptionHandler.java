@@ -1,6 +1,7 @@
 package b1nd.dodamapi.common.exception;
 
 import b1nd.dodamcore.common.exception.ErrorResponseEntity;
+import b1nd.dodamcore.common.exception.ExceptionCode;
 import b1nd.dodamcore.common.exception.GlobalExceptionCode;
 import b1nd.dodamcore.common.exception.CustomException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -29,8 +30,8 @@ public class CustomExceptionHandler {
 
     @ExceptionHandler(CustomException.class)
     protected ResponseEntity<ErrorResponseEntity> handleCustomException(CustomException e){
-        log.error("CustomException Status : {}", e.getExceptionCode().getHttpStatus());
-        log.error("CustomException Message : {}", e.getExceptionCode().getMessage());
+        ExceptionCode code = e.getExceptionCode();
+        log.error("Exception : {}, {}", code.getHttpStatus(), code.getMessage());
 
         return ErrorResponseEntity.responseEntity(e.getExceptionCode());
     }
@@ -119,7 +120,7 @@ public class CustomExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     protected ResponseEntity<ErrorResponseEntity> handleException(Exception e, HttpServletRequest request){
-        errorNoticeSender.send(e, request);
+        sendErrorNotice(e, request);
 
         return ResponseEntity
                 .status(500)
@@ -128,6 +129,18 @@ public class CustomExceptionHandler {
                         .code(GlobalExceptionCode.INTERNAL_SERVER.name())
                         .message(GlobalExceptionCode.INTERNAL_SERVER.getMessage())
                         .build());
+    }
+
+    private void sendErrorNotice(Exception e, HttpServletRequest request) {
+        errorNoticeSender.send(
+                e,
+                new RequestInfo(
+                        request.getMethod(),
+                        request.getRequestURI(),
+                        request.getQueryString(),
+                        request.getRemoteHost()
+                )
+        );
     }
 
 }
