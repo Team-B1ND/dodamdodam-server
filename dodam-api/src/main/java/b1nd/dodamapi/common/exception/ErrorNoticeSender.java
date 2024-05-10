@@ -19,13 +19,16 @@ public class ErrorNoticeSender {
     @Async
     public void send(Exception e, HttpServletRequest request) {
         LocalDateTime now = LocalDateTime.now();
-        String requestPath = getRequestPath(request);
+        String clientInfo = getClientInfo(request);
+        String endpoint = getEndpoint(request);
         String title = "🚨 OMG";
-        String description = "### 🕖 발생 시간\n"
+        String description = "### 🕖 Time\n"
                 + now
                 + "\n"
-                + "### 🔗 요청 URL\n"
-                + requestPath
+                + "### 🤔 Client"
+                + clientInfo
+                + "### 🔗 Endpoint\n"
+                + endpoint
                 + "\n"
                 + "### 📄 Stack Trace\n"
                 + "```\n"
@@ -35,15 +38,19 @@ public class ErrorNoticeSender {
         client.notice("", title, description);
     }
 
-    private String getRequestPath(HttpServletRequest request) {
-        String path = request.getMethod() + " " + request.getRequestURL();
+    private String getClientInfo(HttpServletRequest request) {
+        return request.getRemoteHost();
+    }
+
+    private String getEndpoint(HttpServletRequest request) {
+        String endpoint = request.getMethod() + " " + request.getRequestURI();
 
         String queryString = request.getQueryString();
         if (queryString != null) {
-            path += "?" + queryString;
+            endpoint += "?" + queryString;
         }
 
-        return path;
+        return endpoint;
     }
 
     private String getStackTrace(Exception e) {
