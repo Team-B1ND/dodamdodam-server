@@ -23,7 +23,7 @@ public enum SchoolPlace {
     HALL("강당"),
     AUDIOVISUAL_ROOM("시청각실"),
     NONE("장소 없음"),
-    ECT("기타");
+    ETC("기타");
 
     private final String place;
 
