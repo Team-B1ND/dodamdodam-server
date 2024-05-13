@@ -5,15 +5,15 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.time.LocalDateTime;
+import java.util.Arrays;
 
 @Component
 @RequiredArgsConstructor
 public class ErrorNoticeSender {
 
     private final NoticeClient client;
+    private static final int MAX_LENGTH = 1000;
 
     @Async
     public void send(Exception e, RequestInfo request) {
@@ -47,11 +47,11 @@ public class ErrorNoticeSender {
         return endpoint;
     }
 
-    private String getStackTrace(Exception e) {
-        StringWriter stringWriter = new StringWriter();
-        e.printStackTrace(new PrintWriter(stringWriter));
+    private String getStackTrace(Throwable th) {
+        String stackTrace = Arrays.toString(th.getStackTrace());
+        int length = Math.min(MAX_LENGTH, stackTrace.length());
 
-        return stringWriter.toString().substring(0, 1000);
+        return stackTrace.substring(0, length);
     }
 
 }
