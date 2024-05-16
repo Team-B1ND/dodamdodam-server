@@ -1,11 +1,10 @@
-package b1nd.dodamapi.outgoing;
+package b1nd.dodamapi.outgoing.handler;
 
 import b1nd.dodamapi.common.response.Response;
 import b1nd.dodamapi.common.response.ResponseData;
+import b1nd.dodamapi.outgoing.usecase.OutGoingUseCase;
 import b1nd.dodamcore.outgoing.application.dto.req.RejectOutGoingReq;
 import b1nd.dodamcore.outgoing.application.dto.res.OutGoingRes;
-import b1nd.dodamcore.outgoing.domain.enums.OutGoingStatus;
-import b1nd.dodamcore.outgoing.application.OutGoingService;
 import b1nd.dodamcore.outgoing.application.dto.req.ApplyOutGoingReq;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -20,51 +19,41 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class OutGoingController {
 
-    private final OutGoingService outGoingService;
+    private final OutGoingUseCase useCase;
 
     @PostMapping
     public Response apply(@RequestBody @Valid ApplyOutGoingReq req) {
-        outGoingService.apply(req);
-
-        return Response.created("외출 신청 성공");
+        return useCase.apply(req);
     }
 
     @PatchMapping("/{id}/allow")
     public Response allow(@PathVariable Long id) {
-        outGoingService.modifyStatus(id, OutGoingStatus.ALLOWED, null);
-
-        return Response.noContent("외출 승인 성공");
+        return useCase.allow(id);
     }
 
     @PatchMapping("/{id}/reject")
     public Response reject(@PathVariable Long id, @RequestBody Optional<RejectOutGoingReq> req) {
-        outGoingService.modifyStatus(id, OutGoingStatus.REJECTED, req.map(RejectOutGoingReq::rejectReason).orElse(null));
-
-        return Response.noContent("외출 거절 성공");
+        return useCase.reject(id, req);
     }
 
     @PatchMapping("/{id}/revert")
     public Response revert(@PathVariable Long id) {
-        outGoingService.modifyStatus(id, OutGoingStatus.PENDING, null);
-
-        return Response.noContent("외출 대기 성공");
+        return useCase.revert(id);
     }
 
     @DeleteMapping("/{id}")
     public Response cancel(@PathVariable Long id) {
-        outGoingService.cancel(id);
-
-        return Response.noContent("외출 취소 완료");
+        return useCase.cancel(id);
     }
 
     @GetMapping
     public ResponseData<List<OutGoingRes>> getByDate(@RequestParam LocalDate date) {
-        return ResponseData.ok("날짜별 외출 조회 성공", outGoingService.getByDate(date));
+        return useCase.getByDate(date);
     }
 
     @GetMapping("/my")
     public ResponseData<List<OutGoingRes>> getMy() {
-        return ResponseData.ok("내 외출 조회 성공", outGoingService.getMy());
+        return useCase.getMy();
     }
 
 }
