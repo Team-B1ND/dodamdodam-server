@@ -10,7 +10,7 @@ import org.springframework.util.MultiValueMap;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
-import java.util.Objects;
+import java.util.concurrent.CompletableFuture;
 
 @Component
 @RequiredArgsConstructor
@@ -19,18 +19,16 @@ final class GabiaOAuthClient {
     private final WebClientSupport webClientSupport;
     private final GabiaProperties gabiaProperties;
 
-    public String getAccessToken() {
+    public CompletableFuture<String> getAccessToken() {
         MultiValueMap<String, String> formData = new LinkedMultiValueMap<>();
         formData.add("grant_type", "client_credentials");
 
-        return Objects.requireNonNull(
-                webClientSupport.post(
-                        gabiaProperties.getTokenUrl(),
-                        formData,
-                        GabiaOAuthRes.class,
-                        HttpHeaders.AUTHORIZATION, "Basic " + getAuthValue()
-                ).block()
-        ).accessToken();
+        return webClientSupport.post(
+                gabiaProperties.getTokenUrl(),
+                formData,
+                GabiaOAuthRes.class,
+                HttpHeaders.AUTHORIZATION, "Basic " + getAuthValue()
+        ).toFuture().thenApply(GabiaOAuthRes::accessToken);
     }
 
     private String getAuthValue() {
