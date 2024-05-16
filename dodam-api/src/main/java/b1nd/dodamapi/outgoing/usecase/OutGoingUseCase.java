@@ -11,6 +11,7 @@ import b1nd.dodamapi.outgoing.usecase.dto.req.RejectOutGoingReq;
 import b1nd.dodamapi.outgoing.usecase.dto.res.OutGoingRes;
 import b1nd.dodamcore.outgoing.domain.entity.OutGoing;
 import b1nd.dodamcore.outgoing.domain.enums.OutGoingStatus;
+import b1nd.dodamcore.outsleeping.domain.exception.NotOutSleepingApplicantException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -37,8 +38,16 @@ public class OutGoingUseCase {
 
     public Response cancel(Long id) {
         OutGoing outGoing = outGoingService.getById(id);
+        throwExceptionWhenStudentIsNotApplicant(outGoing);
+
         outGoingService.delete(outGoing);
         return Response.noContent("외출 취소 성공");
+    }
+
+    private void throwExceptionWhenStudentIsNotApplicant(OutGoing outGoing) {
+        if(outGoing.isNotApplicant(memberService.getStudentFromSession())) {
+            throw new NotOutSleepingApplicantException();
+        }
     }
 
     public Response allow(Long id) {
