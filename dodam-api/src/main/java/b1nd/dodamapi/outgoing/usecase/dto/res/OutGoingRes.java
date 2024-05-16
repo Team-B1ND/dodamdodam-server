@@ -1,4 +1,4 @@
-package b1nd.dodamcore.outgoing.application.dto.res;
+package b1nd.dodamapi.outgoing.usecase.dto.res;
 
 import b1nd.dodamcore.member.domain.vo.StudentRes;
 import b1nd.dodamcore.outgoing.domain.entity.OutGoing;
