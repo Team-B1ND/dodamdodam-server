@@ -1,4 +1,4 @@
-package b1nd.dodamcore.outsleeping.application.dto.req;
+package b1nd.dodamapi.outsleeping.usecase.dto.req;
 
 import b1nd.dodamcore.member.domain.entity.Student;
 import b1nd.dodamcore.outsleeping.domain.entity.OutSleeping;

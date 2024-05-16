@@ -1,11 +1,11 @@
-package b1nd.dodamapi.outgoing.handler;
+package b1nd.dodamapi.outsleeping.handler;
 
 import b1nd.dodamapi.common.response.Response;
 import b1nd.dodamapi.common.response.ResponseData;
-import b1nd.dodamapi.outgoing.usecase.OutGoingUseCase;
-import b1nd.dodamapi.outgoing.usecase.dto.req.RejectOutGoingReq;
-import b1nd.dodamapi.outgoing.usecase.dto.res.OutGoingRes;
-import b1nd.dodamapi.outgoing.usecase.dto.req.ApplyOutGoingReq;
+import b1nd.dodamapi.outsleeping.usecase.OutSleepingUseCase;
+import b1nd.dodamapi.outsleeping.usecase.dto.req.ApplyOutSleepingReq;
+import b1nd.dodamapi.outsleeping.usecase.dto.req.RejectOutSleepingReq;
+import b1nd.dodamapi.outsleeping.usecase.dto.res.OutSleepingRes;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -15,14 +15,14 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/out-going")
+@RequestMapping("/out-sleeping")
 @RequiredArgsConstructor
-public class OutGoingController {
+public class OutSleepingController {
 
-    private final OutGoingUseCase useCase;
+    private final OutSleepingUseCase useCase;
 
     @PostMapping
-    public Response apply(@RequestBody @Valid ApplyOutGoingReq req) {
+    public Response apply(@RequestBody @Valid ApplyOutSleepingReq req) {
         return useCase.apply(req);
     }
 
@@ -32,7 +32,7 @@ public class OutGoingController {
     }
 
     @PatchMapping("/{id}/reject")
-    public Response reject(@PathVariable Long id, @RequestBody Optional<RejectOutGoingReq> req) {
+    public Response reject(@PathVariable Long id, @RequestBody Optional<RejectOutSleepingReq> req) {
         return useCase.reject(id, req);
     }
 
@@ -47,13 +47,18 @@ public class OutGoingController {
     }
 
     @GetMapping
-    public ResponseData<List<OutGoingRes>> getByDate(@RequestParam LocalDate date) {
+    public ResponseData<List<OutSleepingRes>> getBy(@RequestParam LocalDate date) {
         return useCase.getByDate(date);
     }
 
     @GetMapping("/my")
-    public ResponseData<List<OutGoingRes>> getMy() {
+    public ResponseData<List<OutSleepingRes>> getMy() {
         return useCase.getMy();
+    }
+
+    @GetMapping("/valid")
+    public ResponseData<List<OutSleepingRes>> getValid() {
+        return useCase.getValid();
     }
 
 }

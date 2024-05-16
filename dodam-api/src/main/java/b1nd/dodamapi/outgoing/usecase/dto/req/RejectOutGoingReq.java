@@ -1,3 +1,3 @@
-package b1nd.dodamcore.outgoing.application.dto.req;
+package b1nd.dodamapi.outgoing.usecase.dto.req;
 
 public record RejectOutGoingReq(String rejectReason) {}
