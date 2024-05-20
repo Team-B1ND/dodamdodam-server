@@ -1,7 +1,8 @@
-package b1nd.dodamapi.wakeupsong;
+package b1nd.dodamapi.wakeupsong.handler;
 
 import b1nd.dodamapi.common.response.Response;
 import b1nd.dodamapi.common.response.ResponseData;
+import b1nd.dodamapi.wakeupsong.usecase.WakeupSongUseCase;
 import b1nd.dodamcore.wakeupsong.application.WakeupSongService;
 import b1nd.dodamcore.wakeupsong.application.dto.req.ApplyWakeupSongBySearchReq;
 import b1nd.dodamcore.wakeupsong.application.dto.req.ApplyWakeupSongReq;
@@ -10,17 +11,18 @@ import b1nd.dodamcore.wakeupsong.application.dto.res.WakeupSongRes;
 import b1nd.dodamcore.wakeupsong.application.dto.res.YoutubeRes;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.concurrent.Callable;
+import java.util.concurrent.Executor;
 
 @RestController
 @RequestMapping("/wakeup-song")
 @RequiredArgsConstructor
 public class WakeupSongController {
-
-    private final WakeupSongService wakeupSongService;
+    private final WakeupSongUseCase wakeupSongUseCase;
 
     @GetMapping("/allowed")
     public ResponseData<List<WakeupSongRes>> getAllowedWakeupSongByPlayDate(
@@ -28,67 +30,56 @@ public class WakeupSongController {
             @RequestParam int month,
             @RequestParam int day
     ) {
-        List<WakeupSongRes> wakeupSongList = wakeupSongService.getAllowedWakeupSongByPlayDate(year, month, day);
-        return ResponseData.ok("승인된 기상송 조회 성공", wakeupSongList);
+        return wakeupSongUseCase.getAllowedWakeupSong(year, month, day);
     }
 
     @GetMapping("/pending")
     public ResponseData<List<WakeupSongRes>> getPendingWakeupSong() {
-        List<WakeupSongRes> wakeupSongList = wakeupSongService.getPendingWakeupSong();
-        return ResponseData.ok("승인 대기 중인 기상송 조회 성공", wakeupSongList);
+        return wakeupSongUseCase.getPendingWakeupSong();
     }
 
     @GetMapping("/my")
     public ResponseData<List<WakeupSongRes>> getMyWakeupSong() {
-        List<WakeupSongRes> wakeupSongList = wakeupSongService.getMyWakeupSong();
-        return ResponseData.ok("자신이 신청한 기상송 조회 성공", wakeupSongList);
+        return wakeupSongUseCase.getMyWakeupSong();
     }
 
     @PostMapping
     public Callable<Response> createWakeupSong(@RequestBody @Valid ApplyWakeupSongReq req) {
-        wakeupSongService.createWakeupSong(req.videoUrl());
-        return () -> Response.created("기상송 신청 성공");
+        return wakeupSongUseCase.createWakeupSong(req.videoUrl());
     }
 
     @PostMapping("/keyword")
     public Callable<Response> createWakeupSongByYoutubeSearch(@RequestBody @Valid ApplyWakeupSongBySearchReq req) {
-        wakeupSongService.createWakeupSongByYoutubeSearch(req);
-        return () -> Response.created("유튜브 검색을 통한 기상송 신청 성공");
+        return wakeupSongUseCase.createWakeupSongByYoutubeSearch(req);
     }
 
     @GetMapping("/search")
     public ResponseData<List<YoutubeRes>> getYoutubeVideo(@RequestParam String keyword) {
-        List<YoutubeRes> videoList = wakeupSongService.getYoutubeList(keyword);
-        return ResponseData.ok("유튜브 검색을 통한 기상송 조회 성공", videoList);
+        return wakeupSongUseCase.getYoutubeList(keyword);
     }
 
     @PatchMapping("/allow/{id}")
     public Response allowWakeupSong(@PathVariable int id) {
-        wakeupSongService.allowWakeupSong(id);
-        return Response.ok("기상송 승인 성공");
+        return wakeupSongUseCase.allow(id);
     }
 
     @PatchMapping("/deny/{id}")
     public Response denyWakeupSong(@PathVariable int id) {
-        wakeupSongService.denyWakeupSong(id);
-        return Response.ok("기상송 거절 성공");
+        return wakeupSongUseCase.deny(id);
     }
 
     @DeleteMapping("/{id}")
     public Response deleteWakeupSong(@PathVariable int id) {
-        wakeupSongService.deleteWakeupSong(id);
-        return Response.ok("기상송 삭제 성공");
+        return wakeupSongUseCase.delete(id);
     }
 
     @DeleteMapping("/my/{id}")
     public Response deleteMyWakeupSong(@PathVariable int id) {
-        wakeupSongService.deleteMyWakeupSong(id);
-        return Response.ok("기상송 신청 취소 성공");
+        return wakeupSongUseCase.deleteMyWakeupSong(id);
     }
 
     @GetMapping("/chart")
     public ResponseData<List<ChartRes>> getChart() {
-        List<ChartRes> chartList = wakeupSongService.getChartList();
-        return ResponseData.ok("차트 조회 성공", chartList);
+        return wakeupSongUseCase.getChartList();
     }
 }

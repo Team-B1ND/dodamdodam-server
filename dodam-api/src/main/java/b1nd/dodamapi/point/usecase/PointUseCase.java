@@ -17,6 +17,7 @@ import b1nd.dodamcore.point.domain.entity.PointReason;
 import b1nd.dodamcore.point.domain.entity.PointScore;
 import b1nd.dodamcore.point.domain.enums.PointType;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,6 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.util.List;
 
+@Slf4j
 @Component
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
@@ -36,7 +38,9 @@ public class PointUseCase {
 
     @Transactional(rollbackFor = Exception.class)
     public Response issue(IssuePointReq req) {
+        log.info("아");
         PointReason reason = pointReasonService.getBy(req.reasonId());
+        log.info("아잉");
         List<Student> students = memberService.getStudentsByIds(req.studentIds());
 
         savePoints(students, reason, req.issueAt());
