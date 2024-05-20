@@ -44,7 +44,6 @@ public class WakeupSongUseCase {
         return ResponseData.ok("승인 대기 중인 기상송 조회 성공", WakeupSongRes.of(wakeupSongList));
     }
 
-    @Async
     public ResponseData<List<WakeupSongRes>> getMyWakeupSong(){
         Member member = memberSessionHolder.current();
         List<WakeupSong> wakeupSongList = wakeupSongService.getMyWakeupSong(member);
@@ -63,6 +62,7 @@ public class WakeupSongUseCase {
         });
     }
 
+    @Async
     public CompletableFuture<Response> createWakeupSongByYoutubeSearch(ApplyWakeupSongBySearchReq req){
         return CompletableFuture.supplyAsync(() -> {
             Member member = verifyAlreadyAppliedFromSession();
