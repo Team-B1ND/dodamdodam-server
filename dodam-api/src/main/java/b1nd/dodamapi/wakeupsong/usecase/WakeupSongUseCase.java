@@ -14,6 +14,7 @@ import b1nd.dodamcore.wakeupsong.application.dto.res.WakeupSongRes;
 import b1nd.dodamcore.wakeupsong.application.dto.res.YoutubeApiRes;
 import b1nd.dodamcore.wakeupsong.application.dto.res.YoutubeRes;
 import b1nd.dodamcore.wakeupsong.domain.entity.WakeupSong;
+import b1nd.dodamcore.wakeupsong.domain.exception.UnsupportedVideoTypeException;
 import b1nd.dodamcore.wakeupsong.domain.exception.WakeupSongAlreadyCreatedException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -21,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.concurrent.Callable;
+import java.util.concurrent.CompletableFuture;
 
 @Component
 @Transactional(rollbackFor = Exception.class)
@@ -47,21 +49,33 @@ public class WakeupSongUseCase {
         return ResponseData.ok("자신이 신청한 기상송 조회 성공", WakeupSongRes.of(wakeupSongList));
     }
 
-    public Callable<Response> createWakeupSong(String videoUrl) {
-        Member member = verifyAlreadyAppliedFromSession();
-        String videoId = YoutubeApiUtil.getVideoId(videoUrl);
-        YoutubeApiRes.Snippet snippet = wakeupSongClient.getVideo(videoId).getItems().get(0).getSnippet();
-        wakeupSongService.buildAndSaveWakeupSong(snippet, videoId, videoUrl, member);
-        return () -> Response.created("기상송 신청 성공");
+    public CompletableFuture<Response> createWakeupSong(String videoUrl) {
+        return CompletableFuture.supplyAsync(() -> {
+            Member member = verifyAlreadyAppliedFromSession();
+            String videoId = YoutubeApiUtil.getVideoId(videoUrl);
+            YoutubeApiRes.Snippet snippet = wakeupSongClient.getVideo(videoId).getItems().get(0).getSnippet();
+            checkIsMV(snippet.getTitle());
+            wakeupSongService.buildAndSaveWakeupSong(snippet, videoId, videoUrl, member);
+            return Response.created("기상송 신청 성공");
+        });
     }
 
-    public Callable<Response> createWakeupSongByYoutubeSearch(ApplyWakeupSongBySearchReq req){
-        Member member = verifyAlreadyAppliedFromSession();
-        YoutubeApiRes.SearchItem searchItem = wakeupSongClient.searchVideoByKeyword(
-                req.title() + " " + req.artist(), 1).getItems().get(0);
-        wakeupSongService.buildAndSaveWakeupSong(searchItem.getSnippet(), searchItem.getId().getVideoId(),
-                "https://www.youtube.com/watch?v=" + searchItem.getId().getVideoId(), member);
-        return () -> Response.created("유튜브 검색을 통한 기상송 신청 성공");
+    public CompletableFuture<Response> createWakeupSongByYoutubeSearch(ApplyWakeupSongBySearchReq req){
+        return CompletableFuture.supplyAsync(() -> {
+            Member member = verifyAlreadyAppliedFromSession();
+            YoutubeApiRes.SearchItem searchItem = wakeupSongClient.searchVideoByKeyword(
+                    req.title() + " " + req.artist(), 1).getItems().get(0);
+            checkIsMV(searchItem.getSnippet().getTitle());
+            wakeupSongService.buildAndSaveWakeupSong(searchItem.getSnippet(), searchItem.getId().getVideoId(),
+                    "https://www.youtube.com/watch?v=" + searchItem.getId().getVideoId(), member);
+            return Response.created("유튜브 검색을 통한 기상송 신청 성공");
+        });
+    }
+
+    private void checkIsMV(String title){
+        if(title.contains("MV")){
+            throw new UnsupportedVideoTypeException();
+        }
     }
 
     private Member verifyAlreadyAppliedFromSession(){

@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.concurrent.Callable;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 
 @RestController
@@ -44,12 +45,12 @@ public class WakeupSongController {
     }
 
     @PostMapping
-    public Callable<Response> createWakeupSong(@RequestBody @Valid ApplyWakeupSongReq req) {
+    public CompletableFuture<Response> createWakeupSong(@RequestBody @Valid ApplyWakeupSongReq req) {
         return wakeupSongUseCase.createWakeupSong(req.videoUrl());
     }
 
     @PostMapping("/keyword")
-    public Callable<Response> createWakeupSongByYoutubeSearch(@RequestBody @Valid ApplyWakeupSongBySearchReq req) {
+    public CompletableFuture<Response> createWakeupSongByYoutubeSearch(@RequestBody @Valid ApplyWakeupSongBySearchReq req) {
         return wakeupSongUseCase.createWakeupSongByYoutubeSearch(req);
     }
 
