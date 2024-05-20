@@ -11,6 +11,7 @@ import b1nd.dodamcore.wakeupsong.application.dto.res.WakeupSongRes;
 import b1nd.dodamcore.wakeupsong.application.dto.res.YoutubeRes;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,6 +23,7 @@ import java.util.concurrent.Executor;
 @RestController
 @RequestMapping("/wakeup-song")
 @RequiredArgsConstructor
+@Slf4j
 public class WakeupSongController {
     private final WakeupSongUseCase wakeupSongUseCase;
 
@@ -46,6 +48,7 @@ public class WakeupSongController {
 
     @PostMapping
     public CompletableFuture<Response> createWakeupSong(@RequestBody @Valid ApplyWakeupSongReq req) {
+        log.info("니ㅏㄹㅇ니ㅏㅇㄴㄹㅁ;ㅏㅣㅓㄹㄴㅇ머ㅏㅣ;라ㅣㄹㅇ나ㅣ아ㅣㅇㄹㅇㄹ니ㅏ");
         return wakeupSongUseCase.createWakeupSong(req.videoUrl());
     }
 

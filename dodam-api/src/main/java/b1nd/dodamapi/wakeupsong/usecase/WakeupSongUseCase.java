@@ -17,6 +17,7 @@ import b1nd.dodamcore.wakeupsong.domain.entity.WakeupSong;
 import b1nd.dodamcore.wakeupsong.domain.exception.UnsupportedVideoTypeException;
 import b1nd.dodamcore.wakeupsong.domain.exception.WakeupSongAlreadyCreatedException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -43,12 +44,14 @@ public class WakeupSongUseCase {
         return ResponseData.ok("승인 대기 중인 기상송 조회 성공", WakeupSongRes.of(wakeupSongList));
     }
 
+    @Async
     public ResponseData<List<WakeupSongRes>> getMyWakeupSong(){
         Member member = memberSessionHolder.current();
         List<WakeupSong> wakeupSongList = wakeupSongService.getMyWakeupSong(member);
         return ResponseData.ok("자신이 신청한 기상송 조회 성공", WakeupSongRes.of(wakeupSongList));
     }
 
+    @Async
     public CompletableFuture<Response> createWakeupSong(String videoUrl) {
         return CompletableFuture.supplyAsync(() -> {
             Member member = verifyAlreadyAppliedFromSession();
