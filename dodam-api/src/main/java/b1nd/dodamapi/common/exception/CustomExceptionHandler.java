@@ -120,7 +120,7 @@ public class CustomExceptionHandler {
     @ExceptionHandler(Exception.class)
     protected ResponseEntity<ErrorResponseEntity> handleException(Exception e, HttpServletRequest request){
         errorNoticeSender.send(e, request);
-
+//        log.info("{}",e.toString());
         return ResponseEntity
                 .status(500)
                 .body(ErrorResponseEntity.builder()

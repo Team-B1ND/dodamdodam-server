@@ -48,7 +48,6 @@ public class WakeupSongController {
 
     @PostMapping
     public CompletableFuture<Response> createWakeupSong(@RequestBody @Valid ApplyWakeupSongReq req) {
-        log.info("니ㅏㄹㅇ니ㅏㅇㄴㄹㅁ;ㅏㅣㅓㄹㄴㅇ머ㅏㅣ;라ㅣㄹㅇ나ㅣ아ㅣㅇㄹㅇㄹ니ㅏ");
         return wakeupSongUseCase.createWakeupSong(req.videoUrl());
     }
 

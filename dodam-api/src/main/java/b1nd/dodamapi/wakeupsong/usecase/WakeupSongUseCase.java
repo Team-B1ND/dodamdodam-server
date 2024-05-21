@@ -17,6 +17,7 @@ import b1nd.dodamcore.wakeupsong.domain.entity.WakeupSong;
 import b1nd.dodamcore.wakeupsong.domain.exception.UnsupportedVideoTypeException;
 import b1nd.dodamcore.wakeupsong.domain.exception.WakeupSongAlreadyCreatedException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,6 +26,7 @@ import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CompletableFuture;
 
+@Slf4j
 @Component
 @Transactional(rollbackFor = Exception.class)
 @RequiredArgsConstructor
@@ -85,7 +87,8 @@ public class WakeupSongUseCase {
         Member member = memberSessionHolder.current();
         if (wakeupSongService.existsByMemberAndCreatedAt(member)){
             throw new WakeupSongAlreadyCreatedException();
-        } return member;
+        }
+        return member;
     }
 
     public Response allow(int id){
