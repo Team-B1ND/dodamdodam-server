@@ -1,4 +1,4 @@
-package b1nd.dodaminfra.cloud;
+package b1nd.dodaminfra.cloud.storage;
 
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.auth.BasicAWSCredentials;

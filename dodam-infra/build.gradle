@@ -11,6 +11,8 @@ dependencies {
     implementation 'org.json:json:20220320'
     implementation 'org.jsoup:jsoup:1.14.2'
 
+    implementation 'com.google.firebase:firebase-admin:9.2.0'
+
     compileOnly 'org.apache.tomcat.embed:tomcat-embed-core:10.1.7'
 }
 

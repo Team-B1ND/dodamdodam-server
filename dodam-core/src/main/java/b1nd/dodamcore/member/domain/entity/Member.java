@@ -46,6 +46,9 @@ public class Member extends BaseEntity {
     @NotNull
     private String phone;
 
+    @Column(columnDefinition = "TEXT")
+    private String pushToken;
+
     public Member login(String pw, PasswordEncoder passwordEncoder) {
         if(!passwordEncoder.matches(pw, this.pw)) {
             throw new WrongPasswordException();
@@ -78,7 +81,7 @@ public class Member extends BaseEntity {
     }
 
     @Builder
-    public Member(String id, String pw, String name, String email, MemberRole role, AuthStatus status, String profileImage, String phone) {
+    public Member(String id, String pw, String name, String email, MemberRole role, AuthStatus status, String profileImage, String phone, String pushToken) {
         this.id = id;
         this.pw = pw;
         this.email = email;
@@ -87,6 +90,7 @@ public class Member extends BaseEntity {
         this.status = status;
         this.profileImage = profileImage;
         this.phone = phone;
+        this.pushToken = pushToken;
     }
 
 }

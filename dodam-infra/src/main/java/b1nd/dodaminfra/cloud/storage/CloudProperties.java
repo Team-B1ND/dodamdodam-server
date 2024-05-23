@@ -1,8 +1,8 @@
-package b1nd.dodaminfra.cloud;
+package b1nd.dodaminfra.cloud.storage;
 
-import b1nd.dodaminfra.cloud.data.CredentialsData;
-import b1nd.dodaminfra.cloud.data.RegionData;
-import b1nd.dodaminfra.cloud.data.StorageData;
+import b1nd.dodaminfra.cloud.storage.data.CredentialsData;
+import b1nd.dodaminfra.cloud.storage.data.RegionData;
+import b1nd.dodaminfra.cloud.storage.data.StorageData;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;

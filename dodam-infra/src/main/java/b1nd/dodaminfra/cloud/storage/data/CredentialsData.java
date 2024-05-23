@@ -1,4 +1,4 @@
-package b1nd.dodaminfra.cloud.data;
+package b1nd.dodaminfra.cloud.storage.data;
 
 import lombok.Getter;
 import lombok.Setter;

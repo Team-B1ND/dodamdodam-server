@@ -1,4 +1,4 @@
-package b1nd.dodaminfra.cloud;
+package b1nd.dodaminfra.cloud.storage;
 
 import b1nd.dodamcore.upload.application.UploadService;
 import b1nd.dodaminfra.cloud.exception.CloudException;

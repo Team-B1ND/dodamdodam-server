@@ -25,6 +25,7 @@ bin/
 out/
 !**/src/main/**/out/
 !**/src/test/**/out/
+dodam-api/src/main/resources/dodamdodam-2d96f-firebase-adminsdk-wk65d-41ed500df3.json
 
 ### NetBeans ###
 /nbproject/private/
