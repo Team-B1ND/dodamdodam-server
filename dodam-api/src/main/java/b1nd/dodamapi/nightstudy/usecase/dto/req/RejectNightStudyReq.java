@@ -1,3 +1,3 @@
-package b1nd.dodamcore.nightstudy.application.dto.req;
+package b1nd.dodamapi.nightstudy.usecase.dto.req;
 
 public record RejectNightStudyReq(String rejectReason) {}

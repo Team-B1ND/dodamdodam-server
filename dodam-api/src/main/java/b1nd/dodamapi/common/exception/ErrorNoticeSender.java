@@ -1,31 +1,33 @@
 package b1nd.dodamapi.common.exception;
 
 import b1nd.dodamcore.notice.NoticeClient;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.time.LocalDateTime;
+import java.util.Arrays;
 
 @Component
 @RequiredArgsConstructor
 public class ErrorNoticeSender {
 
     private final NoticeClient client;
+    private static final int MAX_LENGTH = 1000;
 
     @Async
-    public void send(Exception e, HttpServletRequest request) {
+    public void send(Exception e, RequestInfo request) {
         LocalDateTime now = LocalDateTime.now();
-        String requestPath = getRequestPath(request);
+        String endpoint = getEndpoint(request.method(), request.uri(), request.query());
         String title = "🚨 OMG";
-        String description = "### 🕖 발생 시간\n"
+        String description = "### 🕖 Time\n"
                 + now
                 + "\n"
-                + "### 🔗 요청 URL\n"
-                + requestPath
+                + "### 🤔 Client\n"
+                + request.remoteHost()
+                + "\n"
+                + "### 🔗 Endpoint\n"
+                + endpoint
                 + "\n"
                 + "### 📄 Stack Trace\n"
                 + "```\n"
@@ -35,22 +37,23 @@ public class ErrorNoticeSender {
         client.notice("", title, description);
     }
 
-    private String getRequestPath(HttpServletRequest request) {
-        String path = request.getMethod() + " " + request.getRequestURL();
+    private String getEndpoint(String method, String uri, String query) {
+        String endpoint = method + " " + uri;
 
-        String queryString = request.getQueryString();
-        if (queryString != null) {
-            path += "?" + queryString;
+        if (query != null) {
+            endpoint += "?" + query;
         }
 
-        return path;
+        return endpoint;
     }
 
-    private String getStackTrace(Exception e) {
-        StringWriter stringWriter = new StringWriter();
-        e.printStackTrace(new PrintWriter(stringWriter));
+    private String getStackTrace(Throwable th) {
+        String stackTrace = Arrays.toString(th.getStackTrace());
+        int length = Math.min(MAX_LENGTH, stackTrace.length());
 
-        return stringWriter.toString().substring(0, 1000);
+        return stackTrace.substring(0, length);
     }
 
 }
+
+record RequestInfo(String method, String uri, String query, String remoteHost) {}

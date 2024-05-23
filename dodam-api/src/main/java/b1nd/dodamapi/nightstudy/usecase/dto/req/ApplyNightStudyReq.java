@@ -1,4 +1,4 @@
-package b1nd.dodamcore.nightstudy.application.dto.req;
+package b1nd.dodamapi.nightstudy.usecase.dto.req;
 
 import b1nd.dodamcore.common.enums.SchoolPlace;
 import b1nd.dodamcore.member.domain.entity.Student;

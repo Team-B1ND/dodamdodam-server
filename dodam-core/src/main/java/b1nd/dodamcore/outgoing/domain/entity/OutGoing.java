@@ -65,10 +65,8 @@ public class OutGoing extends BaseEntity {
         this.rejectReason = rejectReason;
     }
 
-    public void isApplicant(Student student) {
-        if(this.student.getId() != student.getId()) {
-            throw new NotOutGoingApplicantException();
-        }
+    public boolean isNotApplicant(Student student) {
+        return this.student.getId() != student.getId();
     }
 
     private void isInvalidPeriod(LocalDateTime startAt, LocalDateTime endAt) {

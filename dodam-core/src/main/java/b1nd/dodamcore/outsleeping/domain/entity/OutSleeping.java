@@ -65,10 +65,8 @@ public class OutSleeping extends BaseEntity {
         this.rejectReason = rejectReason;
     }
 
-    public void isApplicant(Student student) {
-        if(this.student.getId() != student.getId()) {
-            throw new NotOutSleepingApplicantException();
-        }
+    public boolean isNotApplicant(Student student) {
+        return this.student.getId() != student.getId();
     }
 
     private void isInvalidPeriod(LocalDate startAt, LocalDate endAt) {

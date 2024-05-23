@@ -1,4 +1,4 @@
-package b1nd.dodamcore.nightstudy.application.dto.res;
+package b1nd.dodamapi.nightstudy.usecase.dto.res;
 
 import b1nd.dodamcore.member.domain.vo.StudentRes;
 import b1nd.dodamcore.nightstudy.domain.entity.NightStudy;

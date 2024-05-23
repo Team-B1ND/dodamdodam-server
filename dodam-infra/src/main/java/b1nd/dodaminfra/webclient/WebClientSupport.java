@@ -8,8 +8,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Component;
-import org.springframework.util.MultiValueMap;
-import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.ClientResponse;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
@@ -49,16 +47,6 @@ public class WebClientSupport {
                 .uri(url)
                 .headers(convertStringToHttpHeaders(headers))
                 .bodyValue(body)
-                .retrieve()
-                .onStatus(HttpStatusCode::isError, onError())
-                .bodyToMono(responseClass);
-    }
-
-    public <T> Mono<T> postWithFormData(String url, MultiValueMap<String, String> body, Class<T> responseClass, String... headers) {
-        return webClient.post()
-                .uri(url)
-                .headers(convertStringToHttpHeaders(headers))
-                .body(BodyInserters.fromFormData(body))
                 .retrieve()
                 .onStatus(HttpStatusCode::isError, onError())
                 .bodyToMono(responseClass);

@@ -1,4 +1,4 @@
-package b1nd.dodamcore.outgoing.application.dto.res;
+package b1nd.dodamapi.outgoing.usecase.dto.res;
 
 import b1nd.dodamcore.member.domain.vo.StudentRes;
 import b1nd.dodamcore.outgoing.domain.entity.OutGoing;
@@ -10,7 +10,7 @@ import java.util.List;
 public record OutGoingRes(Long id, String reason, OutGoingStatus status, LocalDateTime startAt, LocalDateTime endAt,
                           StudentRes student, String rejectReason, LocalDateTime createdAt, LocalDateTime modifiedAt) {
     public static List<OutGoingRes> of(List<OutGoing> oList) {
-        return oList.stream()
+        return oList.parallelStream()
                 .map(OutGoingRes::of)
                 .toList();
     }

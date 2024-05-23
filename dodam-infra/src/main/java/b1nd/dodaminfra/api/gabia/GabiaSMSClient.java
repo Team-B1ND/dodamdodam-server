@@ -12,6 +12,7 @@ import org.springframework.util.MultiValueMap;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
+import java.util.concurrent.CompletableFuture;
 
 @Component
 @Slf4j
@@ -37,12 +38,7 @@ public final class GabiaSMSClient implements SMSClient {
             formData = createFormDataWithSubject(req);
         }
 
-        webClientSupport.postWithFormData(
-                url,
-                formData,
-                Void.class,
-                HttpHeaders.AUTHORIZATION, getAuthValue()
-        ).subscribe();
+        getAuthValue().thenAccept(value -> webClientSupport.post(url, formData, HttpHeaders.AUTHORIZATION, value));
     }
 
     private boolean isLMS(byte[] bytes) {
@@ -66,14 +62,13 @@ public final class GabiaSMSClient implements SMSClient {
         return formData;
     }
 
-    private String getAuthValue() {
-        return "Basic " + Base64.getEncoder().encodeToString(
-                String.format(
-                        "%s:%s",
-                        gabiaProperties.getId(),
-                        gabiaOAuthClient.getAccessToken()
-                ).getBytes(StandardCharsets.UTF_8)
-        );
+    private CompletableFuture<String> getAuthValue() {
+        return gabiaOAuthClient.getAccessToken()
+                .thenApply(token -> "Basic " + Base64.getEncoder().encodeToString(
+                                String.format("%s:%s", gabiaProperties.getId(), token
+                                ).getBytes(StandardCharsets.UTF_8)
+                        )
+                );
     }
 
 }
