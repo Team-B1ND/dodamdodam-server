@@ -1,6 +1,7 @@
 package b1nd.dodaminfra.cloud.fcm;
 
 import b1nd.dodamcore.member.domain.entity.Member;
+import b1nd.dodamcore.pushmessage.application.FCMSender;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.messaging.Message;
 import com.google.firebase.messaging.Notification;
@@ -12,7 +13,7 @@ import java.util.Objects;
 import java.util.concurrent.ExecutionException;
 
 @Component
-public class FirebaseMessageSender {
+public class FirebaseMessageSender implements FCMSender {
     public void sendByMemberList(List<Member> memberList, String title, String body){
         List<String> pushTokenList = getPushTokenByMemberList(memberList);
         Notification notification = buildNotification(title, body);

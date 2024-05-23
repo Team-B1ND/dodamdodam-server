@@ -4,6 +4,7 @@ import b1nd.dodamapi.common.response.Response;
 import b1nd.dodamapi.common.response.ResponseData;
 import b1nd.dodamcore.common.util.ZonedDateTimeUtil;
 import b1nd.dodamcore.member.application.MemberService;
+import b1nd.dodamcore.member.domain.entity.Member;
 import b1nd.dodamcore.member.domain.entity.Student;
 import b1nd.dodamcore.member.domain.entity.Teacher;
 import b1nd.dodamcore.nightstudy.application.NightStudyService;
@@ -14,6 +15,7 @@ import b1nd.dodamcore.nightstudy.domain.entity.NightStudy;
 import b1nd.dodamcore.nightstudy.domain.enums.NightStudyStatus;
 import b1nd.dodamcore.nightstudy.domain.exception.NightStudyDuplicateException;
 import b1nd.dodamcore.nightstudy.domain.exception.NotNightStudyApplicantException;
+import b1nd.dodamcore.pushmessage.application.FCMSender;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,6 +31,8 @@ public class NightStudyUseCase {
 
     private final NightStudyService nightStudyService;
     public final MemberService memberService;
+    private final FCMSender fcmSender;
+
 
     public Response apply(ApplyNightStudyReq req) {
         Student student = memberService.getStudentFromSession();
@@ -100,5 +104,4 @@ public class NightStudyUseCase {
         List<NightStudyRes> result = NightStudyRes.of(nightStudyService.getValid(now));
         return ResponseData.ok("승인된 심야자습 조회 성공", result);
     }
-
 }
