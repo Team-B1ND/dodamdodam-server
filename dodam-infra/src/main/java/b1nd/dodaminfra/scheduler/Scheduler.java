@@ -43,6 +43,6 @@ public class Scheduler {
                 .filter(n -> n.getStatus() == NightStudyStatus.ALLOWED)
                 .map(n -> n.getStudent().getMember())
                 .toList();
-        messageSender.sendToMemberList(members,"도담도담","심야자습 신청이 오늘 끝났습니다.\n연장을 원하시면 다시 신청해주세요.");
+        messageSender.sendToMemberList(members,"도담도담","신청한 심야자습이 어제 종료되었습니다.\n연장을 원하시면 다시 신청해주세요.");
     }
 }

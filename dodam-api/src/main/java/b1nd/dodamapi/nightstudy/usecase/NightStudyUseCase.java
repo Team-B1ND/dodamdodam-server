@@ -66,7 +66,7 @@ public class NightStudyUseCase {
     public Response allow(Long id) {
         NightStudy nightStudy = modifyStatus(id, NightStudyStatus.ALLOWED, null);
         fcmSender.sendToMember(nightStudy.getStudent().getMember(),
-                "도담도담","선생님께서 신청한 심야자습을 승인하셨어요.");
+                "도담도담","선생님께서 심야자습을 승인하셨어요.");
         return Response.noContent("심야자습 승인 성공");
     }
 
@@ -74,7 +74,7 @@ public class NightStudyUseCase {
         NightStudy nightStudy = modifyStatus(id, NightStudyStatus.REJECTED,
                 req.map(RejectNightStudyReq::rejectReason).orElse(null));
         fcmSender.sendToMember(nightStudy.getStudent().getMember(),
-                "도담도담","선생님께서 신청한 심야신청을 거절하셨어요.\n다시 신청해주세요.");
+                "도담도담","선생님께서 심야신청을 거절하셨어요.\n다시 신청해주세요.");
         return Response.noContent("심야자습 거절 성공");
     }
 
