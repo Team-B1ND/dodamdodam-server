@@ -5,5 +5,6 @@ import b1nd.dodamcore.member.domain.entity.Member;
 import java.util.List;
 
 public interface FCMSender {
-    void sendByMemberList(List<Member> memberList, String title, String body);
+    void sendToMemberList(List<Member> memberList, String title, String body);
+    void sendToMember(Member member, String title, String body);
 }

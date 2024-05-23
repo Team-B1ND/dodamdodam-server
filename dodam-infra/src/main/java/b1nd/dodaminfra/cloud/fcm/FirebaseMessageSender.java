@@ -11,10 +11,13 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.ExecutionException;
+import java.util.stream.Collectors;
 
 @Component
 public class FirebaseMessageSender implements FCMSender {
-    public void sendByMemberList(List<Member> memberList, String title, String body){
+
+    @Override
+    public void sendToMemberList(List<Member> memberList, String title, String body) {
         List<String> pushTokenList = getPushTokenByMemberList(memberList);
         Notification notification = buildNotification(title, body);
         List<Message> messages = buildMessageList(pushTokenList, notification);
@@ -27,15 +30,30 @@ public class FirebaseMessageSender implements FCMSender {
         }
     }
 
-    private List<String> getPushTokenByMemberList(List<Member> member){
-        return member
-                .stream()
-                .map(Member::getPushToken)
-                .filter(Objects::nonNull)
-                .toList();
+    @Override
+    public void sendToMember(Member member, String title, String body) {
+        String pushToken = member.getPushToken();
+        if (pushToken == null) {
+            return ;
+        }
+        Notification notification = buildNotification(title, body);
+        Message message = buildMessage(pushToken, notification);
+
+        try {
+            FirebaseMessaging.getInstance().sendAsync(message).get();
+        } catch (ExecutionException | InterruptedException e) {
+            throw new RuntimeException(e);
+        }
     }
 
-    private Notification buildNotification(String title, String body){
+    private List<String> getPushTokenByMemberList(List<Member> memberList) {
+        return memberList.stream()
+                .map(Member::getPushToken)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
+    }
+
+    private Notification buildNotification(String title, String body) {
         return Notification.builder()
                 .setTitle(title)
                 .setBody(body)
@@ -47,6 +65,14 @@ public class FirebaseMessageSender implements FCMSender {
                 .putData("time", LocalDateTime.now().toString())
                 .setNotification(notification)
                 .setToken(token)
-                .build()).toList();
+                .build()).collect(Collectors.toList());
+    }
+
+    private Message buildMessage(String pushToken, Notification notification) {
+        return Message.builder()
+                .putData("time", LocalDateTime.now().toString())
+                .setNotification(notification)
+                .setToken(pushToken)
+                .build();
     }
 }

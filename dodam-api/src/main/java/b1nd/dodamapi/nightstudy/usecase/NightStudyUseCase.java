@@ -64,12 +64,17 @@ public class NightStudyUseCase {
     }
 
     public Response allow(Long id) {
-        modifyStatus(id, NightStudyStatus.ALLOWED, null);
+        NightStudy nightStudy = modifyStatus(id, NightStudyStatus.ALLOWED, null);
+        fcmSender.sendToMember(nightStudy.getStudent().getMember(),
+                "도담도담","선생님께서 신청한 심야자습을 승인하셨어요.");
         return Response.noContent("심야자습 승인 성공");
     }
 
     public Response reject(Long id, Optional<RejectNightStudyReq> req) {
-        modifyStatus(id, NightStudyStatus.REJECTED, req.map(RejectNightStudyReq::rejectReason).orElse(null));
+        NightStudy nightStudy = modifyStatus(id, NightStudyStatus.REJECTED,
+                req.map(RejectNightStudyReq::rejectReason).orElse(null));
+        fcmSender.sendToMember(nightStudy.getStudent().getMember(),
+                "도담도담","선생님께서 신청한 심야신청을 거절하셨어요.\n다시 신청해주세요.");
         return Response.noContent("심야자습 거절 성공");
     }
 
@@ -78,10 +83,11 @@ public class NightStudyUseCase {
         return Response.noContent("심야자습 대기 성공");
     }
 
-    private void modifyStatus(Long id, NightStudyStatus status, String rejectReason) {
+    private NightStudy modifyStatus(Long id, NightStudyStatus status, String rejectReason) {
         Teacher teacher = memberService.getTeacherFromSession();
         NightStudy nightStudy = nightStudyService.getBy(id);
         nightStudy.modifyStatus(teacher, status, rejectReason);
+        return nightStudy;
     }
 
     @Transactional(readOnly = true)
