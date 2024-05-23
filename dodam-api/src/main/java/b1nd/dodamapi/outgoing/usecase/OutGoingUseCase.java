@@ -12,6 +12,7 @@ import b1nd.dodamapi.outgoing.usecase.dto.res.OutGoingRes;
 import b1nd.dodamcore.outgoing.domain.entity.OutGoing;
 import b1nd.dodamcore.outgoing.domain.enums.OutGoingStatus;
 import b1nd.dodamcore.outsleeping.domain.exception.NotOutSleepingApplicantException;
+import b1nd.dodamcore.pushmessage.application.FCMSender;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,6 +30,7 @@ public class OutGoingUseCase {
 
     private final OutGoingService outGoingService;
     private final MemberService memberService;
+    private final FCMSender fcmSender;
 
     public Response apply(ApplyOutGoingReq req) {
         OutGoing outGoing = req.toEntity(memberService.getStudentFromSession());
@@ -51,12 +53,14 @@ public class OutGoingUseCase {
     }
 
     public Response allow(Long id) {
-        modifyStatus(id, OutGoingStatus.ALLOWED, null);
+        OutGoing outGoing = modifyStatus(id, OutGoingStatus.ALLOWED, null);
+        fcmSender.sendToMember(outGoing.getStudent().getMember(), "도담도담", "외출 신청이 승인되었습니다.");
         return Response.noContent("외출 승인 성공");
     }
 
     public Response reject(Long id, Optional<RejectOutGoingReq> req) {
-        modifyStatus(id, OutGoingStatus.REJECTED, req.map(RejectOutGoingReq::rejectReason).orElse(null));
+        OutGoing outGoing = modifyStatus(id, OutGoingStatus.REJECTED, req.map(RejectOutGoingReq::rejectReason).orElse(null));
+        fcmSender.sendToMember(outGoing.getStudent().getMember(), "도담도담", "외출 신청이 거절되었습니다.\n다시 신청해주세요.");
         return Response.noContent("외출 거절 성공");
     }
 
@@ -65,9 +69,10 @@ public class OutGoingUseCase {
         return Response.noContent("외출 대기 성공");
     }
 
-    private void modifyStatus(Long id, OutGoingStatus status, String rejectReason) {
+    private OutGoing modifyStatus(Long id, OutGoingStatus status, String rejectReason) {
         OutGoing outGoing = outGoingService.getById(id);
         outGoing.modifyStatus(memberService.getTeacherFromSession(), status, rejectReason);
+        return outGoing;
     }
 
     @Transactional(readOnly = true)

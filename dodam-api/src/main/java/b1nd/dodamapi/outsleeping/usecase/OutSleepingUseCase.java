@@ -12,6 +12,7 @@ import b1nd.dodamapi.outsleeping.usecase.dto.res.OutSleepingRes;
 import b1nd.dodamcore.outsleeping.domain.entity.OutSleeping;
 import b1nd.dodamcore.outsleeping.domain.enums.OutSleepingStatus;
 import b1nd.dodamcore.outsleeping.domain.exception.NotOutSleepingApplicantException;
+import b1nd.dodamcore.pushmessage.application.FCMSender;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,6 +28,7 @@ public class OutSleepingUseCase {
 
     private final OutSleepingService outSleepingService;
     private final MemberService memberService;
+    private final FCMSender fcmSender;
 
     public Response apply(ApplyOutSleepingReq req) {
         OutSleeping outSleeping = req.toEntity(memberService.getStudentFromSession());
@@ -49,12 +51,14 @@ public class OutSleepingUseCase {
     }
 
     public Response allow(Long id) {
-        modifyStatus(id, OutSleepingStatus.ALLOWED, null);
+        OutSleeping outSleeping = modifyStatus(id, OutSleepingStatus.ALLOWED, null);
+        fcmSender.sendToMember(outSleeping.getStudent().getMember(), "도담도담", "외박 신청이 승인되었습니다.");
         return Response.noContent("외박 승인 성공");
     }
 
     public Response reject(Long id, Optional<RejectOutSleepingReq> req) {
-        modifyStatus(id, OutSleepingStatus.REJECTED, req.map(RejectOutSleepingReq::rejectReason).orElse(null));
+        OutSleeping outSleeping = modifyStatus(id, OutSleepingStatus.REJECTED, req.map(RejectOutSleepingReq::rejectReason).orElse(null));
+        fcmSender.sendToMember(outSleeping.getStudent().getMember(), "도담도담", "외박 신청이 거절되었습니다.\n다시 신청해주세요.");
         return Response.noContent("외박 거절 성공");
     }
 
@@ -63,9 +67,10 @@ public class OutSleepingUseCase {
         return Response.noContent("외박 대기 성공");
     }
 
-    private void modifyStatus(Long id, OutSleepingStatus status, String rejectReason) {
+    private OutSleeping modifyStatus(Long id, OutSleepingStatus status, String rejectReason) {
         OutSleeping outSleeping = outSleepingService.getById(id);
         outSleeping.modifyStatus(memberService.getTeacherFromSession(), status, rejectReason);
+        return outSleeping;
     }
 
     @Transactional(readOnly = true)
