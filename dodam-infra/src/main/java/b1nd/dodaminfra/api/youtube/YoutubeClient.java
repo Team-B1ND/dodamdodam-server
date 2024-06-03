@@ -1,6 +1,6 @@
 package b1nd.dodaminfra.api.youtube;
 
-import b1nd.dodamcore.wakeupsong.application.WakeupSongClient;
+import b1nd.dodamcore.wakeupsong.application.VideoClient;
 import b1nd.dodamcore.wakeupsong.application.dto.res.YoutubeApiRes;
 import b1nd.dodaminfra.webclient.WebClientSupport;
 import lombok.RequiredArgsConstructor;
@@ -9,7 +9,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 @Component
 @RequiredArgsConstructor
-public class YoutubeClient implements WakeupSongClient {
+public class YoutubeClient implements VideoClient {
 
     private final YoutubeProperties youtubeProperties;
     private final WebClientSupport webClientSupport;

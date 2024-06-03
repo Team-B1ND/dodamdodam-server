@@ -6,7 +6,10 @@ import b1nd.dodamcore.wakeupsong.domain.exception.WakeupSongUrlMalformedExceptio
 
 import java.util.Optional;
 
-public class YoutubeApiUtil {
+public final class YoutubeApiUtil {
+
+    private YoutubeApiUtil() {
+    }
 
     static public YoutubeApiRes.Thumbnail getThumbnailUrl(YoutubeApiRes.Snippet snippet) {
         Optional<YoutubeApiRes.Thumbnail> standard = Optional.ofNullable(snippet.getThumbnails().getStandard());

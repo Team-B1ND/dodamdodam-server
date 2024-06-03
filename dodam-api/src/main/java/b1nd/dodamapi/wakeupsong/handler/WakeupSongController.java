@@ -82,7 +82,7 @@ public class WakeupSongController {
     }
 
     @GetMapping("/chart")
-    public ResponseData<List<ChartRes>> getChart() {
+    public ResponseData<CompletableFuture<List<ChartRes>>> getChart() {
         return wakeupSongUseCase.getChartList();
     }
 }

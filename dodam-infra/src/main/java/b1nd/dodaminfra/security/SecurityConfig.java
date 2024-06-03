@@ -116,11 +116,6 @@ class SecurityConfig {
     }
 
     @Bean
-    public void setSecurityContextHolderStrategy() {
-        SecurityContextHolder.setStrategyName(SecurityContextHolder.MODE_GLOBAL);
-    }
-
-    @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
 

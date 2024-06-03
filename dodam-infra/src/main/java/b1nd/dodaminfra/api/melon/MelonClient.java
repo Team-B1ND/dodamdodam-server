@@ -1,6 +1,6 @@
 package b1nd.dodaminfra.api.melon;
 
-import b1nd.dodamcore.wakeupsong.application.ChartClient;
+import b1nd.dodamcore.wakeupsong.application.MusicChartClient;
 import b1nd.dodamcore.wakeupsong.application.dto.res.ChartRes;
 import b1nd.dodaminfra.webclient.WebClientSupport;
 import lombok.RequiredArgsConstructor;
@@ -12,7 +12,7 @@ import java.util.concurrent.CompletableFuture;
 
 @Component
 @RequiredArgsConstructor
-public class MelonClient implements ChartClient {
+public class MelonClient implements MusicChartClient {
 
     private final MelonProperties melonProperties;
     private final WebClientSupport webClientSupport;
