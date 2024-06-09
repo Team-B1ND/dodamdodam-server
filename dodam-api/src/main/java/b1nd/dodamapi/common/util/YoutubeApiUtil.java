@@ -1,5 +1,6 @@
-package b1nd.dodamcore.common.util;
+package b1nd.dodamapi.common.util;
 
+import b1nd.dodamcore.common.util.HtmlConverter;
 import b1nd.dodamcore.wakeupsong.application.dto.res.YoutubeApiRes;
 import b1nd.dodamcore.wakeupsong.application.dto.res.YoutubeRes;
 import b1nd.dodamcore.wakeupsong.domain.exception.WakeupSongUrlMalformedException;

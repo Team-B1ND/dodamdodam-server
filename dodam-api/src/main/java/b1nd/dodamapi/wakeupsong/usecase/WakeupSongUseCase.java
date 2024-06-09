@@ -2,7 +2,8 @@ package b1nd.dodamapi.wakeupsong.usecase;
 
 import b1nd.dodamapi.common.response.Response;
 import b1nd.dodamapi.common.response.ResponseData;
-import b1nd.dodamcore.common.util.YoutubeApiUtil;
+import b1nd.dodamapi.common.util.YoutubeApiUtil;
+import b1nd.dodamcore.common.util.HtmlConverter;
 import b1nd.dodamcore.member.application.MemberSessionHolder;
 import b1nd.dodamcore.member.domain.entity.Member;
 import b1nd.dodamcore.wakeupsong.application.MusicChartClient;
@@ -20,6 +21,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.nio.file.WatchKey;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
@@ -57,7 +59,7 @@ public class WakeupSongUseCase {
             String videoId = YoutubeApiUtil.getVideoId(videoUrl);
             YoutubeApiRes.Snippet snippet = videoClient.getVideo(videoId).getItems().get(0).getSnippet();
             checkValidVideoType(snippet.getTitle());
-            wakeupSongService.buildAndSaveWakeupSong(snippet, videoId, videoUrl, member);
+            buildAndSaveWakeupSong(snippet, videoId,videoUrl,member);
             return Response.created("기상송 신청 성공");
         });
     }
@@ -69,10 +71,22 @@ public class WakeupSongUseCase {
             YoutubeApiRes.SearchItem searchItem = videoClient.searchVideoByKeyword(
                     req.title() + " " + req.artist(), 1).getItems().get(0);
             checkValidVideoType(searchItem.getSnippet().getTitle());
-            wakeupSongService.buildAndSaveWakeupSong(searchItem.getSnippet(), searchItem.getId().getVideoId(),
+            buildAndSaveWakeupSong(searchItem.getSnippet(), searchItem.getId().getVideoId(),
                     "https://www.youtube.com/watch?v=" + searchItem.getId().getVideoId(), member);
             return Response.created("유튜브 검색을 통한 기상송 신청 성공");
         });
+    }
+
+    private void buildAndSaveWakeupSong(YoutubeApiRes.Snippet snippet, String videoId, String videoUrl, Member member){
+         WakeupSong wakeupSong = WakeupSong.builder()
+                .videoId(videoId)
+                .videoTitle(HtmlConverter.of(snippet.getTitle()))
+                .videoUrl(videoUrl)
+                .channelTitle(snippet.getChannelTitle())
+                .thumbnailUrl(YoutubeApiUtil.getThumbnailUrl(snippet).getUrl())
+                .member(member)
+                .build();
+        wakeupSongService.saveWakeupSong(wakeupSong);
     }
 
     private void checkValidVideoType(String title){
