@@ -1,7 +1,7 @@
 package b1nd.dodamapi.outsleeping.usecase;
 
-import b1nd.dodamapi.common.response.Response;
-import b1nd.dodamapi.common.response.ResponseData;
+import b1nd.dodamcore.common.response.Response;
+import b1nd.dodamcore.common.response.ResponseData;
 import b1nd.dodamcore.common.util.ZonedDateTimeUtil;
 import b1nd.dodamcore.member.application.MemberService;
 import b1nd.dodamcore.member.domain.entity.Student;

@@ -1,7 +1,7 @@
 package b1nd.dodamapi.member.handler;
 
-import b1nd.dodamapi.common.response.Response;
-import b1nd.dodamapi.common.response.ResponseData;
+import b1nd.dodamcore.common.response.Response;
+import b1nd.dodamcore.common.response.ResponseData;
 import b1nd.dodamapi.member.usecase.MemberCommandUseCase;
 import b1nd.dodamapi.member.usecase.MemberQueryUseCase;
 import b1nd.dodamapi.member.usecase.req.*;

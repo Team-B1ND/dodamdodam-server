@@ -1,7 +1,7 @@
 package b1nd.dodamapi.point.usecase;
 
-import b1nd.dodamapi.common.response.Response;
-import b1nd.dodamapi.common.response.ResponseData;
+import b1nd.dodamcore.common.response.Response;
+import b1nd.dodamcore.common.response.ResponseData;
 import b1nd.dodamcore.member.application.MemberService;
 import b1nd.dodamcore.member.domain.entity.Member;
 import b1nd.dodamcore.member.domain.entity.Student;
@@ -17,7 +17,6 @@ import b1nd.dodamcore.point.domain.entity.PointReason;
 import b1nd.dodamcore.point.domain.entity.PointScore;
 import b1nd.dodamcore.point.domain.enums.PointType;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;

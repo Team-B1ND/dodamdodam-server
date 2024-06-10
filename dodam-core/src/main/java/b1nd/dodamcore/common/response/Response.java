@@ -1,4 +1,4 @@
-package b1nd.dodamapi.common.response;
+package b1nd.dodamcore.common.response;
 
 import lombok.Builder;
 import lombok.Getter;

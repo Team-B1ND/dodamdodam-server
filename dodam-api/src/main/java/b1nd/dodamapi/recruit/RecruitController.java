@@ -1,7 +1,7 @@
 package b1nd.dodamapi.recruit;
 
-import b1nd.dodamapi.common.response.Response;
-import b1nd.dodamapi.common.response.ResponseData;
+import b1nd.dodamcore.common.response.Response;
+import b1nd.dodamcore.common.response.ResponseData;
 import b1nd.dodamcore.recruit.application.RecruitService;
 import b1nd.dodamcore.recruit.application.dto.req.RecruitReq;
 import b1nd.dodamcore.recruit.application.dto.res.RecruitPageRes;

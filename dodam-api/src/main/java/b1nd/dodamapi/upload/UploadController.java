@@ -1,6 +1,6 @@
 package b1nd.dodamapi.upload;
 
-import b1nd.dodamapi.common.response.ResponseData;
+import b1nd.dodamcore.common.response.ResponseData;
 import b1nd.dodamcore.upload.application.UploadService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;

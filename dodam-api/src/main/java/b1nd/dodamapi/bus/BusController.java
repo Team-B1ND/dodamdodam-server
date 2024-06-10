@@ -1,7 +1,7 @@
 package b1nd.dodamapi.bus;
 
-import b1nd.dodamapi.common.response.Response;
-import b1nd.dodamapi.common.response.ResponseData;
+import b1nd.dodamcore.common.response.Response;
+import b1nd.dodamcore.common.response.ResponseData;
 import b1nd.dodamcore.bus.application.BusService;
 import b1nd.dodamcore.bus.application.dto.req.BusReq;
 import b1nd.dodamcore.bus.application.dto.res.BusRes;

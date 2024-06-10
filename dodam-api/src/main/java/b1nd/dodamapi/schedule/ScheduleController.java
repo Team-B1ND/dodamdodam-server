@@ -1,7 +1,7 @@
 package b1nd.dodamapi.schedule;
 
-import b1nd.dodamapi.common.response.Response;
-import b1nd.dodamapi.common.response.ResponseData;
+import b1nd.dodamcore.common.response.Response;
+import b1nd.dodamcore.common.response.ResponseData;
 import b1nd.dodamcore.schedule.application.ScheduleService;
 import b1nd.dodamcore.schedule.application.dto.req.ScheduleReq;
 import b1nd.dodamcore.schedule.application.dto.res.ScheduleRes;

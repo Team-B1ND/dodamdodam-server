@@ -1,7 +1,7 @@
 package b1nd.dodamapi.outsleeping.handler;
 
-import b1nd.dodamapi.common.response.Response;
-import b1nd.dodamapi.common.response.ResponseData;
+import b1nd.dodamcore.common.response.Response;
+import b1nd.dodamcore.common.response.ResponseData;
 import b1nd.dodamapi.outsleeping.usecase.OutSleepingUseCase;
 import b1nd.dodamapi.outsleeping.usecase.dto.req.ApplyOutSleepingReq;
 import b1nd.dodamapi.outsleeping.usecase.dto.req.RejectOutSleepingReq;

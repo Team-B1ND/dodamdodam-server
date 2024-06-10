@@ -1,9 +1,8 @@
 package b1nd.dodamapi.wakeupsong.handler;
 
-import b1nd.dodamapi.common.response.Response;
-import b1nd.dodamapi.common.response.ResponseData;
+import b1nd.dodamcore.common.response.Response;
+import b1nd.dodamcore.common.response.ResponseData;
 import b1nd.dodamapi.wakeupsong.usecase.WakeupSongUseCase;
-import b1nd.dodamcore.wakeupsong.application.WakeupSongService;
 import b1nd.dodamcore.wakeupsong.application.dto.req.ApplyWakeupSongBySearchReq;
 import b1nd.dodamcore.wakeupsong.application.dto.req.ApplyWakeupSongReq;
 import b1nd.dodamcore.wakeupsong.application.dto.res.ChartRes;
@@ -12,13 +11,10 @@ import b1nd.dodamcore.wakeupsong.application.dto.res.YoutubeRes;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.concurrent.Callable;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.Executor;
 
 @RestController
 @RequestMapping("/wakeup-song")

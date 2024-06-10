@@ -1,7 +1,7 @@
 package b1nd.dodamapi.auth.handler;
 
 import b1nd.dodamapi.auth.usecase.AuthUseCase;
-import b1nd.dodamapi.common.response.ResponseData;
+import b1nd.dodamcore.common.response.ResponseData;
 import b1nd.dodamcore.auth.application.dto.req.LoginReq;
 import b1nd.dodamcore.auth.application.dto.req.ReissueTokenReq;
 import b1nd.dodamcore.auth.application.dto.res.LoginRes;

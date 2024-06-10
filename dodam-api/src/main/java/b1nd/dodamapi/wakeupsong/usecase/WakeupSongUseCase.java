@@ -1,7 +1,9 @@
 package b1nd.dodamapi.wakeupsong.usecase;
 
-import b1nd.dodamapi.common.response.Response;
-import b1nd.dodamapi.common.response.ResponseData;
+import b1nd.dodamcore.common.exception.GlobalExceptionCode;
+import b1nd.dodamcore.common.response.ErrorResponseEntity;
+import b1nd.dodamcore.common.response.Response;
+import b1nd.dodamcore.common.response.ResponseData;
 import b1nd.dodamapi.common.util.YoutubeApiUtil;
 import b1nd.dodamcore.common.util.HtmlConverter;
 import b1nd.dodamcore.member.application.MemberSessionHolder;
@@ -18,10 +20,10 @@ import b1nd.dodamcore.wakeupsong.domain.entity.WakeupSong;
 import b1nd.dodamcore.wakeupsong.domain.exception.UnsupportedVideoTypeException;
 import b1nd.dodamcore.wakeupsong.domain.exception.WakeupSongAlreadyCreatedException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.nio.file.WatchKey;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 

@@ -1,6 +1,6 @@
 package b1nd.dodamapi.member.usecase;
 
-import b1nd.dodamapi.common.response.ResponseData;
+import b1nd.dodamcore.common.response.ResponseData;
 import b1nd.dodamcore.member.application.MemberService;
 import b1nd.dodamcore.member.application.MemberSessionHolder;
 import b1nd.dodamcore.member.domain.entity.Member;
