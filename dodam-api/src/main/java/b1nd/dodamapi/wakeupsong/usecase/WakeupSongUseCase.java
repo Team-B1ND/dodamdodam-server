@@ -1,10 +1,11 @@
 package b1nd.dodamapi.wakeupsong.usecase;
 
+import b1nd.dodamapi.common.util.YoutubeApiUtil;
+import b1nd.dodamcore.common.exception.ExceptionCode;
 import b1nd.dodamcore.common.exception.GlobalExceptionCode;
 import b1nd.dodamcore.common.response.ErrorResponseEntity;
 import b1nd.dodamcore.common.response.Response;
 import b1nd.dodamcore.common.response.ResponseData;
-import b1nd.dodamapi.common.util.YoutubeApiUtil;
 import b1nd.dodamcore.common.util.HtmlConverter;
 import b1nd.dodamcore.member.application.MemberSessionHolder;
 import b1nd.dodamcore.member.domain.entity.Member;
@@ -19,14 +20,19 @@ import b1nd.dodamcore.wakeupsong.application.dto.res.YoutubeRes;
 import b1nd.dodamcore.wakeupsong.domain.entity.WakeupSong;
 import b1nd.dodamcore.wakeupsong.domain.exception.UnsupportedVideoTypeException;
 import b1nd.dodamcore.wakeupsong.domain.exception.WakeupSongAlreadyCreatedException;
+import b1nd.dodamcore.wakeupsong.domain.exception.WakeupSongExceptionCode;
+import b1nd.dodamcore.wakeupsong.domain.exception.WakeupSongUrlMalformedException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionException;
 
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class WakeupSongUseCase {
@@ -63,7 +69,7 @@ public class WakeupSongUseCase {
             checkValidVideoType(snippet.getTitle());
             buildAndSaveWakeupSong(snippet, videoId,videoUrl,member);
             return Response.created("기상송 신청 성공");
-        });
+        }).exceptionally(this::handleExceptionOnCreateWakeupSong);
     }
 
     @Transactional(rollbackFor = Exception.class)
@@ -76,7 +82,23 @@ public class WakeupSongUseCase {
             buildAndSaveWakeupSong(searchItem.getSnippet(), searchItem.getId().getVideoId(),
                     "https://www.youtube.com/watch?v=" + searchItem.getId().getVideoId(), member);
             return Response.created("유튜브 검색을 통한 기상송 신청 성공");
-        });
+        }).exceptionally(this::handleExceptionOnCreateWakeupSong);
+    }
+
+    private Response handleExceptionOnCreateWakeupSong(Throwable e) {
+        Throwable cause = (e instanceof CompletionException) ? e.getCause() : e;
+        ExceptionCode exceptionCode = mapExceptionToCodeOnCreateWakeupSong(cause);
+        return ErrorResponseEntity.of(exceptionCode.getHttpStatus().value(), exceptionCode.getExceptionName(), exceptionCode.getMessage());
+    }
+
+    private ExceptionCode mapExceptionToCodeOnCreateWakeupSong(Throwable cause) {
+        if (cause instanceof WakeupSongUrlMalformedException) {
+            return WakeupSongExceptionCode.URL_MALFORMED;
+        } else if (cause instanceof UnsupportedVideoTypeException) {
+            return WakeupSongExceptionCode.UNSUPPORTED_TYPE;
+        } else {
+            return GlobalExceptionCode.INTERNAL_SERVER;
+        }
     }
 
     private void buildAndSaveWakeupSong(YoutubeApiRes.Snippet snippet, String videoId, String videoUrl, Member member){

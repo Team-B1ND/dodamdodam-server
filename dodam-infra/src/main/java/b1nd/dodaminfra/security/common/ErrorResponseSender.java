@@ -30,7 +30,7 @@ public final class ErrorResponseSender {
 
     private ErrorResponseEntity getErrorResponseEntity(ExceptionCode code) {
         return ErrorResponseEntity.of(
-                code.getHttpStatus(),
+                code.getHttpStatus().value(),
                 code.getExceptionName(),
                 code.getMessage());
     }

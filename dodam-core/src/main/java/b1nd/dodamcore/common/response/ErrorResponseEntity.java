@@ -7,7 +7,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 @Getter
-@Builder
 public class ErrorResponseEntity extends Response {
     private final String code;
 

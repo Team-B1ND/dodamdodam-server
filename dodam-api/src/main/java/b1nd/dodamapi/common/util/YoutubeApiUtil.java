@@ -1,14 +1,11 @@
 package b1nd.dodamapi.common.util;
 
-import b1nd.dodamcore.common.response.ErrorResponseEntity;
 import b1nd.dodamcore.common.util.HtmlConverter;
 import b1nd.dodamcore.wakeupsong.application.dto.res.YoutubeApiRes;
 import b1nd.dodamcore.wakeupsong.application.dto.res.YoutubeRes;
-import b1nd.dodamcore.wakeupsong.domain.exception.WakeupSongExceptionCode;
 import b1nd.dodamcore.wakeupsong.domain.exception.WakeupSongUrlMalformedException;
 
 import java.util.Optional;
-import java.util.concurrent.CompletableFuture;
 
 public final class YoutubeApiUtil {
 
