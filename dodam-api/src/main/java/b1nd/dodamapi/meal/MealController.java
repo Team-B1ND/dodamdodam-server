@@ -1,6 +1,6 @@
 package b1nd.dodamapi.meal;
 
-import b1nd.dodamcore.common.response.ResponseData;
+import b1nd.dodamapi.common.response.ResponseData;
 import b1nd.dodamcore.meal.application.MealService;
 import b1nd.dodamcore.meal.application.dto.Meal;
 import lombok.RequiredArgsConstructor;

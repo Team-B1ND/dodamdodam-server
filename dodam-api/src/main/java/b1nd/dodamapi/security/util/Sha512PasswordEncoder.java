@@ -1,4 +1,4 @@
-package b1nd.dodaminfra.security;
+package b1nd.dodamapi.security.util;
 
 import b1nd.dodamcore.auth.application.PasswordEncoder;
 import b1nd.dodamcore.common.exception.InternalServerException;

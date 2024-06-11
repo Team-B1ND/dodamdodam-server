@@ -1,7 +1,7 @@
 package b1nd.dodamapi.wakeupsong.handler;
 
-import b1nd.dodamcore.common.response.Response;
-import b1nd.dodamcore.common.response.ResponseData;
+import b1nd.dodamapi.common.response.Response;
+import b1nd.dodamapi.common.response.ResponseData;
 import b1nd.dodamapi.wakeupsong.usecase.WakeupSongUseCase;
 import b1nd.dodamcore.wakeupsong.application.dto.req.ApplyWakeupSongBySearchReq;
 import b1nd.dodamcore.wakeupsong.application.dto.req.ApplyWakeupSongReq;

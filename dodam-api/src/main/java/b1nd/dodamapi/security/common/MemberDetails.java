@@ -1,4 +1,4 @@
-package b1nd.dodaminfra.security.common;
+package b1nd.dodamapi.security.common;
 
 import b1nd.dodamcore.member.domain.entity.Member;
 import org.springframework.security.core.GrantedAuthority;

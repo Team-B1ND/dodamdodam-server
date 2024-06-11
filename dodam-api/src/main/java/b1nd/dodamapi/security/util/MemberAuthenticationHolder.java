@@ -1,8 +1,8 @@
-package b1nd.dodaminfra.security;
+package b1nd.dodamapi.security.util;
 
+import b1nd.dodamapi.security.common.MemberDetails;
 import b1nd.dodamcore.member.application.MemberSessionHolder;
 import b1nd.dodamcore.member.domain.entity.Member;
-import b1nd.dodaminfra.security.common.MemberDetails;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;

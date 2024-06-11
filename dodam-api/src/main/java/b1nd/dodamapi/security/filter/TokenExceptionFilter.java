@@ -1,7 +1,7 @@
-package b1nd.dodaminfra.token;
+package b1nd.dodamapi.security.filter;
 
+import b1nd.dodamapi.security.common.ErrorResponseSender;
 import b1nd.dodamcore.common.exception.GlobalExceptionCode;
-import b1nd.dodaminfra.security.common.ErrorResponseSender;
 import b1nd.dodaminfra.webclient.exception.WebClientException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.http.HttpServletRequest;

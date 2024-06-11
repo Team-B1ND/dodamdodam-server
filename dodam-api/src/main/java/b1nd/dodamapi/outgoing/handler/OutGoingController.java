@@ -1,7 +1,7 @@
 package b1nd.dodamapi.outgoing.handler;
 
-import b1nd.dodamcore.common.response.Response;
-import b1nd.dodamcore.common.response.ResponseData;
+import b1nd.dodamapi.common.response.Response;
+import b1nd.dodamapi.common.response.ResponseData;
 import b1nd.dodamapi.outgoing.usecase.OutGoingUseCase;
 import b1nd.dodamapi.outgoing.usecase.dto.req.RejectOutGoingReq;
 import b1nd.dodamapi.outgoing.usecase.dto.res.OutGoingRes;

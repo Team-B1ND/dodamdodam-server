@@ -1,9 +1,7 @@
-package b1nd.dodamcore.common.response;
+package b1nd.dodamapi.common.response;
 
 import b1nd.dodamcore.common.exception.ExceptionCode;
-import lombok.Builder;
 import lombok.Getter;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 @Getter

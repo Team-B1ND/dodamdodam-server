@@ -1,7 +1,7 @@
 package b1nd.dodamapi.banner;
 
-import b1nd.dodamcore.common.response.Response;
-import b1nd.dodamcore.common.response.ResponseData;
+import b1nd.dodamapi.common.response.Response;
+import b1nd.dodamapi.common.response.ResponseData;
 import b1nd.dodamcore.banner.application.BannerService;
 import b1nd.dodamcore.banner.application.dto.req.BannerReq;
 import b1nd.dodamcore.banner.domain.entity.Banner;

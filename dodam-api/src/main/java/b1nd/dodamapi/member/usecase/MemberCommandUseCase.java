@@ -1,6 +1,6 @@
 package b1nd.dodamapi.member.usecase;
 
-import b1nd.dodamcore.common.response.Response;
+import b1nd.dodamapi.common.response.Response;
 import b1nd.dodamapi.member.usecase.req.*;
 import b1nd.dodamcore.auth.application.PasswordEncoder;
 import b1nd.dodamcore.member.application.MemberService;

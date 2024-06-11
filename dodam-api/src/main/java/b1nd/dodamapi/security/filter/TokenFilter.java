@@ -1,8 +1,9 @@
-package b1nd.dodaminfra.token;
+package b1nd.dodamapi.security.filter;
 
+import b1nd.dodamapi.security.common.MemberDetails;
+import b1nd.dodamapi.security.util.TokenExtractor;
 import b1nd.dodamcore.auth.application.TokenClient;
 import b1nd.dodamcore.member.application.MemberService;
-import b1nd.dodaminfra.security.common.MemberDetails;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

@@ -1,6 +1,6 @@
-package b1nd.dodaminfra.security.common;
+package b1nd.dodamapi.security.common;
 
-import b1nd.dodamcore.common.response.ErrorResponseEntity;
+import b1nd.dodamapi.common.response.ErrorResponseEntity;
 import b1nd.dodamcore.common.exception.ExceptionCode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletResponse;

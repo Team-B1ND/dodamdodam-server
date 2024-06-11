@@ -1,6 +1,6 @@
 package b1nd.dodamapi.conference.handler;
 
-import b1nd.dodamcore.common.response.ResponseData;
+import b1nd.dodamapi.common.response.ResponseData;
 import b1nd.dodamapi.conference.usecase.ConferenceUseCase;
 import b1nd.dodamcore.conference.application.dto.res.ConferenceRes;
 import lombok.RequiredArgsConstructor;

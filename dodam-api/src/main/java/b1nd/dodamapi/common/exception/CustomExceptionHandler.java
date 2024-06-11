@@ -1,6 +1,6 @@
 package b1nd.dodamapi.common.exception;
 
-import b1nd.dodamcore.common.response.ErrorResponseEntity;
+import b1nd.dodamapi.common.response.ErrorResponseEntity;
 import b1nd.dodamcore.common.exception.ExceptionCode;
 import b1nd.dodamcore.common.exception.GlobalExceptionCode;
 import b1nd.dodamcore.common.exception.CustomException;
