@@ -1,6 +1,6 @@
 package b1nd.dodaminfra.security.common;
 
-import b1nd.dodamcore.common.exception.ErrorResponseEntity;
+import b1nd.dodamcore.common.response.ErrorResponseEntity;
 import b1nd.dodamcore.common.exception.ExceptionCode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletResponse;
@@ -29,11 +29,10 @@ public final class ErrorResponseSender {
     }
 
     private ErrorResponseEntity getErrorResponseEntity(ExceptionCode code) {
-        return ErrorResponseEntity.builder()
-                .status(code.getHttpStatus().value())
-                .code(code.getExceptionName())
-                .message(code.getMessage())
-                .build();
+        return ErrorResponseEntity.of(
+                code.getHttpStatus().value(),
+                code.getExceptionName(),
+                code.getMessage());
     }
 
 }

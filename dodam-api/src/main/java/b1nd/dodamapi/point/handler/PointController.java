@@ -1,7 +1,7 @@
 package b1nd.dodamapi.point.handler;
 
-import b1nd.dodamapi.common.response.Response;
-import b1nd.dodamapi.common.response.ResponseData;
+import b1nd.dodamcore.common.response.Response;
+import b1nd.dodamcore.common.response.ResponseData;
 import b1nd.dodamapi.point.usecase.PointReasonUseCase;
 import b1nd.dodamapi.point.usecase.PointUseCase;
 import b1nd.dodamapi.point.usecase.req.IssuePointReq;

@@ -28,11 +28,9 @@ public class TokenFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         String token = TokenExtractor.extract(request, TOKEN_TYPE);
-
         if(!token.isEmpty()) {
             setAuthentication(token);
         }
-
         filterChain.doFilter(request, response);
     }
 

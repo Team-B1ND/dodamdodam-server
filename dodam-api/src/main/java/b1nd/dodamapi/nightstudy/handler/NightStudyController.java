@@ -1,7 +1,7 @@
 package b1nd.dodamapi.nightstudy.handler;
 
-import b1nd.dodamapi.common.response.Response;
-import b1nd.dodamapi.common.response.ResponseData;
+import b1nd.dodamcore.common.response.Response;
+import b1nd.dodamcore.common.response.ResponseData;
 import b1nd.dodamapi.nightstudy.usecase.NightStudyUseCase;
 import b1nd.dodamapi.nightstudy.usecase.dto.req.ApplyNightStudyReq;
 import b1nd.dodamapi.nightstudy.usecase.dto.req.RejectNightStudyReq;

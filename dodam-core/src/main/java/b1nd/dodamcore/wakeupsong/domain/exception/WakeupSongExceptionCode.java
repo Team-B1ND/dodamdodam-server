@@ -10,7 +10,8 @@ public enum WakeupSongExceptionCode implements ExceptionCode {
     ALREADY_APPLIED(HttpStatus.LOCKED, "이미 이번주에 기상송을 신청함"),
     NOT_FOUND(HttpStatus.NOT_FOUND, "없는 기상송"),
     NOT_APPLICANT(HttpStatus.FORBIDDEN, "신청자가 아님"),
-    URL_MALFORMED(HttpStatus.BAD_REQUEST, "잘못된 유튜브 URL 형식");
+    URL_MALFORMED(HttpStatus.BAD_REQUEST, "잘못된 유튜브 URL 형식"),
+    UNSUPPORTED_TYPE(HttpStatus.UNPROCESSABLE_ENTITY,"지원하지 않는 유형의 비디오");
 
     private final HttpStatus status;
     private final String message;

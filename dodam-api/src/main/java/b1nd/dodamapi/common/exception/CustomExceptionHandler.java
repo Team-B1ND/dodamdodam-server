@@ -1,6 +1,6 @@
 package b1nd.dodamapi.common.exception;
 
-import b1nd.dodamcore.common.exception.ErrorResponseEntity;
+import b1nd.dodamcore.common.response.ErrorResponseEntity;
 import b1nd.dodamcore.common.exception.ExceptionCode;
 import b1nd.dodamcore.common.exception.GlobalExceptionCode;
 import b1nd.dodamcore.common.exception.CustomException;
@@ -43,14 +43,14 @@ public class CustomExceptionHandler {
         log.error("Valid Fail Object : {}", e.getObjectName());
         log.error("Valid Fail Message : \"{}\"", message);
 
+        ErrorResponseEntity.of(e.getStatusCode().value(), GlobalExceptionCode.PARAMETER_NOT_VALID.name(),message);
         return ResponseEntity
                 .status(e.getStatusCode())
-                .body(ErrorResponseEntity.builder()
-                        .status(e.getStatusCode().value())
-                        .code(GlobalExceptionCode.PARAMETER_NOT_VALID.name())
-                        .message(message)
-                        .build()
-                );
+                .body(ErrorResponseEntity.of(
+                        e.getStatusCode().value(),
+                        GlobalExceptionCode.PARAMETER_NOT_VALID.name(),
+                        message
+                ));
     }
 
     private String getValidExceptionMessages(List<ObjectError> errors) {
@@ -65,70 +65,70 @@ public class CustomExceptionHandler {
 
     @ExceptionHandler(MissingServletRequestParameterException.class)
     protected ResponseEntity<ErrorResponseEntity> handleMissingServletRequestParameterException(MissingServletRequestParameterException e) {
+
         return ResponseEntity
                 .status(400)
-                .body(ErrorResponseEntity.builder()
-                        .status(GlobalExceptionCode.PARAMETER_NOT_FOUND.getStatus().value())
-                        .code(GlobalExceptionCode.PARAMETER_NOT_FOUND.name())
-                        .message(GlobalExceptionCode.PARAMETER_NOT_FOUND.getMessage())
-                        .build());
+                .body(ErrorResponseEntity.of(
+                        GlobalExceptionCode.PARAMETER_NOT_FOUND.getStatus().value(),
+                        GlobalExceptionCode.PARAMETER_NOT_FOUND.name(),
+                        GlobalExceptionCode.PARAMETER_NOT_FOUND.getMessage()
+                ));
     }
 
     @ExceptionHandler(HttpMessageNotReadableException.class)
     protected ResponseEntity<ErrorResponseEntity> handleHttpMessageNotReadableException(HttpMessageNotReadableException e) {
         return ResponseEntity
                 .status(400)
-                .body(ErrorResponseEntity.builder()
-                        .status(GlobalExceptionCode.PARAMETER_NOT_FOUND.getStatus().value())
-                        .code(GlobalExceptionCode.PARAMETER_NOT_FOUND.name())
-                        .message(GlobalExceptionCode.PARAMETER_NOT_FOUND.getMessage())
-                        .build());
+                .body(ErrorResponseEntity.of(
+                        GlobalExceptionCode.PARAMETER_NOT_FOUND.getStatus().value(),
+                        GlobalExceptionCode.PARAMETER_NOT_FOUND.name(),
+                        GlobalExceptionCode.PARAMETER_NOT_FOUND.getMessage()
+                ));
     }
 
     @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
     protected ResponseEntity<ErrorResponseEntity> handleHttpRequestMethodNotSupportedException(HttpRequestMethodNotSupportedException e) {
         return ResponseEntity
                 .status(400)
-                .body(ErrorResponseEntity.builder()
-                        .status(GlobalExceptionCode.METHOD_NOT_SUPPORTED.getStatus().value())
-                        .code(GlobalExceptionCode.METHOD_NOT_SUPPORTED.name())
-                        .message(GlobalExceptionCode.METHOD_NOT_SUPPORTED.getMessage())
-                        .build());
+                .body(ErrorResponseEntity.of(
+                        GlobalExceptionCode.METHOD_NOT_SUPPORTED.getStatus().value(),
+                        GlobalExceptionCode.METHOD_NOT_SUPPORTED.name(),
+                        GlobalExceptionCode.METHOD_NOT_SUPPORTED.getMessage()
+                ));
     }
 
     @ExceptionHandler(HttpMediaTypeNotSupportedException.class)
     protected ResponseEntity<ErrorResponseEntity> handleHttpMediaTypeNotSupportedException() {
         return ResponseEntity
                 .status(400)
-                .body(ErrorResponseEntity.builder()
-                        .status(GlobalExceptionCode.MEDIA_TYPE_NOT_SUPPORTED.getStatus().value())
-                        .code(GlobalExceptionCode.MEDIA_TYPE_NOT_SUPPORTED.name())
-                        .message(GlobalExceptionCode.MEDIA_TYPE_NOT_SUPPORTED.getMessage())
-                        .build());
+                .body(ErrorResponseEntity.of(
+                        GlobalExceptionCode.MEDIA_TYPE_NOT_SUPPORTED.getStatus().value(),
+                        GlobalExceptionCode.MEDIA_TYPE_NOT_SUPPORTED.name(),
+                        GlobalExceptionCode.MEDIA_TYPE_NOT_SUPPORTED.getMessage()
+                ));
     }
 
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
     protected ResponseEntity<ErrorResponseEntity> handleMethodArgumentTypeMismatchException() {
         return ResponseEntity
                 .status(400)
-                .body(ErrorResponseEntity.builder()
-                        .status(GlobalExceptionCode.MEDIA_TYPE_MISS_MATCHED.getStatus().value())
-                        .code(GlobalExceptionCode.MEDIA_TYPE_MISS_MATCHED.name())
-                        .message(GlobalExceptionCode.MEDIA_TYPE_MISS_MATCHED.getMessage())
-                        .build());
+                .body(ErrorResponseEntity.of(
+                        GlobalExceptionCode.MEDIA_TYPE_MISS_MATCHED.getStatus().value(),
+                        GlobalExceptionCode.MEDIA_TYPE_MISS_MATCHED.name(),
+                        GlobalExceptionCode.MEDIA_TYPE_MISS_MATCHED.getMessage()
+                ));
     }
 
     @ExceptionHandler(Exception.class)
-    protected ResponseEntity<ErrorResponseEntity> handleException(Exception e, HttpServletRequest request){
+    protected ResponseEntity<ErrorResponseEntity> handleException(Exception e, HttpServletRequest request) {
         sendErrorNotice(e, request);
-
         return ResponseEntity
                 .status(500)
-                .body(ErrorResponseEntity.builder()
-                        .status(GlobalExceptionCode.INTERNAL_SERVER.getStatus().value())
-                        .code(GlobalExceptionCode.INTERNAL_SERVER.name())
-                        .message(GlobalExceptionCode.INTERNAL_SERVER.getMessage())
-                        .build());
+                .body(ErrorResponseEntity.of(
+                        GlobalExceptionCode.INTERNAL_SERVER.getStatus().value(),
+                        GlobalExceptionCode.INTERNAL_SERVER.name(),
+                        GlobalExceptionCode.INTERNAL_SERVER.getMessage()
+                ));
     }
 
     private void sendErrorNotice(Exception e, HttpServletRequest request) {

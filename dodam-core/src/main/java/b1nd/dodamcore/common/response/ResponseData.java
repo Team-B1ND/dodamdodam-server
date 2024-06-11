@@ -1,4 +1,4 @@
-package b1nd.dodamapi.common.response;
+package b1nd.dodamcore.common.response;
 
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
