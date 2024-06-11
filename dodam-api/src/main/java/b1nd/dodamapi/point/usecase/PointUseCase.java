@@ -7,9 +7,11 @@ import b1nd.dodamcore.member.domain.entity.Member;
 import b1nd.dodamcore.member.domain.entity.Student;
 import b1nd.dodamcore.member.domain.entity.Teacher;
 import b1nd.dodamcore.member.domain.enums.AuthStatus;
+import b1nd.dodamcore.member.domain.enums.MemberRole;
 import b1nd.dodamcore.point.application.PointReasonService;
 import b1nd.dodamcore.point.application.PointService;
 import b1nd.dodamapi.point.usecase.req.IssuePointReq;
+import b1nd.dodamcore.point.domain.vo.PointExcelRes;
 import b1nd.dodamcore.point.domain.vo.PointRes;
 import b1nd.dodamcore.point.domain.vo.PointScoreRes;
 import b1nd.dodamcore.point.domain.entity.Point;
@@ -22,7 +24,9 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Component
 @Transactional(readOnly = true)
@@ -116,6 +120,18 @@ public class PointUseCase {
                 .map(score -> PointScoreRes.of(score, type))
                 .toList();
         return ResponseData.ok("모든 상벌점 점수 조회 성공", result);
+    }
+
+    public ResponseData<List<PointExcelRes>> getAllScoresForExcel(PointType type){
+        List<PointExcelRes> result = pointService.getAllScores().parallelStream()
+                .filter(score -> score.getStudent().getMember().getStatus() == AuthStatus.ACTIVE)
+                .filter(score -> score.getStudent().getMember().getRole() == MemberRole.STUDENT)
+                .map(score -> PointExcelRes.of(score,type))
+                .sorted(Comparator.comparing(PointExcelRes::grade)
+                        .thenComparing(PointExcelRes::room)
+                        .thenComparing(PointExcelRes::number))
+                .collect(Collectors.toList());
+        return ResponseData.ok("엑셀화 상벌점 조회 성공", result);
     }
 
 }

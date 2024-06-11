@@ -7,6 +7,7 @@ import b1nd.dodamapi.point.usecase.PointUseCase;
 import b1nd.dodamapi.point.usecase.req.IssuePointReq;
 import b1nd.dodamapi.point.usecase.req.ModifyPointReasonReq;
 import b1nd.dodamapi.point.usecase.req.RegisterPointReasonReq;
+import b1nd.dodamcore.point.domain.vo.PointExcelRes;
 import b1nd.dodamcore.point.domain.vo.PointReasonRes;
 import b1nd.dodamcore.point.domain.vo.PointRes;
 import b1nd.dodamcore.point.domain.vo.PointScoreRes;
@@ -75,4 +76,8 @@ public class PointController {
         return pointReasonUseCase.getBy(type);
     }
 
+    @GetMapping("/score/excel")
+    public ResponseData<List<PointExcelRes>> getForExcel(@RequestParam PointType type){
+        return pointUseCase.getAllScoresForExcel(type);
+    }
 }
