@@ -31,7 +31,6 @@ public class WakeupSongService {
         return wakeupSongRepository.findAllByMember_IdAndStatus(member.getId(), WakeupSongStatus.PENDING);
     }
 
-    @Transactional(rollbackFor = Exception.class)
     public void saveWakeupSong(WakeupSong wakeupSong){
         wakeupSongRepository.save(wakeupSong);
     }
@@ -45,7 +44,6 @@ public class WakeupSongService {
                 .orElseThrow(WakeupSongNotFoundException::new);
     }
 
-    @Transactional(rollbackFor = Exception.class)
     public void delete(WakeupSong wakeupSong){
         wakeupSongRepository.delete(wakeupSong);
     }
