@@ -155,8 +155,8 @@ public class WakeupSongUseCase {
         return Response.ok("기상송 신청 취소 성공");
     }
 
-    public ResponseData<CompletableFuture<List<ChartRes>>> getChartList() {
-        return ResponseData.ok("차트 조회 성공", chartClient.getList());
+    public CompletableFuture<ResponseData<List<ChartRes>>> getChartList() {
+        return chartClient.getList().thenApply(res ->  ResponseData.ok("차트 조회 성공", res));
     }
 
     public ResponseData<List<YoutubeRes>> getYoutubeList(String keyword) {
