@@ -1,11 +1,11 @@
-package b1nd.dodaminfra.wakeupsong;
+package b1nd.dodamapi.security.filter;
 
+import b1nd.dodamapi.security.common.ErrorResponseSender;
 import b1nd.dodamcore.common.exception.GlobalExceptionCode;
 import b1nd.dodamcore.member.application.MemberService;
 import b1nd.dodamcore.member.application.MemberSessionHolder;
 import b1nd.dodamcore.member.domain.entity.Member;
 import b1nd.dodamcore.member.domain.enums.MemberRole;
-import b1nd.dodaminfra.security.common.ErrorResponseSender;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -20,7 +20,7 @@ import static org.springframework.http.HttpMethod.*;
 
 @Component
 @RequiredArgsConstructor
-public class WakeupSongFilter extends OncePerRequestFilter {
+public class BroadcastMemberFilter extends OncePerRequestFilter {
 
     private final MemberService memberService;
     private final MemberSessionHolder memberSessionHolder;

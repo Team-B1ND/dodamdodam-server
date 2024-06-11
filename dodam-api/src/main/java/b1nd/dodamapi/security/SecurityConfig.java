@@ -4,7 +4,7 @@ import b1nd.dodamapi.security.common.ErrorResponseSender;
 import b1nd.dodamcore.common.exception.GlobalExceptionCode;
 import b1nd.dodamapi.security.filter.TokenExceptionFilter;
 import b1nd.dodamapi.security.filter.TokenFilter;
-import b1nd.dodaminfra.wakeupsong.WakeupSongFilter;
+import b1nd.dodamapi.security.filter.BroadcastMemberFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -32,7 +32,7 @@ class SecurityConfig {
 
     private final TokenFilter tokenFilter;
     private final TokenExceptionFilter tokenExceptionFilter;
-    private final WakeupSongFilter wakeupSongFilter;
+    private final BroadcastMemberFilter broadcastMemberFilter;
     private final ErrorResponseSender errorResponseSender;
 
     @Bean
@@ -45,7 +45,7 @@ class SecurityConfig {
                 .csrf().disable()
                 .addFilterAfter(tokenFilter, UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(tokenExceptionFilter, TokenFilter.class)
-                .addFilterAfter(wakeupSongFilter, AuthorizationFilter.class)
+                .addFilterAfter(broadcastMemberFilter, AuthorizationFilter.class)
 
                 .authorizeHttpRequests()
                 
