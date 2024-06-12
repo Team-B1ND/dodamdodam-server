@@ -54,6 +54,7 @@ public class WebClientSupport {
 
     private Function<ClientResponse, Mono<? extends Throwable>> onError() {
         return response -> {
+            log.info("{}",response.statusCode());
             throw new WebClientException(response.statusCode().value());
         };
     }

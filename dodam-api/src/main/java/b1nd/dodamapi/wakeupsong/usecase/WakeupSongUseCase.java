@@ -95,7 +95,9 @@ public class WakeupSongUseCase {
             return WakeupSongExceptionCode.URL_MALFORMED;
         } else if (cause instanceof UnsupportedVideoTypeException) {
             return WakeupSongExceptionCode.UNSUPPORTED_TYPE;
-        } else {
+        } else if(cause instanceof WakeupSongAlreadyCreatedException){
+            return WakeupSongExceptionCode.ALREADY_APPLIED;
+        }else {
             return GlobalExceptionCode.INTERNAL_SERVER;
         }
     }
@@ -155,10 +157,12 @@ public class WakeupSongUseCase {
         return Response.ok("기상송 신청 취소 성공");
     }
 
+    @Transactional(readOnly = true)
     public CompletableFuture<ResponseData<List<ChartRes>>> getChartList() {
         return chartClient.getList().thenApply(res ->  ResponseData.ok("차트 조회 성공", res));
     }
 
+    @Transactional(readOnly = true)
     public ResponseData<List<YoutubeRes>> getYoutubeList(String keyword) {
         List<YoutubeRes> videoList = videoClient.searchVideoByKeyword(keyword, 5).getItems().stream()
                 .map(YoutubeApiUtil::getYoutubeRes).toList();
