@@ -78,7 +78,7 @@ public class WakeupSongController {
     }
 
     @GetMapping("/chart")
-    public ResponseData<CompletableFuture<List<ChartRes>>> getChart() {
+    public CompletableFuture<ResponseData<List<ChartRes>>> getChart() {
         return wakeupSongUseCase.getChartList();
     }
 }
