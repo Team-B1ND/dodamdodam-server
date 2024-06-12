@@ -53,12 +53,9 @@ public class WebClientSupport {
     }
 
     private Function<ClientResponse, Mono<? extends Throwable>> onError() {
-        return response -> response.bodyToMono(String.class)
-                .flatMap(errorBody -> {
-                    log.info("Status Code: {}", response.statusCode());
-                    log.info("Error Body: {}", errorBody);
-                    return Mono.error(new WebClientException(response.statusCode().value()));
-                });
+        return response -> {
+            throw new WebClientException(response.statusCode().value());
+        };
     }
 
     private Consumer<HttpHeaders> convertStringToHttpHeaders(String... headers) {
