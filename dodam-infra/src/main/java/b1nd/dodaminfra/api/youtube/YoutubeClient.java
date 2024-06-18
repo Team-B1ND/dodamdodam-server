@@ -7,6 +7,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import java.util.concurrent.CompletableFuture;
+
 @Component
 @RequiredArgsConstructor
 public class YoutubeClient implements VideoClient {
@@ -15,12 +17,12 @@ public class YoutubeClient implements VideoClient {
     private final WebClientSupport webClientSupport;
 
     @Override
-    public YoutubeApiRes.Video getVideo(String videoId) {
+    public CompletableFuture<YoutubeApiRes.Video> getVideo(String videoId) {
         return webClientSupport.get(
                 UriComponentsBuilder.fromUriString(youtubeProperties.url().getVideo())
                         .build(youtubeProperties.getApiKey(), videoId).toString(),
                 YoutubeApiRes.Video.class
-        ).block();
+        ).toFuture();
     }
 
     @Override

@@ -40,7 +40,9 @@ public interface NightStudyRepository extends JpaRepository<NightStudy, Long> {
     List<NightStudy> findByStatus(NightStudyStatus status);
 
     @EntityGraph(attributePaths = {"student.member"})
-    @Query("select n from NightStudy n where n.endAt >= :now and n.startAt <= :now and n.status = :status")
+    @Query("select n from NightStudy n join n.student s join s.member m " +
+            "where n.endAt >= :now and n.startAt <= :now and n.status = :status " +
+            "order by n.student.grade, n.student.room, n.student.number")
     List<NightStudy> findAllowedStudyByDate(@Param("now") LocalDate now, @Param("status") NightStudyStatus status);
 
 }

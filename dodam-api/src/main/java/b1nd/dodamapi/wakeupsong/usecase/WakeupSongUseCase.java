@@ -62,14 +62,16 @@ public class WakeupSongUseCase {
     @Transactional(rollbackFor = Exception.class)
     public CompletableFuture<Response> createWakeupSong(String videoUrl) {
         Member member = verifyAlreadyAppliedFromSession();
-        return CompletableFuture.supplyAsync(() -> {
-            String videoId = YoutubeApiUtil.getVideoId(videoUrl);
-            YoutubeApiRes.Snippet snippet = videoClient.getVideo(videoId).getItems().get(0).getSnippet();
-            checkValidVideoType(snippet.getTitle());
-            buildAndSaveWakeupSong(snippet, videoId,videoUrl,member);
-            return Response.created("기상송 신청 성공");
-        }).exceptionally(this::handleExceptionOnCreateWakeupSong);
+        String videoId = YoutubeApiUtil.getVideoId(videoUrl);
+        return videoClient.getVideo(videoId)
+                .thenApply(videoResponse -> {
+                    YoutubeApiRes.Snippet snippet = videoResponse.getItems().get(0).getSnippet();
+                    checkValidVideoType(snippet.getTitle());
+                    buildAndSaveWakeupSong(snippet, videoId, videoUrl, member);
+                    return Response.created("기상송 신청 성공");
+                }).exceptionally(this::handleExceptionOnCreateWakeupSong);
     }
+
 
     @Transactional(rollbackFor = Exception.class)
     public CompletableFuture<Response> createWakeupSongByYoutubeSearch(ApplyWakeupSongBySearchReq req){
