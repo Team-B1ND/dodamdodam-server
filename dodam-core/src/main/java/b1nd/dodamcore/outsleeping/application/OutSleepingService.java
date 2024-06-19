@@ -40,6 +40,10 @@ public class OutSleepingService {
         return repository.findByDate(date);
     }
 
+    public List<OutSleeping> getAll(LocalDate date){
+        return repository.findAll(date);
+    }
+
     public List<OutSleeping> getByStudent(Student student, LocalDate now) {
         return repository.findByStudentAndEndAtGreaterThanEqual(student, now);
     }

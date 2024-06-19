@@ -25,6 +25,10 @@ public interface OutSleepingRepository extends JpaRepository<OutSleeping, Long> 
     List<OutSleeping> findByDate(@Param("date") LocalDate date);
 
     @EntityGraph(attributePaths = {"student.member"})
+    @Query("SELECT o FROM OutSleeping o WHERE o.endAt >= :date")
+    List<OutSleeping> findAll(@Param("date") LocalDate date);
+
+    @EntityGraph(attributePaths = {"student.member"})
     List<OutSleeping> findByStudentAndEndAtGreaterThanEqual(Student student, LocalDate now);
 
 }
