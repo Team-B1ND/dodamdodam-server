@@ -17,12 +17,12 @@ public class YoutubeClient implements VideoClient {
     private final WebClientSupport webClientSupport;
 
     @Override
-    public CompletableFuture<YoutubeApiRes.Video> getVideo(String videoId) {
+    public YoutubeApiRes.Video getVideo(String videoId) {
         return webClientSupport.get(
                 UriComponentsBuilder.fromUriString(youtubeProperties.url().getVideo())
                         .build(youtubeProperties.getApiKey(), videoId).toString(),
                 YoutubeApiRes.Video.class
-        ).toFuture();
+        ).block();
     }
 
     @Override

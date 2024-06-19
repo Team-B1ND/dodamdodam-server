@@ -6,7 +6,7 @@ import java.util.concurrent.CompletableFuture;
 
 public interface VideoClient {
 
-    CompletableFuture<YoutubeApiRes.Video> getVideo(String videoId);
+    YoutubeApiRes.Video getVideo(String videoId);
 
     YoutubeApiRes.Search searchVideoByKeyword(String keyword, int size);
 }
