@@ -47,8 +47,8 @@ public class OutSleepingController {
     }
 
     @GetMapping
-    public ResponseData<List<OutSleepingRes>> getAll(@RequestParam LocalDate date){
-        return useCase.getAll(date);
+    public ResponseData<List<OutSleepingRes>> getBy(@RequestParam LocalDate endAt){
+        return useCase.getByEndAt(endAt);
     }
 
     @GetMapping("/my")
