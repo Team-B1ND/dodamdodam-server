@@ -126,7 +126,7 @@ public class MemberCommandUseCase {
         Member member = service.getMemberFromSession();
         member.updateInfo(req.name(), req.email(), req.phone(), req.profileImage());
 
-//        service.save(member);
+        service.save(member);
         return Response.noContent("내 정보 수정 성공");
     }
 
