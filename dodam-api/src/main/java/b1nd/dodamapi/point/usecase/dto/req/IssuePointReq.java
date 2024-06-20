@@ -1,4 +1,4 @@
-package b1nd.dodamapi.point.usecase.req;
+package b1nd.dodamapi.point.usecase.dto.req;
 
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
