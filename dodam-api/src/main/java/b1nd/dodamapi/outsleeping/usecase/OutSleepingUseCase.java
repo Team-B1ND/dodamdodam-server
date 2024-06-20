@@ -75,8 +75,8 @@ public class OutSleepingUseCase {
     }
 
     @Transactional(readOnly = true)
-    public ResponseData<List<OutSleepingRes>> getByDate(LocalDate date) {
-        return ResponseData.ok("날짜별 외박 조회 성공", OutSleepingRes.of(outSleepingService.getByDate(date)));
+    public ResponseData<List<OutSleepingRes>> getByEndAt(LocalDate endAt){
+        return ResponseData.ok("종료일 기준 외박 조회 성공", OutSleepingRes.of(outSleepingService.getByEndAt(endAt)));
     }
 
     @Transactional(readOnly = true)
