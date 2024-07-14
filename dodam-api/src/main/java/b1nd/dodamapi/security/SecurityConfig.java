@@ -109,7 +109,7 @@ class SecurityConfig {
                 .and()
                 .exceptionHandling()
                 .accessDeniedHandler((req, res, e) -> errorResponseSender.send(res, GlobalExceptionCode.INVALID_ROLE))
-                .authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.NOT_FOUND));
+                .authenticationEntryPoint((req, res, e) -> errorResponseSender.send(res, GlobalExceptionCode.ENDPOINT_NOT_FOUND));
 
         return http.build();
     }

@@ -19,6 +19,7 @@ public enum GlobalExceptionCode implements ExceptionCode {
     INVALID_ROLE(HttpStatus.FORBIDDEN, "유효하지 않은 권한"),
     TOKEN_NOT_PROVIDED(HttpStatus.BAD_REQUEST, "잘못된 토큰"),
     TOKEN_EXPIRED(HttpStatus.UNAUTHORIZED, "만료된 토큰"),
+    ENDPOINT_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 엔드포인트"),
     INTERNAL_SERVER(HttpStatus.INTERNAL_SERVER_ERROR, "서버 오류");
 
     private final HttpStatus status;
