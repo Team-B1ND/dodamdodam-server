@@ -1,4 +1,4 @@
-package b1nd.dodamcore.bus.application.dto.res;
+package b1nd.dodamapi.bus.usecase.dto.res;
 
 import b1nd.dodamcore.bus.domain.entity.BusMember;
 
