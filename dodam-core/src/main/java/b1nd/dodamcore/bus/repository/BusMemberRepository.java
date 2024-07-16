@@ -17,10 +17,9 @@ public interface BusMemberRepository extends JpaRepository<BusMember, Integer> {
     @EntityGraph(attributePaths = {"student", "student.member"})
     List<BusMember> findByBusOrderByStudentAsc(Bus bus);
 
-    Optional<BusMember> findByStudentAndBus_Id(Student student, int busId);
-
     @EntityGraph(attributePaths = {"bus"})
     Optional<BusMember> findByStudentAndBus_LeaveTimeAfter(Student student, LocalDateTime now);
 
     boolean existsByStudentAndBus_LeaveTimeAfter(Student student, LocalDateTime now);
+
 }

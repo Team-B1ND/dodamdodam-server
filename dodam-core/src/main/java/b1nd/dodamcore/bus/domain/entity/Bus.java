@@ -51,6 +51,14 @@ public class Bus {
         this.applyCount -= 1;
     }
 
+    public boolean isFullOfSeat() {
+        return peopleLimit == applyCount;
+    }
+
+    public boolean isExpired(LocalDateTime now) {
+        return leaveTime.isBefore(now);
+    }
+
     public void updateBus(String busName, String description, LocalDateTime leaveTime, LocalTime timeRequired, int peopleLimit) {
         this.busName = busName;
         this.description = description;
@@ -67,4 +75,5 @@ public class Bus {
         this.leaveTime = leaveTime;
         this.timeRequired = timeRequired;
     }
+
 }

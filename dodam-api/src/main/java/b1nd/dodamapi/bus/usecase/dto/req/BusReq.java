@@ -1,4 +1,4 @@
-package b1nd.dodamcore.bus.application.dto.req;
+package b1nd.dodamapi.bus.usecase.dto.req;
 
 import b1nd.dodamcore.bus.domain.entity.Bus;
 import jakarta.validation.constraints.NotEmpty;
