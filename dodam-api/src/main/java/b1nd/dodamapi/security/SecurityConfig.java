@@ -8,12 +8,10 @@ import b1nd.dodamapi.security.filter.BroadcastMemberFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.intercept.AuthorizationFilter;
-import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
@@ -69,7 +67,7 @@ class SecurityConfig {
                 .requestMatchers("/wakeup-song/**").permitAll()
 
                 .requestMatchers(GET, "/bus").permitAll()
-                .requestMatchers("/bus/apply/**").hasRole(STUDENT)
+                .requestMatchers("/bus/apply/**").hasAnyRole(STUDENT, ADMIN)
                 .requestMatchers("/bus/**").hasRole(TEACHER)
 
                 .requestMatchers(POST, "/night-study").hasRole(STUDENT)
