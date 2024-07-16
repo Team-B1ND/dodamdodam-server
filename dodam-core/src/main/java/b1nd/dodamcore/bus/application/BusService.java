@@ -57,8 +57,8 @@ public class BusService {
         return repository.findAllByLeaveTime(date);
     }
 
-    public List<Bus> getValid(LocalDateTime left, LocalDateTime right) {
-        return repository.findBusByLeaveTimeBetween(left, right);
+    public List<Bus> getValid(LocalDateTime startAt, LocalDateTime endAt) {
+        return repository.findBusByLeaveTimeBetween(startAt, endAt);
     }
 
 }
