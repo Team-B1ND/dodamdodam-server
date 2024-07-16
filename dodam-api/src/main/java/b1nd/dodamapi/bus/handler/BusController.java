@@ -72,6 +72,6 @@ public class BusController {
 
     @DeleteMapping("/apply/{id}")
     public Response cancelApplication(@PathVariable int id) {
-        return busApplicationUseCase.cancel(id);
+        return busApplicationUseCase.cancel();
     }
 }

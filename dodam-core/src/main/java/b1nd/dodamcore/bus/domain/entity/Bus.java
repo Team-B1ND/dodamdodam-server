@@ -48,7 +48,7 @@ public class Bus {
     }
 
     public void decreaseApplyCount() {
-        this.applyCount -= 1;
+        this.applyCount = Math.max(0, applyCount - 1);
     }
 
     public boolean isFullOfSeat() {
