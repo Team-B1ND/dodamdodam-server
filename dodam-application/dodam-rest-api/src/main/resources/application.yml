@@ -1,0 +1,96 @@
+server:
+  port: 8080
+
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: ${DB_URL}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+    hikari:
+      connection-timeout: 20000   # ??? ???? (20?)
+      maximum-pool-size: 10       # ?? ??? ? ?? (10?)
+      minimum-idle: 2             # ?? ?? ??? ? (2?)
+      idle-timeout: 30000         # ?? ??? ???? (30?)
+      pool-name: MyHikariCP
+  servlet:
+    multipart:
+      max-file-size: 500MB
+      max-request-size: 500MB
+  web:
+    resources:
+      static-locations: classpath:/static/
+  jpa:
+    hibernate:
+      ddl-auto: none
+    properties:
+      hibernate:
+        show_sql: false
+        format_sql: true
+  data:
+    redis.repositories.enabled: false
+redis:
+  master:
+    host: ${REDIS_MASTER_HOST}
+    port: ${REDIS_MASTER_PORT}
+  slaves:
+    - host: ${REDIS_SLAVE_1_HOST}
+      port: ${REDIS_SLAVE_1_PORT}
+    - host: ${REDIS_SLAVE_2_HOST}
+      port: ${REDIS_SLAVE_2_PORT}
+
+logging.level:
+  org.springframework.boot.autoconfigure: ERROR
+
+app:
+  token:
+    generate: ${TOKEN_GENERATE_URL}
+    verify: ${TOKEN_VERIFY_URL}
+    refresh: ${TOKEN_REFRESH_URL}
+  jwt:
+    issuer: ${JWT_ISSUER}
+    tokenServer: ${TOKEN_SERVER_URL}
+  youtube:
+    key:
+      apiKey: ${YOUTUBE_KEY}
+    url:
+      video: ${YOUTUBE_VIDEO_URL}
+      search: ${YOUTUBE_SEARCH_URL}
+  gabia:
+    id: ${GABIA_ID}
+    apiKey: ${GABIA_API_KEY}
+    refKey: ${GABIA_REF_KEY}
+    tokenUrl: ${GABIA_TOKEN_URL}
+    smsUrl: ${GABIA_SMS_URL}
+    lmsUrl: ${GABIA_LMS_URL}
+    sender: ${GABIA_SMS_SENDER}
+    subject: ${GABIA_SMS_SUBJECT}
+  neis:
+    apiKey: ${NEIS_KEY}
+    url: ${NEIS_URL}
+  codenary:
+    url: ${CODENARY_URL}
+  melon:
+    url: ${MELON_URL}
+  discord:
+    url: ${DISCORD_URL}
+
+cloud:
+  aws:
+    credentials:
+      access-key: ${S3_ACCESS_KEY}
+      secret-key: ${S3_SECRET_KEY}
+    stack:
+      auto: false
+    region:
+      static: ${S3_REGION}
+    storage:
+      endpoint: ${S3_ENDPOINT}
+      bucket: ${S3_BUCKET}
+
+logging:
+  level:
+    com:
+      amazonaws:
+        util:
+          com.amazonaws.util.EC2MetadataUtils: error

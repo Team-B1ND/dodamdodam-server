@@ -1,0 +1,24 @@
+dependencies {
+    implementation project(':dodam-system-core')
+
+    implementation project(':dodam-system-domain:dodam-domain-rds')
+    implementation project(':dodam-system-domain:dodam-domain-redis')
+
+    implementation project(':dodam-in-system-available:dodam-client-core')
+    implementation project(':dodam-in-system-available:dodam-codenary-client')
+    implementation project(':dodam-in-system-available:dodam-discord-webhook-client')
+    implementation project(':dodam-in-system-available:dodam-gabia-client')
+    implementation project(':dodam-in-system-available:dodam-melon-chart-client')
+    implementation project(':dodam-in-system-available:dodam-ncp-object-storage-client')
+    implementation project(':dodam-in-system-available:dodam-neis-meal-client')
+    implementation project(':dodam-in-system-available:dodam-token-client')
+    implementation project(':dodam-in-system-available:dodam-youtube-video-client')
+
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
+
+    implementation 'org.springframework:spring-tx:6.0.6'
+
+    runtimeOnly 'com.mysql:mysql-connector-j'
+}

@@ -1,0 +1,13 @@
+subprojects {
+	dependencies {
+		implementation project(':dodam-system-core')
+
+		implementation 'io.projectreactor:reactor-core:3.5.3'
+	}
+
+	bootJar { enabled = false }
+	jar { enabled = true }
+}
+
+bootJar { enabled = false }
+jar { enabled = true }
