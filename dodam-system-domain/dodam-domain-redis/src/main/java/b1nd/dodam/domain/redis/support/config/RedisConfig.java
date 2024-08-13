@@ -43,7 +43,7 @@ public class RedisConfig {
     }
 
     @Bean
-    public org.springframework.data.redis.cache.RedisCacheManager redisCacheManager() {
+    public RedisCacheManager redisCacheManager() {
         RedisCacheConfiguration redisCacheConfiguration = RedisCacheConfiguration.defaultCacheConfig()
                 .serializeKeysWith(RedisSerializationContext.SerializationPair.fromSerializer(new StringRedisSerializer()))
                 .serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(new GenericJackson2JsonRedisSerializer()))

@@ -7,9 +7,6 @@ dependencies {
 
     implementation 'org.springframework.boot:spring-boot:3.0.4'
 
-    implementation 'org.json:json:20220320'
-    implementation 'org.jsoup:jsoup:1.14.2'
-
     implementation 'com.fasterxml.jackson.core:jackson-annotations:2.14.2'
     implementation 'com.fasterxml.jackson.core:jackson-databind:2.14.2'
     implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'

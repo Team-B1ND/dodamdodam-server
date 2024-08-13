@@ -1,4 +1,4 @@
-package b1nd.dodam.restapi.support.scheduler;
+package b1nd.dodam.restapi.support.meal;
 
 import b1nd.dodam.domain.redis.meal.service.MealCacheService;
 import lombok.RequiredArgsConstructor;
