@@ -1,5 +1,25 @@
 rootProject.name = 'dodam'
 
-include 'dodam-api'
-include 'dodam-core'
-include 'dodam-infra'
+//dodam-system-core
+include 'dodam-system-core'
+
+//dodam-system-domain
+include 'dodam-system-domain'
+include 'dodam-system-domain:dodam-domain-rds'
+include 'dodam-system-domain:dodam-domain-redis'
+
+//dodam-in-system-available
+include 'dodam-in-system-available'
+include 'dodam-in-system-available:dodam-client-core'
+include 'dodam-in-system-available:dodam-token-client'
+include 'dodam-in-system-available:dodam-discord-webhook-client'
+include 'dodam-in-system-available:dodam-melon-chart-client'
+include 'dodam-in-system-available:dodam-youtube-video-client'
+include 'dodam-in-system-available:dodam-gabia-client'
+include 'dodam-in-system-available:dodam-ncp-object-storage-client'
+include 'dodam-in-system-available:dodam-codenary-client'
+include 'dodam-in-system-available:dodam-neis-meal-client'
+
+//dodam-application
+include 'dodam-application'
+include 'dodam-application:dodam-rest-api'

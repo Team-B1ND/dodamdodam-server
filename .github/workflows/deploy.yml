@@ -22,7 +22,7 @@ jobs:
     - name: Set yml file 
       uses: microsoft/variable-substitution@v1
       with:
-        files: dodam-api/src/main/resources/application.yml
+        files: dodam-application/dodam-rest-api/src/main/resources/application.yml
       env:
         spring.datasource.url: ${{ secrets.DB_URL }} 
         spring.datasource.username: ${{ secrets.DB_USERNAME }} 
@@ -61,7 +61,7 @@ jobs:
         cloud.aws.storage.bucket: ${{ secrets.S3_BUCKET }}
 
     - name: Build with Gradle
-      run: ./gradlew :dodam-api:build -x test --parallel
+      run: ./gradlew :dodam-application:dodam-rest-api:build -x test --parallel
       
     - name: Build Docker Image For Spring
       run: |
