@@ -61,7 +61,7 @@ public class PointUseCase {
     }
 
     private void saveScores(List<Student> students, PointReason reason) {
-        pointService.getScoresBy(students).forEach(
+        pointService.getScoresByStudentsForUpdate(students).forEach(
                 s -> s.issue(reason)
         );
     }
