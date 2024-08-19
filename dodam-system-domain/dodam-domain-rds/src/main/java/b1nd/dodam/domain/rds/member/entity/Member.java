@@ -44,8 +44,10 @@ public class Member extends BaseEntity {
     @NotNull
     private String phone;
 
+    private String parentPhone;
+
     @Builder
-    public Member(String id, String pw, String name, String email, MemberRole role, ActiveStatus status, String profileImage, String phone) {
+    public Member(String id, String pw, String name, String email, MemberRole role, ActiveStatus status, String profileImage, String phone, String parentPhone) {
         this.id = id;
         this.pw = pw;
         this.email = email;
@@ -54,6 +56,7 @@ public class Member extends BaseEntity {
         this.status = status;
         this.profileImage = profileImage;
         this.phone = phone;
+        this.parentPhone = parentPhone;
     }
 
     public void updatePw(String pw) {
