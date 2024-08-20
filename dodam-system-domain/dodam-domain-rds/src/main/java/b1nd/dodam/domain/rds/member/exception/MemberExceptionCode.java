@@ -14,7 +14,8 @@ public enum MemberExceptionCode implements ExceptionCode {
     PARENT_NOT_FOUND(404, "없는 부모님 정보"),
     TEACHER_NOT_FOUND(404, "없는 선생님"),
     MEMBER_DUPLICATION(409, "이미 존재하는 멤버"),
-    BROADCAST_CLUB_MEMBER_DUPLICATION(409, "이미 존재하는 방송부원");
+    BROADCAST_CLUB_MEMBER_DUPLICATION(409, "이미 존재하는 방송부원"),
+    UNMODIFIABLE_ROLE(403, "해당 유저는 수정이 불가합니다");
 
     private final int status;
     private final String message;

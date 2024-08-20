@@ -6,6 +6,7 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
 
 @Getter
 @Entity(name = "teacher")
@@ -31,6 +32,16 @@ public class Teacher {
         this.member = member;
         this.tel = tel;
         this.position = position;
+    }
+
+    public void updateInfoForAdmin(String tel, String position){
+        if(StringUtils.isNotBlank(tel)){
+            this.tel = tel;
+        }
+        if (StringUtils.isNotBlank(position)){
+            this.position = position;
+        }
+
     }
 
 }

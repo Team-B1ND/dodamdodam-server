@@ -2,7 +2,9 @@ package b1nd.dodam.restapi.member.application;
 
 import b1nd.dodam.domain.rds.member.entity.Member;
 import b1nd.dodam.domain.rds.member.entity.Student;
+import b1nd.dodam.domain.rds.member.entity.Teacher;
 import b1nd.dodam.domain.rds.member.enumeration.ActiveStatus;
+import b1nd.dodam.domain.rds.member.enumeration.MemberRole;
 import b1nd.dodam.domain.rds.member.event.StudentRegisteredEvent;
 import b1nd.dodam.domain.rds.member.exception.*;
 import b1nd.dodam.domain.rds.member.service.MemberService;
@@ -124,6 +126,33 @@ public class MemberCommandUseCase {
         Student student = getStudentByMember(memberAuthenticationHolder.current());
         student.updateInfo(req.grade(), req.room(), req.number());
         return Response.noContent("내 학생 정보 수정 성공");
+    }
+
+    public Response updateInfoForAdmin(String id, MemberRole memberRole, UpdateStudentForAdminReq req){
+        switch (memberRole) {
+            case STUDENT:
+                updateMemberInfo(id, req);
+                Student student = getStudentByMember(service.getMemberBy(id));
+                student.updateInfo(req.grade(), req.room(), req.number());
+                break;
+
+            case TEACHER:
+                updateMemberInfo(id, req);
+                Teacher teacher = service.getTeacherBy(service.getMemberBy(id));
+                teacher.updateInfoForAdmin(req.tel(), req.position());
+                break;
+
+            default:
+                throw new UnmodifiableRole();
+        }
+        return Response.noContent("유저 정보 수정 성공");
+    }
+
+    private void updateMemberInfo(String id, UpdateStudentForAdminReq req) {
+        Member member = service.getMemberById(id)
+                .orElseThrow(MemberNotFoundException::new);
+        member.updateInfoForAdmin(req.name(), req.pw(), req.phone(), req.parentPhone());
+        service.save(member);
     }
 
     private Student getStudentByMember(Member member) {

@@ -4,4 +4,6 @@ dependencies {
     implementation 'com.fasterxml.jackson.core:jackson-annotations:2.14.2'
 
     implementation 'jakarta.validation:jakarta.validation-api:3.0.2'
+
+    implementation 'org.apache.commons:commons-lang3:3.13.0'
 }

@@ -4,14 +4,16 @@ import b1nd.dodam.domain.rds.member.enumeration.ActiveStatus;
 import b1nd.dodam.domain.rds.member.enumeration.MemberRole;
 import b1nd.dodam.domain.rds.support.entity.BaseEntity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import jakarta.persistence.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.Id;
 import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
-import java.util.Objects;
+import org.apache.commons.lang3.StringUtils;
 
 @Getter
 @Entity(name = "member")
@@ -64,17 +66,32 @@ public class Member extends BaseEntity {
     }
 
     public void updateInfo(String name, String email, String phone, String profileImage) {
-        if(Objects.nonNull(name)) {
+        if(StringUtils.isNotBlank(name)){
             this.name = name;
         }
-        if(Objects.nonNull(email)) {
+        if(StringUtils.isNotBlank(email)){
             this.email = email;
         }
-        if(Objects.nonNull(phone)) {
+        if(StringUtils.isNotBlank(phone)){
             this.phone = phone;
         }
-        if(Objects.nonNull(profileImage)) {
+        if(StringUtils.isNotBlank(profileImage)){
             this.profileImage = profileImage;
+        }
+    }
+
+    public void updateInfoForAdmin(String pw, String name, String phone, String parentPhone){
+        if(StringUtils.isNotBlank(pw)){
+            this.phone = pw;
+        }
+        if(StringUtils.isNotBlank(name)){
+            this.name = name;
+        }
+        if(StringUtils.isNotBlank(phone)){
+            this.phone = phone;
+        }
+        if(StringUtils.isNotBlank(parentPhone)){
+            this.parentPhone = parentPhone;
         }
     }
 
