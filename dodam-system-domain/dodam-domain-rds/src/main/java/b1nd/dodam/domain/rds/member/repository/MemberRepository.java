@@ -21,7 +21,7 @@ public interface MemberRepository extends JpaRepository<Member, String> {
             "WHERE m.status = :status " +
             "ORDER BY CASE WHEN s.id IS NOT NULL THEN 0 ELSE 1 END ASC, " +
             "s.grade ASC, s.room ASC, s.number ASC")
-    List<Member> findByStatusOrderedByStudent(ActiveStatus status);
+    List<Member> findByStatusOrderByStudent(ActiveStatus status);
 
 
     List<Member> findByNameContains(String name);
