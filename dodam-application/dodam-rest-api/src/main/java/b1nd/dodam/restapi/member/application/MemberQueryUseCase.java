@@ -9,6 +9,7 @@ import b1nd.dodam.restapi.auth.infrastructure.security.support.MemberAuthenticat
 import b1nd.dodam.restapi.member.application.data.res.MemberInfoRes;
 import b1nd.dodam.restapi.support.data.ResponseData;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,6 +22,7 @@ public class MemberQueryUseCase {
 
     private final MemberService service;
     private final MemberAuthenticationHolder memberAuthenticationHolder;
+    private final MemberService memberService;
 
     public ResponseData<MemberInfoRes> getById(String id) {
         return ResponseData.ok("Id로 멤버 조회 성공", getMemberInfo(service.getMemberBy(id)));
@@ -42,6 +44,7 @@ public class MemberQueryUseCase {
                 .toList());
     }
 
+    @Cacheable(value = "membersCache", key = "'activeMembers'")
     public ResponseData<List<MemberInfoRes>> getAll() {
         return ResponseData.ok("모든 멤버 정보 조회 성공", service.getByStatus(ActiveStatus.ACTIVE).parallelStream()
                 .map(this::getMemberInfo)
