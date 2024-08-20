@@ -80,7 +80,7 @@ public class WakeupSongUseCase {
         Member member = verifyAlreadyAppliedFromSession();
         return CompletableFuture.supplyAsync(() -> {
             YoutubeApiRes.SearchItem searchItem = youtubeVideoClient.searchVideoByKeyword(
-                    req.title() + " " + req.artist(), 1).getItems().get(0);
+                    req.title() + " " + req.artist() + "가사", 1).getItems().get(0);
             checkValidVideoType(searchItem.getSnippet().getTitle());
             buildAndSaveWakeupSong(searchItem.getSnippet(), searchItem.getId().getVideoId(),
                     "https://www.youtube.com/watch?v=" + searchItem.getId().getVideoId(), member);
