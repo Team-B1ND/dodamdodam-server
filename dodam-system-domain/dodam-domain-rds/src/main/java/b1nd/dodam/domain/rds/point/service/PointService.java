@@ -44,6 +44,11 @@ public class PointService {
     }
 
     public PointScore getScoreBy(Student student) {
+        return scoreRepository.findByStudent(student)
+                .orElseThrow(PointScoreNotFoundException::new);
+    }
+
+    public PointScore getScoreByStudentForUpdate(Student student) {
         return scoreRepository.findByStudentWithPessimisticLock(student)
                 .orElseThrow(PointScoreNotFoundException::new);
     }

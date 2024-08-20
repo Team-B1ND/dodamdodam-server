@@ -18,6 +18,8 @@ public interface PointScoreRepository extends JpaRepository<PointScore, Integer>
     @Query("SELECT ps FROM PointScore ps WHERE ps.student = :student")
     Optional<PointScore> findByStudentWithPessimisticLock(Student student);
 
+    Optional<PointScore> findByStudent(Student student);
+
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     @Query("SELECT ps FROM PointScore ps WHERE ps.student IN :students")
     List<PointScore> findByStudentInWithPessimisticLock(List<Student> students);

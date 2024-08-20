@@ -77,7 +77,7 @@ public class PointUseCase {
         Point point = pointService.getPointBy(id);
         PointReason reason = point.getReason();
         Student student = point.getStudent();
-        PointScore score = pointService.getScoreBy(student);
+        PointScore score = pointService.getScoreByStudentForUpdate(student);
         score.cancel(reason);
 
         pointService.delete(point);
