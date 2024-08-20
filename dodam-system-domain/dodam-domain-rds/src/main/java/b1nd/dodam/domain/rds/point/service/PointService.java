@@ -48,8 +48,13 @@ public class PointService {
                 .orElseThrow(PointScoreNotFoundException::new);
     }
 
-    public List<PointScore> getScoresBy(List<Student> students) {
-        return scoreRepository.getByStudentIn(students);
+    public PointScore getScoreByStudentForUpdate(Student student) {
+        return scoreRepository.findByStudentWithPessimisticLock(student)
+                .orElseThrow(PointScoreNotFoundException::new);
+    }
+
+    public List<PointScore> getScoresByStudentsForUpdate(List<Student> students) {
+        return scoreRepository.getByStudentInWithPessimisticLock(students);
     }
 
     public List<PointScore> getAllScores() {
