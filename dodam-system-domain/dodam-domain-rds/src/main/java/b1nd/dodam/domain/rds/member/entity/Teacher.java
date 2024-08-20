@@ -41,7 +41,6 @@ public class Teacher {
         if (StringUtils.isNotBlank(position)){
             this.position = position;
         }
-
     }
 
 }
