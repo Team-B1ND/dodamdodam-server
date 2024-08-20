@@ -34,14 +34,13 @@ public class Teacher {
         this.position = position;
     }
 
-    public void updateInfoForAdmin(String tel, String position){
+    public void updateInfo(String tel, String position){
         if(StringUtils.isNotBlank(tel)){
             this.tel = tel;
         }
         if (StringUtils.isNotBlank(position)){
             this.position = position;
         }
-
     }
 
 }

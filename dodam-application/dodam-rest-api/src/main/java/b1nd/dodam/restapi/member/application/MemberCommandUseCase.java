@@ -4,7 +4,6 @@ import b1nd.dodam.domain.rds.member.entity.Member;
 import b1nd.dodam.domain.rds.member.entity.Student;
 import b1nd.dodam.domain.rds.member.entity.Teacher;
 import b1nd.dodam.domain.rds.member.enumeration.ActiveStatus;
-import b1nd.dodam.domain.rds.member.enumeration.MemberRole;
 import b1nd.dodam.domain.rds.member.event.StudentRegisteredEvent;
 import b1nd.dodam.domain.rds.member.exception.*;
 import b1nd.dodam.domain.rds.member.service.MemberService;
@@ -128,30 +127,26 @@ public class MemberCommandUseCase {
         return Response.noContent("내 학생 정보 수정 성공");
     }
 
-    public Response updateInfoForAdmin(String id, MemberRole memberRole, UpdateStudentForAdminReq req){
-        switch (memberRole) {
-            case STUDENT:
-                updateMemberInfo(id, req);
-                Student student = getStudentByMember(service.getMemberBy(id));
-                student.updateInfo(req.grade(), req.room(), req.number());
-                break;
+    public Response updateStudentForAdmin(String id, UpdateStudentForAdminReq req){
+        updateMember(id, req.pw(), req.name(), req.phone());
 
-            case TEACHER:
-                updateMemberInfo(id, req);
-                Teacher teacher = service.getTeacherBy(service.getMemberBy(id));
-                teacher.updateInfoForAdmin(req.tel(), req.position());
-                break;
-
-            default:
-                throw new UnmodifiableRole();
-        }
-        return Response.noContent("유저 정보 수정 성공");
+        Student student = getStudentByMember(service.getMemberBy(id));
+        student.updateInfo(req.grade(), req.room(), req.number());
+        student.setParentPhone(req.parentPhone());
+        return Response.noContent("학생 정보 수정 성공");
     }
 
-    private void updateMemberInfo(String id, UpdateStudentForAdminReq req) {
-        Member member = service.getMemberById(id)
-                .orElseThrow(MemberNotFoundException::new);
-        member.updateInfoForAdmin(req.name(), req.pw(), req.phone(), req.parentPhone());
+    public Response updateTeacherForAdmin(String id, UpdateTeacherForAdminReq req){
+        updateMember(id, req.pw(), req.name(), req.phone());
+
+        Teacher teacher = service.getTeacherBy(service.getMemberBy(id));
+        teacher.updateInfo(req.tel(), req.position());
+        return Response.noContent("선생 정보 수정 성공");
+    }
+
+    private void updateMember(String id, String pw, String name, String phone) {
+        Member member = service.getMemberBy(id);
+        member.updateInfoForAdmin(pw, name, phone);
         service.save(member);
     }
 

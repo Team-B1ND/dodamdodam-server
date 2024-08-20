@@ -1,6 +1,5 @@
 package b1nd.dodam.restapi.member.presentation;
 
-import b1nd.dodam.domain.rds.member.enumeration.MemberRole;
 import b1nd.dodam.restapi.member.application.MemberCommandUseCase;
 import b1nd.dodam.restapi.member.application.MemberQueryUseCase;
 import b1nd.dodam.restapi.member.application.data.req.*;
@@ -71,12 +70,14 @@ public class MemberController {
         return commandUseCase.updateStudentInfo(req);
     }
 
-    @PatchMapping("/info/{id}/{role}")
-    public Response updateInfoForAdmin(@PathVariable String id,
-                                       @PathVariable MemberRole role,
-                                       @RequestBody UpdateStudentForAdminReq req
-    ){
-        return commandUseCase.updateInfoForAdmin(id, role, req);
+    @PatchMapping("/student/info/{id}")
+    public Response updateStudentForAdmin(@PathVariable String id, @RequestBody UpdateStudentForAdminReq req){
+        return commandUseCase.updateStudentForAdmin(id, req);
+    }
+
+    @PatchMapping("/teacher/info/{id}")
+    public Response updateTeacherForAdmin(@PathVariable String id, @RequestBody UpdateTeacherForAdminReq req){
+        return commandUseCase.updateTeacherForAdmin(id, req);
     }
 
     @GetMapping("/{id}")
@@ -113,6 +114,5 @@ public class MemberController {
     public ResponseData<Boolean> checkBroadcastClubMember(@PathVariable String id) {
         return queryUseCase.checkBroadcastClubMember(id);
     }
-
 
 }

@@ -16,6 +16,7 @@ public record JoinStudentReq(@NotEmpty String id, @NotEmpty String pw, @NotEmpty
                 .grade(grade)
                 .room(room)
                 .number(number)
+                .parentPhone(parentPhone)
                 .build();
     }
 
@@ -27,7 +28,6 @@ public record JoinStudentReq(@NotEmpty String id, @NotEmpty String pw, @NotEmpty
                 .name(name)
                 .role(MemberRole.STUDENT)
                 .phone(phone)
-                .parentPhone(parentPhone)
                 .status(ActiveStatus.DEACTIVATE)
                 .build();
     }

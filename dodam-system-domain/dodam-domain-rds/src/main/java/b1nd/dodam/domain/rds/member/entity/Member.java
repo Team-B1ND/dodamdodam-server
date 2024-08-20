@@ -46,10 +46,8 @@ public class Member extends BaseEntity {
     @NotNull
     private String phone;
 
-    private String parentPhone;
-
     @Builder
-    public Member(String id, String pw, String name, String email, MemberRole role, ActiveStatus status, String profileImage, String phone, String parentPhone) {
+    public Member(String id, String pw, String name, String email, MemberRole role, ActiveStatus status, String profileImage, String phone) {
         this.id = id;
         this.pw = pw;
         this.email = email;
@@ -58,7 +56,6 @@ public class Member extends BaseEntity {
         this.status = status;
         this.profileImage = profileImage;
         this.phone = phone;
-        this.parentPhone = parentPhone;
     }
 
     public void updatePw(String pw) {
@@ -80,7 +77,7 @@ public class Member extends BaseEntity {
         }
     }
 
-    public void updateInfoForAdmin(String pw, String name, String phone, String parentPhone){
+    public void updateInfoForAdmin(String pw, String name, String phone){
         if(StringUtils.isNotBlank(pw)){
             this.phone = pw;
         }
@@ -89,9 +86,6 @@ public class Member extends BaseEntity {
         }
         if(StringUtils.isNotBlank(phone)){
             this.phone = phone;
-        }
-        if(StringUtils.isNotBlank(parentPhone)){
-            this.parentPhone = parentPhone;
         }
     }
 
