@@ -73,7 +73,7 @@ public class MemberService {
     }
 
     public List<Member> getByStatus(ActiveStatus status) {
-        return memberRepository.findByStatus(status);
+        return memberRepository.findByStatusOrderedByStudent(status);
     }
 
     public Optional<Student> getStudentByMember(Member member) {

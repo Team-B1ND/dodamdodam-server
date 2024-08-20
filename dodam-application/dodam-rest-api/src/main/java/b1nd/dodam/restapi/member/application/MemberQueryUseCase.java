@@ -22,7 +22,6 @@ public class MemberQueryUseCase {
 
     private final MemberService service;
     private final MemberAuthenticationHolder memberAuthenticationHolder;
-    private final MemberService memberService;
 
     public ResponseData<MemberInfoRes> getById(String id) {
         return ResponseData.ok("Id로 멤버 조회 성공", getMemberInfo(service.getMemberBy(id)));
