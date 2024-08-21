@@ -132,7 +132,7 @@ public class MemberCommandUseCase {
 
         Student student = getStudentByMember(service.getMemberBy(id));
         student.updateInfo(req.grade(), req.room(), req.number());
-        student.setParentPhone(req.parentPhone());
+        student.updateParentPhone(req.parentPhone());
         return Response.noContent("학생 정보 수정 성공");
     }
 
@@ -146,7 +146,7 @@ public class MemberCommandUseCase {
 
     private void updateMember(String id, String pw, String name, String phone) {
         Member member = service.getMemberBy(id);
-        member.updateInfoForAdmin(pw, name, phone);
+        member.updateInfoForAdmin(encodePw(pw), name, phone);
         service.save(member);
     }
 

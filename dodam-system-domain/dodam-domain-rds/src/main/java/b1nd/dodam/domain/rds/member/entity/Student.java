@@ -48,7 +48,7 @@ public class Student {
         this.number = number;
     }
 
-    public void setParentPhone(String parentPhone) {
+    public void updateParentPhone(String parentPhone) {
         if(StringUtils.isNotBlank(parentPhone)){
             this.parentPhone = parentPhone;
         }

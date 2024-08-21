@@ -79,7 +79,7 @@ public class Member extends BaseEntity {
 
     public void updateInfoForAdmin(String pw, String name, String phone){
         if(StringUtils.isNotBlank(pw)){
-            this.phone = pw;
+            this.pw = pw;
         }
         if(StringUtils.isNotBlank(name)){
             this.name = name;
