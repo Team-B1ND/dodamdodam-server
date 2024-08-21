@@ -12,6 +12,7 @@ import b1nd.dodam.restapi.member.application.data.req.*;
 import b1nd.dodam.restapi.support.data.Response;
 import b1nd.dodam.restapi.support.encrypt.Sha512PasswordEncoder;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -67,6 +68,7 @@ public class MemberCommandUseCase {
         }
     }
 
+    @CacheEvict(value = "members-cache", key = "'activeMembers'")
     public Response delete(String id) {
         Member member = getMemberById(id);
         throwExceptionWhenAuthStatusIsActive(member);
@@ -80,16 +82,19 @@ public class MemberCommandUseCase {
         }
     }
 
+    @CacheEvict(value = "members-cache", key = "'activeMembers'")
     public Response active(String id) {
         updateStatus(id, ActiveStatus.ACTIVE);
         return Response.ok("멤버 활성화 성공");
     }
 
+    @CacheEvict(value = "members-cache", key = "'activeMembers'")
     public Response deactivate(String id) {
         updateStatus(id, ActiveStatus.DEACTIVATE);
         return Response.ok("멤버 비활성화 성공");
     }
 
+    @CacheEvict(value = "members-cache", key = "'activeMembers'")
     public Response deactivate() {
         Member member = memberAuthenticationHolder.current();
         member.updateStatus(ActiveStatus.DEACTIVATE);
@@ -114,6 +119,7 @@ public class MemberCommandUseCase {
         return Response.noContent("비밀번호 수정 성공");
     }
 
+    @CacheEvict(value = "members-cache", key = "'activeMembers'")
     public Response updateMemberInfo(UpdateMemberInfoReq req) {
         Member member = memberAuthenticationHolder.current();
         member.updateInfo(req.name(), req.email(), req.phone(), req.profileImage());
@@ -121,6 +127,7 @@ public class MemberCommandUseCase {
         return Response.noContent("내 정보 수정 성공");
     }
 
+    @CacheEvict(value = "members-cache", key = "'activeMembers'")
     public Response updateStudentInfo(UpdateStudentInfoReq req) {
         Student student = getStudentByMember(memberAuthenticationHolder.current());
         student.updateInfo(req.grade(), req.room(), req.number());

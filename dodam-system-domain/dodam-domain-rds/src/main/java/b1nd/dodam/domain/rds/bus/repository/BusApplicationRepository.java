@@ -2,6 +2,7 @@ package b1nd.dodam.domain.rds.bus.repository;
 
 import b1nd.dodam.domain.rds.bus.entity.Bus;
 import b1nd.dodam.domain.rds.bus.entity.BusApplication;
+import b1nd.dodam.domain.rds.bus.exception.BusApplicationNotFoundException;
 import b1nd.dodam.domain.rds.member.entity.Student;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -19,5 +20,10 @@ public interface BusApplicationRepository extends JpaRepository<BusApplication, 
     Optional<BusApplication> findByStudentAndBus_LeaveTimeAfter(Student student, LocalDateTime now);
 
     boolean existsByStudentAndBus_LeaveTimeAfter(Student student, LocalDateTime now);
+
+    default BusApplication getByStudentAndBus_LeaveTimeAfter(Student student, LocalDateTime now) {
+        return findByStudentAndBus_LeaveTimeAfter(student, now)
+                .orElseThrow(BusApplicationNotFoundException::new);
+    }
 
 }

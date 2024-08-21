@@ -3,7 +3,7 @@ package b1nd.dodam.restapi.auth.infrastructure.security.filter;
 import b1nd.dodam.core.exception.global.GlobalExceptionCode;
 import b1nd.dodam.domain.rds.member.entity.Member;
 import b1nd.dodam.domain.rds.member.enumeration.MemberRole;
-import b1nd.dodam.domain.rds.member.service.MemberService;
+import b1nd.dodam.domain.rds.member.repository.BroadcastClubMemberRepository;
 import b1nd.dodam.restapi.auth.infrastructure.security.support.MemberAuthenticationHolder;
 import b1nd.dodam.restapi.support.exception.ErrorResponseSender;
 import jakarta.servlet.FilterChain;
@@ -23,7 +23,7 @@ import static org.springframework.http.HttpMethod.PATCH;
 @RequiredArgsConstructor
 public class BroadcastMemberFilter extends OncePerRequestFilter {
 
-    private final MemberService memberService;
+    private final BroadcastClubMemberRepository broadcastClubMemberRepository;
     private final MemberAuthenticationHolder memberAuthenticationHolder;
     private final ErrorResponseSender errorResponseSender;
 
@@ -84,7 +84,7 @@ public class BroadcastMemberFilter extends OncePerRequestFilter {
     }
 
     private boolean isNotBroadcastClubMemberAndAdmin(Member member) {
-        return !MemberRole.ADMIN.equals(member.getRole()) && !memberService.checkBroadcastClubMember(member);
+        return !MemberRole.ADMIN.equals(member.getRole()) && !broadcastClubMemberRepository.existsByMember(member);
     }
 
 }
