@@ -22,37 +22,37 @@ public class BusController {
     private final BusApplicationUseCase busApplicationUseCase;
 
     @PostMapping
-    public Response registerBus(@RequestBody @Valid BusReq req) {
+    public Response register(@RequestBody @Valid BusReq req) {
         return busUseCase.register(req);
     }
 
     @PatchMapping("/{id}")
-    public Response modifyBus(@PathVariable int id, @RequestBody BusReq req) {
+    public Response modify(@PathVariable int id, @RequestBody BusReq req) {
         return busUseCase.modify(id, req);
     }
 
     @DeleteMapping("/{id}")
-    public Response deleteBus(@PathVariable int id) {
+    public Response delete(@PathVariable int id) {
         return busUseCase.delete(id);
     }
 
     @GetMapping
-    public ResponseData<List<Bus>> getValidBuses() {
+    public ResponseData<List<Bus>> getValid() {
         return busUseCase.getValid();
     }
 
     @GetMapping("/list")
-    public ResponseData<List<BusRes>> getBuses(@RequestParam int page, @RequestParam int limit) {
-        return busUseCase.getBuses(page, limit);
+    public ResponseData<List<BusRes>> getAll(@RequestParam int page, @RequestParam int limit) {
+        return busUseCase.getAll(page, limit);
     }
 
     @GetMapping("/date")
-    public ResponseData<List<BusRes>> getBusesByDate(
+    public ResponseData<List<BusRes>> getByDate(
             @RequestParam int year,
             @RequestParam int month,
             @RequestParam int day
     ) {
-        return busUseCase.getBusesByDate(year, month, day);
+        return busUseCase.getByDate(year, month, day);
     }
 
     @GetMapping("/apply")
@@ -61,7 +61,7 @@ public class BusController {
     }
 
     @PostMapping("/apply/{id}")
-    public Response applyBus(@PathVariable int id) {
+    public Response apply(@PathVariable int id) {
         return busApplicationUseCase.apply(id);
     }
 
