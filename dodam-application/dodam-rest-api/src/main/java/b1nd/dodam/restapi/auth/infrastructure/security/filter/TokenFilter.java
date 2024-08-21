@@ -1,6 +1,6 @@
 package b1nd.dodam.restapi.auth.infrastructure.security.filter;
 
-import b1nd.dodam.domain.rds.member.service.MemberService;
+import b1nd.dodam.domain.rds.member.repository.MemberRepository;
 import b1nd.dodam.restapi.auth.infrastructure.security.MemberDetails;
 import b1nd.dodam.restapi.auth.infrastructure.security.support.TokenExtractor;
 import b1nd.dodam.token.client.DodamTokenClient;
@@ -23,8 +23,8 @@ public class TokenFilter extends OncePerRequestFilter {
 
     private static final String TOKEN_TYPE = "Bearer";
 
+    private final MemberRepository memberRepository;
     private final DodamTokenClient tokenClient;
-    private final MemberService memberService;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
@@ -48,7 +48,7 @@ public class TokenFilter extends OncePerRequestFilter {
 
     private MemberDetails getMemberDetails(String token) {
         String id = tokenClient.getMemberIdByToken(token);
-        return new MemberDetails(memberService.getMemberBy(id));
+        return new MemberDetails(memberRepository.getById(id));
     }
 
 }
