@@ -52,11 +52,10 @@ public class MemberQueryUseCase {
     }
 
     @Cacheable(value = "members-cache", key = "'activeMembers'")
-    public ResponseData<List<MemberInfoRes>> getAll() {
-        return ResponseData.ok("모든 멤버 정보 조회 성공", memberRepository.findByStatusOrderByStudent(ActiveStatus.ACTIVE)
-                .parallelStream()
+    public List<MemberInfoRes> getAll() {
+        return memberRepository.findByStatusOrderByStudent(ActiveStatus.ACTIVE).parallelStream()
                 .map(this::getMemberInfo)
-                .toList());
+                .toList();
     }
 
     private MemberInfoRes getMemberInfo(Member member) {
