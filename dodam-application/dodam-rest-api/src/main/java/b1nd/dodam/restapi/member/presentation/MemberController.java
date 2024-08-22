@@ -92,7 +92,7 @@ public class MemberController {
 
     @GetMapping("/all")
     public ResponseData<List<MemberInfoRes>> getAll() {
-        return queryUseCase.getAll();
+        return ResponseData.ok("모든 멤버 정보 조회 성공", queryUseCase.getAll());
     }
 
     @GetMapping("/check/broadcast-club-member")

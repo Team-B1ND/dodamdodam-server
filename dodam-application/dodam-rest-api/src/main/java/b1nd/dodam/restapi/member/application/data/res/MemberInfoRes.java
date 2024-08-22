@@ -10,6 +10,7 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
 public record MemberInfoRes(
@@ -28,7 +29,7 @@ public record MemberInfoRes(
         @JsonSerialize(using = LocalDateTimeSerializer.class)
         @JsonDeserialize(using = LocalDateTimeDeserializer.class)
         LocalDateTime modifiedAt
-) {
+) implements Serializable {
     public static MemberInfoRes of(Member member, Student student, Teacher teacher) {
         return new MemberInfoRes(
                 member.getId(),
