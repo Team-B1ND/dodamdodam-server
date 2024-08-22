@@ -4,7 +4,8 @@ import b1nd.dodam.domain.rds.member.entity.Member;
 import b1nd.dodam.domain.rds.member.entity.Student;
 import b1nd.dodam.domain.rds.member.entity.Teacher;
 import b1nd.dodam.domain.rds.member.enumeration.ActiveStatus;
-import b1nd.dodam.domain.rds.member.service.MemberService;
+import b1nd.dodam.domain.rds.member.repository.StudentRepository;
+import b1nd.dodam.domain.rds.member.repository.TeacherRepository;
 import b1nd.dodam.domain.rds.point.entity.Point;
 import b1nd.dodam.domain.rds.point.entity.PointReason;
 import b1nd.dodam.domain.rds.point.entity.PointScore;
@@ -33,14 +34,15 @@ public class PointUseCase {
 
     private final PointService pointService;
     private final PointReasonService pointReasonService;
+    private final StudentRepository studentRepository;
+    private final TeacherRepository teacherRepository;
     private final MemberAuthenticationHolder memberAuthenticationHolder;
-    private final MemberService memberService;
     private final ApplicationEventPublisher eventPublisher;
 
     @Transactional(rollbackFor = Exception.class)
     public Response issue(IssuePointReq req) {
         PointReason reason = pointReasonService.getBy(req.reasonId());
-        List<Student> students = memberService.getStudentsByIds(req.studentIds());
+        List<Student> students = studentRepository.getByIds(req.studentIds());
         savePoints(students, reason, req.issueAt());
         saveScores(students, reason);
         publishPointIssuedEvents(students, reason);
@@ -48,7 +50,7 @@ public class PointUseCase {
     }
 
     private void savePoints(List<Student> students, PointReason reason, LocalDate issueAt) {
-        Teacher teacher = memberService.getTeacherBy(memberAuthenticationHolder.current());
+        Teacher teacher = teacherRepository.getByMember(memberAuthenticationHolder.current());
         pointService.save(students.parallelStream()
                 .map(s -> Point.builder()
                         .student(s)
@@ -90,12 +92,12 @@ public class PointUseCase {
     }
 
     public ResponseData<List<PointRes>> getMyPoints(PointType type) {
-        Student student = memberService.getStudentBy(memberAuthenticationHolder.current());
+        Student student = studentRepository.getByMember(memberAuthenticationHolder.current());
         return ResponseData.ok("내 상벌점 조회 성공", getPointsBy(student, type));
     }
 
-    public ResponseData<List<PointRes>> getPointsByStudent(Integer studentId, PointType type) {
-        Student student = memberService.getStudentBy(studentId);
+    public ResponseData<List<PointRes>> getPointsByStudent(int studentId, PointType type) {
+        Student student = studentRepository.getById(studentId);
         return ResponseData.ok("학생별 상벌점 조회 성공", getPointsBy(student, type));
     }
 
@@ -106,7 +108,7 @@ public class PointUseCase {
     }
 
     public ResponseData<PointScoreRes> getMyScore(PointType type) {
-        Student student = memberService.getStudentBy(memberAuthenticationHolder.current());
+        Student student = studentRepository.getByMember(memberAuthenticationHolder.current());
         PointScore score = pointService.getScoreBy(student);
         PointScoreRes result = PointScoreRes.of(score, type);
         return ResponseData.ok("내 상벌점 점수 조회 성공", result);

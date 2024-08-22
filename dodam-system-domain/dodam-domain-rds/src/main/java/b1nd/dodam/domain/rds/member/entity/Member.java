@@ -2,6 +2,9 @@ package b1nd.dodam.domain.rds.member.entity;
 
 import b1nd.dodam.domain.rds.member.enumeration.ActiveStatus;
 import b1nd.dodam.domain.rds.member.enumeration.MemberRole;
+import b1nd.dodam.domain.rds.member.exception.ActiveMemberException;
+import b1nd.dodam.domain.rds.member.exception.DeactivateMemberException;
+import b1nd.dodam.domain.rds.member.exception.WrongPasswordException;
 import b1nd.dodam.domain.rds.support.entity.BaseEntity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
@@ -79,12 +82,22 @@ public class Member extends BaseEntity {
         this.status = status;
     }
 
-    public boolean isCorrectPw(String pw) {
-        return this.pw.equals(pw);
+    public void checkIfPasswordIsCorrect(String encodedPw) {
+        if(!this.pw.equals(encodedPw)) {
+            throw new WrongPasswordException();
+        }
     }
 
-    public boolean isActive() {
-        return ActiveStatus.ACTIVE == this.status;
+    public void checkIfStatusIsActive() {
+        if(this.status == ActiveStatus.ACTIVE) {
+            throw new ActiveMemberException();
+        }
+    }
+
+    public void checkIfStatusIsDeactivate() {
+        if(this.status == ActiveStatus.DEACTIVATE) {
+            throw new DeactivateMemberException();
+        }
     }
 
 }

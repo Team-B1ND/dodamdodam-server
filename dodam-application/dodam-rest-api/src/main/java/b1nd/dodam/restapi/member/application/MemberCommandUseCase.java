@@ -5,7 +5,10 @@ import b1nd.dodam.domain.rds.member.entity.Student;
 import b1nd.dodam.domain.rds.member.enumeration.ActiveStatus;
 import b1nd.dodam.domain.rds.member.event.StudentRegisteredEvent;
 import b1nd.dodam.domain.rds.member.exception.*;
-import b1nd.dodam.domain.rds.member.service.MemberService;
+import b1nd.dodam.domain.rds.member.repository.BroadcastClubMemberRepository;
+import b1nd.dodam.domain.rds.member.repository.MemberRepository;
+import b1nd.dodam.domain.rds.member.repository.StudentRepository;
+import b1nd.dodam.domain.rds.member.repository.TeacherRepository;
 import b1nd.dodam.restapi.auth.infrastructure.security.support.MemberAuthenticationHolder;
 import b1nd.dodam.restapi.member.application.data.req.*;
 import b1nd.dodam.restapi.support.data.Response;
@@ -21,14 +24,17 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class MemberCommandUseCase {
 
+    private final MemberRepository memberRepository;
+    private final StudentRepository studentRepository;
+    private final TeacherRepository teacherRepository;
+    private final BroadcastClubMemberRepository broadcastClubMemberRepository;
     private final MemberAuthenticationHolder memberAuthenticationHolder;
-    private final MemberService service;
     private final ApplicationEventPublisher eventPublisher;
 
     public Response join(JoinStudentReq req) {
-        throwExceptionWhenIdIsDuplicate(req.id());
-        Member member = service.save(req.mapToMember(encodePw(req.pw())));
-        Student student = service.save(req.mapToStudent(member));
+        checkIfIdIsDuplicate(req.id());
+        Member member = memberRepository.save(req.mapToMember(encodePw(req.pw())));
+        Student student = studentRepository.save(req.mapToStudent(member));
         publishStudentRegisteredEvent(student);
         return Response.created("학생 회원가입 성공");
     }
@@ -38,14 +44,14 @@ public class MemberCommandUseCase {
     }
 
     public Response join(JoinTeacherReq req) {
-        throwExceptionWhenIdIsDuplicate(req.id());
-        Member member = service.save(req.mapToMember(encodePw(req.pw())));
-        service.save(req.mapToTeacher(member));
+        checkIfIdIsDuplicate(req.id());
+        Member member = memberRepository.save(req.mapToMember(encodePw(req.pw())));
+        teacherRepository.save(req.mapToTeacher(member));
         return Response.created("선생님 회원가입 성공");
     }
 
-    private void throwExceptionWhenIdIsDuplicate(String id) {
-        if(service.checkIdDuplication(id)) {
+    private void checkIfIdIsDuplicate(String id) {
+        if(memberRepository.existsById(id)) {
             throw new MemberDuplicateException();
         }
     }
@@ -55,30 +61,24 @@ public class MemberCommandUseCase {
     }
 
     public Response apply(ApplyBroadcastClubMemberReq req) {
-        Member member = getMemberById(req.id());
-        throwExceptionWhenMemberIsBroadcastClubMember(member);
-        service.save(req.toEntity(member));
+        Member member = memberRepository.getById(req.id());
+        checkIfMemberIsAlreadyBroadcastClubMember(member);
+        broadcastClubMemberRepository.save(req.toEntity(member));
         return Response.created("방송부원 등록 성공");
     }
 
-    private void throwExceptionWhenMemberIsBroadcastClubMember(Member member) {
-        if(service.checkBroadcastClubMember(member)) {
+    private void checkIfMemberIsAlreadyBroadcastClubMember(Member member) {
+        if(broadcastClubMemberRepository.existsByMember(member)) {
             throw new BroadcastClubMemberDuplicateException();
         }
     }
 
     @CacheEvict(value = "members-cache", key = "'activeMembers'")
     public Response delete(String id) {
-        Member member = getMemberById(id);
-        throwExceptionWhenAuthStatusIsActive(member);
-        service.delete(member);
+        Member member = memberRepository.getById(id);
+        member.checkIfStatusIsActive();
+        memberRepository.delete(member);
         return Response.noContent("멤버 삭제 성공");
-    }
-
-    private void throwExceptionWhenAuthStatusIsActive(Member member) {
-        if(member.isActive()) {
-            throw new ActiveMemberException();
-        }
     }
 
     @CacheEvict(value = "members-cache", key = "'activeMembers'")
@@ -97,24 +97,19 @@ public class MemberCommandUseCase {
     public Response deactivate() {
         Member member = memberAuthenticationHolder.current();
         member.updateStatus(ActiveStatus.DEACTIVATE);
-        service.save(member);
+        memberRepository.save(member);
         return Response.ok("멤버 비활성화 성공");
     }
 
     private void updateStatus(String id, ActiveStatus status) {
-        Member member = getMemberById(id);
+        Member member = memberRepository.getById(id);
         member.updateStatus(status);
-    }
-
-    private Member getMemberById(String id) {
-        return service.getMemberById(id)
-                .orElseThrow(MemberNotFoundException::new);
     }
 
     public Response updatePassword(UpdatePasswordReq req) {
         Member member = memberAuthenticationHolder.current();
         member.updatePw(Sha512PasswordEncoder.encode(req.password()));
-        service.save(member);
+        memberRepository.save(member);
         return Response.noContent("비밀번호 수정 성공");
     }
 
@@ -122,20 +117,15 @@ public class MemberCommandUseCase {
     public Response updateMemberInfo(UpdateMemberInfoReq req) {
         Member member = memberAuthenticationHolder.current();
         member.updateInfo(req.name(), req.email(), req.phone(), req.profileImage());
-        service.save(member);
+        memberRepository.save(member);
         return Response.noContent("내 정보 수정 성공");
     }
 
     @CacheEvict(value = "members-cache", key = "'activeMembers'")
     public Response updateStudentInfo(UpdateStudentInfoReq req) {
-        Student student = getStudentByMember(memberAuthenticationHolder.current());
+        Student student = studentRepository.getByMember(memberAuthenticationHolder.current());
         student.updateInfo(req.grade(), req.room(), req.number());
         return Response.noContent("내 학생 정보 수정 성공");
-    }
-
-    private Student getStudentByMember(Member member) {
-        return service.getStudentByMember(member)
-                .orElseThrow(StudentNotFoundException::new);
     }
 
 }
