@@ -42,6 +42,12 @@ public class MemberQueryUseCase {
                 .toList());
     }
 
+    public ResponseData<List<MemberInfoRes>> getPendingMembers() {
+        return ResponseData.ok("가입 대기 멤버 조회 성공", service.getByStatus(ActiveStatus.PENDING).parallelStream()
+                .map(this::getMemberInfo)
+                .toList());
+    }
+
     public ResponseData<List<MemberInfoRes>> getAll() {
         return ResponseData.ok("모든 멤버 정보 조회 성공", service.getByStatus(ActiveStatus.ACTIVE).parallelStream()
                 .map(this::getMemberInfo)

@@ -100,6 +100,11 @@ public class MemberController {
         return queryUseCase.getDeactivateMembers();
     }
 
+    @GetMapping("/pending")
+    public ResponseData<List<MemberInfoRes>> getPendingMembers() {
+        return queryUseCase.getPendingMembers();
+    }
+
     @GetMapping("/all")
     public ResponseData<List<MemberInfoRes>> getAll() {
         return queryUseCase.getAll();
