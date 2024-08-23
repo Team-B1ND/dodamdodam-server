@@ -3,7 +3,7 @@ package b1nd.dodam.restapi.point.application;
 import b1nd.dodam.domain.rds.point.entity.PointReason;
 import b1nd.dodam.domain.rds.point.enumeration.PointType;
 import b1nd.dodam.domain.rds.point.exception.PointReasonDuplicateException;
-import b1nd.dodam.domain.rds.point.service.PointReasonService;
+import b1nd.dodam.domain.rds.point.repository.PointReasonRepository;
 import b1nd.dodam.restapi.point.application.data.req.ModifyPointReasonReq;
 import b1nd.dodam.restapi.point.application.data.req.RegisterPointReasonReq;
 import b1nd.dodam.restapi.point.application.data.res.PointReasonRes;
@@ -20,36 +20,36 @@ import java.util.List;
 @RequiredArgsConstructor
 public class PointReasonUseCase {
 
-    private final PointReasonService service;
+    private final PointReasonRepository repository;
 
     public Response register(RegisterPointReasonReq req) {
-        throwExceptionWhenReasonIsDuplicate(req.reason());
-        service.save(req.toEntity());
+        checkIfReasonIsDuplicate(req.reason());
+        repository.save(req.toEntity());
         return Response.created("상벌점 사유 등록 성공");
     }
 
-    private void throwExceptionWhenReasonIsDuplicate(String reason) {
-        if(service.checkReasonDuplication(reason)) {
+    private void checkIfReasonIsDuplicate(String reason) {
+        if(repository.existsByReason(reason)) {
             throw new PointReasonDuplicateException();
         }
     }
 
     //todo 해당 사유로 발급된 상벌점 처리 필요
     public Response delete(Integer id) {
-        PointReason reason = service.getBy(id);
-        service.delete(reason);
+        repository.deleteById(id);
         return Response.noContent("상벌점 사유 삭제 성공");
     }
 
-    public Response update(Integer id, ModifyPointReasonReq req) {
-        PointReason reason = service.getBy(id);
+    public Response update(int id, ModifyPointReasonReq req) {
+        PointReason reason = repository.getById(id);
         reason.update(req.score(), req.reason(), req.scoreType(), req.pointType());
         return Response.noContent("상벌점 사유 수정 성공");
     }
 
     @Transactional(readOnly = true)
     public ResponseData<List<PointReasonRes>> getBy(PointType type) {
-        List<PointReasonRes> result = service.getBy(type).parallelStream()
+        List<PointReasonRes> result = repository.findByPointType(type)
+                .parallelStream()
                 .map(PointReasonRes::of)
                 .toList();
         return ResponseData.ok("상벌점 사유 조회 성공", result);

@@ -6,4 +6,4 @@ import jakarta.validation.constraints.NotNull;
 import java.time.LocalDate;
 import java.util.List;
 
-public record IssuePointReq(@NotNull LocalDate issueAt, @NotNull Integer reasonId, @NotEmpty List<Integer> studentIds) {}
+public record IssuePointReq(@NotNull LocalDate issueAt, @NotNull int reasonId, @NotEmpty List<Integer> studentIds) {}
