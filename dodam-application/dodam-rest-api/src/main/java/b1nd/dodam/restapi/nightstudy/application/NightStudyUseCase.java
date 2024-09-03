@@ -3,7 +3,8 @@ package b1nd.dodam.restapi.nightstudy.application;
 import b1nd.dodam.core.util.ZonedDateTimeUtil;
 import b1nd.dodam.domain.rds.member.entity.Student;
 import b1nd.dodam.domain.rds.member.entity.Teacher;
-import b1nd.dodam.domain.rds.member.service.MemberService;
+import b1nd.dodam.domain.rds.member.repository.StudentRepository;
+import b1nd.dodam.domain.rds.member.repository.TeacherRepository;
 import b1nd.dodam.domain.rds.nightstudy.entity.NightStudy;
 import b1nd.dodam.domain.rds.nightstudy.exception.NightStudyDuplicateException;
 import b1nd.dodam.domain.rds.nightstudy.exception.NotNightStudyApplicantException;
@@ -29,11 +30,12 @@ import java.util.Optional;
 public class NightStudyUseCase {
 
     private final NightStudyService nightStudyService;
+    private final StudentRepository studentRepository;
+    private final TeacherRepository teacherRepository;
     private final MemberAuthenticationHolder memberAuthenticationHolder;
-    public final MemberService memberService;
 
     public Response apply(ApplyNightStudyReq req) {
-        Student student = memberService.getStudentBy(memberAuthenticationHolder.current());
+        Student student = studentRepository.getByMember(memberAuthenticationHolder.current());
         throwExceptionWhenDurationIsDuplicate(student, req.startAt(), req.endAt());
         nightStudyService.save(req.toEntity(student));
         return Response.created("심야자습 신청 성공");
@@ -46,7 +48,7 @@ public class NightStudyUseCase {
     }
 
     public Response cancel(Long id) {
-        Student student = memberService.getStudentBy(memberAuthenticationHolder.current());
+        Student student = studentRepository.getByMember(memberAuthenticationHolder.current());
         NightStudy nightStudy = nightStudyService.getBy(id);
         throwExceptionWhenStudentIsNotApplicant(nightStudy, student);
         nightStudyService.delete(nightStudy);
@@ -75,14 +77,14 @@ public class NightStudyUseCase {
     }
 
     private void modifyStatus(Long id, ApprovalStatus status, String rejectReason) {
-        Teacher teacher = memberService.getTeacherBy(memberAuthenticationHolder.current());
+        Teacher teacher = teacherRepository.getByMember(memberAuthenticationHolder.current());
         NightStudy nightStudy = nightStudyService.getBy(id);
         nightStudy.modifyStatus(teacher, status, rejectReason);
     }
 
     @Transactional(readOnly = true)
     public ResponseData<List<NightStudyRes>> getMy() {
-        Student student = memberService.getStudentBy(memberAuthenticationHolder.current());
+        Student student = studentRepository.getByMember(memberAuthenticationHolder.current());
         LocalDate now = ZonedDateTimeUtil.nowToLocalDate();
         List<NightStudyRes> result = NightStudyRes.of(nightStudyService.getMy(student, now));
         return ResponseData.ok("내 심야자습 조회 성공", result);

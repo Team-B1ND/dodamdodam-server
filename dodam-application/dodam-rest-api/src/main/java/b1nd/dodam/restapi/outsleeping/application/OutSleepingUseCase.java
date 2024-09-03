@@ -2,7 +2,8 @@ package b1nd.dodam.restapi.outsleeping.application;
 
 import b1nd.dodam.core.util.ZonedDateTimeUtil;
 import b1nd.dodam.domain.rds.member.entity.Student;
-import b1nd.dodam.domain.rds.member.service.MemberService;
+import b1nd.dodam.domain.rds.member.repository.StudentRepository;
+import b1nd.dodam.domain.rds.member.repository.TeacherRepository;
 import b1nd.dodam.domain.rds.outsleeping.entity.OutSleeping;
 import b1nd.dodam.domain.rds.outsleeping.exception.NotOutSleepingApplicantException;
 import b1nd.dodam.domain.rds.outsleeping.service.OutSleepingService;
@@ -27,11 +28,12 @@ import java.util.Optional;
 public class OutSleepingUseCase {
 
     private final OutSleepingService outSleepingService;
+    private final StudentRepository studentRepository;
+    private final TeacherRepository teacherRepository;
     private final MemberAuthenticationHolder memberAuthenticationHolder;
-    private final MemberService memberService;
 
     public Response apply(ApplyOutSleepingReq req) {
-        OutSleeping outSleeping = req.toEntity(memberService.getStudentBy(memberAuthenticationHolder.current()));
+        OutSleeping outSleeping = req.toEntity(studentRepository.getByMember(memberAuthenticationHolder.current()));
         outSleepingService.save(outSleeping);
         return Response.created("외박 신청 성공");
     }
@@ -45,7 +47,7 @@ public class OutSleepingUseCase {
     }
 
     public void throwExceptionWhenStudentIsNotApplicant(OutSleeping o) {
-        if(o.isNotApplicant(memberService.getStudentBy(memberAuthenticationHolder.current()))) {
+        if(o.isNotApplicant(studentRepository.getByMember(memberAuthenticationHolder.current()))) {
             throw new NotOutSleepingApplicantException();
         }
     }
@@ -67,7 +69,7 @@ public class OutSleepingUseCase {
 
     private void modifyStatus(Long id, ApprovalStatus status, String rejectReason) {
         OutSleeping outSleeping = outSleepingService.getById(id);
-        outSleeping.modifyStatus(memberService.getTeacherBy(memberAuthenticationHolder.current()), status, rejectReason);
+        outSleeping.modifyStatus(teacherRepository.getByMember(memberAuthenticationHolder.current()), status, rejectReason);
     }
 
     @Transactional(readOnly = true)
@@ -83,7 +85,7 @@ public class OutSleepingUseCase {
 
     @Transactional(readOnly = true)
     public ResponseData<List<OutSleepingRes>> getMy() {
-        Student student = memberService.getStudentBy(memberAuthenticationHolder.current());
+        Student student = studentRepository.getByMember(memberAuthenticationHolder.current());
         LocalDate now = ZonedDateTimeUtil.nowToLocalDate();
         return ResponseData.ok("내 외박 조회 성공", OutSleepingRes.of(outSleepingService.getByStudent(student, now)));
     }

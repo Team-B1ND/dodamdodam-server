@@ -3,7 +3,7 @@ package b1nd.dodam.restapi.point.application;
 import b1nd.dodam.domain.rds.member.event.StudentRegisteredEvent;
 import b1nd.dodam.domain.rds.point.entity.PointScore;
 import b1nd.dodam.domain.rds.point.event.PointSMSEvent;
-import b1nd.dodam.domain.rds.point.service.PointService;
+import b1nd.dodam.domain.rds.point.repository.PointScoreRepository;
 import b1nd.dodam.gabia.client.GabiaSMSClient;
 import b1nd.dodam.gabia.client.data.req.SendSmsReq;
 import lombok.RequiredArgsConstructor;
@@ -17,14 +17,14 @@ import org.springframework.transaction.event.TransactionalEventListener;
 @RequiredArgsConstructor
 public class PointEventHandler {
 
-    private final PointService service;
+    private final PointScoreRepository pointScoreRepository;
     private final GabiaSMSClient gabiaSMSClient;
 
     @Async
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     @TransactionalEventListener
     public void listen(StudentRegisteredEvent e) {
-        service.save(PointScore.builder()
+        pointScoreRepository.save(PointScore.builder()
                 .student(e.student())
                 .build()
         );

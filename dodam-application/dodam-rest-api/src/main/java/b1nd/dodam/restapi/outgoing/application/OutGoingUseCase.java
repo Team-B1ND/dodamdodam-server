@@ -2,7 +2,8 @@ package b1nd.dodam.restapi.outgoing.application;
 
 import b1nd.dodam.core.util.ZonedDateTimeUtil;
 import b1nd.dodam.domain.rds.member.entity.Student;
-import b1nd.dodam.domain.rds.member.service.MemberService;
+import b1nd.dodam.domain.rds.member.repository.StudentRepository;
+import b1nd.dodam.domain.rds.member.repository.TeacherRepository;
 import b1nd.dodam.domain.rds.outgoing.entity.OutGoing;
 import b1nd.dodam.domain.rds.outgoing.exception.NotOutGoingApplicantException;
 import b1nd.dodam.domain.rds.outgoing.service.OutGoingService;
@@ -29,11 +30,12 @@ import java.util.Optional;
 public class OutGoingUseCase {
 
     private final OutGoingService outGoingService;
+    private final StudentRepository studentRepository;
+    private final TeacherRepository teacherRepository;
     private final MemberAuthenticationHolder memberAuthenticationHolder;
-    private final MemberService memberService;
 
     public Response apply(ApplyOutGoingReq req) {
-        OutGoing outGoing = req.toEntity(memberService.getStudentBy(memberAuthenticationHolder.current()));
+        OutGoing outGoing = req.toEntity(studentRepository.getByMember(memberAuthenticationHolder.current()));
         outGoingService.save(outGoing);
         return Response.created("외출 신청 성공");
     }
@@ -47,7 +49,7 @@ public class OutGoingUseCase {
     }
 
     private void throwExceptionWhenStudentIsNotApplicant(OutGoing outGoing) {
-        if(outGoing.isNotApplicant(memberService.getStudentBy(memberAuthenticationHolder.current()))) {
+        if(outGoing.isNotApplicant(studentRepository.getByMember(memberAuthenticationHolder.current()))) {
             throw new NotOutGoingApplicantException();
         }
     }
@@ -69,7 +71,7 @@ public class OutGoingUseCase {
 
     private void modifyStatus(Long id, ApprovalStatus status, String rejectReason) {
         OutGoing outGoing = outGoingService.getById(id);
-        outGoing.modifyStatus(memberService.getTeacherBy(memberAuthenticationHolder.current()), status, rejectReason);
+        outGoing.modifyStatus(teacherRepository.getByMember(memberAuthenticationHolder.current()), status, rejectReason);
     }
 
     @Transactional(readOnly = true)
@@ -81,7 +83,7 @@ public class OutGoingUseCase {
 
     @Transactional(readOnly = true)
     public ResponseData<List<OutGoingRes>> getMy() {
-        Student student = memberService.getStudentBy(memberAuthenticationHolder.current());
+        Student student = studentRepository.getByMember(memberAuthenticationHolder.current());
         LocalDateTime now = ZonedDateTimeUtil.nowToLocalDateTime();
         return ResponseData.ok("내 외출 조회 성공", OutGoingRes.of(outGoingService.getByStudent(student, now)));
     }

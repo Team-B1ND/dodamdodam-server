@@ -1,8 +1,6 @@
 package b1nd.dodam.restapi.auth.application;
 
 import b1nd.dodam.domain.rds.member.entity.Member;
-import b1nd.dodam.domain.rds.member.exception.DeactivateMemberException;
-import b1nd.dodam.domain.rds.member.exception.WrongPasswordException;
 import b1nd.dodam.domain.rds.member.repository.MemberRepository;
 import b1nd.dodam.restapi.auth.application.data.req.LoginReq;
 import b1nd.dodam.restapi.support.data.ResponseData;
@@ -35,12 +33,8 @@ public class AuthUseCase {
 
     public CompletableFuture<ResponseData<LoginRes>> login(LoginReq req) {
         Member member = memberRepository.getById(req.id());
-        if(!member.isCorrectPw(Sha512PasswordEncoder.encode(req.pw()))) {
-            throw new WrongPasswordException();
-        }
-        if(!member.isActive()) {
-            throw new DeactivateMemberException();
-        }
+        member.checkIfPasswordIsCorrect(Sha512PasswordEncoder.encode(req.pw()));
+        member.checkIfStatusIsDeactivate();
         return CompletableFuture.supplyAsync(() -> member, executor)
                 .thenCompose(m -> tokenClient.issueTokens(member.getId(), member.getRole().getNumber()))
                 .thenApply(tokens -> new LoginRes(member, tokens.accessToken(), tokens.refreshToken()))

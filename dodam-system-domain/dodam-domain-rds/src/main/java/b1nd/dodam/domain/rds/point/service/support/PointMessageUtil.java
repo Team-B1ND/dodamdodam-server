@@ -1,4 +1,4 @@
-package b1nd.dodam.restapi.point.application.support;
+package b1nd.dodam.domain.rds.point.service.support;
 
 import b1nd.dodam.domain.rds.member.entity.Member;
 import b1nd.dodam.domain.rds.point.entity.PointReason;
@@ -7,9 +7,9 @@ import b1nd.dodam.domain.rds.point.enumeration.ScoreType;
 import b1nd.dodam.domain.rds.point.event.PointCanceledEvent;
 import b1nd.dodam.domain.rds.point.event.PointIssuedEvent;
 
-public final class PointMessageMaker {
+public final class PointMessageUtil {
 
-    private PointMessageMaker() {}
+    private PointMessageUtil() {}
 
     public static PointIssuedEvent createIssuedEvent(Member member, PointReason reason) {
         return new PointIssuedEvent(

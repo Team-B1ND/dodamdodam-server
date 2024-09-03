@@ -30,16 +30,14 @@ public class Student {
     @NotNull
     private int number;
 
-    @NotNull
     private String parentPhone;
 
     @Builder
-    public Student(Member member, int grade, int room, int number, String parentPhone) {
+    public Student(Member member, int grade, int room, int number) {
         this.member = member;
         this.grade = grade;
         this.room = room;
         this.number = number;
-        this.parentPhone = parentPhone;
     }
 
     public void updateInfo(int grade, int room, int number) {
