@@ -1,5 +1,8 @@
 package b1nd.dodam.domain.rds.bus.entity;
 
+import b1nd.dodam.core.util.ZonedDateTimeUtil;
+import b1nd.dodam.domain.rds.bus.exception.BusFullOfSeatException;
+import b1nd.dodam.domain.rds.bus.exception.BusPeriodExpiredException;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
@@ -52,6 +55,7 @@ public class Bus {
     }
 
     public void updateBus(String busName, String description, LocalDateTime leaveTime, LocalTime timeRequired, int peopleLimit) {
+        checkIfTheBusHasDeparted();
         if(Objects.nonNull(busName)) {
             this.busName = busName;
         }
@@ -68,19 +72,27 @@ public class Bus {
     }
 
     public void increaseApplyCount() {
+        checkIfTheBusHasDeparted();
+        checkIfThereAreSeatsAvailable();
         this.applyCount += 1;
     }
 
     public void decreaseApplyCount() {
-        this.applyCount = Math.max(0, applyCount - 1);
+        checkIfTheBusHasDeparted();
+        checkIfThereAreSeatsAvailable();
+        this.applyCount -= 1;
     }
 
-    public boolean isFullOfSeat() {
-        return peopleLimit == applyCount;
+    private void checkIfTheBusHasDeparted() {
+        if(leaveTime.isBefore(ZonedDateTimeUtil.nowToLocalDateTime())) {
+            throw new BusPeriodExpiredException();
+        }
     }
 
-    public boolean isExpired(LocalDateTime now) {
-        return leaveTime.isBefore(now);
+    private void checkIfThereAreSeatsAvailable() {
+        if(applyCount == peopleLimit) {
+            throw new BusFullOfSeatException();
+        }
     }
 
 }

@@ -16,6 +16,11 @@ public interface StudentRepository extends JpaRepository<Student, Integer> {
     @EntityGraph(attributePaths = {"member"})
     Optional<Student> findByMember(Member member);
 
+    default Student getById(int id) {
+        return findById(id)
+                .orElseThrow(StudentNotFoundException::new);
+    }
+
     default Student getByMember(Member member) {
         return findByMember(member)
                 .orElseThrow(StudentNotFoundException::new);

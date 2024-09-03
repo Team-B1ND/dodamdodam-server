@@ -70,16 +70,6 @@ public class MemberController {
         return commandUseCase.updateStudentInfo(req);
     }
 
-    @PatchMapping("/student/info/{id}")
-    public Response updateStudentForAdmin(@PathVariable String id, @RequestBody UpdateStudentForAdminReq req){
-        return commandUseCase.updateStudentForAdmin(id, req);
-    }
-
-    @PatchMapping("/teacher/info/{id}")
-    public Response updateTeacherForAdmin(@PathVariable String id, @RequestBody UpdateTeacherForAdminReq req){
-        return commandUseCase.updateTeacherForAdmin(id, req);
-    }
-
     @GetMapping("/{id}")
     public ResponseData<MemberInfoRes> getById(@PathVariable String id) {
         return queryUseCase.getById(id);
@@ -100,14 +90,9 @@ public class MemberController {
         return queryUseCase.getDeactivateMembers();
     }
 
-    @GetMapping("/pending")
-    public ResponseData<List<MemberInfoRes>> getPendingMembers() {
-        return queryUseCase.getPendingMembers();
-    }
-
     @GetMapping("/all")
     public ResponseData<List<MemberInfoRes>> getAll() {
-        return queryUseCase.getAll();
+        return ResponseData.ok("모든 멤버 정보 조회 성공", queryUseCase.getAll());
     }
 
     @GetMapping("/check/broadcast-club-member")

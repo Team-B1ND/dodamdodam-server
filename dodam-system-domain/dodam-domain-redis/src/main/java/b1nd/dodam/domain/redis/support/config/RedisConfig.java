@@ -58,6 +58,8 @@ public class RedisConfig {
         cacheConfigurations.put("meal-month", RedisCacheConfiguration.defaultCacheConfig()
                 .entryTtl(Duration.ofSeconds(MONTH_EXPIRE_SECONDS)));
 
+        cacheConfigurations.put("members-cache", RedisCacheConfiguration.defaultCacheConfig());
+
         return RedisCacheManager.RedisCacheManagerBuilder
                 .fromConnectionFactory(redisConnectionFactory())
                 .cacheDefaults(redisCacheConfiguration)
