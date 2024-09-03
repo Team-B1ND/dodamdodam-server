@@ -2,7 +2,9 @@ package b1nd.dodam.restapi.member.application;
 
 import b1nd.dodam.domain.rds.member.entity.Member;
 import b1nd.dodam.domain.rds.member.entity.Student;
+import b1nd.dodam.domain.rds.member.entity.Teacher;
 import b1nd.dodam.domain.rds.member.enumeration.ActiveStatus;
+import b1nd.dodam.domain.rds.member.enumeration.MemberRole;
 import b1nd.dodam.domain.rds.member.event.StudentRegisteredEvent;
 import b1nd.dodam.domain.rds.member.exception.*;
 import b1nd.dodam.domain.rds.member.repository.BroadcastClubMemberRepository;
@@ -126,6 +128,28 @@ public class MemberCommandUseCase {
         Student student = studentRepository.getByMember(memberAuthenticationHolder.current());
         student.updateInfo(req.grade(), req.room(), req.number());
         return Response.noContent("내 학생 정보 수정 성공");
+    }
+
+    public Response updateStudentParentPhone(String id, UpdateStudentForAdminReq req){
+        Member current = memberAuthenticationHolder.current();
+        if (!(current.getRole() == MemberRole.TEACHER || current.getRole() == MemberRole.ADMIN)){
+            throw new UnauthorizedException();
+        }
+        Member member = memberRepository.getById(id);
+        Student student = studentRepository.getByMember(member);
+        student.updateParentPhone(req.parentPhone());
+        return Response.noContent("학생 정보 수정 성공");
+    }
+
+    public Response updateTeacherForAdmin(String id, UpdateTeacherForAdminReq req){
+        Member current = memberAuthenticationHolder.current();
+        if (!(current.getRole() == MemberRole.TEACHER)){
+            throw new UnauthorizedException();
+        }
+        Member member = memberRepository.getById(id);
+        Teacher teacher = teacherRepository.getByMember(member);
+        teacher.updateInfo(req.tel(), req.position());
+        return Response.noContent("선생 정보 수정 성공");
     }
 
 }

@@ -6,6 +6,7 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
 
 @Getter
 @Entity(name = "student")
@@ -29,6 +30,8 @@ public class Student {
     @NotNull
     private int number;
 
+    private String parentPhone;
+
     @Builder
     public Student(Member member, int grade, int room, int number) {
         this.member = member;
@@ -43,4 +46,9 @@ public class Student {
         this.number = number;
     }
 
+    public void updateParentPhone(String parentPhone) {
+        if(StringUtils.isNotBlank(parentPhone)){
+            this.parentPhone = parentPhone;
+        }
+    }
 }
