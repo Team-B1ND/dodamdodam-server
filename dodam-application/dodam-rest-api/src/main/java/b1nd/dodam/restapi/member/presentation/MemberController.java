@@ -42,7 +42,7 @@ public class MemberController {
     }
 
     @PatchMapping("/status/{id}")
-    public Response updateStatus(@PathVariable("id") String id, @RequestParam ActiveStatus status){
+    public Response updateStatus(@PathVariable String id, @RequestParam ActiveStatus status){
         return commandUseCase.status(id, status);
     }
 
