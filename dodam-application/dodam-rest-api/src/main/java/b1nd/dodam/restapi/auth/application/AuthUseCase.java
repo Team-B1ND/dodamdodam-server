@@ -34,7 +34,7 @@ public class AuthUseCase {
     public CompletableFuture<ResponseData<LoginRes>> login(LoginReq req) {
         Member member = memberRepository.getById(req.id());
         member.checkIfPasswordIsCorrect(Sha512PasswordEncoder.encode(req.pw()));
-        member.checkIfStatusIsDeactivate();
+        member.checkIfStatusIncorrect();
         return CompletableFuture.supplyAsync(() -> member, executor)
                 .thenCompose(m -> tokenClient.issueTokens(member.getId(), member.getRole().getNumber()))
                 .thenApply(tokens -> new LoginRes(member, tokens.accessToken(), tokens.refreshToken()))

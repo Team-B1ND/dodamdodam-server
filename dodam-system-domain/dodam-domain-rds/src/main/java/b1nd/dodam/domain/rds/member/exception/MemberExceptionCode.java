@@ -7,7 +7,7 @@ import lombok.RequiredArgsConstructor;
 public enum MemberExceptionCode implements ExceptionCode {
 
     WRONG_PASSWORD(401, "잘못된 비밀번호"),
-    DEACTIVATE_MEMBER(403, "비활성화된 멤버"),
+    MEMBER_NOT_ACTIVE(403, "활성화되지 않은 멤버"),
     ACTIVE_MEMBER(403, "활성화된 멤버"),
     MEMBER_NOT_FOUND(404, "없는 멤버"),
     STUDENT_NOT_FOUND(404, "없는 학생"),

@@ -2,9 +2,7 @@ package b1nd.dodam.domain.rds.member.entity;
 
 import b1nd.dodam.domain.rds.member.enumeration.ActiveStatus;
 import b1nd.dodam.domain.rds.member.enumeration.MemberRole;
-import b1nd.dodam.domain.rds.member.exception.ActiveMemberException;
-import b1nd.dodam.domain.rds.member.exception.DeactivateMemberException;
-import b1nd.dodam.domain.rds.member.exception.WrongPasswordException;
+import b1nd.dodam.domain.rds.member.exception.*;
 import b1nd.dodam.domain.rds.support.entity.BaseEntity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Entity;
@@ -80,18 +78,6 @@ public class Member extends BaseEntity {
         }
     }
 
-    public void updateInfoForAdmin(String pw, String name, String phone){
-        if(StringUtils.isNotBlank(pw)){
-            this.pw = pw;
-        }
-        if(StringUtils.isNotBlank(name)){
-            this.name = name;
-        }
-        if(StringUtils.isNotBlank(phone)){
-            this.phone = phone;
-        }
-    }
-
     public void updateStatus(ActiveStatus status) {
         this.status = status;
     }
@@ -108,9 +94,9 @@ public class Member extends BaseEntity {
         }
     }
 
-    public void checkIfStatusIsDeactivate() {
-        if(this.status == ActiveStatus.DEACTIVATE) {
-            throw new DeactivateMemberException();
+    public void checkIfStatusIncorrect() {
+        if(!(this.status == ActiveStatus.ACTIVE)) {
+            throw new MemberNotActiveException();
         }
     }
 
