@@ -1,6 +1,6 @@
 package b1nd.dodam.domain.rds.point.service.support;
 
-import b1nd.dodam.domain.rds.member.entity.Member;
+import b1nd.dodam.domain.rds.member.entity.Student;
 import b1nd.dodam.domain.rds.point.entity.PointReason;
 import b1nd.dodam.domain.rds.point.enumeration.PointType;
 import b1nd.dodam.domain.rds.point.enumeration.ScoreType;
@@ -11,15 +11,15 @@ public final class PointMessageUtil {
 
     private PointMessageUtil() {}
 
-    public static PointIssuedEvent createIssuedEvent(Member member, PointReason reason) {
+    public static PointIssuedEvent createIssuedEvent(Student student, PointReason reason) {
         return new PointIssuedEvent(
-                createMessage(reason, member.getName(), "발급"), member.getPhone()
+                createMessage(reason, student.getMember().getName(), "발급"), student.getMember().getPhone(), student.getParentPhone()
         );
     }
 
-    public static PointCanceledEvent createCanceledEvent(Member member, PointReason reason) {
+    public static PointCanceledEvent createCanceledEvent(Student student, PointReason reason) {
         return new PointCanceledEvent(
-                createMessage(reason, member.getName(), "취소"), member.getPhone()
+                createMessage(reason, student.getMember().getName(), "취소"), student.getMember().getPhone(), student.getParentPhone()
         );
     }
 

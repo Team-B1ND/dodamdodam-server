@@ -56,7 +56,7 @@ public class PointService {
 
     private void publishPointIssuedEvents(List<Student> students, PointReason reason) {
         students.forEach(s -> eventPublisher.publishEvent(
-                PointMessageUtil.createIssuedEvent(s.getMember(), reason)
+                PointMessageUtil.createIssuedEvent(s, reason)
         ));
     }
 
@@ -64,7 +64,7 @@ public class PointService {
         Point point = pointRepository.getById(pointId);
         cancelPointScore(point.getStudent(), point.getReason());
         pointRepository.delete(point);
-        publishPointCanceledEvent(point.getReason(), point.getStudent().getMember());
+        publishPointCanceledEvent(point.getReason(), point.getStudent());
     }
 
     private void cancelPointScore(Student student, PointReason reason) {
@@ -72,8 +72,8 @@ public class PointService {
         score.cancel(reason);
     }
 
-    private void publishPointCanceledEvent(PointReason reason, Member member) {
-        eventPublisher.publishEvent(PointMessageUtil.createCanceledEvent(member, reason));
+    private void publishPointCanceledEvent(PointReason reason, Student student) {
+        eventPublisher.publishEvent(PointMessageUtil.createCanceledEvent(student, reason));
     }
 
     public List<Point> getPointsByStudentAndType(Student student, PointType type) {
