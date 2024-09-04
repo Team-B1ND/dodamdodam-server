@@ -27,7 +27,7 @@ public record JoinStudentReq(@NotEmpty String id, @NotEmpty String pw, @NotEmpty
                 .name(name)
                 .role(MemberRole.STUDENT)
                 .phone(phone)
-                .status(ActiveStatus.DEACTIVATE)
+                .status(ActiveStatus.PENDING)
                 .build();
     }
 }

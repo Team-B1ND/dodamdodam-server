@@ -1,5 +1,6 @@
 package b1nd.dodam.restapi.member.presentation;
 
+import b1nd.dodam.domain.rds.member.enumeration.ActiveStatus;
 import b1nd.dodam.restapi.member.application.MemberCommandUseCase;
 import b1nd.dodam.restapi.member.application.MemberQueryUseCase;
 import b1nd.dodam.restapi.member.application.data.req.*;
@@ -38,6 +39,11 @@ public class MemberController {
     @DeleteMapping("/{id}")
     public Response delete(@PathVariable String id) {
         return commandUseCase.delete(id);
+    }
+
+    @PatchMapping("/status/{id}")
+    public Response updateStatus(@PathVariable String id, @RequestParam ActiveStatus status){
+        return commandUseCase.status(id, status);
     }
 
     @PatchMapping("/active/{id}")
@@ -95,9 +101,19 @@ public class MemberController {
         return queryUseCase.searchByName(name);
     }
 
+    @GetMapping("/status")
+    public ResponseData<List<MemberInfoRes>> getMembersByStatus(@RequestParam ActiveStatus status) {
+        return queryUseCase.getMembersByStatus(status);
+    }
+
     @GetMapping("/deactivate")
     public ResponseData<List<MemberInfoRes>> getDeactivateMembers() {
         return queryUseCase.getDeactivateMembers();
+    }
+
+    @GetMapping("/pending")
+    public ResponseData<List<MemberInfoRes>> getPendingMembers(){
+        return queryUseCase.getPendingMembers();
     }
 
     @GetMapping("/all")

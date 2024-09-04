@@ -84,6 +84,13 @@ public class MemberCommandUseCase {
     }
 
     @CacheEvict(value = "members-cache", key = "'activeMembers'")
+    public Response status(String id, ActiveStatus status) {
+        Member member = memberRepository.getById(id);
+        member.updateStatus(status);
+        return Response.ok("멤버 상태변경 성공");
+    }
+
+    @CacheEvict(value = "members-cache", key = "'activeMembers'")
     public Response active(String id) {
         updateStatus(id, ActiveStatus.ACTIVE);
         return Response.ok("멤버 활성화 성공");
@@ -98,7 +105,7 @@ public class MemberCommandUseCase {
     @CacheEvict(value = "members-cache", key = "'activeMembers'")
     public Response deactivate() {
         Member member = memberAuthenticationHolder.current();
-        member.updateStatus(ActiveStatus.DEACTIVATE);
+        member.updateStatus(ActiveStatus.DEACTIVATED);
         memberRepository.save(member);
         return Response.ok("멤버 비활성화 성공");
     }
@@ -130,22 +137,16 @@ public class MemberCommandUseCase {
         return Response.noContent("내 학생 정보 수정 성공");
     }
 
+    @CacheEvict(value = "members-cache", key = "'activeMembers'")
     public Response updateStudentParentPhone(String id, UpdateStudentForAdminReq req){
-        Member current = memberAuthenticationHolder.current();
-        if (!(current.getRole() == MemberRole.TEACHER || current.getRole() == MemberRole.ADMIN)){
-            throw new UnauthorizedException();
-        }
         Member member = memberRepository.getById(id);
         Student student = studentRepository.getByMember(member);
         student.updateParentPhone(req.parentPhone());
         return Response.noContent("학생 정보 수정 성공");
     }
 
+    @CacheEvict(value = "members-cache", key = "'activeMembers'")
     public Response updateTeacherForAdmin(String id, UpdateTeacherForAdminReq req){
-        Member current = memberAuthenticationHolder.current();
-        if (!(current.getRole() == MemberRole.TEACHER)){
-            throw new UnauthorizedException();
-        }
         Member member = memberRepository.getById(id);
         Teacher teacher = teacherRepository.getByMember(member);
         teacher.updateInfo(req.tel(), req.position());
