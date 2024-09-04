@@ -101,6 +101,11 @@ public class MemberController {
         return queryUseCase.searchByName(name);
     }
 
+    @GetMapping("/status")
+    public ResponseData<List<MemberInfoRes>> getMembersByStatus(@RequestParam ActiveStatus status) {
+        return queryUseCase.getMembersByStatus(status);
+    }
+
     @GetMapping("/deactivate")
     public ResponseData<List<MemberInfoRes>> getDeactivateMembers() {
         return queryUseCase.getDeactivateMembers();
