@@ -11,6 +11,7 @@ import org.springframework.util.MultiValueMap;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 @Component
@@ -26,7 +27,6 @@ public class GabiaSMSClient {
     public void send(SendSmsReq req) {
         final String url;
         final MultiValueMap<String, String> formData;
-
         if(isLMS(req.content().getBytes())) {
             url = gabiaProperties.getLmsUrl();
             formData = createFormData(req);
