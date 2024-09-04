@@ -1,5 +1,6 @@
 package b1nd.dodam.restapi.member.presentation;
 
+import b1nd.dodam.domain.rds.member.enumeration.ActiveStatus;
 import b1nd.dodam.restapi.member.application.MemberCommandUseCase;
 import b1nd.dodam.restapi.member.application.MemberQueryUseCase;
 import b1nd.dodam.restapi.member.application.data.req.*;
@@ -40,6 +41,11 @@ public class MemberController {
         return commandUseCase.delete(id);
     }
 
+    @PatchMapping("/status/{id}")
+    public Response updateStatus(@PathVariable("id") String id, @RequestParam ActiveStatus status){
+        return commandUseCase.status(id, status);
+    }
+
     @PatchMapping("/active/{id}")
     public Response active(@PathVariable("id") String id) {
         return commandUseCase.active(id);
@@ -70,6 +76,16 @@ public class MemberController {
         return commandUseCase.updateStudentInfo(req);
     }
 
+    @PatchMapping("/student/info/{id}")
+    public Response updateStudentForAdmin(@PathVariable String id, @RequestBody UpdateStudentForAdminReq req){
+        return commandUseCase.updateStudentParentPhone(id, req);
+    }
+
+    @PatchMapping("/teacher/info/{id}")
+    public Response updateTeacherForAdmin(@PathVariable String id, @RequestBody UpdateTeacherForAdminReq req){
+        return commandUseCase.updateTeacherForAdmin(id, req);
+    }
+
     @GetMapping("/{id}")
     public ResponseData<MemberInfoRes> getById(@PathVariable String id) {
         return queryUseCase.getById(id);
@@ -88,6 +104,11 @@ public class MemberController {
     @GetMapping("/deactivate")
     public ResponseData<List<MemberInfoRes>> getDeactivateMembers() {
         return queryUseCase.getDeactivateMembers();
+    }
+
+    @GetMapping("/pending")
+    public ResponseData<List<MemberInfoRes>> getPendingMembers(){
+        return queryUseCase.getPendingMembers();
     }
 
     @GetMapping("/all")

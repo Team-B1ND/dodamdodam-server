@@ -51,6 +51,13 @@ public class MemberQueryUseCase {
                 .toList());
     }
 
+    public ResponseData<List<MemberInfoRes>> getPendingMembers(){
+        return ResponseData.ok("보류중인 멤버 조회 성공", memberRepository.findByStatusOrderByStudent(ActiveStatus.PENDING)
+                .parallelStream()
+                .map(this::getMemberInfo)
+                .toList());
+    }
+
     @Cacheable(value = "members-cache", key = "'activeMembers'")
     public List<MemberInfoRes> getAll() {
         return memberRepository.findByStatusOrderByStudent(ActiveStatus.ACTIVE).parallelStream()
