@@ -1,6 +1,5 @@
 package b1nd.dodam.domain.rds.point.service;
 
-import b1nd.dodam.domain.rds.member.entity.Member;
 import b1nd.dodam.domain.rds.member.entity.Student;
 import b1nd.dodam.domain.rds.member.entity.Teacher;
 import b1nd.dodam.domain.rds.point.entity.Point;
