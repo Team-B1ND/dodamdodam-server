@@ -22,7 +22,7 @@ spring:
       static-locations: classpath:/static/
   jpa:
     hibernate:
-      ddl-auto: none
+      ddl-auto: update
     properties:
       hibernate:
         show_sql: false

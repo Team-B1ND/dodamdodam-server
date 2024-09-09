@@ -3,11 +3,13 @@ package b1nd.dodam.domain.rds.outgoing.repository;
 import b1nd.dodam.domain.rds.member.entity.Student;
 import b1nd.dodam.domain.rds.outgoing.entity.OutGoing;
 import b1nd.dodam.domain.rds.outgoing.exception.OutGoingNotFoundException;
+import b1nd.dodam.domain.rds.support.enumeration.ApprovalStatus;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -25,4 +27,5 @@ public interface OutGoingRepository extends JpaRepository<OutGoing, Long> {
     @EntityGraph(attributePaths = {"student.member"})
     List<OutGoing> findByStudentAndEndAtGreaterThanEqual(Student student, LocalDateTime now);
 
+    Long countByIsDinnerAndStatusAndStartAtBetween(Boolean isDinner, ApprovalStatus status, LocalDateTime startOfDay, LocalDateTime endOfDay);
 }

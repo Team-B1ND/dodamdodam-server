@@ -4,10 +4,13 @@ import b1nd.dodam.domain.rds.member.entity.Student;
 import b1nd.dodam.domain.rds.outgoing.entity.OutGoing;
 import b1nd.dodam.domain.rds.outgoing.exception.OutGoingNotFoundException;
 import b1nd.dodam.domain.rds.outgoing.repository.OutGoingRepository;
+import b1nd.dodam.domain.rds.support.enumeration.ApprovalStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 
 @Service
@@ -37,4 +40,9 @@ public class OutGoingService {
         return repository.findByStudentAndEndAtGreaterThanEqual(student, now);
     }
 
+    public Long getTodayCountByIsDinnerAndDate(Boolean isDinner, LocalDate date){
+        LocalDateTime startOfDay = date.atStartOfDay();
+        LocalDateTime endOfDay = date.atTime(LocalTime.MAX);
+        return repository.countByIsDinnerAndStatusAndStartAtBetween(isDinner, ApprovalStatus.ALLOWED, startOfDay, endOfDay);
+    }
 }

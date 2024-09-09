@@ -7,13 +7,19 @@ import jakarta.validation.constraints.NotNull;
 
 import java.time.LocalDateTime;
 
-public record ApplyOutGoingReq(@NotBlank String reason, @NotNull LocalDateTime startAt, @NotNull LocalDateTime endAt) {
+public record ApplyOutGoingReq(
+        @NotBlank String reason,
+        @NotNull LocalDateTime startAt,
+        @NotNull LocalDateTime endAt,
+        @NotNull Boolean isDinner
+        ) {
     public OutGoing toEntity(Student student) {
         return OutGoing.builder()
                 .reason(reason)
                 .student(student)
                 .startAt(startAt)
                 .endAt(endAt)
+                .isDinner(isDinner)
                 .build();
     }
 }
