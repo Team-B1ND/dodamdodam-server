@@ -9,7 +9,9 @@ public record StudentRes(
         String name,
         Integer grade,
         Integer room,
-        Integer number) implements Serializable {
+        Integer number,
+        String parentPhone
+) implements Serializable {
     public static StudentRes of(Student student) {
         if(student == null) {
             return null;
@@ -18,7 +20,8 @@ public record StudentRes(
                 student.getId(),
                 student.getMember().getName(),
                 student.getGrade(), student.getRoom(),
-                student.getNumber()
+                student.getNumber(),
+                student.getParentPhone()
         );
     }
 }
