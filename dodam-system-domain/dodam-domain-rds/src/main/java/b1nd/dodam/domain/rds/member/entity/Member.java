@@ -5,10 +5,7 @@ import b1nd.dodam.domain.rds.member.enumeration.MemberRole;
 import b1nd.dodam.domain.rds.member.exception.*;
 import b1nd.dodam.domain.rds.support.entity.BaseEntity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -46,6 +43,10 @@ public class Member extends BaseEntity {
 
     @NotNull
     private String phone;
+
+    @NotNull
+    @Column(columnDefinition = "TEXT")
+    private String pushToken;
 
     @Builder
     public Member(String id, String pw, String name, String email, MemberRole role, ActiveStatus status, String profileImage, String phone) {

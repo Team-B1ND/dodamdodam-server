@@ -25,6 +25,7 @@ bin/
 out/
 !**/src/main/**/out/
 !**/src/test/**/out/
+**/dodamdodam-firebase-key.json
 
 ### NetBeans ###
 /nbproject/private/

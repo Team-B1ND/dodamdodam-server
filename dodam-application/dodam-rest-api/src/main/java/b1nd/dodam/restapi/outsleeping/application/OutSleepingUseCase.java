@@ -1,6 +1,7 @@
 package b1nd.dodam.restapi.outsleeping.application;
 
 import b1nd.dodam.core.util.ZonedDateTimeUtil;
+import b1nd.dodam.domain.rds.member.entity.Member;
 import b1nd.dodam.domain.rds.member.entity.Student;
 import b1nd.dodam.domain.rds.member.repository.StudentRepository;
 import b1nd.dodam.domain.rds.member.repository.TeacherRepository;
@@ -14,7 +15,10 @@ import b1nd.dodam.restapi.outsleeping.application.data.req.RejectOutSleepingReq;
 import b1nd.dodam.restapi.outsleeping.application.data.res.OutSleepingRes;
 import b1nd.dodam.restapi.support.data.Response;
 import b1nd.dodam.restapi.support.data.ResponseData;
+import b1nd.dodam.restapi.support.pushalarm.ApprovalAlarmEvent;
+import b1nd.dodam.restapi.support.pushalarm.ApprovalAlarmUtil;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -31,6 +35,7 @@ public class OutSleepingUseCase {
     private final StudentRepository studentRepository;
     private final TeacherRepository teacherRepository;
     private final MemberAuthenticationHolder memberAuthenticationHolder;
+    private final ApplicationEventPublisher eventPublisher;
 
     public Response apply(ApplyOutSleepingReq req) {
         OutSleeping outSleeping = req.toEntity(studentRepository.getByMember(memberAuthenticationHolder.current()));
@@ -68,8 +73,11 @@ public class OutSleepingUseCase {
     }
 
     private void modifyStatus(Long id, ApprovalStatus status, String rejectReason) {
+        Member member = memberAuthenticationHolder.current();
         OutSleeping outSleeping = outSleepingService.getById(id);
-        outSleeping.modifyStatus(teacherRepository.getByMember(memberAuthenticationHolder.current()), status, rejectReason);
+        outSleeping.modifyStatus(teacherRepository.getByMember(member), status, rejectReason);
+        eventPublisher.publishEvent(ApprovalAlarmUtil.createAlarmEvent(
+                member.getPushToken(), "외박", outSleeping.getRejectReason(), outSleeping.getStatus()));
     }
 
     @Transactional(readOnly = true)

@@ -1,6 +1,7 @@
 package b1nd.dodam.restapi.outgoing.application;
 
 import b1nd.dodam.core.util.ZonedDateTimeUtil;
+import b1nd.dodam.domain.rds.member.entity.Member;
 import b1nd.dodam.domain.rds.member.entity.Student;
 import b1nd.dodam.domain.rds.member.repository.StudentRepository;
 import b1nd.dodam.domain.rds.member.repository.TeacherRepository;
@@ -14,7 +15,9 @@ import b1nd.dodam.restapi.outgoing.application.data.req.RejectOutGoingReq;
 import b1nd.dodam.restapi.outgoing.application.data.res.OutGoingRes;
 import b1nd.dodam.restapi.support.data.Response;
 import b1nd.dodam.restapi.support.data.ResponseData;
+import b1nd.dodam.restapi.support.pushalarm.ApprovalAlarmUtil;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -33,6 +36,7 @@ public class OutGoingUseCase {
     private final StudentRepository studentRepository;
     private final TeacherRepository teacherRepository;
     private final MemberAuthenticationHolder memberAuthenticationHolder;
+    private final ApplicationEventPublisher eventPublisher;
 
     public Response apply(ApplyOutGoingReq req) {
         OutGoing outGoing = req.toEntity(studentRepository.getByMember(memberAuthenticationHolder.current()));
@@ -70,8 +74,11 @@ public class OutGoingUseCase {
     }
 
     private void modifyStatus(Long id, ApprovalStatus status, String rejectReason) {
+        Member member = memberAuthenticationHolder.current();
         OutGoing outGoing = outGoingService.getById(id);
-        outGoing.modifyStatus(teacherRepository.getByMember(memberAuthenticationHolder.current()), status, rejectReason);
+        outGoing.modifyStatus(teacherRepository.getByMember(member), status, rejectReason);
+        eventPublisher.publishEvent(ApprovalAlarmUtil.createAlarmEvent(
+                member.getPushToken(), "외박", outGoing.getRejectReason(), outGoing.getStatus()));
     }
 
     @Transactional(readOnly = true)
@@ -87,5 +94,4 @@ public class OutGoingUseCase {
         LocalDateTime now = ZonedDateTimeUtil.nowToLocalDateTime();
         return ResponseData.ok("내 외출 조회 성공", OutGoingRes.of(outGoingService.getByStudent(student, now)));
     }
-
 }
