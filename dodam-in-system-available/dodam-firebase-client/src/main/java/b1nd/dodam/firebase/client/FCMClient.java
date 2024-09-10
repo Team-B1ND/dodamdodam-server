@@ -8,22 +8,38 @@ import com.google.firebase.messaging.Notification;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+
 @Component
 @RequiredArgsConstructor
 public class FCMClient {
-    public void sendMessage(PushAlarmEvent pushAlarmEvent) {
+    public void sendMessage(String pushToken, String title, String body) {
         try {
-            if(!pushAlarmEvent.pushToken().isBlank()){
+            if(!pushToken.isBlank()){
                 FirebaseMessaging.getInstance().send(Message.builder()
                         .setNotification(Notification.builder()
-                                .setTitle(pushAlarmEvent.title())
-                                .setBody(pushAlarmEvent.body())
+                                .setTitle(title)
+                                .setBody(body)
                                 .build())
-                        .setToken(pushAlarmEvent.pushToken())
+                        .setToken(pushToken)
                         .build());
             }
         } catch (FirebaseMessagingException e){
             throw new InternalServerException();
         }
+    }
+
+    public void sendMessages(List<String> pushTokens, String title, String body) {
+        Notification notification = Notification.builder()
+                .setTitle(title)
+                .setBody(body)
+                .build();
+        List<Message> messages = pushTokens.stream()
+                .map(token -> Message.builder()
+                        .setNotification(notification)
+                        .setToken(token)
+                        .build()
+                ).toList();
+        FirebaseMessaging.getInstance().sendEachAsync(messages);
     }
 }

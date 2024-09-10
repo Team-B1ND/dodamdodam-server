@@ -14,7 +14,7 @@ public class PushAlarmEventHandler {
 
     @Async
     @TransactionalEventListener
-    public void listen(PushAlarmEvent pushAlarmEvent){
-        fcmClient.sendMessage(pushAlarmEvent);
+    public void listen(PushAlarmEvent e){
+        fcmClient.sendMessage(e.pushToken(), e.title(), e.body());
     }
 }
