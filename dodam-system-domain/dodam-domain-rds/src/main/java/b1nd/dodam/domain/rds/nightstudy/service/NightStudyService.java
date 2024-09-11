@@ -46,4 +46,7 @@ public class NightStudyService {
         return repository.findAllowedStudyByDate(now, ApprovalStatus.ALLOWED);
     }
 
+    public List<NightStudy> getByEndDate(LocalDate endAt){
+        return repository.findByEndAt(endAt);
+    }
 }
