@@ -45,6 +45,7 @@ public class Member extends BaseEntity {
     private String phone;
 
     @NotNull
+    @JsonIgnore
     @Column(columnDefinition = "TEXT")
     private String pushToken;
 
@@ -99,6 +100,10 @@ public class Member extends BaseEntity {
         if(!(this.status == ActiveStatus.ACTIVE)) {
             throw new MemberNotActiveException();
         }
+    }
+
+    public void updatePushToken(String pushToken){
+        this.pushToken = pushToken;
     }
 
 }

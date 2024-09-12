@@ -12,6 +12,7 @@ import b1nd.dodam.restapi.auth.application.data.res.ReissueTokenRes;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
@@ -35,6 +36,7 @@ public class AuthUseCase {
         Member member = memberRepository.getById(req.id());
         member.checkIfPasswordIsCorrect(Sha512PasswordEncoder.encode(req.pw()));
         member.checkIfStatusIncorrect();
+        member.updatePushToken(req.pushToken());
         return CompletableFuture.supplyAsync(() -> member, executor)
                 .thenCompose(m -> tokenClient.issueTokens(member.getId(), member.getRole().getNumber()))
                 .thenApply(tokens -> new LoginRes(member, tokens.accessToken(), tokens.refreshToken()))
