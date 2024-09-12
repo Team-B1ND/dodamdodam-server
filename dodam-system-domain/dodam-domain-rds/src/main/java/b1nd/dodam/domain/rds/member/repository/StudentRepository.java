@@ -5,6 +5,7 @@ import b1nd.dodam.domain.rds.member.entity.Student;
 import b1nd.dodam.domain.rds.member.exception.StudentNotFoundException;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
 import java.util.Optional;
@@ -36,4 +37,7 @@ public interface StudentRepository extends JpaRepository<Student, Integer> {
         throw new StudentNotFoundException();
     }
 
+
+    @Query("SELECT m FROM student s JOIN FETCH s.member m")
+    List<Member> findAllMembers();
 }
