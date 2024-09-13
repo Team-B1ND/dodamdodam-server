@@ -38,6 +38,6 @@ public interface StudentRepository extends JpaRepository<Student, Integer> {
     }
 
 
-    @Query("SELECT m FROM student s JOIN FETCH s.member m")
+    @Query("SELECT m FROM student s JOIN s.member m")
     List<Member> findAllMembers();
 }
