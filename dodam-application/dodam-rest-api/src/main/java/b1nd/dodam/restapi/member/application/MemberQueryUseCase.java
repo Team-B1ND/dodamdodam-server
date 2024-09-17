@@ -45,31 +45,10 @@ public class MemberQueryUseCase {
     }
 
     public ResponseData<List<MemberInfoRes>> getMembersByStatus(ActiveStatus status) {
-        return ResponseData.ok("상태변 멤버 조회 성공", memberRepository.findByStatusOrderByStudent(status)
+        return ResponseData.ok("상태별 멤버 조회 성공", memberRepository.findByStatusOrderByStudent(status)
                 .parallelStream()
                 .map(this::getMemberInfo)
                 .toList());
-    }
-
-    public ResponseData<List<MemberInfoRes>> getDeactivateMembers() {
-        return ResponseData.ok("비활성화된 멤버 조회 성공", memberRepository.findByStatusOrderByStudent(ActiveStatus.DEACTIVATE)
-                .parallelStream()
-                .map(this::getMemberInfo)
-                .toList());
-    }
-
-    public ResponseData<List<MemberInfoRes>> getPendingMembers(){
-        return ResponseData.ok("대기중인 멤버 조회 성공", memberRepository.findByStatusOrderByStudent(ActiveStatus.PENDING)
-                .parallelStream()
-                .map(this::getMemberInfo)
-                .toList());
-    }
-
-    @Cacheable(value = "members-cache", key = "'activeMembers'")
-    public List<MemberInfoRes> getAll() {
-        return memberRepository.findByStatusOrderByStudent(ActiveStatus.ACTIVE).parallelStream()
-                .map(this::getMemberInfo)
-                .toList();
     }
 
     private MemberInfoRes getMemberInfo(Member member) {
