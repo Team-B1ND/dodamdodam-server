@@ -19,7 +19,6 @@ import b1nd.dodam.restapi.support.data.ResponseData;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -53,7 +52,7 @@ public class OutGoingUseCase {
 
     @Transactional(readOnly = true)
     public ResponseData<OutGoingMealCountRes> getMealDemandDuringOuting(LocalDate date) {
-        Long nonEatersCount = outGoingService.getTodayCountByIsDinnerAndDate(Boolean.FALSE, date);
+        Long nonEatersCount = outGoingService.getTodayCountByDinnerOrNotAndDate(Boolean.FALSE, date);
         Long eatersCount = studentRepository.countByMemberStatus(ActiveStatus.ACTIVE) - nonEatersCount;
         return ResponseData.ok("외출 중 급식 수요 조회 성공", new OutGoingMealCountRes(eatersCount, nonEatersCount));
     }

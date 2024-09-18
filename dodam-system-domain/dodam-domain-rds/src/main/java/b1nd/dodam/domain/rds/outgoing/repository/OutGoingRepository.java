@@ -26,5 +26,6 @@ public interface OutGoingRepository extends JpaRepository<OutGoing, Long> {
     @EntityGraph(attributePaths = {"student.member"})
     List<OutGoing> findByStudentAndEndAtGreaterThanEqual(Student student, LocalDateTime now);
 
-    Long countByIsDinnerAndStatusAndStartAtBetween(Boolean isDinner, ApprovalStatus status, LocalDateTime startOfDay, LocalDateTime endOfDay);
+    @Query("SELECT COUNT(o) FROM OutGoing o WHERE o.dinnerOrNot = :dinnerOrNot AND o.status = :status AND o.startAt BETWEEN :startOfDay AND :endOfDay")
+    Long countByDinnerOrNotAndStatusAndStartAtBetween(Boolean dinnerOrNot, ApprovalStatus status, LocalDateTime startOfDay, LocalDateTime endOfDay);
 }

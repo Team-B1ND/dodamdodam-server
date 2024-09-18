@@ -40,9 +40,9 @@ public class OutGoingService {
         return repository.findByStudentAndEndAtGreaterThanEqual(student, now);
     }
 
-    public Long getTodayCountByIsDinnerAndDate(Boolean isDinner, LocalDate date){
+    public Long getTodayCountByDinnerOrNotAndDate(Boolean dinnerOrNot, LocalDate date){
         LocalDateTime startOfDay = date.atStartOfDay();
         LocalDateTime endOfDay = date.atTime(LocalTime.MAX);
-        return repository.countByIsDinnerAndStatusAndStartAtBetween(isDinner, ApprovalStatus.ALLOWED, startOfDay, endOfDay);
+        return repository.countByDinnerOrNotAndStatusAndStartAtBetween(dinnerOrNot, ApprovalStatus.ALLOWED, startOfDay, endOfDay);
     }
 }
