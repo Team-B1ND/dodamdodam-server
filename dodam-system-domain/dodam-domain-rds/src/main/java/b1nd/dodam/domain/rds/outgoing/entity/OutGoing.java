@@ -47,8 +47,11 @@ public class OutGoing extends BaseEntity {
 
     private String rejectReason;
 
+    @NotNull
+    private Boolean dinnerOrNot;
+
     @Builder
-    public OutGoing(String reason, LocalDateTime startAt, LocalDateTime endAt, Student student) {
+    public OutGoing(String reason, LocalDateTime startAt, LocalDateTime endAt, Student student, Boolean dinnerOrNot) {
         isInvalidPeriod(startAt, endAt);
 
         this.reason = reason;
@@ -56,6 +59,7 @@ public class OutGoing extends BaseEntity {
         this.endAt = endAt;
         this.status = ApprovalStatus.PENDING;
         this.student = student;
+        this.dinnerOrNot = dinnerOrNot;
     }
 
     public void modifyStatus(Teacher teacher, ApprovalStatus status, String rejectReason) {

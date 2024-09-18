@@ -25,7 +25,7 @@ bin/
 out/
 !**/src/main/**/out/
 !**/src/test/**/out/
-**/dodamdodam-firebase-key.json
+dodam-application/dodam-rest-api/src/main/resources/dodamdodam-firebase-key.json
 
 ### NetBeans ###
 /nbproject/private/

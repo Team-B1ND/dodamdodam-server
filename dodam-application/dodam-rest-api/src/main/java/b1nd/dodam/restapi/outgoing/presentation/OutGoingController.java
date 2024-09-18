@@ -3,6 +3,7 @@ package b1nd.dodam.restapi.outgoing.presentation;
 import b1nd.dodam.restapi.outgoing.application.OutGoingUseCase;
 import b1nd.dodam.restapi.outgoing.application.data.req.ApplyOutGoingReq;
 import b1nd.dodam.restapi.outgoing.application.data.req.RejectOutGoingReq;
+import b1nd.dodam.restapi.outgoing.application.data.res.OutGoingMealCountRes;
 import b1nd.dodam.restapi.outgoing.application.data.res.OutGoingRes;
 import b1nd.dodam.restapi.support.data.Response;
 import b1nd.dodam.restapi.support.data.ResponseData;
@@ -54,6 +55,11 @@ public class OutGoingController {
     @GetMapping("/my")
     public ResponseData<List<OutGoingRes>> getMy() {
         return useCase.getMy();
+    }
+
+    @GetMapping("/meal-demand")
+    public ResponseData<OutGoingMealCountRes> getMealDemand(@RequestParam LocalDate date) {
+        return useCase.getMealDemandDuringOuting(date);
     }
 
 }
