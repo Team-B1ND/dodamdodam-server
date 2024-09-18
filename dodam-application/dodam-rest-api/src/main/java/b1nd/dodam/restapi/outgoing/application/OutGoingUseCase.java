@@ -2,6 +2,7 @@ package b1nd.dodam.restapi.outgoing.application;
 
 import b1nd.dodam.core.util.ZonedDateTimeUtil;
 import b1nd.dodam.domain.rds.member.entity.Student;
+import b1nd.dodam.domain.rds.member.enumeration.ActiveStatus;
 import b1nd.dodam.domain.rds.member.repository.StudentRepository;
 import b1nd.dodam.domain.rds.member.repository.TeacherRepository;
 import b1nd.dodam.domain.rds.outgoing.entity.OutGoing;
@@ -11,6 +12,7 @@ import b1nd.dodam.domain.rds.support.enumeration.ApprovalStatus;
 import b1nd.dodam.restapi.auth.infrastructure.security.support.MemberAuthenticationHolder;
 import b1nd.dodam.restapi.outgoing.application.data.req.ApplyOutGoingReq;
 import b1nd.dodam.restapi.outgoing.application.data.req.RejectOutGoingReq;
+import b1nd.dodam.restapi.outgoing.application.data.res.OutGoingMealCountRes;
 import b1nd.dodam.restapi.outgoing.application.data.res.OutGoingRes;
 import b1nd.dodam.restapi.support.data.Response;
 import b1nd.dodam.restapi.support.data.ResponseData;
@@ -48,8 +50,15 @@ public class OutGoingUseCase {
         return Response.noContent("외출 취소 성공");
     }
 
+    @Transactional(readOnly = true)
+    public ResponseData<OutGoingMealCountRes> getMealDemandDuringOuting(LocalDate date) {
+        Long nonEatersCount = outGoingService.getTodayCountByDinnerOrNotAndDate(Boolean.FALSE, date);
+        Long eatersCount = studentRepository.countByMemberStatus(ActiveStatus.ACTIVE) - nonEatersCount;
+        return ResponseData.ok("외출 중 급식 수요 조회 성공", new OutGoingMealCountRes(eatersCount, nonEatersCount));
+    }
+
     private void throwExceptionWhenStudentIsNotApplicant(OutGoing outGoing) {
-        if(outGoing.isNotApplicant(studentRepository.getByMember(memberAuthenticationHolder.current()))) {
+        if (outGoing.isNotApplicant(studentRepository.getByMember(memberAuthenticationHolder.current()))) {
             throw new NotOutGoingApplicantException();
         }
     }
