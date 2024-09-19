@@ -17,9 +17,8 @@ import b1nd.dodam.restapi.nightstudy.application.data.req.RejectNightStudyReq;
 import b1nd.dodam.restapi.nightstudy.application.data.res.NightStudyRes;
 import b1nd.dodam.restapi.support.data.Response;
 import b1nd.dodam.restapi.support.data.ResponseData;
-import b1nd.dodam.restapi.support.pushalarm.ApprovalAlarmUtil;
+import b1nd.dodam.restapi.support.pushalarm.PushAlarmEvent;
 import lombok.RequiredArgsConstructor;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -36,7 +35,6 @@ public class NightStudyUseCase {
     private final StudentRepository studentRepository;
     private final TeacherRepository teacherRepository;
     private final MemberAuthenticationHolder memberAuthenticationHolder;
-    private final ApplicationEventPublisher eventPublisher;
 
     public Response apply(ApplyNightStudyReq req) {
         Student student = studentRepository.getByMember(memberAuthenticationHolder.current());
@@ -65,16 +63,19 @@ public class NightStudyUseCase {
         }
     }
 
+    @PushAlarmEvent(target = "심야자습", status = ApprovalStatus.PENDING)
     public Response allow(Long id) {
         modifyStatus(id, ApprovalStatus.ALLOWED, null);
         return Response.noContent("심야자습 승인 성공");
     }
 
+    @PushAlarmEvent(target = "심야자습", status = ApprovalStatus.PENDING)
     public Response reject(Long id, Optional<RejectNightStudyReq> req) {
         modifyStatus(id, ApprovalStatus.REJECTED, req.map(RejectNightStudyReq::rejectReason).orElse(null));
         return Response.noContent("심야자습 거절 성공");
     }
 
+    @PushAlarmEvent(target = "심야자습", status = ApprovalStatus.PENDING)
     public Response revert(Long id) {
         modifyStatus(id, ApprovalStatus.PENDING, null);
         return Response.noContent("심야자습 대기 성공");
@@ -85,8 +86,6 @@ public class NightStudyUseCase {
         Teacher teacher = teacherRepository.getByMember(member);
         NightStudy nightStudy = nightStudyService.getBy(id);
         nightStudy.modifyStatus(teacher, status, rejectReason);
-        eventPublisher.publishEvent(ApprovalAlarmUtil.createAlarmEvent(
-                member.getPushToken(), "심야자습", nightStudy.getRejectReason(), nightStudy.getStatus()));
     }
 
     @Transactional(readOnly = true)

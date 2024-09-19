@@ -18,6 +18,7 @@ import b1nd.dodam.restapi.outgoing.application.data.res.OutGoingRes;
 import b1nd.dodam.restapi.support.data.Response;
 import b1nd.dodam.restapi.support.data.ResponseData;
 import b1nd.dodam.restapi.support.pushalarm.ApprovalAlarmUtil;
+import b1nd.dodam.restapi.support.pushalarm.PushAlarmEvent;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
@@ -38,7 +39,6 @@ public class OutGoingUseCase {
     private final StudentRepository studentRepository;
     private final TeacherRepository teacherRepository;
     private final MemberAuthenticationHolder memberAuthenticationHolder;
-    private final ApplicationEventPublisher eventPublisher;
 
     public Response apply(ApplyOutGoingReq req) {
         OutGoing outGoing = req.toEntity(studentRepository.getByMember(memberAuthenticationHolder.current()));
@@ -67,16 +67,19 @@ public class OutGoingUseCase {
         }
     }
 
+    @PushAlarmEvent(target = "외출", status = ApprovalStatus.ALLOWED)
     public Response allow(Long id) {
         modifyStatus(id, ApprovalStatus.ALLOWED, null);
         return Response.noContent("외출 승인 성공");
     }
 
+    @PushAlarmEvent(target = "외출", status = ApprovalStatus.REJECTED)
     public Response reject(Long id, Optional<RejectOutGoingReq> req) {
         modifyStatus(id, ApprovalStatus.REJECTED, req.map(RejectOutGoingReq::rejectReason).orElse(null));
         return Response.noContent("외출 거절 성공");
     }
 
+    @PushAlarmEvent(target = "외출", status = ApprovalStatus.PENDING)
     public Response revert(Long id) {
         modifyStatus(id, ApprovalStatus.PENDING, null);
         return Response.noContent("외출 대기 성공");
@@ -86,8 +89,6 @@ public class OutGoingUseCase {
         Member member = memberAuthenticationHolder.current();
         OutGoing outGoing = outGoingService.getById(id);
         outGoing.modifyStatus(teacherRepository.getByMember(member), status, rejectReason);
-        eventPublisher.publishEvent(ApprovalAlarmUtil.createAlarmEvent(
-                member.getPushToken(), "외박", outGoing.getRejectReason(), outGoing.getStatus()));
     }
 
     @Transactional(readOnly = true)

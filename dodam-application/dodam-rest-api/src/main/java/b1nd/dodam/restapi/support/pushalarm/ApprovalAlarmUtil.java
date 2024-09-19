@@ -15,8 +15,9 @@ public final class ApprovalAlarmUtil {
 
     private static String createBody(String target, String rejectReason, ApprovalStatus status){
         return switch (status) {
+
             case ALLOWED -> target+"이 승인됐어요!";
-            case REJECTED -> target+"이 거절됐어요\n사유: "+rejectReason;
+            case REJECTED -> target+"이 거절됐어요\n"+ (rejectReason != null ? "사유: " + rejectReason : "");
             case PENDING -> target+"이 승인 취소됐어요";
         };
     }
