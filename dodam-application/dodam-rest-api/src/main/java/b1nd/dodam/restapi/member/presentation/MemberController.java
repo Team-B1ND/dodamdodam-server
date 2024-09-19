@@ -61,6 +61,11 @@ public class MemberController {
         return commandUseCase.deactivate(id);
     }
 
+    @PatchMapping("/deactivate-graduate")
+    public Response deactivateGraduate(){
+        return commandUseCase.deactivateThirdGrade();
+    }
+
     @PatchMapping("/password")
     public Response updatePassword(@RequestBody @Valid UpdatePasswordReq req) {
         return commandUseCase.updatePassword(req);

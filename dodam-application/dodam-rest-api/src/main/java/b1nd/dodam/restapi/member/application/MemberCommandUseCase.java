@@ -21,6 +21,8 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Component
 @Transactional(rollbackFor = Exception.class)
 @RequiredArgsConstructor
@@ -108,6 +110,16 @@ public class MemberCommandUseCase {
         member.updateStatus(ActiveStatus.DEACTIVATED);
         memberRepository.save(member);
         return Response.ok("멤버 비활성화 성공");
+    }
+
+    @CacheEvict(value = "members-cache", key = "'activeMembers'")
+    public Response deactivateThirdGrade(){
+        List<Member> members = studentRepository.findMembersByGrade(3);
+        for (Member member : members) {
+            member.updateStatus(ActiveStatus.DEACTIVATED);
+        }
+        memberRepository.saveAll(members);
+        return Response.noContent("졸업생 비활성화 성공");
     }
 
     private void updateStatus(String id, ActiveStatus status) {
