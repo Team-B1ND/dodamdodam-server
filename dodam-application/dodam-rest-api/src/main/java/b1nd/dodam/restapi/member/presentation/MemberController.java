@@ -46,19 +46,9 @@ public class MemberController {
         return commandUseCase.status(id, status);
     }
 
-    @PatchMapping("/active/{id}")
-    public Response active(@PathVariable("id") String id) {
-        return commandUseCase.active(id);
-    }
-
     @PatchMapping("/deactivate")
     public Response deactivate() {
         return commandUseCase.deactivate();
-    }
-
-    @PatchMapping("/deactivate/{id}")
-    public Response deactivate(@PathVariable("id") String id) {
-        return commandUseCase.deactivate(id);
     }
 
     @PatchMapping("/password")
@@ -104,21 +94,6 @@ public class MemberController {
     @GetMapping("/status")
     public ResponseData<List<MemberInfoRes>> getMembersByStatus(@RequestParam ActiveStatus status) {
         return queryUseCase.getMembersByStatus(status);
-    }
-
-    @GetMapping("/deactivate")
-    public ResponseData<List<MemberInfoRes>> getDeactivateMembers() {
-        return queryUseCase.getDeactivateMembers();
-    }
-
-    @GetMapping("/pending")
-    public ResponseData<List<MemberInfoRes>> getPendingMembers(){
-        return queryUseCase.getPendingMembers();
-    }
-
-    @GetMapping("/all")
-    public ResponseData<List<MemberInfoRes>> getAll() {
-        return ResponseData.ok("모든 멤버 정보 조회 성공", queryUseCase.getAll());
     }
 
     @GetMapping("/check/broadcast-club-member")

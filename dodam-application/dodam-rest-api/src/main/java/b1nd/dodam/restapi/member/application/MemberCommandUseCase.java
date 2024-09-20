@@ -91,28 +91,11 @@ public class MemberCommandUseCase {
     }
 
     @CacheEvict(value = "members-cache", key = "'activeMembers'")
-    public Response active(String id) {
-        updateStatus(id, ActiveStatus.ACTIVE);
-        return Response.ok("멤버 활성화 성공");
-    }
-
-    @CacheEvict(value = "members-cache", key = "'activeMembers'")
-    public Response deactivate(String id) {
-        updateStatus(id, ActiveStatus.DEACTIVATE);
-        return Response.ok("멤버 비활성화 성공");
-    }
-
-    @CacheEvict(value = "members-cache", key = "'activeMembers'")
     public Response deactivate() {
         Member member = memberAuthenticationHolder.current();
         member.updateStatus(ActiveStatus.DEACTIVATED);
         memberRepository.save(member);
         return Response.ok("멤버 비활성화 성공");
-    }
-
-    private void updateStatus(String id, ActiveStatus status) {
-        Member member = memberRepository.getById(id);
-        member.updateStatus(status);
     }
 
     public Response updatePassword(UpdatePasswordReq req) {
