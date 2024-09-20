@@ -16,6 +16,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 
+import java.util.Objects;
+
 @Getter
 @Entity(name = "member")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -73,7 +75,7 @@ public class Member extends BaseEntity {
         if(StringUtils.isNotBlank(phone)){
             this.phone = phone;
         }
-        if(StringUtils.isNotBlank(profileImage)){
+        if (Objects.nonNull(profileImage)) {
             this.profileImage = profileImage;
         }
     }
