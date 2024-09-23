@@ -66,7 +66,7 @@ jobs:
       with:
         name: "dodamdodam-firebase-key.json" 
         json: ${{ secrets. FIREBASE_KEY }} 
-        dir: './dodam-application/dodam-rest-api/src/main/resources/dodamdodam-firebase-key.json'
+        dir: './dodam-application/dodam-rest-api/src/main/resources/'
    
     - name: Build with Gradle
       run: ./gradlew :dodam-application:dodam-rest-api:build -x test --parallel
