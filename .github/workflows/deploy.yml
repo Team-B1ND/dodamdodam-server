@@ -61,7 +61,7 @@ jobs:
         cloud.aws.storage.bucket: ${{ secrets.S3_BUCKET }}
         
     - name: Set Firebase key file
-      run: echo "${{ secrets.FIREBASE_KEY }}" > dodam-application/dodam-rest-api/src/main/resources/firebase_key.json
+      run: echo "${{ secrets.FIREBASE_KEY }}" > dodam-application/dodam-rest-api/src/main/resources/dodamdodam-firebase-key.json
 
     - name: Build with Gradle
       run: ./gradlew :dodam-application:dodam-rest-api:build -x test --parallel
