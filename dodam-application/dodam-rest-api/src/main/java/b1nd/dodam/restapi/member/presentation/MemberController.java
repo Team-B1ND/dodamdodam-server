@@ -96,6 +96,11 @@ public class MemberController {
         return queryUseCase.getMembersByStatus(status);
     }
 
+    @GetMapping("/all")
+    public ResponseData<List<MemberInfoRes>> getMemberAll(){
+        return queryUseCase.getAll();
+    }
+
     @GetMapping("/check/broadcast-club-member")
     public ResponseData<Boolean> checkBroadcastClubMember() {
         return queryUseCase.checkBroadcastClubMember();

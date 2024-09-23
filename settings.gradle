@@ -21,6 +21,7 @@ include 'dodam-in-system-available:dodam-codenary-client'
 include 'dodam-in-system-available:dodam-neis-meal-client'
 include 'dodam-in-system-available:dodam-neis-schedule-client'
 include 'dodam-in-system-available:dodam-neis-client-core'
+include 'dodam-in-system-available:dodam-firebase-client'
 
 //dodam-application
 include 'dodam-application'

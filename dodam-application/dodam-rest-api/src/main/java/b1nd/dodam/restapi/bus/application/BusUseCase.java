@@ -5,7 +5,9 @@ import b1nd.dodam.domain.rds.bus.entity.Bus;
 import b1nd.dodam.domain.rds.bus.entity.BusApplication;
 import b1nd.dodam.domain.rds.bus.repository.BusApplicationRepository;
 import b1nd.dodam.domain.rds.bus.repository.BusRepository;
+import b1nd.dodam.domain.rds.member.entity.Member;
 import b1nd.dodam.domain.rds.member.repository.StudentRepository;
+import b1nd.dodam.firebase.client.FCMClient;
 import b1nd.dodam.restapi.auth.infrastructure.security.support.MemberAuthenticationHolder;
 import b1nd.dodam.restapi.bus.application.data.req.BusReq;
 import b1nd.dodam.restapi.bus.application.data.res.BusMemberRes;
@@ -30,10 +32,13 @@ public class BusUseCase {
     private final BusApplicationRepository busApplicationRepository;
     private final StudentRepository studentRepository;
     private final MemberAuthenticationHolder memberAuthenticationHolder;
+    private final FCMClient fcmClient;
 
     @Transactional(rollbackFor = Exception.class)
     public Response register(BusReq req) {
         busRepository.save(req.mapToBus());
+        List<String> pushTokens = studentRepository.findAllMembers().stream().map(Member::getPushToken).toList();
+        fcmClient.sendMessages(pushTokens, "귀가버스 신청", "귀가 버스 신청이 가능해요! 신청해주세요.");
         return Response.created("버스 등록 성공");
     }
 
