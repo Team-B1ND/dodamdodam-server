@@ -75,9 +75,7 @@ public class Member extends BaseEntity {
         if(StringUtils.isNotBlank(phone)){
             this.phone = phone;
         }
-        if (Objects.nonNull(profileImage)) {
             this.profileImage = profileImage;
-        }
     }
 
     public void updateStatus(ActiveStatus status) {
