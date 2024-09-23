@@ -93,18 +93,6 @@ public class MemberCommandUseCase {
     }
 
     @CacheEvict(value = "members-cache", key = "'activeMembers'")
-    public Response active(String id) {
-        updateStatus(id, ActiveStatus.ACTIVE);
-        return Response.ok("멤버 활성화 성공");
-    }
-
-    @CacheEvict(value = "members-cache", key = "'activeMembers'")
-    public Response deactivate(String id) {
-        updateStatus(id, ActiveStatus.DEACTIVATE);
-        return Response.ok("멤버 비활성화 성공");
-    }
-
-    @CacheEvict(value = "members-cache", key = "'activeMembers'")
     public Response deactivate() {
         Member member = memberAuthenticationHolder.current();
         member.updateStatus(ActiveStatus.DEACTIVATED);

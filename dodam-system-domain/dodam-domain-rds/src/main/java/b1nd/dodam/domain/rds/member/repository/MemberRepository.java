@@ -22,7 +22,6 @@ public interface MemberRepository extends JpaRepository<Member, String> {
             "s.grade ASC, s.room ASC, s.number ASC")
     List<Member> findByStatusOrderByStudent(ActiveStatus status);
 
-
     List<Member> findByNameContains(String name);
 
     default Member getById(String id) {

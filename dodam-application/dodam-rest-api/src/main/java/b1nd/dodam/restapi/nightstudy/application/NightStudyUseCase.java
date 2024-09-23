@@ -1,6 +1,7 @@
 package b1nd.dodam.restapi.nightstudy.application;
 
 import b1nd.dodam.core.util.ZonedDateTimeUtil;
+import b1nd.dodam.domain.rds.member.entity.Member;
 import b1nd.dodam.domain.rds.member.entity.Student;
 import b1nd.dodam.domain.rds.member.entity.Teacher;
 import b1nd.dodam.domain.rds.member.repository.StudentRepository;
@@ -16,6 +17,7 @@ import b1nd.dodam.restapi.nightstudy.application.data.req.RejectNightStudyReq;
 import b1nd.dodam.restapi.nightstudy.application.data.res.NightStudyRes;
 import b1nd.dodam.restapi.support.data.Response;
 import b1nd.dodam.restapi.support.data.ResponseData;
+import b1nd.dodam.restapi.support.pushalarm.PushAlarmEvent;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -61,23 +63,27 @@ public class NightStudyUseCase {
         }
     }
 
+    @PushAlarmEvent(target = "심야자습", status = ApprovalStatus.PENDING)
     public Response allow(Long id) {
         modifyStatus(id, ApprovalStatus.ALLOWED, null);
         return Response.noContent("심야자습 승인 성공");
     }
 
+    @PushAlarmEvent(target = "심야자습", status = ApprovalStatus.PENDING)
     public Response reject(Long id, Optional<RejectNightStudyReq> req) {
         modifyStatus(id, ApprovalStatus.REJECTED, req.map(RejectNightStudyReq::rejectReason).orElse(null));
         return Response.noContent("심야자습 거절 성공");
     }
 
+    @PushAlarmEvent(target = "심야자습", status = ApprovalStatus.PENDING)
     public Response revert(Long id) {
         modifyStatus(id, ApprovalStatus.PENDING, null);
         return Response.noContent("심야자습 대기 성공");
     }
 
     private void modifyStatus(Long id, ApprovalStatus status, String rejectReason) {
-        Teacher teacher = teacherRepository.getByMember(memberAuthenticationHolder.current());
+        Member member = memberAuthenticationHolder.current();
+        Teacher teacher = teacherRepository.getByMember(member);
         NightStudy nightStudy = nightStudyService.getBy(id);
         nightStudy.modifyStatus(teacher, status, rejectReason);
     }
