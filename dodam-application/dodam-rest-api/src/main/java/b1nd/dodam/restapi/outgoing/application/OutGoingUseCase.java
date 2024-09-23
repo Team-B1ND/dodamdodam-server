@@ -1,6 +1,7 @@
 package b1nd.dodam.restapi.outgoing.application;
 
 import b1nd.dodam.core.util.ZonedDateTimeUtil;
+import b1nd.dodam.domain.rds.member.entity.Member;
 import b1nd.dodam.domain.rds.member.entity.Student;
 import b1nd.dodam.domain.rds.member.enumeration.ActiveStatus;
 import b1nd.dodam.domain.rds.member.repository.StudentRepository;
@@ -16,7 +17,10 @@ import b1nd.dodam.restapi.outgoing.application.data.res.OutGoingMealCountRes;
 import b1nd.dodam.restapi.outgoing.application.data.res.OutGoingRes;
 import b1nd.dodam.restapi.support.data.Response;
 import b1nd.dodam.restapi.support.data.ResponseData;
+import b1nd.dodam.restapi.support.pushalarm.ApprovalAlarmUtil;
+import b1nd.dodam.restapi.support.pushalarm.PushAlarmEvent;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -63,24 +67,28 @@ public class OutGoingUseCase {
         }
     }
 
+    @PushAlarmEvent(target = "외출", status = ApprovalStatus.ALLOWED)
     public Response allow(Long id) {
         modifyStatus(id, ApprovalStatus.ALLOWED, null);
         return Response.noContent("외출 승인 성공");
     }
 
+    @PushAlarmEvent(target = "외출", status = ApprovalStatus.REJECTED)
     public Response reject(Long id, Optional<RejectOutGoingReq> req) {
         modifyStatus(id, ApprovalStatus.REJECTED, req.map(RejectOutGoingReq::rejectReason).orElse(null));
         return Response.noContent("외출 거절 성공");
     }
 
+    @PushAlarmEvent(target = "외출", status = ApprovalStatus.PENDING)
     public Response revert(Long id) {
         modifyStatus(id, ApprovalStatus.PENDING, null);
         return Response.noContent("외출 대기 성공");
     }
 
     private void modifyStatus(Long id, ApprovalStatus status, String rejectReason) {
+        Member member = memberAuthenticationHolder.current();
         OutGoing outGoing = outGoingService.getById(id);
-        outGoing.modifyStatus(teacherRepository.getByMember(memberAuthenticationHolder.current()), status, rejectReason);
+        outGoing.modifyStatus(teacherRepository.getByMember(member), status, rejectReason);
     }
 
     @Transactional(readOnly = true)
@@ -96,5 +104,4 @@ public class OutGoingUseCase {
         LocalDateTime now = ZonedDateTimeUtil.nowToLocalDateTime();
         return ResponseData.ok("내 외출 조회 성공", OutGoingRes.of(outGoingService.getByStudent(student, now)));
     }
-
 }

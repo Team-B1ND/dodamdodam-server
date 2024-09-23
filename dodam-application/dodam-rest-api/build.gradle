@@ -13,6 +13,7 @@ dependencies {
     implementation project(':dodam-in-system-available:dodam-neis-meal-client')
     implementation project(':dodam-in-system-available:dodam-token-client')
     implementation project(':dodam-in-system-available:dodam-youtube-video-client')
+    implementation project(':dodam-in-system-available:dodam-firebase-client')
 
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-security'

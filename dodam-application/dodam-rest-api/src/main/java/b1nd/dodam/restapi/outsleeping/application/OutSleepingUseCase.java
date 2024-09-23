@@ -1,6 +1,7 @@
 package b1nd.dodam.restapi.outsleeping.application;
 
 import b1nd.dodam.core.util.ZonedDateTimeUtil;
+import b1nd.dodam.domain.rds.member.entity.Member;
 import b1nd.dodam.domain.rds.member.entity.Student;
 import b1nd.dodam.domain.rds.member.repository.StudentRepository;
 import b1nd.dodam.domain.rds.member.repository.TeacherRepository;
@@ -14,7 +15,11 @@ import b1nd.dodam.restapi.outsleeping.application.data.req.RejectOutSleepingReq;
 import b1nd.dodam.restapi.outsleeping.application.data.res.OutSleepingRes;
 import b1nd.dodam.restapi.support.data.Response;
 import b1nd.dodam.restapi.support.data.ResponseData;
+import b1nd.dodam.restapi.support.pushalarm.ApprovalAlarmEvent;
+import b1nd.dodam.restapi.support.pushalarm.ApprovalAlarmUtil;
+import b1nd.dodam.restapi.support.pushalarm.PushAlarmEvent;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -52,24 +57,28 @@ public class OutSleepingUseCase {
         }
     }
 
+    @PushAlarmEvent(target = "외박", status = ApprovalStatus.PENDING)
     public Response allow(Long id) {
         modifyStatus(id, ApprovalStatus.ALLOWED, null);
         return Response.noContent("외박 승인 성공");
     }
 
+    @PushAlarmEvent(target = "외박", status = ApprovalStatus.PENDING)
     public Response reject(Long id, Optional<RejectOutSleepingReq> req) {
         modifyStatus(id, ApprovalStatus.REJECTED, req.map(RejectOutSleepingReq::rejectReason).orElse(null));
         return Response.noContent("외박 거절 성공");
     }
 
+    @PushAlarmEvent(target = "외박", status = ApprovalStatus.PENDING)
     public Response revert(Long id) {
         modifyStatus(id, ApprovalStatus.PENDING, null);
         return Response.noContent("외박 대기 성공");
     }
 
     private void modifyStatus(Long id, ApprovalStatus status, String rejectReason) {
+        Member member = memberAuthenticationHolder.current();
         OutSleeping outSleeping = outSleepingService.getById(id);
-        outSleeping.modifyStatus(teacherRepository.getByMember(memberAuthenticationHolder.current()), status, rejectReason);
+        outSleeping.modifyStatus(teacherRepository.getByMember(member), status, rejectReason);
     }
 
     @Transactional(readOnly = true)
