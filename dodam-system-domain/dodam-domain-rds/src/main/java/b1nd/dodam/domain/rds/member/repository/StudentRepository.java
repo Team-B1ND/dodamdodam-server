@@ -38,7 +38,6 @@ public interface StudentRepository extends JpaRepository<Student, Integer> {
         throw new StudentNotFoundException();
     }
 
-
     @Query("SELECT m FROM student s JOIN s.member m")
     List<Member> findAllMembers();
 
