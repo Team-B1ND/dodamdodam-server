@@ -19,6 +19,8 @@ include 'dodam-in-system-available:dodam-gabia-client'
 include 'dodam-in-system-available:dodam-ncp-object-storage-client'
 include 'dodam-in-system-available:dodam-codenary-client'
 include 'dodam-in-system-available:dodam-neis-meal-client'
+include 'dodam-in-system-available:dodam-neis-schedule-client'
+include 'dodam-in-system-available:dodam-neis-client-core'
 
 //dodam-application
 include 'dodam-application'

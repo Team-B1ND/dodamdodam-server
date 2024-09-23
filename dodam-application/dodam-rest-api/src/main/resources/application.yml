@@ -68,6 +68,10 @@ app:
   neis:
     apiKey: ${NEIS_KEY}
     url: ${NEIS_URL}
+    meal:
+      meal-endpoint: ${NEIS_MEAL_ENDPOINT}
+    schedule:
+      schedule-endpoint: ${NEIS_SCHEDULE_ENDPOINT}
   codenary:
     url: ${CODENARY_URL}
   melon:
