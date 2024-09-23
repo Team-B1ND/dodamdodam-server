@@ -4,12 +4,14 @@ import b1nd.dodam.core.exception.global.InternalServerException;
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
 
 import javax.annotation.PostConstruct;
 import java.io.InputStream;
 
+@Slf4j
 @Configuration
 public class FirebaseConfig {
     @PostConstruct
@@ -24,6 +26,7 @@ public class FirebaseConfig {
                 FirebaseApp.initializeApp(options);
             }
         } catch (Exception e){
+            log.error("error cause: {}", e.getCause());
             throw new InternalServerException();
         }
     }
