@@ -51,11 +51,6 @@ public class MemberController {
         return commandUseCase.deactivate();
     }
 
-    @PatchMapping("/deactivate/{id}")
-    public Response deactivate(@PathVariable("id") String id) {
-        return commandUseCase.deactivate(id);
-    }
-
     @PatchMapping("/deactivate-graduate")
     public Response deactivateGraduate(){
         return commandUseCase.deactivateThirdGrade();
