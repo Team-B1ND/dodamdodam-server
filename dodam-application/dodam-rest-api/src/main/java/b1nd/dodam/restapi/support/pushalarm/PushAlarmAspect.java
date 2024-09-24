@@ -9,6 +9,7 @@ import b1nd.dodam.domain.rds.support.enumeration.ApprovalStatus;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
+import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.springframework.context.ApplicationEventPublisher;
@@ -26,44 +27,27 @@ public class PushAlarmAspect {
     private final OutGoingService outGoingService;
     private final OutSleepingService outSleepingService;
 
-    @Around("@annotation(pushAlarmEvent)")
-    public Object handlePushAlarmEvent(ProceedingJoinPoint joinPoint, PushAlarmEvent pushAlarmEvent) {
-
-        Object result = proceedJoinPointSafely(joinPoint);
-
-        Long id = getIdFromArgs(joinPoint.getArgs());
-        String rejectReason = getRejectReasonFromArgs(joinPoint.getArgs());
+    @AfterReturning(pointcut = "@annotation(pushAlarmEvent)", returning = "result")
+    public void handlePushAlarmEvent(Object result, PushAlarmEvent pushAlarmEvent) {
         String target = pushAlarmEvent.target();
-        ApprovalStatus status = pushAlarmEvent.status();
-
-        Student student = getStudentByTargetAndId(target, id);
-
-        sendPushAlarm(student, target, rejectReason, status);
-
-        return result;
+        sendPushAlarm(
+                getStudentByTargetAndId(target, getIdFromArgs(result)),
+                target,
+                getRejectReasonFromArgs(result),
+                pushAlarmEvent.status()
+        );
     }
 
-    private Object proceedJoinPointSafely(ProceedingJoinPoint joinPoint) {
-        try {
-            return joinPoint.proceed();
-        } catch (Throwable e) {
-            throw new InternalServerException();
-        }
-    }
-
-    private Long getIdFromArgs(Object[] args) {
-        if (args[0] instanceof Long id) {
+    private Long getIdFromArgs(Object result) {
+        if (result instanceof Long id)
             return id;
-        } else {
-            throw new InternalServerException();
-        }
+        else throw new InternalServerException();
     }
 
-    private String getRejectReasonFromArgs(Object[] args) {
-        if (args.length > 1 && args[1] instanceof Optional<?> optionalArg) {
+    private String getRejectReasonFromArgs(Object result) {
+        if (result instanceof Optional<?> optionalArg)
             return (String) optionalArg.orElse(null);
-        }
-        return null;
+        else throw new InternalServerException();
     }
 
     private Student getStudentByTargetAndId(String target, Long id) {
@@ -76,8 +60,7 @@ public class PushAlarmAspect {
     }
 
     private void sendPushAlarm(Student student, String target, String rejectReason, ApprovalStatus status) {
-        String pushToken = student.getMember().getPushToken();
-        ApprovalAlarmEvent alarmEvent = ApprovalAlarmUtil.createAlarmEvent(pushToken, target, rejectReason, status);
-        eventPublisher.publishEvent(alarmEvent);
+        eventPublisher.publishEvent(ApprovalAlarmUtil.createAlarmEvent(
+                student.getMember().getPushToken(), target, rejectReason, status));
     }
 }
