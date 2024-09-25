@@ -35,6 +35,7 @@ public class MemberCommandUseCase {
     private final MemberAuthenticationHolder memberAuthenticationHolder;
     private final ApplicationEventPublisher eventPublisher;
 
+    @Transactional(rollbackFor = Exception.class)
     public Response join(JoinStudentReq req) {
         checkIfIdIsDuplicate(req.id());
         Member member = memberRepository.save(req.mapToMember(encodePw(req.pw())));
@@ -47,6 +48,7 @@ public class MemberCommandUseCase {
         eventPublisher.publishEvent(new StudentRegisteredEvent(student));
     }
 
+    @Transactional(rollbackFor = Exception.class)
     public Response join(JoinTeacherReq req) {
         checkIfIdIsDuplicate(req.id());
         Member member = memberRepository.save(req.mapToMember(encodePw(req.pw())));
@@ -64,6 +66,7 @@ public class MemberCommandUseCase {
         return Sha512PasswordEncoder.encode(rawPw);
     }
 
+    @Transactional(rollbackFor = Exception.class)
     public Response apply(ApplyBroadcastClubMemberReq req) {
         Member member = memberRepository.getById(req.id());
         checkIfMemberIsAlreadyBroadcastClubMember(member);
@@ -77,6 +80,7 @@ public class MemberCommandUseCase {
         }
     }
 
+    @Transactional(rollbackFor = Exception.class)
     @CacheEvict(value = "members-cache", key = "'activeMembers'")
     public Response delete(String id) {
         Member member = memberRepository.getById(id);
@@ -85,6 +89,7 @@ public class MemberCommandUseCase {
         return Response.noContent("멤버 삭제 성공");
     }
 
+    @Transactional(rollbackFor = Exception.class)
     @CacheEvict(value = "members-cache", key = "'activeMembers'")
     public Response status(String id, ActiveStatus status) {
         Member member = memberRepository.getById(id);
@@ -92,6 +97,7 @@ public class MemberCommandUseCase {
         return Response.ok("멤버 상태변경 성공");
     }
 
+    @Transactional(rollbackFor = Exception.class)
     @CacheEvict(value = "members-cache", key = "'activeMembers'")
     public Response deactivate() {
         Member member = memberAuthenticationHolder.current();
@@ -100,6 +106,7 @@ public class MemberCommandUseCase {
         return Response.ok("멤버 비활성화 성공");
     }
 
+    @Transactional(rollbackFor = Exception.class)
     @CacheEvict(value = "members-cache", key = "'activeMembers'")
     public Response deactivateThirdGrade(){
         List<Member> members = studentRepository.findMembersByGrade(3);
@@ -110,11 +117,7 @@ public class MemberCommandUseCase {
         return Response.noContent("졸업생 비활성화 성공");
     }
 
-    private void updateStatus(String id, ActiveStatus status) {
-        Member member = memberRepository.getById(id);
-        member.updateStatus(status);
-    }
-
+    @Transactional(rollbackFor = Exception.class)
     public Response updatePassword(UpdatePasswordReq req) {
         Member member = memberAuthenticationHolder.current();
         member.updatePw(Sha512PasswordEncoder.encode(req.password()));
@@ -122,6 +125,7 @@ public class MemberCommandUseCase {
         return Response.noContent("비밀번호 수정 성공");
     }
 
+    @Transactional(rollbackFor = Exception.class)
     @CacheEvict(value = "members-cache", key = "'activeMembers'")
     public Response updateMemberInfo(UpdateMemberInfoReq req) {
         Member member = memberAuthenticationHolder.current();
@@ -130,6 +134,7 @@ public class MemberCommandUseCase {
         return Response.noContent("내 정보 수정 성공");
     }
 
+    @Transactional(rollbackFor = Exception.class)
     @CacheEvict(value = "members-cache", key = "'activeMembers'")
     public Response updateStudentInfo(UpdateStudentInfoReq req) {
         Student student = studentRepository.getByMember(memberAuthenticationHolder.current());
@@ -137,6 +142,7 @@ public class MemberCommandUseCase {
         return Response.noContent("내 학생 정보 수정 성공");
     }
 
+    @Transactional(rollbackFor = Exception.class)
     @CacheEvict(value = "members-cache", key = "'activeMembers'")
     public Response updateStudentParentPhone(String id, UpdateStudentForAdminReq req){
         Member member = memberRepository.getById(id);
@@ -145,6 +151,7 @@ public class MemberCommandUseCase {
         return Response.noContent("학생 정보 수정 성공");
     }
 
+    @Transactional(rollbackFor = Exception.class)
     @CacheEvict(value = "members-cache", key = "'activeMembers'")
     public Response updateTeacherForAdmin(String id, UpdateTeacherForAdminReq req){
         Member member = memberRepository.getById(id);
