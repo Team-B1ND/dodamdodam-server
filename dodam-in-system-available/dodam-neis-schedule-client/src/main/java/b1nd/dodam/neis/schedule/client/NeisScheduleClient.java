@@ -43,6 +43,7 @@ public class NeisScheduleClient {
 
     private List<NeisSchedule> mergeSchedules(List<NeisSchedule> scheduleList) {
         return scheduleList.stream()
+                .distinct()
                 .collect(Collectors.groupingBy(NeisSchedule::eventName))
                 .entrySet().stream()
                 .map(entry -> createMergedSchedule(entry.getKey(), entry.getValue()))
