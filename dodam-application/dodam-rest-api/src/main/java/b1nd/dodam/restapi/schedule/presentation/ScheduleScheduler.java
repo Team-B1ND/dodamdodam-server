@@ -15,7 +15,7 @@ public class ScheduleScheduler {
     private final ScheduleUseCase scheduleUseCase;
 
     @Scheduled(cron = "0 0 7 1 * ?", zone = "Asia/Seoul")
-    public void flushAllMealData() {
+    public void flushAllScheduleData() {
         try {
             LocalDate now = LocalDate.now();
             LocalDate startDate = LocalDate.of(now.getYear(), 3, 2);

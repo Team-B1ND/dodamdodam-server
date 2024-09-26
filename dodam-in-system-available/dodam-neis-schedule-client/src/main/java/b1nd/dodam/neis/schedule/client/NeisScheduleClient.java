@@ -29,11 +29,11 @@ public class NeisScheduleClient {
         List<NeisSchedule> scheduleList = new ArrayList<>();
 
         for (Object object : rawData) {
-            JSONObject mealData = (JSONObject) object;
+            JSONObject scheduleData = (JSONObject) object;
 
-            String eventName = String.valueOf(mealData.get("EVENT_NM"));
-            List<String> grades = NeisScheduleUtil.determineGrades(mealData);
-            LocalDate date = NeisScheduleUtil.parseDate(String.valueOf(mealData.get("AA_YMD")));
+            String eventName = String.valueOf(scheduleData.get("EVENT_NM"));
+            List<String> grades = NeisScheduleUtil.determineGrades(scheduleData);
+            LocalDate date = NeisScheduleUtil.parseDate(String.valueOf(scheduleData.get("AA_YMD")));
 
             scheduleList.add(new NeisSchedule(eventName, grades, date, null));
         }

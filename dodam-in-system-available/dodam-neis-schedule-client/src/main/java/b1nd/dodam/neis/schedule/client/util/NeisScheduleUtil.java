@@ -12,11 +12,11 @@ import java.util.List;
 
 public class NeisScheduleUtil {
 
-    public static List<String> determineGrades(JSONObject mealData) {
+    public static List<String> determineGrades(JSONObject scheduleData) {
         List<String> grades = new ArrayList<>();
-        if ("Y".equals(mealData.get("ONE_GRADE_EVENT_YN"))) grades.add("1학년");
-        if ("Y".equals(mealData.get("TW_GRADE_EVENT_YN"))) grades.add("2학년");
-        if ("Y".equals(mealData.get("THREE_GRADE_EVENT_YN"))) grades.add("3학년");
+        if ("Y".equals(scheduleData.get("ONE_GRADE_EVENT_YN"))) grades.add("1학년");
+        if ("Y".equals(scheduleData.get("TW_GRADE_EVENT_YN"))) grades.add("2학년");
+        if ("Y".equals(scheduleData.get("THREE_GRADE_EVENT_YN"))) grades.add("3학년");
 
         if (grades.size() == 3) {
             grades.clear();
