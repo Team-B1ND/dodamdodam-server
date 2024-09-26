@@ -16,13 +16,9 @@ public class ScheduleScheduler {
 
     @Scheduled(cron = "0 0 7 1 * ?", zone = "Asia/Seoul")
     public void flushAllScheduleData() {
-        try {
-            LocalDate now = LocalDate.now();
-            LocalDate startDate = LocalDate.of(now.getYear(), 3, 2);
-            LocalDate endDate = LocalDate.of(now.getYear()+1, 3, 1);
-            scheduleUseCase.createScheduleByNeis(startDate, endDate);
-        } catch (Exception e) {
-            log.error("fail to process", e);
-        }
+        LocalDate now = LocalDate.now();
+        LocalDate startDate = LocalDate.of(now.getYear(), 3, 2);
+        LocalDate endDate = LocalDate.of(now.getYear()+1, 3, 1);
+        scheduleUseCase.createScheduleByNeis(startDate, endDate);
     }
 }
