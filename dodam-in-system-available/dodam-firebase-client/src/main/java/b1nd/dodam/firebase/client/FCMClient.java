@@ -15,7 +15,7 @@ import java.util.List;
 public class FCMClient {
     public void sendMessage(String pushToken, String title, String body) {
         try {
-            if(!pushToken.isBlank()){
+            if(pushToken != null && !pushToken.isBlank()){
                 FirebaseMessaging.getInstance().send(Message.builder()
                         .setNotification(Notification.builder()
                                 .setTitle(title)
