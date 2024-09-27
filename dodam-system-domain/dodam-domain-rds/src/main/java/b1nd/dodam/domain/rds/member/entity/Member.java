@@ -46,7 +46,6 @@ public class Member extends BaseEntity {
     @NotNull
     private String phone;
 
-    @NotNull
     @JsonIgnore
     @Column(columnDefinition = "TEXT")
     private String pushToken;
