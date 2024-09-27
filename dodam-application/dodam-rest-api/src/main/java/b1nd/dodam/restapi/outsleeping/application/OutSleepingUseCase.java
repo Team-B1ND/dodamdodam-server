@@ -57,7 +57,7 @@ public class OutSleepingUseCase {
         }
     }
 
-    @PushAlarmEvent(target = "외박", status = ApprovalStatus.PENDING)
+    @PushAlarmEvent(target = "외박", status = ApprovalStatus.ALLOWED)
     public Response allow(Long id) {
         modifyStatus(id, ApprovalStatus.ALLOWED, null);
         return Response.noContent("외박 승인 성공");
@@ -69,7 +69,7 @@ public class OutSleepingUseCase {
         return Response.noContent("외박 거절 성공");
     }
 
-    @PushAlarmEvent(target = "외박", status = ApprovalStatus.PENDING)
+    @PushAlarmEvent(target = "외박", status = ApprovalStatus.REJECTED)
     public Response revert(Long id) {
         modifyStatus(id, ApprovalStatus.PENDING, null);
         return Response.noContent("외박 대기 성공");
