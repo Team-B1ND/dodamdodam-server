@@ -22,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -37,8 +38,8 @@ public class BusUseCase {
     @Transactional(rollbackFor = Exception.class)
     public Response register(BusReq req) {
         busRepository.save(req.mapToBus());
-//        List<String> pushTokens = studentRepository.findAllMembers().stream().map(Member::getPushToken).toList();
-//        fcmClient.sendMessages(pushTokens, "귀가버스 신청", "귀가 버스 신청이 가능해요! 신청해주세요.");
+        Optional<List<String>> pushTokens = Optional.of(studentRepository.findAllMembers().stream().map(Member::getPushToken).toList());
+        fcmClient.sendMessages(pushTokens, "귀가버스 신청", "귀가 버스 신청이 가능해요! 신청해주세요.");
         return Response.created("버스 등록 성공");
     }
 

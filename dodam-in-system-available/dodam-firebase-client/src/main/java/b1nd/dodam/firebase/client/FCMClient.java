@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Optional;
 
 @Component
 @RequiredArgsConstructor
@@ -29,7 +30,7 @@ public class FCMClient {
         }
     }
 
-    public void sendMessages(List<String> pushTokens, String title, String body) {
+    public void sendMessages(Optional<List<String>> pushTokens, String title, String body) {
         Notification notification = Notification.builder()
                 .setTitle(title)
                 .setBody(body)
@@ -37,9 +38,8 @@ public class FCMClient {
         List<Message> messages = pushTokens.stream()
                 .map(token -> Message.builder()
                         .setNotification(notification)
-                        .setToken(token)
+                        .setToken(token.toString())
                         .build()
                 ).toList();
-        FirebaseMessaging.getInstance().sendEachAsync(messages);
     }
 }
