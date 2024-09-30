@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 @Component
 @RequiredArgsConstructor
@@ -22,6 +23,6 @@ public class NightStudyPushAlarmScheduler {
         List<String> tokens = nightStudies.stream()
                 .map(n -> n.getStudent().getMember().getPushToken())
                 .toList();
-        fcmClient.sendMessages(tokens, "심야자습 만료", "심야자습이 만료됐어요.");
+        fcmClient.sendMessages(Optional.of(tokens), "심야자습 만료", "심야자습이 만료됐어요.");
     }
 }
