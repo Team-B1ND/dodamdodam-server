@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 public record OutGoingRes(Long id, String reason, ApprovalStatus status, LocalDateTime startAt, LocalDateTime endAt,
-                          StudentRes student, String rejectReason, LocalDateTime createdAt, LocalDateTime modifiedAt) {
+                          StudentRes student, String rejectReason, Boolean dinnerOrNot, LocalDateTime createdAt, LocalDateTime modifiedAt) {
     public static List<OutGoingRes> of(List<OutGoing> oList) {
         return oList.parallelStream()
                 .map(OutGoingRes::of)
@@ -24,6 +24,7 @@ public record OutGoingRes(Long id, String reason, ApprovalStatus status, LocalDa
                 o.getEndAt(),
                 StudentRes.of(o.getStudent()),
                 o.getRejectReason(),
+                o.getDinnerOrNot(),
                 o.getCreatedAt(),
                 o.getModifiedAt()
         );
