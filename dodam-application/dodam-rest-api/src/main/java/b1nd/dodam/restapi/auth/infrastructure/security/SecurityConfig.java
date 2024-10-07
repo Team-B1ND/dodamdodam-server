@@ -46,6 +46,8 @@ class SecurityConfig {
                 .addFilterAfter(broadcastMemberFilter, AuthorizationFilter.class)
 
                 .authorizeHttpRequests()
+
+                .requestMatchers("/actuator/prometheus").permitAll()
                 
                 .requestMatchers(POST, "/auth/**").permitAll()
 
