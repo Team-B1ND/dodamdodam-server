@@ -1,5 +1,6 @@
 dependencies {
     implementation project(':dodam-in-system-available:dodam-client-core')
+    implementation project(':dodam-in-system-available:dodam-neis-client-core')
 
     implementation 'org.springframework:spring-context:6.0.6'
     implementation 'org.springframework:spring-web:6.0.6'

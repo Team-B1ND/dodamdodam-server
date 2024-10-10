@@ -4,8 +4,9 @@ import b1nd.dodam.client.core.WebClientSupport;
 import b1nd.dodam.neis.meal.client.data.Food;
 import b1nd.dodam.neis.meal.client.data.FoodDetail;
 import b1nd.dodam.neis.meal.client.data.Meal;
-import b1nd.dodam.neis.meal.client.properties.NeisProperties;
+import b1nd.dodam.neis.meal.client.properties.NeisMealProperties;
 import b1nd.dodam.neis.meal.client.support.MealConverter;
+import b1nd.dodam.neis.client.core.NeisCoreProperties;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.json.simple.JSONArray;
@@ -24,8 +25,9 @@ import java.util.*;
 @RequiredArgsConstructor
 public class NeisMealClient {
 
-    private final NeisProperties neisProperties;
+    private final NeisMealProperties neisMealProperties;
     private final WebClientSupport webClient;
+    private final NeisCoreProperties neisCoreProperties;
 
     @Cacheable(value = "meal-day", key = "#year.toString().concat(-#month).concat(-#day)")
     public Meal getMeal(int year, int month, int day) {
@@ -95,8 +97,8 @@ public class NeisMealClient {
 
     private String getByDate(String date) {
         return webClient.get(
-                UriComponentsBuilder.fromUriString(neisProperties.getUrl())
-                        .build(neisProperties.getApiKey(), date).toString(),
+                UriComponentsBuilder.fromUriString(neisCoreProperties.getUrl()+neisMealProperties.getMealEndpoint())
+                        .build(neisCoreProperties.getApiKey(), date).toString(),
                 String.class
         ).block();
     }
