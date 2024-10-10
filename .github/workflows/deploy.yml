@@ -60,9 +60,6 @@ jobs:
         cloud.aws.storage.endpoint: ${{ secrets.S3_ENDPOINT }}
         cloud.aws.storage.bucket: ${{ secrets.S3_BUCKET }}
         
-    - name: Display application.yml
-      run: cat dodam-application/dodam-rest-api/src/main/resources/application.yml
-        
     - name: Set Firebase key file
       id: create-json 
       uses: jsdaniell/create-json@v1.2.2 
