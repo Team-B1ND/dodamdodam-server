@@ -1,4 +1,4 @@
-package b1nd.dodam.neis.meal.client.properties;
+package b1nd.dodam.neis.schedule.client.properties;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -8,10 +8,9 @@ import org.springframework.context.annotation.Configuration;
 @Getter
 @Setter
 @Configuration
-@ConfigurationProperties("app.neis")
-public class NeisProperties {
+@ConfigurationProperties("app.neis.schedule")
+public class NeisScheduleProperties {
 
-    private String apiKey;
-    private String url;
+    private String scheduleEndpoint;
 
 }

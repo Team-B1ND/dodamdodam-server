@@ -21,6 +21,10 @@ public class ScheduleService {
         repository.save(schedule);
     }
 
+    public void saveAll(List<Schedule> schedules) {
+        repository.saveAll(schedules);
+    }
+
     public void deleteById(int id) {
         repository.deleteById(id);
     }
