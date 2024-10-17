@@ -6,6 +6,7 @@ import com.google.firebase.messaging.FirebaseMessagingException;
 import com.google.firebase.messaging.Message;
 import com.google.firebase.messaging.Notification;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -16,7 +17,7 @@ import java.util.Optional;
 public class FCMClient {
     public void sendMessage(String pushToken, String title, String body) {
         try {
-            if(pushToken != null && !pushToken.isBlank()){
+            if(StringUtils.isNotBlank(pushToken)){
                 FirebaseMessaging.getInstance().send(Message.builder()
                         .setNotification(Notification.builder()
                                 .setTitle(title)
