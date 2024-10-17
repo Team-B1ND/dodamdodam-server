@@ -63,13 +63,13 @@ public class OutSleepingUseCase {
         return Response.noContent("외박 승인 성공");
     }
 
-    @PushAlarmEvent(target = "외박", status = ApprovalStatus.PENDING)
+    @PushAlarmEvent(target = "외박", status = ApprovalStatus.REJECTED)
     public Response reject(Long id, Optional<RejectOutSleepingReq> req) {
         modifyStatus(id, ApprovalStatus.REJECTED, req.map(RejectOutSleepingReq::rejectReason).orElse(null));
         return Response.noContent("외박 거절 성공");
     }
 
-    @PushAlarmEvent(target = "외박", status = ApprovalStatus.REJECTED)
+    @PushAlarmEvent(target = "외박", status = ApprovalStatus.PENDING)
     public Response revert(Long id) {
         modifyStatus(id, ApprovalStatus.PENDING, null);
         return Response.noContent("외박 대기 성공");
