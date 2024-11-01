@@ -95,4 +95,4 @@ jobs:
             docker rmi ${{ secrets.DOCKERHUB_USERNAME }}/dodamdodam-one:latest || true
             docker pull ${{ secrets.DOCKERHUB_USERNAME }}/dodamdodam-one:latest
             docker run -d -p 33333:8080 -p 55555:8090 --name dodamdodam-server ${{ secrets.DOCKERHUB_USERNAME }}/dodamdodam-one:latest
-            docker network connect redis-net dodamdodam-server
+            docker network connect dodam-redis-net dodamdodam-server
