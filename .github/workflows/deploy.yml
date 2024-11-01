@@ -90,9 +90,9 @@ jobs:
           port: ${{ secrets.LINUX_SSH_PORT }}
           script: |
             docker login -u ${{ secrets.DOCKERHUB_USERNAME }} -p ${{ secrets.DOCKERHUB_PASSWORD }}
-            docker stop dodamdodam
-            docker rm dodamdodam
-            docker rmi ${{ secrets.DOCKERHUB_USERNAME }}/dodamdodam:latest
-            docker pull ${{ secrets.DOCKERHUB_USERNAME }}/dodamdodam:latest
-            docker run -d -p 33333:8080 -p 55555:8090 --name dodamdodam ${{ secrets.DOCKERHUB_USERNAME }}/dodamdodam:latest
-            docker network connect redis-net dodamdodam
+            docker stop dodamdodam-server || true
+            docker rm dodamdodam-server || true
+            docker rmi ${{ secrets.DOCKERHUB_USERNAME }}/dodamdodam-one:latest || true
+            docker pull ${{ secrets.DOCKERHUB_USERNAME }}/dodamdodam-one:latest
+            docker run -d -p 33333:8080 -p 55555:8090 --name dodamdodam-server ${{ secrets.DOCKERHUB_USERNAME }}/dodamdodam-one:latest
+            docker network connect redis-net dodamdodam-server
