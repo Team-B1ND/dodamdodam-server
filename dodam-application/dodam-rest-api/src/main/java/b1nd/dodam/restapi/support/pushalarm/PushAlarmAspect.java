@@ -8,6 +8,7 @@ import b1nd.dodam.domain.rds.outsleeping.service.OutSleepingService;
 import b1nd.dodam.domain.rds.support.enumeration.ApprovalStatus;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Around;
@@ -27,27 +28,35 @@ public class PushAlarmAspect {
     private final OutGoingService outGoingService;
     private final OutSleepingService outSleepingService;
 
-    @AfterReturning(pointcut = "@annotation(pushAlarmEvent)", returning = "result")
-    public void handlePushAlarmEvent(Object result, PushAlarmEvent pushAlarmEvent) {
+    @AfterReturning(pointcut = "@annotation(pushAlarmEvent)")
+    public void handlePushAlarmEvent(JoinPoint joinPoint, PushAlarmEvent pushAlarmEvent) {
+        Object[] args = joinPoint.getArgs();
         String target = pushAlarmEvent.target();
+        ApprovalStatus status = pushAlarmEvent.status();
         sendPushAlarm(
-                getStudentByTargetAndId(target, getIdFromArgs(result)),
+                getStudentByTargetAndId(target, getIdFromArgs(args)),
                 target,
-                getRejectReasonFromArgs(result),
-                pushAlarmEvent.status()
+                getRejectReasonFromArgs(args, status),
+                status
         );
     }
 
-    private Long getIdFromArgs(Object result) {
-        if (result instanceof Long id)
+    private Long getIdFromArgs(Object[] args) {
+        if (args[0] instanceof Long id) {
             return id;
-        else throw new InternalServerException();
+        } else {
+            log.error("id 획득 실패");
+            throw new InternalServerException();
+        }
     }
 
-    private String getRejectReasonFromArgs(Object result) {
-        if (result instanceof Optional<?> optionalArg)
+    private String getRejectReasonFromArgs(Object[] args, ApprovalStatus status) {
+        if (status != ApprovalStatus.REJECTED) {
+            return null;
+        }
+        if (args[1] instanceof Optional<?> optionalArg)
             return (String) optionalArg.orElse(null);
-        else throw new InternalServerException();
+        return null;
     }
 
     private Student getStudentByTargetAndId(String target, Long id) {
@@ -56,6 +65,7 @@ public class PushAlarmAspect {
             case "외박" -> outSleepingService.getById(id).getStudent();
             case "심야자습" -> nightStudyService.getBy(id).getStudent();
             default -> throw new InternalServerException();
+
         };
     }
 

@@ -17,12 +17,12 @@ public class NightStudyPushAlarmScheduler {
     private final NightStudyService service;
     private final FCMClient fcmClient;
 
-    @Scheduled(cron = "0 0 11 * * ?")
+    @Scheduled(cron = "0 0 8 * * ?")
     public void scheduledPushAlarm() {
         List<NightStudy> nightStudies = service.getByEndDate(LocalDate.now().minusDays(1));
         List<String> tokens = nightStudies.stream()
                 .map(n -> n.getStudent().getMember().getPushToken())
                 .toList();
-        fcmClient.sendMessages(Optional.of(tokens), "심야자습 만료", "심야자습이 만료됐어요.");
+        fcmClient.sendMessages(tokens, "심야자습 만료", "심야자습이 만료됐어요.");
     }
 }

@@ -36,6 +36,7 @@ public class AuthUseCase {
         member.checkIfPasswordIsCorrect(Sha512PasswordEncoder.encode(req.pw()));
         member.checkIfStatusIncorrect();
         member.updatePushToken(req.pushToken());
+        memberRepository.save(member);
         return CompletableFuture.supplyAsync(() -> member, executor)
                 .thenCompose(m -> tokenClient.issueTokens(member.getId(), member.getRole().getNumber()))
                 .thenApply(tokens -> new LoginRes(member, tokens.accessToken(), tokens.refreshToken()))
