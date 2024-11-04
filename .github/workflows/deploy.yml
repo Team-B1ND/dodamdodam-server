@@ -90,8 +90,7 @@ jobs:
         uses: appleboy/ssh-action@v0.1.8
         with:
           host: ${{ secrets.LINUX_HOST }}
-          username: ${{ secrets.LINUX_USERNAME }}
-          key: ${{ secrets.LINUX_KEY }}
+          key: ${{ secrets.LINUX_PRIVATE_KEY }}
           port: ${{ secrets.LINUX_SSH_PORT }}
           script: |
             cd docker
