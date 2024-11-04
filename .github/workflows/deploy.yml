@@ -89,7 +89,7 @@ jobs:
       - name: EC2 Docker Run
         uses: appleboy/ssh-action@v0.1.8
         with:
-          host: ${{ secrets.UBUNTU_HOST}}
+          host: ${{ secrets.UBUNTU_HOST }}
           key: ${{ secrets.PRIVATE_KEY }}
           port: ${{ secrets.SSH_PORT }}
           script: |
