@@ -46,7 +46,6 @@ public class Schedule {
             name = "schedule_of_grade",
             joinColumns = @JoinColumn(name = "schedule_id")
     )
-
     @Enumerated(EnumType.STRING)
     private Set<TargetGrade> targetGrades;
 
