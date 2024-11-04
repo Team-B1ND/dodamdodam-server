@@ -89,9 +89,9 @@ jobs:
       - name: EC2 Docker Run
         uses: appleboy/ssh-action@v0.1.8
         with:
-          host: ${{ secrets.UBUNTU_HOST }}
-          key: ${{ secrets.PRIVATE_KEY }}
-          port: ${{ secrets.SSH_PORT }}
+          host: ${{ secrets.LINUX_HOST }}
+          key: ${{ secrets.LINUX_PRIVATE_KEY }}
+          port: ${{ secrets.LINUX_SSH_PORT }}
           script: |
             cd docker
             docker login -u ${{ secrets.DOCKERHUB_USERNAME }} -p ${{ secrets.DOCKERHUB_PASSWORD }}
