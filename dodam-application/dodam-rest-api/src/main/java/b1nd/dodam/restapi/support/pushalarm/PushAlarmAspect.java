@@ -45,16 +45,12 @@ public class PushAlarmAspect {
         if (args[0] instanceof Long id) {
             return id;
         } else {
-            log.error("id 획득 실패");
             throw new InternalServerException();
         }
     }
 
     private String getRejectReasonFromArgs(Object[] args, ApprovalStatus status) {
-        if (status != ApprovalStatus.REJECTED) {
-            return null;
-        }
-        if (args[1] instanceof Optional<?> optionalArg)
+        if (status == ApprovalStatus.REJECTED && args[1] instanceof Optional<?> optionalArg)
             return (String) optionalArg.orElse(null);
         return null;
     }
