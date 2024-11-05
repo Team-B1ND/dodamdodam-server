@@ -33,7 +33,7 @@ public class FCMClient {
         }
     }
 
-    public void sendMessages(Optional<List<String>> pushTokens, String title, String body) {
+    public void sendMessages(List<String> pushTokens, String title, String body) {
         Notification notification = Notification.builder()
                 .setTitle(title)
                 .setBody(body)
@@ -42,8 +42,9 @@ public class FCMClient {
                 .filter(StringUtils::isNotBlank)
                 .map(token -> Message.builder()
                         .setNotification(notification)
-                        .setToken(token.toString())
+                        .setToken(token)
                         .build()
                 ).toList();
+        FirebaseMessaging.getInstance().sendEachAsync(messages);
     }
 }
