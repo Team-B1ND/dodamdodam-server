@@ -1,6 +1,6 @@
-package b1nd.dodam.ncp.object.storage.client.config;
+package b1nd.dodam.simple.storage.service.client.config;
 
-import b1nd.dodam.ncp.object.storage.client.properties.CloudProperties;
+import b1nd.dodam.simple.storage.service.client.properties.CloudProperties;
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.client.builder.AwsClientBuilder;

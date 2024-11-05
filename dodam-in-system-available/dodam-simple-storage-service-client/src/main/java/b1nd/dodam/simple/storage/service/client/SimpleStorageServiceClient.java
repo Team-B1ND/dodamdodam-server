@@ -1,7 +1,7 @@
-package b1nd.dodam.ncp.object.storage.client;
+package b1nd.dodam.simple.storage.service.client;
 
 import b1nd.dodam.core.exception.global.InternalServerException;
-import b1nd.dodam.ncp.object.storage.client.properties.CloudProperties;
+import b1nd.dodam.simple.storage.service.client.properties.CloudProperties;
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.ObjectMetadata;
@@ -14,7 +14,7 @@ import java.util.UUID;
 
 @Component
 @RequiredArgsConstructor
-public class NCPObjectStorageClient {
+public class SimpleStorageServiceClient {
 
     private final AmazonS3Client amazonS3Client;
     private final CloudProperties cloudProperties;

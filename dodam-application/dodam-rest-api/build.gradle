@@ -9,7 +9,7 @@ dependencies {
     implementation project(':dodam-in-system-available:dodam-discord-webhook-client')
     implementation project(':dodam-in-system-available:dodam-gabia-client')
     implementation project(':dodam-in-system-available:dodam-melon-chart-client')
-    implementation project(':dodam-in-system-available:dodam-ncp-object-storage-client')
+    implementation project(':dodam-in-system-available:dodam-simple-storage-service-client')
     implementation project(':dodam-in-system-available:dodam-neis-meal-client')
     implementation project(':dodam-in-system-available:dodam-token-client')
     implementation project(':dodam-in-system-available:dodam-youtube-video-client')

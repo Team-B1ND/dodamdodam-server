@@ -1,7 +1,7 @@
 package b1nd.dodam.restapi.support.file;
 
-import b1nd.dodam.ncp.object.storage.client.NCPObjectStorageClient;
 import b1nd.dodam.restapi.support.data.ResponseData;
+import b1nd.dodam.simple.storage.service.client.SimpleStorageServiceClient;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -14,7 +14,7 @@ import org.springframework.web.multipart.MultipartFile;
 @RequiredArgsConstructor
 public class FileController {
 
-    private final NCPObjectStorageClient ncpObjectStorageClient;
+    private final SimpleStorageServiceClient ncpObjectStorageClient;
 
     @PostMapping
     public ResponseData<String> uploadFile(@RequestParam("file") MultipartFile multipartFile) {
