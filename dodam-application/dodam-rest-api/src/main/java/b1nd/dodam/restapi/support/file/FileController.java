@@ -14,11 +14,11 @@ import org.springframework.web.multipart.MultipartFile;
 @RequiredArgsConstructor
 public class FileController {
 
-    private final SimpleStorageServiceClient ncpObjectStorageClient;
+    private final SimpleStorageServiceClient simpleStorageServiceClient;
 
     @PostMapping
     public ResponseData<String> uploadFile(@RequestParam("file") MultipartFile multipartFile) {
-        return ResponseData.created("파일 업로드 성공", ncpObjectStorageClient.uploadFile(multipartFile));
+        return ResponseData.created("파일 업로드 성공", simpleStorageServiceClient.uploadFile(multipartFile));
     }
 
 }
