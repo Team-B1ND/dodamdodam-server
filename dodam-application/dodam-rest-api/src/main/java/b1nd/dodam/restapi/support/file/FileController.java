@@ -1,5 +1,6 @@
 package b1nd.dodam.restapi.support.file;
 
+import b1nd.dodam.simple.storage.service.client.SimpleStorageServiceClient;
 import b1nd.dodam.restapi.support.data.ResponseData;
 import b1nd.dodam.simple.storage.service.client.SimpleStorageServiceClient;
 import lombok.RequiredArgsConstructor;

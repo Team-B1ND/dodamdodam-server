@@ -41,7 +41,7 @@ public class OutSleepingService {
     }
 
     public List<OutSleeping> getByEndAt(LocalDate endAt){
-        return repository.findByEndAtGreaterThanEqual(endAt);
+        return repository.findByEndAtGreaterThan(endAt);
     }
 
     public List<OutSleeping> getByStudent(Student student, LocalDate now) {

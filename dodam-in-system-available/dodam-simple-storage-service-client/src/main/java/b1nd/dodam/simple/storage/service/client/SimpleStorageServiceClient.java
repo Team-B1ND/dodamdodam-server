@@ -3,7 +3,6 @@ package b1nd.dodam.simple.storage.service.client;
 import b1nd.dodam.core.exception.global.InternalServerException;
 import b1nd.dodam.simple.storage.service.client.properties.CloudProperties;
 import com.amazonaws.services.s3.AmazonS3Client;
-import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import lombok.RequiredArgsConstructor;
@@ -26,8 +25,7 @@ public class SimpleStorageServiceClient {
 
             ObjectMetadata metadata = createObjectMetadata(multipartFile);
 
-            PutObjectRequest request = new PutObjectRequest(bucket, originalFilename, multipartFile.getInputStream(), metadata)
-                    .withCannedAcl(CannedAccessControlList.PublicRead);
+            PutObjectRequest request = new PutObjectRequest(bucket, originalFilename, multipartFile.getInputStream(), metadata);
             amazonS3Client.putObject(request);
 
             return amazonS3Client.getUrl(bucket, originalFilename).toString();

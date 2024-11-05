@@ -9,73 +9,78 @@ permissions:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
-    
-    steps:
-    - uses: actions/checkout@v3
-    - name: Set up JDK 17
-      uses: actions/setup-java@v3
-      with:
-        java-version: '17'
-        distribution: 'temurin'
+    runs-on: ubuntu-24.04
 
-    - name: Set yml file 
-      uses: microsoft/variable-substitution@v1
-      with:
-        files: dodam-application/dodam-rest-api/src/main/resources/application.yml
-      env:
-        spring.datasource.url: ${{ secrets.DB_URL }} 
-        spring.datasource.username: ${{ secrets.DB_USERNAME }} 
-        spring.datasource.password: ${{ secrets.DB_PASSWORD }} 
-        redis.master.host: ${{ secrets.REDIS_MASTER_HOST }}
-        redis.master.port: ${{ secrets.REDIS_MASTER_PORT }}
-        redis.slaves.0.host: ${{ secrets.REDIS_SLAVE_1_HOST }}
-        redis.slaves.0.port: ${{ secrets.REDIS_SLAVE_1_PORT }}
-        redis.slaves.1.host: ${{ secrets.REDIS_SLAVE_2_HOST }}
-        redis.slaves.1.port: ${{ secrets.REDIS_SLAVE_2_PORT }}
-        app.token.generate: ${{ secrets.TOKEN_GENERATE_URL }}
-        app.token.verify: ${{ secrets.TOKEN_VERIFY_URL }}
-        app.token.refresh: ${{ secrets.TOKEN_REFRESH_URL }}
-        app.jwt.issuer: ${{ secrets.JWT_ISSUER }}
-        app.jwt.tokenServer: ${{ secrets.TOKEN_SERVER_URL }}
-        app.youtube.key.apiKey: ${{ secrets.YOUTUBE_KEY }}
-        app.youtube.url.video: ${{ secrets.YOUTUBE_VIDEO_URL }}
-        app.youtube.url.search: ${{ secrets.YOUTUBE_SEARCH_URL }}
-        app.gabia.id: ${{ secrets.GABIA_ID }}
-        app.gabia.apiKey: ${{ secrets.GABIA_API_KEY }}
-        app.gabia.refKey: ${{ secrets.GABIA_REF_KEY }}
-        app.gabia.tokenUrl: ${{ secrets.GABIA_TOKEN_URL }}
-        app.gabia.smsUrl: ${{ secrets.GABIA_SMS_URL }}
-        app.gabia.lmsUrl: ${{ secrets.GABIA_LMS_URL }}
-        app.gabia.sender: ${{ secrets.GABIA_SMS_SENDER }}
-        app.gabia.subject: ${{ secrets.GABIA_SMS_SUBJECT }}
-        app.neis.apiKey: ${{ secrets.NEIS_KEY }}
-        app.neis.url: ${{ secrets.NEIS_URL }}
-        app.codenary.url: ${{ secrets.CODENARY_URL }}
-        app.melon.url: ${{ secrets.MELON_URL }}
-        app.discord.url: ${{ secrets.DISCORD_URL }}
-        cloud.aws.credentials.access-key: ${{ secrets.S3_ACCESS_KEY }}
-        cloud.aws.credentials.secret-key: ${{ secrets.S3_SECRET_KEY }}
-        cloud.aws.region.static: ${{ secrets.S3_REGION }}
-        cloud.aws.storage.endpoint: ${{ secrets.S3_ENDPOINT }}
-        cloud.aws.storage.bucket: ${{ secrets.S3_BUCKET }}
-        
-    - name: Set Firebase key file
-      id: create-json 
-      uses: jsdaniell/create-json@v1.2.2 
-      with:
-        name: "dodamdodam-firebase-key.json" 
-        json: ${{ secrets. FIREBASE_KEY }} 
-        dir: './dodam-application/dodam-rest-api/src/main/resources/'
-   
-    - name: Build with Gradle
-      run: ./gradlew :dodam-application:dodam-rest-api:build -x test --parallel
-      
-    - name: Build Docker Image For Spring
-      run: |
-        docker login -u ${{ secrets.DOCKERHUB_USERNAME }} -p ${{ secrets.DOCKERHUB_PASSWORD }}
-        docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/dodamdodam:latest .
-        docker push ${{ secrets.DOCKERHUB_USERNAME }}/dodamdodam:latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Set yml file
+        uses: microsoft/variable-substitution@v1
+        with:
+          files: dodam-application/dodam-rest-api/src/main/resources/application.yml
+        env:
+          spring.datasource.url: ${{ secrets.DB_URL }}
+          spring.datasource.username: ${{ secrets.DB_USERNAME }}
+          spring.datasource.password: ${{ secrets.DB_PASSWORD }}
+          redis.master.host: ${{ secrets.REDIS_MASTER_HOST }}
+          redis.master.port: ${{ secrets.REDIS_MASTER_PORT }}
+          redis.slaves.0.host: ${{ secrets.REDIS_SLAVE_1_HOST }}
+          redis.slaves.0.port: ${{ secrets.REDIS_SLAVE_1_PORT }}
+          redis.slaves.1.host: ${{ secrets.REDIS_SLAVE_2_HOST }}
+          redis.slaves.1.port: ${{ secrets.REDIS_SLAVE_2_PORT }}
+          app.token.generate: ${{ secrets.TOKEN_GENERATE_URL }}
+          app.token.verify: ${{ secrets.TOKEN_VERIFY_URL }}
+          app.token.refresh: ${{ secrets.TOKEN_REFRESH_URL }}
+          app.jwt.issuer: ${{ secrets.JWT_ISSUER }}
+          app.jwt.tokenServer: ${{ secrets.TOKEN_SERVER_URL }}
+          app.youtube.key.apiKey: ${{ secrets.YOUTUBE_KEY }}
+          app.youtube.url.video: ${{ secrets.YOUTUBE_VIDEO_URL }}
+          app.youtube.url.search: ${{ secrets.YOUTUBE_SEARCH_URL }}
+          app.gabia.id: ${{ secrets.GABIA_ID }}
+          app.gabia.apiKey: ${{ secrets.GABIA_API_KEY }}
+          app.gabia.refKey: ${{ secrets.GABIA_REF_KEY }}
+          app.gabia.tokenUrl: ${{ secrets.GABIA_TOKEN_URL }}
+          app.gabia.smsUrl: ${{ secrets.GABIA_SMS_URL }}
+          app.gabia.lmsUrl: ${{ secrets.GABIA_LMS_URL }}
+          app.gabia.sender: ${{ secrets.GABIA_SMS_SENDER }}
+          app.gabia.subject: ${{ secrets.GABIA_SMS_SUBJECT }}
+          app.neis.apiKey: ${{ secrets.NEIS_KEY }}
+          app.neis.url: ${{ secrets.NEIS_URL }}
+          app.codenary.url: ${{ secrets.CODENARY_URL }}
+          app.melon.url: ${{ secrets.MELON_URL }}
+          app.discord.url: ${{ secrets.DISCORD_URL }}
+          cloud.aws.credentials.access-key: ${{ secrets.S3_ACCESS_KEY }}
+          cloud.aws.credentials.secret-key: ${{ secrets.S3_SECRET_KEY }}
+          cloud.aws.region.static: ${{ secrets.S3_REGION }}
+          cloud.aws.storage.endpoint: ${{ secrets.S3_ENDPOINT }}
+          cloud.aws.storage.bucket: ${{ secrets.S3_BUCKET }}
+
+      - name: Display application.yml
+        run: cat dodam-application/dodam-rest-api/src/main/resources/application.yml
+
+      - name: Set Firebase key file
+        id: create-json
+        uses: jsdaniell/create-json@v1.2.2
+        with:
+          name: "dodamdodam-firebase-key.json"
+          json: ${{ secrets.FIREBASE_KEY }}
+          dir: './dodam-application/dodam-rest-api/src/main/resources/'
+
+      - name: Build with Gradle
+        run: ./gradlew :dodam-application:dodam-rest-api:build -x test --parallel
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Build and push Docker images
+        run: |
+          docker login -u ${{ secrets.DOCKERHUB_USERNAME }} -p ${{ secrets.DOCKERHUB_PASSWORD }}
+          docker buildx build --platform linux/amd64,linux/arm64 -t ${{ secrets.DOCKERHUB_USERNAME }}/dodamdodam-one:latest --push .
 
   deploy:
     needs: build
@@ -86,13 +91,11 @@ jobs:
         with:
           host: ${{ secrets.LINUX_HOST }}
           username: ${{ secrets.LINUX_USERNAME }}
-          password: ${{ secrets.LINUX_PASSWORD }}
+          key: ${{ secrets.LINUX_PRIVATE_KEY }}
           port: ${{ secrets.LINUX_SSH_PORT }}
           script: |
+            cd docker
             docker login -u ${{ secrets.DOCKERHUB_USERNAME }} -p ${{ secrets.DOCKERHUB_PASSWORD }}
-            docker stop dodamdodam-server || true
-            docker rm dodamdodam-server || true
-            docker rmi ${{ secrets.DOCKERHUB_USERNAME }}/dodamdodam-one:latest || true
-            docker pull ${{ secrets.DOCKERHUB_USERNAME }}/dodamdodam-one:latest
-            docker run -d -p 33333:8080 -p 55555:8090 --name dodamdodam-server ${{ secrets.DOCKERHUB_USERNAME }}/dodamdodam-one:latest
-            docker network connect dodam-redis-net dodamdodam-server
+            docker compose -f dodamdodam-docker-compose.yml stop dodamdodam
+            docker compose -f dodamdodam-docker-compose.yml rm -f dodamdodam
+            docker compose -f dodamdodam-docker-compose.yml up dodamdodam --pull always -d
