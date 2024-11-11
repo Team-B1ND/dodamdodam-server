@@ -13,8 +13,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 
-import java.util.Objects;
-
 @Getter
 @Entity(name = "member")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -102,7 +100,9 @@ public class Member extends BaseEntity {
     }
 
     public void updatePushToken(String pushToken){
-        this.pushToken = pushToken;
+        if(StringUtils.isNotBlank(pushToken)){
+            this.pushToken = pushToken;
+        }
     }
 
 }

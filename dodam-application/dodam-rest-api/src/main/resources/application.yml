@@ -8,10 +8,10 @@ spring:
     username: ${DB_USERNAME}
     password: ${DB_PASSWORD}
     hikari:
-      connection-timeout: 20000   # ??? ???? (20?)
-      maximum-pool-size: 10       # ?? ??? ? ?? (10?)
-      minimum-idle: 2             # ?? ?? ??? ? (2?)
-      idle-timeout: 30000         # ?? ??? ???? (30?)
+      connection-timeout: 20000
+      maximum-pool-size: 10
+      minimum-idle: 2
+      idle-timeout: 30000
       pool-name: MyHikariCP
   servlet:
     multipart:
