@@ -16,15 +16,15 @@ import java.util.List;
 public class FCMClient {
     public void sendMessage(String pushToken, String title, String body) {
         try {
-            if (StringUtils.isNotEmpty(pushToken)) {
-                FirebaseMessaging.getInstance().send(Message.builder()
-                        .setNotification(Notification.builder()
-                                .setTitle(title)
-                                .setBody(body)
-                                .build())
-                        .setToken(pushToken)
-                        .build());
-            }
+            if (StringUtils.isEmpty(pushToken)) return;
+
+            FirebaseMessaging.getInstance().send(Message.builder()
+                    .setNotification(Notification.builder()
+                            .setTitle(title)
+                            .setBody(body)
+                            .build())
+                    .setToken(pushToken)
+                    .build());
         } catch (FirebaseMessagingException e){
             throw new InternalServerException();
         }
@@ -35,13 +35,19 @@ public class FCMClient {
                 .setTitle(title)
                 .setBody(body)
                 .build();
+
         List<Message> messages = pushTokens.stream()
                 .filter(StringUtils::isNotBlank)
                 .map(token -> Message.builder()
                         .setNotification(notification)
                         .setToken(token)
                         .build()
-                ).toList();
-        FirebaseMessaging.getInstance().sendEachAsync(messages);
+                )
+                .toList();
+
+        if (!messages.isEmpty()) {
+            FirebaseMessaging.getInstance().sendEachAsync(messages);
+        }
     }
+
 }
