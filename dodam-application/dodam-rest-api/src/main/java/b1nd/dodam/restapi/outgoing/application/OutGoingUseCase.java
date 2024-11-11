@@ -17,10 +17,8 @@ import b1nd.dodam.restapi.outgoing.application.data.res.OutGoingMealCountRes;
 import b1nd.dodam.restapi.outgoing.application.data.res.OutGoingRes;
 import b1nd.dodam.restapi.support.data.Response;
 import b1nd.dodam.restapi.support.data.ResponseData;
-import b1nd.dodam.restapi.support.pushalarm.ApprovalAlarmUtil;
 import b1nd.dodam.restapi.support.pushalarm.PushAlarmEvent;
 import lombok.RequiredArgsConstructor;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 

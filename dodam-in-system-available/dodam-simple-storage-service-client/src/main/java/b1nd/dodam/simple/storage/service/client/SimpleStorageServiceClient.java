@@ -9,7 +9,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.InputStream;
 import java.util.UUID;
 
 @Component
@@ -21,12 +20,13 @@ public class SimpleStorageServiceClient {
 
     public String uploadFile(MultipartFile multipartFile) {
         String bucket = cloudProperties.storage().getBucket();
+        try {
             String originalFilename = bucket + "/" + UUID.randomUUID() + multipartFile.getOriginalFilename();
 
             ObjectMetadata metadata = createObjectMetadata(multipartFile);
 
-        try (InputStream inputStream = multipartFile.getInputStream()){
-            amazonS3Client.putObject(new PutObjectRequest(bucket, originalFilename, inputStream, metadata));
+            PutObjectRequest request = new PutObjectRequest(bucket, originalFilename, multipartFile.getInputStream(), metadata);
+            amazonS3Client.putObject(request);
 
             return amazonS3Client.getUrl(bucket, originalFilename).toString();
         } catch (Exception e) {
