@@ -15,11 +15,8 @@ import b1nd.dodam.restapi.outsleeping.application.data.req.RejectOutSleepingReq;
 import b1nd.dodam.restapi.outsleeping.application.data.res.OutSleepingRes;
 import b1nd.dodam.restapi.support.data.Response;
 import b1nd.dodam.restapi.support.data.ResponseData;
-import b1nd.dodam.restapi.support.pushalarm.ApprovalAlarmEvent;
-import b1nd.dodam.restapi.support.pushalarm.ApprovalAlarmUtil;
 import b1nd.dodam.restapi.support.pushalarm.PushAlarmEvent;
 import lombok.RequiredArgsConstructor;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
