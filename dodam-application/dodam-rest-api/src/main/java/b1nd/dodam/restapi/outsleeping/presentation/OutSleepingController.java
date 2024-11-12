@@ -61,4 +61,9 @@ public class OutSleepingController {
         return useCase.getValid();
     }
 
+    @GetMapping("/residual")
+    public ResponseData<List<OutSleepingRes>> getResidual() {
+        return useCase.getValid();
+    }
+
 }

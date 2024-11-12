@@ -37,6 +37,11 @@ public class OutSleepingService {
                 .toList();
     }
 
+    public List<OutSleeping> getResidual(LocalDate now){
+//        return getByDate(now).parallelStream()
+        return null;
+    }
+
     public List<OutSleeping> getByDate(LocalDate date) {
         return repository.findByDate(date);
     }

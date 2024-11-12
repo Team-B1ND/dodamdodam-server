@@ -88,6 +88,12 @@ public class OutSleepingUseCase {
     }
 
     @Transactional(readOnly = true)
+    public ResponseData<List<OutSleepingRes>> getResidual() {
+        LocalDate now = ZonedDateTimeUtil.nowToLocalDate();
+        return ResponseData.ok("잔류 학생 조회 성공", OutSleepingRes.of(outSleepingService.getResidual(now)));
+    }
+
+    @Transactional(readOnly = true)
     public ResponseData<List<OutSleepingRes>> getByEndAt(LocalDate endAt){
         return ResponseData.ok("종료일 기준 외박 조회 성공", OutSleepingRes.of(outSleepingService.getByEndAt(endAt)));
     }
