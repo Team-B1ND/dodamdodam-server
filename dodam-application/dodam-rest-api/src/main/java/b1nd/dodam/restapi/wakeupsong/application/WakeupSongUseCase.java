@@ -23,7 +23,6 @@ import b1nd.dodam.youtube.video.client.YoutubeVideoClient;
 import b1nd.dodam.youtube.video.client.data.YoutubeApiRes;
 import b1nd.dodam.youtube.video.client.data.YoutubeRes;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -31,7 +30,6 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
 
-@Slf4j
 @Component
 @RequiredArgsConstructor
 public class WakeupSongUseCase {

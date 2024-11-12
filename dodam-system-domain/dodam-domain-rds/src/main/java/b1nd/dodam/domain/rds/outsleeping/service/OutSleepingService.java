@@ -31,9 +31,7 @@ public class OutSleepingService {
     }
 
     public List<OutSleeping> getValid(LocalDate now) {
-        return getByDate(now).parallelStream()
-                .filter(o -> ApprovalStatus.ALLOWED.equals(o.getStatus()))
-                .toList();
+        return getByDate(now).parallelStream().toList();
     }
 
     public List<OutSleeping> getByDate(LocalDate date) {
@@ -41,7 +39,7 @@ public class OutSleepingService {
     }
 
     public List<OutSleeping> getByEndAt(LocalDate endAt){
-        return repository.findByEndAtGreaterThan(endAt);
+        return repository.findByEndAtGreaterThanEqual(endAt);
     }
 
     public List<OutSleeping> getByStudent(Student student, LocalDate now) {

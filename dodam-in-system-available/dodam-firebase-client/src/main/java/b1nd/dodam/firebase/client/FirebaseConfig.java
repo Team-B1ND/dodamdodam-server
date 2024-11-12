@@ -1,6 +1,5 @@
 package b1nd.dodam.firebase.client;
 
-import b1nd.dodam.core.exception.global.InternalServerException;
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
