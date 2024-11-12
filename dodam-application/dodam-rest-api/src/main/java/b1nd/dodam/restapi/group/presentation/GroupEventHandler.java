@@ -20,6 +20,8 @@ public class GroupEventHandler {
     @TransactionalEventListener
     public void listen(JoinMemberToGroupEvent e) {
         groupMemberRepository.save(GroupMember.builder()
+                .permission(e.permission())
+                .status(e.status())
                 .group(e.group())
                 .member(e.member())
                 .build()

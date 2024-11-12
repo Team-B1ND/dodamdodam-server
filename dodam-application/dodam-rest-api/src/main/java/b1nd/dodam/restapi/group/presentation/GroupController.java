@@ -1,8 +1,9 @@
 package b1nd.dodam.restapi.group.presentation;
 
-import b1nd.dodam.domain.rds.group.entity.Group;
+import b1nd.dodam.domain.rds.support.enumeration.ApprovalStatus;
 import b1nd.dodam.restapi.group.application.GroupUseCase;
 import b1nd.dodam.restapi.group.application.data.req.ManageGroupReq;
+import b1nd.dodam.restapi.group.application.data.res.GroupMemberRes;
 import b1nd.dodam.restapi.group.application.data.res.MyGroupRes;
 import b1nd.dodam.restapi.support.data.Response;
 import b1nd.dodam.restapi.support.data.ResponseData;
@@ -23,6 +24,16 @@ public class GroupController {
         return useCase.organize(req);
     }
 
+    @PostMapping("/member/join/{id}")
+    public Response apply(@PathVariable Long id){
+        return useCase.applyGroup(id);
+    }
+
+    @PostMapping("/{id}")
+    public Response handleGroupApplication(@PathVariable Long id, @RequestParam ApprovalStatus status){
+        return useCase.handleGroupApplication(id, status);
+    }
+
     @PatchMapping("/{id}")
     public Response modify(
             @PathVariable Long id,
@@ -36,9 +47,18 @@ public class GroupController {
         return useCase.delete(id);
     }
 
+    @DeleteMapping("/member/{id}")
+    public Response deleteMember(@PathVariable Long id){
+        return useCase.exitFromGroupById(id);
+    }
+
     @GetMapping("/my")
     public ResponseData<List<MyGroupRes>> getMyGroups() {
         return useCase.getMyGroups();
     }
 
+    @GetMapping("/members/{id}")
+    public ResponseData<List<GroupMemberRes>> getMyGroup(@PathVariable Long id){
+        return useCase.getGroupMemberByGroupId(id);
+    }
 }

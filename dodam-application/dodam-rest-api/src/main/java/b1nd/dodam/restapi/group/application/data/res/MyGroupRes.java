@@ -8,7 +8,7 @@ import java.util.List;
 
 public record MyGroupRes(
         Long id,
-        String name,
+        String groupName,
         GroupPermission permission
 ) {
     static public List<MyGroupRes> of(List<GroupMember> groupMembers){

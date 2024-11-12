@@ -8,6 +8,7 @@ import b1nd.dodam.domain.rds.group.exception.GroupNotFoundException;
 import b1nd.dodam.domain.rds.group.repository.GroupMemberRepository;
 import b1nd.dodam.domain.rds.group.repository.GroupRepository;
 import b1nd.dodam.domain.rds.member.entity.Member;
+import b1nd.dodam.domain.rds.support.enumeration.ApprovalStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -32,19 +33,6 @@ public class GroupService {
         groupRepository.deleteById(id);
     }
 
-    public void deleteGroupMemberByGroup(Group group) {
-        groupMemberRepository.deleteAllByGroup(group);
-    }
 
-    public void validateIsAdminInGroup(Group group, Member member) {
-        GroupMember groupMember = groupMemberRepository.findByGroupAndMember(group, member);
-        if (!GroupPermission.isAdmin(groupMember.getPermission())){
-            throw new InvalidPermissionException();
-        }
-    }
-
-    public List<GroupMember> getGroupMemberByMember(Member member) {
-        return groupMemberRepository.findByMember(member);
-    }
 
 }
