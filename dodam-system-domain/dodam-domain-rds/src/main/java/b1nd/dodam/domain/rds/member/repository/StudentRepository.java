@@ -47,6 +47,6 @@ public interface StudentRepository extends JpaRepository<Student, Integer> {
     @Query("SELECT m FROM student s JOIN s.member m WHERE s.grade = :grade")
     List<Member> findMembersByGrade(@Param("grade") int grade);
 
-    List<Student> findAllByIdNotIn (List<Integer> ids);
+    List<Student> findAllByIdNotIn(List<Integer> ids);
 
 }

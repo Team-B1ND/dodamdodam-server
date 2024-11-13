@@ -96,15 +96,12 @@ public class OutSleepingUseCase {
                         .stream()
                         .map(OutSleeping::getStudent)
                         .map(Student::getId)
-                        .collect(Collectors.toList())
-        );
+                        .toList());
 
-        List<MemberInfoRes> memberInfoResList = studentList.stream()
+        return ResponseData.ok("잔류 학생 조회 성공", studentList.stream()
                 .filter(student -> student.getMember().getStatus().equals(ActiveStatus.ACTIVE))
                 .map(student -> MemberInfoRes.of(student.getMember(), student, null))
-                .collect(Collectors.toList());
-
-        return ResponseData.ok("잔류 학생 조회 성공", memberInfoResList);
+                .toList());
     }
 
     @Transactional(readOnly = true)
