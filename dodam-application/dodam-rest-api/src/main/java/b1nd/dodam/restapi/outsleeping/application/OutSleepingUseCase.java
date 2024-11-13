@@ -3,6 +3,7 @@ package b1nd.dodam.restapi.outsleeping.application;
 import b1nd.dodam.core.util.ZonedDateTimeUtil;
 import b1nd.dodam.domain.rds.member.entity.Member;
 import b1nd.dodam.domain.rds.member.entity.Student;
+import b1nd.dodam.domain.rds.member.entity.Teacher;
 import b1nd.dodam.domain.rds.member.repository.StudentRepository;
 import b1nd.dodam.domain.rds.member.repository.TeacherRepository;
 import b1nd.dodam.domain.rds.outsleeping.entity.OutSleeping;
@@ -10,6 +11,7 @@ import b1nd.dodam.domain.rds.outsleeping.exception.NotOutSleepingApplicantExcept
 import b1nd.dodam.domain.rds.outsleeping.service.OutSleepingService;
 import b1nd.dodam.domain.rds.support.enumeration.ApprovalStatus;
 import b1nd.dodam.restapi.auth.infrastructure.security.support.MemberAuthenticationHolder;
+import b1nd.dodam.restapi.member.application.data.res.MemberInfoRes;
 import b1nd.dodam.restapi.outsleeping.application.data.req.ApplyOutSleepingReq;
 import b1nd.dodam.restapi.outsleeping.application.data.req.RejectOutSleepingReq;
 import b1nd.dodam.restapi.outsleeping.application.data.res.OutSleepingRes;
@@ -21,8 +23,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Component
 @Transactional(rollbackFor = Exception.class)
@@ -85,9 +87,29 @@ public class OutSleepingUseCase {
     }
 
     @Transactional(readOnly = true)
-    public ResponseData<List<OutSleepingRes>> getResidual() {
+    public ResponseData<List<MemberInfoRes>> getRemainder() {
         LocalDate now = ZonedDateTimeUtil.nowToLocalDate();
-        return ResponseData.ok("잔류 학생 조회 성공", OutSleepingRes.of(outSleepingService.getResidual(now)));
+        List<Student> outSleepingIds = outSleepingService.getValid(now)
+                .stream()
+                .map(OutSleeping::getStudent)
+                .collect(Collectors.toList());
+
+        List<Integer> studentIds = outSleepingIds
+                .stream()
+                .map(Student::getId)
+                .collect(Collectors.toList());
+
+        List<Student> studentList = studentRepository.findAllByIdNotIn(studentIds);
+
+        List<MemberInfoRes> memberInfoResList = new ArrayList<>();
+        for (Student student : studentList){
+
+            Member member = student.getMember();
+
+            memberInfoResList.add(MemberInfoRes.of(member, student, null));
+        }
+
+        return ResponseData.ok("잔류 학생 조회 성공", memberInfoResList);
     }
 
     @Transactional(readOnly = true)

@@ -1,5 +1,6 @@
 package b1nd.dodam.restapi.outsleeping.presentation;
 
+import b1nd.dodam.restapi.member.application.data.res.MemberInfoRes;
 import b1nd.dodam.restapi.outsleeping.application.OutSleepingUseCase;
 import b1nd.dodam.restapi.outsleeping.application.data.req.ApplyOutSleepingReq;
 import b1nd.dodam.restapi.outsleeping.application.data.req.RejectOutSleepingReq;
@@ -62,8 +63,8 @@ public class OutSleepingController {
     }
 
     @GetMapping("/residual")
-    public ResponseData<List<OutSleepingRes>> getResidual() {
-        return useCase.getValid();
+    public ResponseData<List<MemberInfoRes>> getResidual() {
+        return useCase.getRemainder();
     }
 
 }

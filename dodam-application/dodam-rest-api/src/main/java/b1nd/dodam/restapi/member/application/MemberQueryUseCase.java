@@ -60,7 +60,9 @@ public class MemberQueryUseCase {
     }
 
     public ResponseData<List<MemberInfoRes>> getAll(){
-        return ResponseData.ok("모든 멤버 정보 조회 성공", memberRepository.findByStatusOrderByStudent(ActiveStatus.ACTIVE).parallelStream()
+        return ResponseData.ok("모든 멤버 정보 조회 성공",
+                memberRepository.findByStatusOrderByStudent(ActiveStatus.ACTIVE)
+                .parallelStream()
                 .map(this::getMemberInfo)
                 .toList());
     }
