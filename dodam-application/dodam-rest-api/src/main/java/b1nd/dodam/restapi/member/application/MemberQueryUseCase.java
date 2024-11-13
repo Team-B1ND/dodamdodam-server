@@ -12,7 +12,6 @@ import b1nd.dodam.restapi.auth.infrastructure.security.support.MemberAuthenticat
 import b1nd.dodam.restapi.member.application.data.res.MemberInfoRes;
 import b1nd.dodam.restapi.support.data.ResponseData;
 import lombok.RequiredArgsConstructor;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 

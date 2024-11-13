@@ -3,7 +3,7 @@ package b1nd.dodam.restapi.outsleeping.application;
 import b1nd.dodam.core.util.ZonedDateTimeUtil;
 import b1nd.dodam.domain.rds.member.entity.Member;
 import b1nd.dodam.domain.rds.member.entity.Student;
-import b1nd.dodam.domain.rds.member.entity.Teacher;
+import b1nd.dodam.domain.rds.member.enumeration.ActiveStatus;
 import b1nd.dodam.domain.rds.member.repository.StudentRepository;
 import b1nd.dodam.domain.rds.member.repository.TeacherRepository;
 import b1nd.dodam.domain.rds.outsleeping.entity.OutSleeping;
@@ -23,7 +23,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
-import java.util.*;
+import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Component
@@ -89,25 +90,19 @@ public class OutSleepingUseCase {
     @Transactional(readOnly = true)
     public ResponseData<List<MemberInfoRes>> getRemainder() {
         LocalDate now = ZonedDateTimeUtil.nowToLocalDate();
-        List<Student> outSleepingIds = outSleepingService.getValid(now)
-                .stream()
-                .map(OutSleeping::getStudent)
+
+        List<Student> studentList = studentRepository.findAllByIdNotIn(
+                outSleepingService.getValid(now)
+                        .stream()
+                        .map(OutSleeping::getStudent)
+                        .map(Student::getId)
+                        .collect(Collectors.toList())
+        );
+
+        List<MemberInfoRes> memberInfoResList = studentList.stream()
+                .filter(student -> student.getMember().getStatus().equals(ActiveStatus.ACTIVE))
+                .map(student -> MemberInfoRes.of(student.getMember(), student, null))
                 .collect(Collectors.toList());
-
-        List<Integer> studentIds = outSleepingIds
-                .stream()
-                .map(Student::getId)
-                .collect(Collectors.toList());
-
-        List<Student> studentList = studentRepository.findAllByIdNotIn(studentIds);
-
-        List<MemberInfoRes> memberInfoResList = new ArrayList<>();
-        for (Student student : studentList){
-
-            Member member = student.getMember();
-
-            memberInfoResList.add(MemberInfoRes.of(member, student, null));
-        }
 
         return ResponseData.ok("잔류 학생 조회 성공", memberInfoResList);
     }
