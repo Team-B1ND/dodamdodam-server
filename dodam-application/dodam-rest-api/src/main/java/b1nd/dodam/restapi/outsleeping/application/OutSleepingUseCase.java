@@ -25,7 +25,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Component
 @Transactional(rollbackFor = Exception.class)
@@ -96,10 +95,10 @@ public class OutSleepingUseCase {
                         .stream()
                         .map(OutSleeping::getStudent)
                         .map(Student::getId)
-                        .toList());
+                        .toList(), ActiveStatus.ACTIVE);
 
-        return ResponseData.ok("잔류 학생 조회 성공", studentList.stream()
-                .filter(student -> student.getMember().getStatus().equals(ActiveStatus.ACTIVE))
+        return ResponseData.ok("잔류 학생 조회 성공", studentList
+                .stream()
                 .map(student -> MemberInfoRes.of(student.getMember(), student, null))
                 .toList());
     }
