@@ -70,8 +70,8 @@ public class BusController {
         return busApplicationUseCase.modify(id);
     }
 
-    @DeleteMapping("/apply/{id}")
-    public Response cancelApplication(@PathVariable int id) {
+    @DeleteMapping("/apply")
+    public Response cancelApplication() {
         return busApplicationUseCase.cancel();
     }
 
