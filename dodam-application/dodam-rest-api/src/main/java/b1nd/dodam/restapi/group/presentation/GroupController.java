@@ -29,7 +29,7 @@ public class GroupController {
         return useCase.applyGroup(id);
     }
 
-    @PatchMapping("/{id}")
+    @PatchMapping("apply/{id}")
     public Response handleGroupApplication(@PathVariable Long id, @RequestParam ApprovalStatus status){
         return useCase.handleGroupApplication(id, status);
     }
