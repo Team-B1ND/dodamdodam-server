@@ -29,7 +29,7 @@ public class GroupController {
         return useCase.applyGroup(id);
     }
 
-    @PostMapping("/{id}")
+    @PatchMapping("/{id}")
     public Response handleGroupApplication(@PathVariable Long id, @RequestParam ApprovalStatus status){
         return useCase.handleGroupApplication(id, status);
     }
@@ -52,9 +52,9 @@ public class GroupController {
         return useCase.exitFromGroupById(id);
     }
 
-    @GetMapping("/my")
-    public ResponseData<List<MyGroupRes>> getMyGroups() {
-        return useCase.getMyGroups();
+    @GetMapping("/my/{status}")
+    public ResponseData<List<MyGroupRes>> getMyGroups(@PathVariable ApprovalStatus status) {
+        return useCase.getMyGroups(status);
     }
 
     @GetMapping("/members/{id}")

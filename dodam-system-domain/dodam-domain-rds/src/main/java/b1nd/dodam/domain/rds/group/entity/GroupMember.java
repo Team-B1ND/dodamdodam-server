@@ -10,7 +10,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Getter
-@Entity(name = "GroupMember")
+@Entity(name = "group_member")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class GroupMember {
     @Id
@@ -28,7 +28,7 @@ public class GroupMember {
     private Member member;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "fk_member_id", nullable = false)
+    @JoinColumn(name = "fk_group_id", nullable = false)
     private Group group;
 
     @Builder
