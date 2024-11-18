@@ -31,11 +31,11 @@ public class OutSleepingService {
     }
 
     public List<OutSleeping> getValid(LocalDate now) {
-        return getByDate(now).parallelStream().toList();
+        return getByDate(now, ApprovalStatus.ALLOWED).parallelStream().toList();
     }
 
-    public List<OutSleeping> getByDate(LocalDate date) {
-        return repository.findByDate(date);
+    public List<OutSleeping> getByDate(LocalDate date, ApprovalStatus approvalStatus) {
+        return repository.findByDate(date, approvalStatus);
     }
 
     public List<OutSleeping> getByEndAt(LocalDate endAt){

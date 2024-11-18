@@ -12,7 +12,6 @@ import b1nd.dodam.restapi.auth.infrastructure.security.support.MemberAuthenticat
 import b1nd.dodam.restapi.member.application.data.res.MemberInfoRes;
 import b1nd.dodam.restapi.support.data.ResponseData;
 import lombok.RequiredArgsConstructor;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -60,7 +59,9 @@ public class MemberQueryUseCase {
     }
 
     public ResponseData<List<MemberInfoRes>> getAll(){
-        return ResponseData.ok("모든 멤버 정보 조회 성공", memberRepository.findByStatusOrderByStudent(ActiveStatus.ACTIVE).parallelStream()
+        return ResponseData.ok("모든 멤버 정보 조회 성공",
+                memberRepository.findByStatusOrderByStudent(ActiveStatus.ACTIVE)
+                .parallelStream()
                 .map(this::getMemberInfo)
                 .toList());
     }

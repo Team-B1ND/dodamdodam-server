@@ -9,7 +9,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-
 import java.util.List;
 import java.util.Optional;
 
@@ -47,4 +46,8 @@ public interface StudentRepository extends JpaRepository<Student, Integer> {
 
     @Query("SELECT m FROM student s JOIN s.member m WHERE s.grade = :grade")
     List<Member> findMembersByGrade(@Param("grade") int grade);
+
+    @Query("SELECT s FROM student s WHERE s.id NOT IN :ids AND s.member.status = :activeStatus")
+    List<Student> findAllByIdNotIn(@Param("ids") List<Integer> ids, @Param("activeStatus") ActiveStatus activeStatus);
+
 }

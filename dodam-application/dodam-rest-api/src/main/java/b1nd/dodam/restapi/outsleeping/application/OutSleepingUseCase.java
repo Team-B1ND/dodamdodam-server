@@ -3,6 +3,7 @@ package b1nd.dodam.restapi.outsleeping.application;
 import b1nd.dodam.core.util.ZonedDateTimeUtil;
 import b1nd.dodam.domain.rds.member.entity.Member;
 import b1nd.dodam.domain.rds.member.entity.Student;
+import b1nd.dodam.domain.rds.member.enumeration.ActiveStatus;
 import b1nd.dodam.domain.rds.member.repository.StudentRepository;
 import b1nd.dodam.domain.rds.member.repository.TeacherRepository;
 import b1nd.dodam.domain.rds.outsleeping.entity.OutSleeping;
@@ -10,6 +11,7 @@ import b1nd.dodam.domain.rds.outsleeping.exception.NotOutSleepingApplicantExcept
 import b1nd.dodam.domain.rds.outsleeping.service.OutSleepingService;
 import b1nd.dodam.domain.rds.support.enumeration.ApprovalStatus;
 import b1nd.dodam.restapi.auth.infrastructure.security.support.MemberAuthenticationHolder;
+import b1nd.dodam.restapi.member.application.data.res.MemberInfoRes;
 import b1nd.dodam.restapi.outsleeping.application.data.req.ApplyOutSleepingReq;
 import b1nd.dodam.restapi.outsleeping.application.data.req.RejectOutSleepingReq;
 import b1nd.dodam.restapi.outsleeping.application.data.res.OutSleepingRes;
@@ -82,6 +84,23 @@ public class OutSleepingUseCase {
     public ResponseData<List<OutSleepingRes>> getValid() {
         LocalDate now = ZonedDateTimeUtil.nowToLocalDate();
         return ResponseData.ok("유효한 외박 조회 성공", OutSleepingRes.of(outSleepingService.getValid(now)));
+    }
+
+    @Transactional(readOnly = true)
+    public ResponseData<List<MemberInfoRes>> getRemainder() {
+        LocalDate now = ZonedDateTimeUtil.nowToLocalDate();
+
+        List<Student> studentList = studentRepository.findAllByIdNotIn(
+                outSleepingService.getValid(now)
+                        .stream()
+                        .map(OutSleeping::getStudent)
+                        .map(Student::getId)
+                        .toList(), ActiveStatus.ACTIVE);
+
+        return ResponseData.ok("잔류 학생 조회 성공", studentList
+                .stream()
+                .map(student -> MemberInfoRes.of(student.getMember(), student, null))
+                .toList());
     }
 
     @Transactional(readOnly = true)
