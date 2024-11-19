@@ -28,18 +28,19 @@ public class BusApplicationUseCase {
 
     public Response modifyStatus(int busId) {
         Student student = studentRepository.getByMember(memberAuthenticationHolder.current());
-        Optional<BusApplication> busApplication = busApplicationRepository.findByStudentAndBus_LeaveTimeAfter(student, ZonedDateTimeUtil.nowToLocalDateTime());
-        if (busApplication.isEmpty()) {
-            applyBus(busId, student);
-            return Response.created("버스 신청 성공");
+        Optional<BusApplication> currentApplication = busApplicationRepository
+                .findByStudentAndBus_LeaveTimeAfter(student, ZonedDateTimeUtil.nowToLocalDateTime());
+
+        if (currentApplication.isEmpty()) {
+            return applyBus(busId, student);
         }
-        if (busApplication.get().getBus().getId() == busId){
-            cancelBus(busId);
-            return Response.noContent("버스 신청 취소 성공");
+
+        BusApplication existingApplication = currentApplication.get();
+        if (existingApplication.getBus().getId() == busId) {
+            return cancelBus(existingApplication);
         }
-        else {
-            return modify(busId);
-        }
+
+        return modify(busId, existingApplication);
     }
 
     public Response apply(int busId) {
@@ -57,6 +58,12 @@ public class BusApplicationUseCase {
         if(busApplicationRepository.existsByStudentAndBus_LeaveTimeAfter(student, ZonedDateTimeUtil.nowToLocalDateTime())) {
             throw new BusAlreadyAppliedException();
         }
+    }
+
+    public Response modify(int newBusId, BusApplication busApplication) {
+        decreaseApplicationCount(busApplication.getBus().getId());
+        busApplication.updateBus(increaseApplicationCount(newBusId));
+        return Response.noContent("버스 신청 수정 성공");
     }
 
     public Response modify(int newBusId) {
@@ -78,7 +85,7 @@ public class BusApplicationUseCase {
         return busApplicationRepository.getByStudentAndBus_LeaveTimeAfter(student, ZonedDateTimeUtil.nowToLocalDateTime());
     }
 
-    private Bus applyBus(int id, Student student) {
+    private Response applyBus(int id, Student student) {
         Bus bus = busRepository.getByIdForUpdate(id);
         bus.increaseApplyCount();
         BusApplication newApplication = BusApplication.builder()
@@ -86,7 +93,7 @@ public class BusApplicationUseCase {
                 .student(student)
                 .build();
         busApplicationRepository.save(newApplication);
-        return bus;
+        return Response.created("버스 신청 성공");
     }
 
     private Bus increaseApplicationCount(int id) {
@@ -95,12 +102,12 @@ public class BusApplicationUseCase {
         return bus;
     }
 
-    private void cancelBus(int id) {
+    private Response cancelBus(BusApplication busApplication) {
+        int id = busApplication.getBus().getId();
         Bus bus = busRepository.getByIdForUpdate(id);
-        BusApplication application = getMy();
-        decreaseApplicationCount(application.getBus().getId());
-        busApplicationRepository.delete(application);
+        busApplicationRepository.delete(busApplication);
         bus.decreaseApplyCount();
+        return Response.noContent("버스 신청 취소 성공");
     }
 
     private void decreaseApplicationCount(int id) {
