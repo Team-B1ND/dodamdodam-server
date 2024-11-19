@@ -55,7 +55,7 @@ public class BusController {
         return busUseCase.getByDate(year, month, day);
     }
 
-    @PatchMapping("apply/status/{id}")
+    @PatchMapping("/apply/status/{id}")
     public Response modifyStatus(@PathVariable int id){
         return busApplicationUseCase.modifyStatus(id);
     }
