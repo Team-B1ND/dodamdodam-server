@@ -14,6 +14,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
+
 @Component
 @Transactional(rollbackFor = Exception.class)
 @RequiredArgsConstructor
@@ -23,6 +25,23 @@ public class BusApplicationUseCase {
     private final BusApplicationRepository busApplicationRepository;
     private final StudentRepository studentRepository;
     private final MemberAuthenticationHolder memberAuthenticationHolder;
+
+    public Response modifyStatus(int busId) {
+        Student student = studentRepository.getByMember(memberAuthenticationHolder.current());
+        if (busApplicationRepository.existsByStudentAndBus_LeaveTimeAfter(student, ZonedDateTimeUtil.nowToLocalDateTime())) {
+            BusApplication application = getMy();
+            decreaseApplicationCount(application.getBus().getId());
+            busApplicationRepository.delete(application);
+            return Response.noContent("버스 신청 취소 성공");
+        }
+        Bus bus = increaseApplicationCount(busId);
+        BusApplication newApplication = BusApplication.builder()
+                .bus(bus)
+                .student(student)
+                .build();
+        busApplicationRepository.save(newApplication);
+        return Response.created("버스 신청 성공");
+    }
 
     public Response apply(int busId) {
         Student student = studentRepository.getByMember(memberAuthenticationHolder.current());

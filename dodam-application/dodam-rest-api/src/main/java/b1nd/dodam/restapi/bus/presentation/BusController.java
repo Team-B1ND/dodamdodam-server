@@ -55,6 +55,11 @@ public class BusController {
         return busUseCase.getByDate(year, month, day);
     }
 
+    @PatchMapping("apply/status/{id}")
+    public Response modifyStatus(@PathVariable int id){
+        return busApplicationUseCase.modifyStatus(id);
+    }
+
     @GetMapping("/apply")
     public ResponseData<Bus> getMy() {
         return busUseCase.getMy();
@@ -70,8 +75,8 @@ public class BusController {
         return busApplicationUseCase.modify(id);
     }
 
-    @DeleteMapping("/apply")
-    public Response cancelApplication() {
+    @DeleteMapping("/apply/{id}")
+    public Response cancelApplication(@PathVariable int id) {
         return busApplicationUseCase.cancel();
     }
 
