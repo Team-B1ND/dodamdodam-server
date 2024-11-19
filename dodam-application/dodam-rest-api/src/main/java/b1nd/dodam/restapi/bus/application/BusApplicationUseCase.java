@@ -14,7 +14,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
+import java.util.Optional;
 
 @Component
 @Transactional(rollbackFor = Exception.class)
@@ -28,19 +28,18 @@ public class BusApplicationUseCase {
 
     public Response modifyStatus(int busId) {
         Student student = studentRepository.getByMember(memberAuthenticationHolder.current());
-        if (busApplicationRepository.existsByStudentAndBus_LeaveTimeAfter(student, ZonedDateTimeUtil.nowToLocalDateTime())) {
-            BusApplication application = getMy();
-            decreaseApplicationCount(application.getBus().getId());
-            busApplicationRepository.delete(application);
+        Optional<BusApplication> busApplication = busApplicationRepository.findByStudentAndBus_LeaveTimeAfter(student, ZonedDateTimeUtil.nowToLocalDateTime());
+        if (busApplication.isEmpty()) {
+            applyBus(busId, student);
+            return Response.created("버스 신청 성공");
+        }
+        if (busApplication.get().getBus().getId() == busId){
+            cancelBus(busId);
             return Response.noContent("버스 신청 취소 성공");
         }
-        Bus bus = increaseApplicationCount(busId);
-        BusApplication newApplication = BusApplication.builder()
-                .bus(bus)
-                .student(student)
-                .build();
-        busApplicationRepository.save(newApplication);
-        return Response.created("버스 신청 성공");
+        else {
+            return modify(busId);
+        }
     }
 
     public Response apply(int busId) {
@@ -79,10 +78,29 @@ public class BusApplicationUseCase {
         return busApplicationRepository.getByStudentAndBus_LeaveTimeAfter(student, ZonedDateTimeUtil.nowToLocalDateTime());
     }
 
+    private Bus applyBus(int id, Student student) {
+        Bus bus = busRepository.getByIdForUpdate(id);
+        bus.increaseApplyCount();
+        BusApplication newApplication = BusApplication.builder()
+                .bus(bus)
+                .student(student)
+                .build();
+        busApplicationRepository.save(newApplication);
+        return bus;
+    }
+
     private Bus increaseApplicationCount(int id) {
         Bus bus = busRepository.getByIdForUpdate(id);
         bus.increaseApplyCount();
         return bus;
+    }
+
+    private void cancelBus(int id) {
+        Bus bus = busRepository.getByIdForUpdate(id);
+        BusApplication application = getMy();
+        decreaseApplicationCount(application.getBus().getId());
+        busApplicationRepository.delete(application);
+        bus.decreaseApplyCount();
     }
 
     private void decreaseApplicationCount(int id) {
