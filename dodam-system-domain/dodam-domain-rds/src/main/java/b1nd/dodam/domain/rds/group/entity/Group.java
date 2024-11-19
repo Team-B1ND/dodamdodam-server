@@ -20,9 +20,13 @@ public class Group extends BaseEntity {
     @Column(unique = true)
     private String name;
 
+    @NotNull
+    private String description;
+
     @Builder
-    public Group(String name) {
+    public Group(String name, String description) {
         this.name = name;
+        this.description = description;
     }
 
     public void modify(String name) {
