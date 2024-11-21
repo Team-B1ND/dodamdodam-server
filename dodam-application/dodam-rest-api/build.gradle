@@ -14,6 +14,7 @@ dependencies {
     implementation project(':dodam-in-system-available:dodam-token-client')
     implementation project(':dodam-in-system-available:dodam-youtube-video-client')
     implementation project(':dodam-in-system-available:dodam-firebase-client')
+    implementation project(':dodam-in-system-available:dodam-simple-storage-service-client')
 
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-security'
@@ -21,7 +22,6 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-validation'
 
     implementation 'org.springframework:spring-tx:6.0.6'
-    implementation project(path: ':dodam-in-system-available:dodam-simple-storage-service-client')
 
     runtimeOnly 'io.micrometer:micrometer-registry-prometheus'
 
