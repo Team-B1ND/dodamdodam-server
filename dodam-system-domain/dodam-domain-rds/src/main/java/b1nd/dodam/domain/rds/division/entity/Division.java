@@ -1,4 +1,4 @@
-package b1nd.dodam.domain.rds.group.entity;
+package b1nd.dodam.domain.rds.division.entity;
 
 import b1nd.dodam.domain.rds.support.entity.BaseEntity;
 import jakarta.persistence.*;
@@ -9,9 +9,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Getter
-@Entity(name = "`group`")
+@Entity(name = "division")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Group extends BaseEntity {
+public class Division extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -24,7 +24,7 @@ public class Group extends BaseEntity {
     private String description;
 
     @Builder
-    public Group(String name, String description) {
+    public Division(String name, String description) {
         this.name = name;
         this.description = description;
     }

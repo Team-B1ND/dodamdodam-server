@@ -1,8 +1,8 @@
-package b1nd.dodam.restapi.group.presentation;
+package b1nd.dodam.restapi.division.presentation;
 
-import b1nd.dodam.domain.rds.group.entity.GroupMember;
-import b1nd.dodam.domain.rds.group.event.JoinMemberToGroupEvent;
-import b1nd.dodam.domain.rds.group.repository.GroupMemberRepository;
+import b1nd.dodam.domain.rds.division.entity.DivisionMember;
+import b1nd.dodam.domain.rds.division.event.JoinMemberToDivisionEvent;
+import b1nd.dodam.domain.rds.division.repository.DivisionMemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
@@ -12,17 +12,17 @@ import org.springframework.transaction.event.TransactionalEventListener;
 
 @Component
 @RequiredArgsConstructor
-public class GroupEventHandler {
-    private final GroupMemberRepository groupMemberRepository;
+public class DivisionEventHandler {
+    private final DivisionMemberRepository divisionMemberRepository;
 
     @Async
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     @TransactionalEventListener
-    public void listen(JoinMemberToGroupEvent e) {
-        groupMemberRepository.save(GroupMember.builder()
+    public void listen(JoinMemberToDivisionEvent e) {
+        divisionMemberRepository.save(DivisionMember.builder()
                 .permission(e.permission())
                 .status(e.status())
-                .group(e.group())
+                .division(e.division())
                 .member(e.member())
                 .build()
         );

@@ -1,6 +1,6 @@
-package b1nd.dodam.domain.rds.group.entity;
+package b1nd.dodam.domain.rds.division.entity;
 
-import b1nd.dodam.domain.rds.group.enumeration.GroupPermission;
+import b1nd.dodam.domain.rds.division.enumeration.DivisionPermission;
 import b1nd.dodam.domain.rds.member.entity.Member;
 import b1nd.dodam.domain.rds.support.enumeration.ApprovalStatus;
 import jakarta.persistence.*;
@@ -10,15 +10,15 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Getter
-@Entity(name = "group_member")
+@Entity(name = "division_member")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class GroupMember {
+public class DivisionMember {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Enumerated(EnumType.STRING)
-    private GroupPermission permission;
+    private DivisionPermission permission;
 
     @Enumerated(EnumType.STRING)
     private ApprovalStatus status;
@@ -28,15 +28,15 @@ public class GroupMember {
     private Member member;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "fk_group_id", nullable = false)
-    private Group group;
+    @JoinColumn(name = "fk_division_id", nullable = false)
+    private Division division;
 
     @Builder
-    public GroupMember(GroupPermission permission, ApprovalStatus status, Member member, Group group) {
+    public DivisionMember(DivisionPermission permission, ApprovalStatus status, Member member, Division division) {
         this.permission = permission;
         this.status = status;
         this.member = member;
-        this.group = group;
+        this.division = division;
     }
 
     public void modifyStatus(ApprovalStatus status) {
