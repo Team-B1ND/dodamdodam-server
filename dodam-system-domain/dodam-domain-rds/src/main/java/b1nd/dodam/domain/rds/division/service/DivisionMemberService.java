@@ -17,45 +17,75 @@ import java.util.List;
 @RequiredArgsConstructor
 public class DivisionMemberService {
 
-    private final DivisionMemberRepository divisionMemberRepository;
+    private final DivisionMemberRepository repository;
 
-    public void save(DivisionMember divisionMember) {
-        divisionMemberRepository.save(divisionMember);
+    public void modifyDivisionMembers(List<DivisionMember> divisionMembers, ApprovalStatus status) {
+        for (DivisionMember divisionMember : divisionMembers) {
+            divisionMember.modifyStatus(status);
+        }
+        repository.saveAll(divisionMembers);
+    }
+
+    public void saveWithBuild(Division division, Member member, ApprovalStatus status, DivisionPermission permission) {
+        repository.save(DivisionMember.builder()
+                .division(division)
+                .member(member)
+                .status(status)
+                .permission(permission)
+                .build()
+        );
+    }
+
+    public void saveAllWithBuild(Division division, List<Member> members, ApprovalStatus status, DivisionPermission permission) {
+        repository.saveAll(members
+                .stream()
+                .map(member -> DivisionMember.builder()
+                    .division(division)
+                    .member(member)
+                    .status(status)
+                    .permission(permission)
+                    .build())
+                .toList()
+        );
     }
 
     public DivisionMember getById(Long id) {
-        return divisionMemberRepository.findById(id)
+        return repository.findById(id)
                 .orElseThrow(DivisionMemberNotFoundException::new);
     }
 
-    public void deleteById(Long id){
-        divisionMemberRepository.deleteById(id);
+    public List<DivisionMember> getByIds(List<Long> ids) {
+        return repository.findAllById(ids);
+    }
+
+    public void deleteByIds(List<Long> idList){
+        repository.deleteAllByIdInBatch(idList);
     }
 
     public void deleteByDivision(Division division) {
-        divisionMemberRepository.deleteAllByDivision(division);
+        repository.deleteAllByDivision(division);
     }
 
     public void validateIsAdminInDivision(Division division, Member member) {
-        DivisionMember divisionMember = divisionMemberRepository.findByDivisionAndMember(division, member);
+        DivisionMember divisionMember = repository.findByDivisionAndMember(division, member);
         if (!DivisionPermission.isAdmin(divisionMember.getPermission())){
             throw new InvalidPermissionException();
         }
     }
 
     public Long getCountByDivision(Division division, ApprovalStatus status) {
-        return divisionMemberRepository.countByDivisionAndStatus(division, status);
+        return repository.countByDivisionAndStatus(division, status);
     }
 
     public List<DivisionMember> getByMember(Member member) {
-        return divisionMemberRepository.findByMember(member);
+        return repository.findByMember(member);
     }
 
     public DivisionMember getByDivisionAndMemberAndStatus(Division division, Member member, ApprovalStatus status) {
-        return divisionMemberRepository.findByDivisionAndMemberAndStatus(division, member, status);
+        return repository.findByDivisionAndMemberAndStatus(division, member, status);
     }
 
     public List<DivisionMember> getByDivision(Division division) {
-        return divisionMemberRepository.findByDivision(division);
+        return repository.findByDivision(division);
     }
 }

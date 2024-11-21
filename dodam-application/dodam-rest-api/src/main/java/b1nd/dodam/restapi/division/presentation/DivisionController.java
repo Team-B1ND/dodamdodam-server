@@ -1,6 +1,7 @@
 package b1nd.dodam.restapi.division.presentation;
 
 import b1nd.dodam.domain.rds.support.enumeration.ApprovalStatus;
+import b1nd.dodam.restapi.division.application.DivisionMemberUseCase;
 import b1nd.dodam.restapi.division.application.DivisionUseCase;
 import b1nd.dodam.restapi.division.application.data.req.ManageDivisionReq;
 import b1nd.dodam.restapi.division.application.data.res.DivisionDetailRes;
@@ -15,58 +16,45 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/division")
+@RequestMapping("/divisions")
 @RequiredArgsConstructor
 public class DivisionController {
 
-    private final DivisionUseCase useCase;
+    private final DivisionUseCase divisionUseCase;
+    private final DivisionMemberUseCase divisionMemberUseCase;
 
     @PostMapping
-    public Response organize(@RequestBody ManageDivisionReq req){
-        return useCase.organize(req);
-    }
-
-    @PostMapping("/member/join/{id}")
-    public Response apply(@PathVariable Long id){
-        return useCase.applyDivision(id);
-    }
-
-    @PostMapping("/member/{id}")
-    public Response addMember(@PathVariable Long id){
-        return useCase.addMember(id);
-    }
-
-    @PatchMapping("/apply/{id}")
-    public Response handleDivisionApplication(@PathVariable Long id, @RequestParam ApprovalStatus status){
-        return useCase.handleDivisionApplication(id, status);
+    public Response createDivision(@RequestBody ManageDivisionReq req) {
+        return divisionUseCase.organize(req);
     }
 
     @PatchMapping("/{id}")
-    public Response modify(
+    public Response updateDivision(
             @PathVariable Long id,
             @RequestBody ManageDivisionReq req
-    ){
-        return useCase.modify(id, req);
+    ) {
+        return divisionUseCase.modify(id, req);
     }
 
     @DeleteMapping("/{id}")
-    public Response delete(@PathVariable Long id){
-        return useCase.delete(id);
+    public Response deleteDivision(@PathVariable Long id) {
+        return divisionUseCase.delete(id);
     }
 
-    @DeleteMapping("/member/{id}")
-    public Response deleteMember(@PathVariable Long id){
-        return useCase.exitFromDivisionById(id);
+    @GetMapping("/{id}")
+    public ResponseData<DivisionDetailRes> getDivisionDetail(
+            @PathVariable Long id,
+            @RequestParam(required = false) ApprovalStatus status
+    ) {
+        return divisionUseCase.getDetail(id, status);
     }
 
-    @GetMapping("/{id}/{status}")
-    public ResponseData<DivisionDetailRes> getDetail(@PathVariable Long id, @PathVariable ApprovalStatus status){
-        return useCase.getDetail(id, status);
-    }
-
-    @GetMapping("/member/count/{status}")
-    public ResponseData<DivisionMemberCountRes> getMemberCount(@PathVariable Long id, @PathVariable ApprovalStatus status){
-        return useCase.getDivisionMemberCount(id, status);
+    @GetMapping
+    public ResponseData<List<DivisionOverviewRes>> getAllDivisions(
+            @RequestParam Long lastId,
+            @RequestParam int size
+    ) {
+        return divisionUseCase.getDivisions(lastId, size);
     }
 
     @GetMapping("/my")
@@ -74,20 +62,49 @@ public class DivisionController {
             @RequestParam Long lastId,
             @RequestParam int size
     ) {
-        return useCase.getMyDivisions(lastId, size);
+        return divisionUseCase.getMyDivisions(lastId, size);
     }
 
-    @GetMapping
-    public ResponseData<List<DivisionOverviewRes>> getAllDivisions(
-            @RequestParam Long lastId,
-            @RequestParam int size
-    ){
-        return useCase.getDivisions(lastId, size);
+    @PostMapping("/{id}/members/apply")
+    public Response applyToDivision(@PathVariable Long id) {
+        return divisionMemberUseCase.applyDivision(id);
     }
 
-    @GetMapping("/members/{id}")
-    public ResponseData<List<DivisionMemberRes>> getDivisionMemberByGroup(@PathVariable Long id){
-        return useCase.getDivisionMemberByDivisionId(id);
+    @PostMapping("/{id}/members")
+    public Response addMemberToDivision(
+            @PathVariable Long id,
+            @RequestParam List<String> memberIdList
+    ) {
+        return divisionMemberUseCase.addMember(id, memberIdList);
     }
 
+    @PatchMapping("/applications")
+    public Response handleMemberApplication(
+            @RequestParam List<Long> idList,
+            @RequestParam ApprovalStatus status
+    ) {
+        return divisionMemberUseCase.handleDivisionApplication(idList, status);
+    }
+
+    @DeleteMapping("/members")
+    public Response removeMemberFromDivision(
+            @RequestParam List<Long> idList
+    ) {
+        return divisionMemberUseCase.expelMemberFromDivision(idList);
+    }
+
+    @GetMapping("/{id}/members")
+    public ResponseData<List<DivisionMemberRes>> getMembersByDivision(
+            @PathVariable Long id
+    ) {
+        return divisionMemberUseCase.getDivisionMemberByDivisionId(id);
+    }
+
+    @GetMapping("/{id}/members/count")
+    public ResponseData<DivisionMemberCountRes> getMemberCountByStatus(
+            @PathVariable Long id,
+            @RequestParam ApprovalStatus status
+    ) {
+        return divisionMemberUseCase.getDivisionMemberCount(id, status);
+    }
 }
