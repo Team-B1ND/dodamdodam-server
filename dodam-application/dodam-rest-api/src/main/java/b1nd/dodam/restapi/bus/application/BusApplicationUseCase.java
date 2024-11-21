@@ -36,7 +36,7 @@ public class BusApplicationUseCase {
     }
 
     private Response handleExistingApplication(int busId, BusApplication currentApplication) {
-        return (currentApplication.getBus().getId() == busId)
+        return currentApplication.getBus().getId() == busId
                 ? cancelCurrentApplication(currentApplication)
                 : updateToNewBus(busId, currentApplication);
     }
