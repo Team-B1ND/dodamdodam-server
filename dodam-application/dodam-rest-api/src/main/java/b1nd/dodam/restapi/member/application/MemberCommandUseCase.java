@@ -1,16 +1,14 @@
 package b1nd.dodam.restapi.member.application;
 
 import b1nd.dodam.domain.rds.member.entity.Member;
+import b1nd.dodam.domain.rds.member.entity.Parent;
 import b1nd.dodam.domain.rds.member.entity.Student;
 import b1nd.dodam.domain.rds.member.entity.Teacher;
 import b1nd.dodam.domain.rds.member.enumeration.ActiveStatus;
 import b1nd.dodam.domain.rds.member.event.StudentRegisteredEvent;
 import b1nd.dodam.domain.rds.member.exception.BroadcastClubMemberDuplicateException;
 import b1nd.dodam.domain.rds.member.exception.MemberDuplicateException;
-import b1nd.dodam.domain.rds.member.repository.BroadcastClubMemberRepository;
-import b1nd.dodam.domain.rds.member.repository.MemberRepository;
-import b1nd.dodam.domain.rds.member.repository.StudentRepository;
-import b1nd.dodam.domain.rds.member.repository.TeacherRepository;
+import b1nd.dodam.domain.rds.member.repository.*;
 import b1nd.dodam.restapi.auth.infrastructure.security.support.MemberAuthenticationHolder;
 import b1nd.dodam.restapi.member.application.data.req.*;
 import b1nd.dodam.restapi.support.data.Response;
@@ -31,6 +29,7 @@ public class MemberCommandUseCase {
     private final MemberRepository memberRepository;
     private final StudentRepository studentRepository;
     private final TeacherRepository teacherRepository;
+    private final ParentRepository parentRepository;
     private final BroadcastClubMemberRepository broadcastClubMemberRepository;
     private final MemberAuthenticationHolder memberAuthenticationHolder;
     private final ApplicationEventPublisher eventPublisher;
@@ -52,6 +51,13 @@ public class MemberCommandUseCase {
         Member member = memberRepository.save(req.mapToMember(encodePw(req.pw())));
         teacherRepository.save(req.mapToTeacher(member));
         return Response.created("선생님 회원가입 성공");
+    }
+
+    public Response join(JoinParentReq req) {
+        checkIfIdIsDuplicate(req.id());
+        Member member = memberRepository.save(req.mapToMember(encodePw(req.pw())));
+        parentRepository.save(req.mapToParent(member));
+        return Response.created("학부모 회원가입 성공");
     }
 
     private void checkIfIdIsDuplicate(String id) {

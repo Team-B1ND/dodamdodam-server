@@ -31,6 +31,11 @@ public class MemberController {
         return commandUseCase.join(req);
     }
 
+    @PostMapping("/join-parent")
+    public Response join(@RequestBody @Valid JoinParentReq req) {
+        return commandUseCase.join(req);
+    }
+
     @PostMapping("/broadcast-club-member")
     public Response apply(@RequestBody @Valid ApplyBroadcastClubMemberReq req) {
         return commandUseCase.apply(req);
