@@ -33,7 +33,6 @@ public class ErrorNoticeSender {
                 + "```\n"
                 + getStackTrace(e)
                 + "\n```";
-
         discordWebHookClient.notice("", title, description);
     }
 

@@ -10,10 +10,11 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
 
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.Objects;
+import java.util.function.Consumer;
 
 @Getter
 @Entity(name = "bus")
@@ -56,19 +57,18 @@ public class Bus {
 
     public void updateBus(String busName, String description, LocalDateTime leaveTime, LocalTime timeRequired, int peopleLimit) {
         checkIfTheBusHasDeparted();
-        if(Objects.nonNull(busName)) {
-            this.busName = busName;
-        }
-        if(Objects.nonNull(description)) {
-            this.description = description;
-        }
-        if(Objects.nonNull(leaveTime)) {
-            this.leaveTime = leaveTime;
-        }
-        if(Objects.nonNull(timeRequired)) {
-            this.timeRequired = timeRequired;
-        }
+
+        updateApplyIfNotEmpty(busName, value -> this.busName = value);
+        updateApplyIfNotEmpty(description, value -> this.description = value);
+        updateApplyIfNotEmpty(leaveTime, value -> this.leaveTime = value);
+        updateApplyIfNotEmpty(timeRequired, value -> this.timeRequired = value);
         this.peopleLimit = peopleLimit;
+    }
+
+    private <T> void updateApplyIfNotEmpty(T newValue, Consumer<T> parameter) {
+        if (newValue instanceof String ? StringUtils.isNotEmpty((String) newValue) : newValue != null) {
+            parameter.accept(newValue);
+        }
     }
 
     public void increaseApplyCount() {
@@ -79,7 +79,6 @@ public class Bus {
 
     public void decreaseApplyCount() {
         checkIfTheBusHasDeparted();
-        checkIfThereAreSeatsAvailable();
         this.applyCount -= 1;
     }
 

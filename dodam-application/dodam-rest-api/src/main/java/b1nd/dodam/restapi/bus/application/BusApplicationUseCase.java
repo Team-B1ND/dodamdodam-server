@@ -14,6 +14,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
+
 @Component
 @Transactional(rollbackFor = Exception.class)
 @RequiredArgsConstructor
@@ -23,6 +25,52 @@ public class BusApplicationUseCase {
     private final BusApplicationRepository busApplicationRepository;
     private final StudentRepository studentRepository;
     private final MemberAuthenticationHolder memberAuthenticationHolder;
+
+    public Response modifyStatus(int busId) {
+        Student student = studentRepository.getByMember(memberAuthenticationHolder.current());
+        Optional<BusApplication> busApplication = busApplicationRepository.findByStudentAndBus_LeaveTimeAfter(student, ZonedDateTimeUtil.nowToLocalDateTime());
+
+        return busApplication
+                .map(application -> handleExistingApplication(busId, application))
+                .orElseGet(() -> applyForNewBus(busId, student));
+    }
+
+    private Response handleExistingApplication(int busId, BusApplication currentApplication) {
+        return currentApplication.getBus().getId() == busId
+                ? cancelCurrentApplication(currentApplication)
+                : updateToNewBus(busId, currentApplication);
+    }
+
+    private Response applyForNewBus(int busId, Student student) {
+        Bus bus = adjustApplicationCount(busId, true);
+        busApplicationRepository.save(
+                BusApplication.builder()
+                        .bus(bus)
+                        .student(student)
+                        .build()
+        );
+        return Response.created("버스 신청 성공");
+    }
+
+    private Response updateToNewBus(int busId, BusApplication currentApplication) {
+        cancelCurrentApplication(currentApplication);
+        Bus newBus = adjustApplicationCount(busId, true);
+        currentApplication.updateBus(newBus);
+        return Response.noContent("버스 신청 수정 성공");
+    }
+
+    private Response cancelCurrentApplication(BusApplication currentApplication) {
+        adjustApplicationCount(currentApplication.getBus().getId(), false);
+        busApplicationRepository.delete(currentApplication);
+        return Response.noContent("버스 신청 취소 성공");
+    }
+
+    private Bus adjustApplicationCount(int busId, boolean increment) {
+        Bus bus = busRepository.getByIdForUpdate(busId);
+        if (increment) bus.increaseApplyCount();
+        else bus.decreaseApplyCount();
+        return bus;
+    }
 
     public Response apply(int busId) {
         Student student = studentRepository.getByMember(memberAuthenticationHolder.current());
