@@ -53,8 +53,8 @@ public class BusApplicationUseCase {
     }
 
     private Response updateToNewBus(int busId, BusApplication currentApplication) {
-        cancelCurrentApplication(currentApplication);
         Bus newBus = adjustApplicationCount(busId, true);
+        adjustApplicationCount(currentApplication.getBus().getId(), false);
         currentApplication.updateBus(newBus);
         return Response.noContent("버스 신청 수정 성공");
     }
