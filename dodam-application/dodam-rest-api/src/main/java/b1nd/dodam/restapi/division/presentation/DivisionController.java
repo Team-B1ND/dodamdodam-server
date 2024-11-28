@@ -44,7 +44,7 @@ public class DivisionController {
     @GetMapping("/{id}")
     public ResponseData<DivisionDetailRes> getDivisionDetail(
             @PathVariable Long id,
-            @RequestParam(required = false) ApprovalStatus status
+            @RequestParam ApprovalStatus status
     ) {
         return divisionUseCase.getDetail(id, status);
     }
@@ -78,16 +78,18 @@ public class DivisionController {
         return divisionMemberUseCase.addMember(id, memberIdList);
     }
 
-    @PatchMapping("/applications")
+    @PatchMapping("/{id}/members")
     public Response handleMemberApplication(
+            @PathVariable Long id,
             @RequestParam List<Long> idList,
             @RequestParam ApprovalStatus status
     ) {
         return divisionMemberUseCase.handleDivisionApplication(idList, status);
     }
 
-    @DeleteMapping("/members")
+    @DeleteMapping("/{id}/members")
     public Response removeMemberFromDivision(
+            @PathVariable Long id,
             @RequestParam List<Long> idList
     ) {
         return divisionMemberUseCase.expelMemberFromDivision(idList);

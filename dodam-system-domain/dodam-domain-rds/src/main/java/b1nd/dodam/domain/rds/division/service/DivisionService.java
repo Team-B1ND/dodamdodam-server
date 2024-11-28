@@ -1,6 +1,7 @@
 package b1nd.dodam.domain.rds.division.service;
 
 import b1nd.dodam.domain.rds.division.entity.Division;
+import b1nd.dodam.domain.rds.division.exception.DivisionDuplicateException;
 import b1nd.dodam.domain.rds.division.exception.DivisionNotFoundException;
 import b1nd.dodam.domain.rds.division.repository.DivisionRepository;
 import b1nd.dodam.domain.rds.member.entity.Member;
@@ -23,6 +24,12 @@ public class DivisionService {
     public Division getById(Long id) {
         return divisionRepository.findById(id)
                 .orElseThrow(DivisionNotFoundException::new);
+    }
+
+    public void checkIsNotDuplicateName(String name) {
+        if (divisionRepository.findByName(name) == null) {
+            throw new DivisionDuplicateException();
+        }
     }
 
     public void delete(Long id) {

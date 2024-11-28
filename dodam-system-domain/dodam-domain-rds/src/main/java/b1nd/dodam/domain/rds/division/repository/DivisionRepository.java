@@ -18,4 +18,6 @@ public interface DivisionRepository extends JpaRepository<Division, Long> {
 
     @Query("SELECT d FROM division d WHERE d.id > :lastId ORDER BY d.id ASC")
     List<Division> findNextPageWithCursor(@Param("lastId") Long lastId, Pageable pageable);
+
+    Division findByName(String name);
 }

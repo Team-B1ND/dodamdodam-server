@@ -27,6 +27,7 @@ public class DivisionUseCase {
     private final MemberAuthenticationHolder authHolder;
 
     public Response organize(ManageDivisionReq req){
+        divisionService.checkIsNotDuplicateName(req.name());
         Division division = req.toEntity();
         divisionService.save(division);
         divisionMemberService.saveWithBuild(

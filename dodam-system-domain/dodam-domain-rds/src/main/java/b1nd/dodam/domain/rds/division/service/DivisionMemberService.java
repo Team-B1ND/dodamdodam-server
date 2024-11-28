@@ -73,6 +73,10 @@ public class DivisionMemberService {
         }
     }
 
+    public DivisionMember getByDivisionAndMember(Division division, Member member) {
+        return repository.findByDivisionAndMember(division, member);
+    }
+
     public Long getCountByDivision(Division division, ApprovalStatus status) {
         return repository.countByDivisionAndStatus(division, status);
     }
