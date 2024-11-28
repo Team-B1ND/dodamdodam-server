@@ -27,7 +27,7 @@ public class DivisionService {
     }
 
     public void checkIsNotDuplicateName(String name) {
-        if (divisionRepository.findByName(name) == null) {
+        if (divisionRepository.findByName(name) != null) {
             throw new DivisionDuplicateException();
         }
     }
