@@ -46,7 +46,7 @@ public class DivisionPermissionInterceptor implements HandlerInterceptor {
             errorResponseSender.send(response, GlobalExceptionCode.INVALID_PERMISSION);
             return false;
         }
-        if(divisionMember.getPermission() == DivisionPermission.READER){
+        if(divisionMember.getPermission() != DivisionPermission.WRITER){
             errorResponseSender.send(response, GlobalExceptionCode.INVALID_PERMISSION);
             return false;
         }
