@@ -89,7 +89,7 @@ public class DivisionMemberService {
         return repository.findByDivisionAndMemberAndStatus(division, member, status);
     }
 
-    public List<DivisionMember> getByDivision(Division division) {
-        return repository.findByDivision(division);
+    public List<DivisionMember> getByDivisionAndStatus(Division division, ApprovalStatus status) {
+        return repository.findByDivisionAndStatus(division, status);
     }
 }

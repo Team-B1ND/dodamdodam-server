@@ -94,9 +94,10 @@ public class DivisionController {
 
     @GetMapping("/{id}/members")
     public ResponseData<List<DivisionMemberRes>> getMembersByDivision(
-            @PathVariable Long id
+            @PathVariable Long id,
+            @RequestParam ApprovalStatus status
     ) {
-        return divisionMemberUseCase.getDivisionMemberByDivisionId(id);
+        return divisionMemberUseCase.getDivisionMemberByDivisionId(id, status);
     }
 
     @GetMapping("/{id}/members/count")

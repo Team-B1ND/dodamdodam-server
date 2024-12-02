@@ -59,9 +59,9 @@ public class DivisionMemberUseCase {
     }
 
     @Transactional(readOnly = true)
-    public ResponseData<List<DivisionMemberRes>> getDivisionMemberByDivisionId(Long id){
+    public ResponseData<List<DivisionMemberRes>> getDivisionMemberByDivisionId(Long id, ApprovalStatus status) {
         Division division = divisionService.getById(id);
-        List<DivisionMemberRes> response = divisionMemberService.getByDivision(division)
+        List<DivisionMemberRes> response = divisionMemberService.getByDivisionAndStatus(division, status)
                 .parallelStream()
                 .map(dm -> DivisionMemberRes.of(dm, studentRepository.getByMember(dm.getMember())))
                 .toList();

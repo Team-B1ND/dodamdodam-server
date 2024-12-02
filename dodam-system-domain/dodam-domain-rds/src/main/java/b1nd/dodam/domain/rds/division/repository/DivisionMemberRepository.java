@@ -20,7 +20,7 @@ public interface DivisionMemberRepository extends JpaRepository<DivisionMember, 
     List<DivisionMember> findByMember(Member member);
 
     @EntityGraph(attributePaths = {"member"})
-    List<DivisionMember> findByDivision(Division division);
+    List<DivisionMember> findByDivisionAndStatus(Division division, ApprovalStatus status);
 
     Long countByDivisionAndStatus(Division division, ApprovalStatus status);
 }
