@@ -53,10 +53,10 @@ public class DivisionUseCase {
     }
 
     @Transactional(readOnly = true)
-    public ResponseData<DivisionDetailRes> getDetail(Long id, ApprovalStatus status){
+    public ResponseData<DivisionDetailRes> getDetail(Long id){
         Division division = divisionService.getById(id);
         DivisionMember divisionMember = divisionMemberService
-                .getByDivisionAndMemberAndStatus(division, authHolder.current(), status);
+                .getByDivisionAndMemberAndStatus(division, authHolder.current(), ApprovalStatus.ALLOWED);
         return ResponseData.ok("id로 조직 조회 성공", DivisionDetailRes.of(division, divisionMember));
     }
 

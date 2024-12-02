@@ -42,11 +42,8 @@ public class DivisionController {
     }
 
     @GetMapping("/{id}")
-    public ResponseData<DivisionDetailRes> getDivisionDetail(
-            @PathVariable Long id,
-            @RequestParam ApprovalStatus status
-    ) {
-        return divisionUseCase.getDetail(id, status);
+    public ResponseData<DivisionDetailRes> getDivisionDetail(@PathVariable Long id) {
+        return divisionUseCase.getDetail(id);
     }
 
     @GetMapping
