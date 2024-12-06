@@ -63,4 +63,12 @@ public class ScheduleController {
         return useCase.getAllOrderByIdDesc(page, size);
     }
 
+    @PostMapping("/neis")
+    public Response createByNeis(
+            @RequestParam LocalDate startDate,
+            @RequestParam LocalDate endDate
+    ){
+        return useCase.createScheduleByNeis(startDate, endDate);
+    }
+
 }

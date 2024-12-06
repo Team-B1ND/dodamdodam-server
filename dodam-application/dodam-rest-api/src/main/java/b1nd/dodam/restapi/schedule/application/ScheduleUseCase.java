@@ -4,6 +4,8 @@ import b1nd.dodam.core.util.ZonedDateTimeUtil;
 import b1nd.dodam.domain.rds.schedule.entity.Schedule;
 import b1nd.dodam.domain.rds.schedule.enumeration.TargetGrade;
 import b1nd.dodam.domain.rds.schedule.service.ScheduleService;
+import b1nd.dodam.neis.schedule.client.NeisScheduleClient;
+import b1nd.dodam.neis.schedule.client.data.NeisSchedule;
 import b1nd.dodam.restapi.schedule.application.data.req.ScheduleReq;
 import b1nd.dodam.restapi.schedule.application.data.res.ScheduleRes;
 import b1nd.dodam.restapi.support.data.Response;
@@ -24,6 +26,7 @@ import java.util.stream.Collectors;
 public class ScheduleUseCase {
 
     private final ScheduleService scheduleService;
+    private final NeisScheduleClient neisScheduleClient;
 
     @Transactional(rollbackFor = Exception.class)
     public Response create(ScheduleReq req) {
@@ -64,6 +67,26 @@ public class ScheduleUseCase {
 
     public ResponseData<List<ScheduleRes>> getByDate(int year, int month, int day) {
         return ResponseData.ok("해당 날짜의 일정 조회 성공", ScheduleRes.of(scheduleService.getByDate(LocalDate.of(year, month, day))));
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public Response createScheduleByNeis(LocalDate startDate, LocalDate endDate){
+        List<NeisSchedule> neisSchedule = neisScheduleClient.getSchedules(startDate, endDate);
+        List<Schedule> schedules = neisSchedule
+                .parallelStream()
+                .map(this::scheduleBuilderForNeis)
+                .toList();
+        scheduleService.saveAll(schedules);
+        return ResponseData.ok("neis로 일정 저장 성공");
+    }
+
+    private Schedule scheduleBuilderForNeis(NeisSchedule neisSchedule){
+        return Schedule.builder()
+                .name(neisSchedule.eventName())
+                .startDate(neisSchedule.startDate())
+                .endDate(neisSchedule.endDate())
+                .targetGrades(neisSchedule.grades().stream().map(TargetGrade::of).collect(Collectors.toSet()))
+                .build();
     }
 
 }
