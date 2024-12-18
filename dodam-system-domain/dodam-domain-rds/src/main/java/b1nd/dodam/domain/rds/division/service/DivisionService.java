@@ -27,7 +27,7 @@ public class DivisionService {
     }
 
     public void checkIsNotDuplicateName(String name) {
-        if (divisionRepository.findByName(name) != null) {
+        if (divisionRepository.findByName(name).isPresent()) {
             throw new DivisionDuplicateException();
         }
     }
@@ -37,11 +37,11 @@ public class DivisionService {
     }
 
 
-    public List<Division> getByMember(Member member, Long lastId, int size) {
-        return divisionRepository.findByMember(member, lastId, PageRequest.of(0, size));
+    public List<Division> getByMember(Member member, Long lastId, int limit) {
+        return divisionRepository.findByMember(member, lastId, PageRequest.of(0, limit));
     }
 
-    public List<Division> getAll(Long lastId, int size) {
-        return divisionRepository.findNextPageWithCursor(lastId, PageRequest.of(0, size));
+    public List<Division> getAll(Long lastId, int limit) {
+        return divisionRepository.findNextPageWithCursor(lastId, PageRequest.of(0, limit));
     }
 }

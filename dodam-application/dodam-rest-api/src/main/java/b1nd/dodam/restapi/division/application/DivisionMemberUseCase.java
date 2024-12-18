@@ -29,7 +29,7 @@ public class DivisionMemberUseCase {
     private final StudentRepository studentRepository;
 
     public Response addMember(Long id, List<String> memberIdList){
-        divisionMemberService.saveAllWithBuild(
+        divisionMemberService.saveWithBuild(
                 divisionService.getById(id),
                 memberIdList.stream().map(memberRepository::getById).toList(),
                 ApprovalStatus.ALLOWED,
@@ -46,7 +46,7 @@ public class DivisionMemberUseCase {
     public Response applyDivision(Long id){
         divisionMemberService.saveWithBuild(
                 divisionService.getById(id),
-                authHolder.current(),
+                List.of(authHolder.current()),
                 ApprovalStatus.PENDING,
                 DivisionPermission.READER
         );

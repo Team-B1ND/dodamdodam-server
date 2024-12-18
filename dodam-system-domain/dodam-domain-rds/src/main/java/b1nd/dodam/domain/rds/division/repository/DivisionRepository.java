@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface DivisionRepository extends JpaRepository<Division, Long> {
     @Query("SELECT d FROM division d " +
@@ -19,5 +20,5 @@ public interface DivisionRepository extends JpaRepository<Division, Long> {
     @Query("SELECT d FROM division d WHERE d.id > :lastId ORDER BY d.id ASC")
     List<Division> findNextPageWithCursor(@Param("lastId") Long lastId, Pageable pageable);
 
-    Division findByName(String name);
+    Optional<Division> findByName(String name);
 }

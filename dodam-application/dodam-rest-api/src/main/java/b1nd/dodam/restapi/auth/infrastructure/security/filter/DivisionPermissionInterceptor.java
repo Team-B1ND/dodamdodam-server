@@ -10,21 +10,17 @@ import b1nd.dodam.domain.rds.member.entity.Member;
 import b1nd.dodam.domain.rds.member.enumeration.MemberRole;
 import b1nd.dodam.restapi.auth.infrastructure.security.support.MemberAuthenticationHolder;
 import b1nd.dodam.restapi.support.exception.ErrorResponseSender;
-import jakarta.servlet.FilterChain;
-import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.HandlerMapping;
 
 import java.util.Map;
 
-import static org.springframework.http.HttpMethod.*;
+import static org.springframework.http.HttpMethod.GET;
 
-@Slf4j
 @Component
 @RequiredArgsConstructor
 public class DivisionPermissionInterceptor implements HandlerInterceptor {
@@ -37,7 +33,7 @@ public class DivisionPermissionInterceptor implements HandlerInterceptor {
         final String method = request.getMethod();
         Member member = memberAuthenticationHolder.current();
         if (isAdminOrTeacher(member)) return true;
-        if (isGetHttpMethod(method)) return true;
+        if (GET.matches(method)) return true;
         Map<String, String> pathVariables = (Map<String, String>) request.getAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE);
         Long id = Long.valueOf(pathVariables.get("id"));
         Division division = divisionService.getById(id);
@@ -51,10 +47,6 @@ public class DivisionPermissionInterceptor implements HandlerInterceptor {
             return false;
         }
         return true;
-    }
-
-    private boolean isGetHttpMethod(String method) {
-        return GET.matches(method);
     }
 
     private boolean isAdminOrTeacher(Member member) {

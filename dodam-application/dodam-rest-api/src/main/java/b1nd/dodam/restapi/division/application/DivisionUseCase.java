@@ -32,7 +32,7 @@ public class DivisionUseCase {
         divisionService.save(division);
         divisionMemberService.saveWithBuild(
                 division,
-                authHolder.current(),
+                List.of(authHolder.current()),
                 ApprovalStatus.ALLOWED,
                 DivisionPermission.ADMIN
         );
@@ -61,14 +61,14 @@ public class DivisionUseCase {
     }
 
     @Transactional(readOnly = true)
-    public ResponseData<List<DivisionOverviewRes>> getMyDivisions(Long lastId, int size){
-        List<Division> divisions = divisionService.getByMember(authHolder.current(), lastId, size);
+    public ResponseData<List<DivisionOverviewRes>> getMyDivisions(Long lastId, int limit){
+        List<Division> divisions = divisionService.getByMember(authHolder.current(), lastId, limit);
         return ResponseData.ok("내 조직 조회 성공", DivisionOverviewRes.of(divisions));
     }
 
     @Transactional(readOnly = true)
-    public ResponseData<List<DivisionOverviewRes>> getDivisions(Long lastId, int size){
-        return ResponseData.ok("전체 조직 조회 성공", DivisionOverviewRes.of(divisionService.getAll(lastId, size)));
+    public ResponseData<List<DivisionOverviewRes>> getDivisions(Long lastId, int limit){
+        return ResponseData.ok("전체 조직 조회 성공", DivisionOverviewRes.of(divisionService.getAll(lastId, limit)));
     }
 
     private Division getDivisionByIdWithValidateAdmin(Long id){
