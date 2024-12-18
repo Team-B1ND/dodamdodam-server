@@ -132,6 +132,7 @@ public class CustomExceptionHandler {
     }
 
     private void sendErrorNotice(Exception e, HttpServletRequest request) {
+        log.info("{}", e.getMessage());
         errorNoticeSender.send(
                 e,
                 new RequestInfo(
