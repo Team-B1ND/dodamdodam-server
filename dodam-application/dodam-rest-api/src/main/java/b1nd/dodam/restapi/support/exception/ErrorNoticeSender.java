@@ -36,8 +36,7 @@ public class ErrorNoticeSender {
                 + getStackTrace(e)
                 + "\n```";
 
-        log.error("{}{}", title, description);
-//        discordWebHookClient.notice("", title, description);
+        discordWebHookClient.notice("", title, description);
     }
 
     private String getEndpoint(String method, String uri, String query) {
