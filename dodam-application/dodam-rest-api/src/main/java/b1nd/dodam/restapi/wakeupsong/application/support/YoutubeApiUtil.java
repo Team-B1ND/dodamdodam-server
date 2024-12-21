@@ -18,6 +18,9 @@ public final class YoutubeApiUtil {
 
     static public String getVideoId(String videoUrl){
         try {
+            if (videoUrl.startsWith("https://youtu.be/")) {
+                return videoUrl.replace("https://youtu.be/", "").split("\\?si=")[0];
+            }
             return videoUrl.split("/?v=")[1].split("&")[0];
         } catch (IndexOutOfBoundsException e) {
             throw new WakeupSongUrlMalformedException();
