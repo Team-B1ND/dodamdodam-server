@@ -47,4 +47,8 @@ public class Notice extends BaseEntity {
         this.noticeStatus = noticeStatus;
         this.member = member;
     }
+
+    public void setNoticeStatus(NoticeStatus noticeStatus) {
+        this.noticeStatus = noticeStatus;
+    }
 }

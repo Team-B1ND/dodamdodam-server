@@ -1,6 +1,6 @@
 package b1nd.dodam.domain.rds.notice.entity;
 
-import b1nd.dodam.domain.rds.division.entity.DivisionMember;
+import b1nd.dodam.domain.rds.division.entity.Division;
 import b1nd.dodam.domain.rds.support.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -23,13 +23,13 @@ public class NoticeDivision extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "fk_division_id")
-    private DivisionMember divisionMember;
+    private Division division;
 
     @Builder
-    public NoticeDivision(Long id, Notice notice, DivisionMember divisionMember) {
+    public NoticeDivision(Long id, Notice notice, Division division) {
         this.id = id;
         this.notice = notice;
-        this.divisionMember = divisionMember;
+        this.division = division;
     }
 
 }
