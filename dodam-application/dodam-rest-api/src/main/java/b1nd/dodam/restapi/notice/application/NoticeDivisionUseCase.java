@@ -25,7 +25,7 @@ public class NoticeDivisionUseCase {
 
     public Response addDivision(Long noticeId, AddNoticeDivisionReq addNoticeDivisionReq){
         Notice notice = noticeService.getById(noticeId);
-        Division division = divisionService.getById(addNoticeDivisionReq.DivisionId());
+        Division division = divisionService.getById(addNoticeDivisionReq.divisionId());
         NoticeDivision noticeDivision = addNoticeDivisionReq.toEntity(notice, division);
         noticeService.changeStatus(notice.getId(), NoticeStatus.CREATED);
         noticeDivisionService.save(noticeDivision);

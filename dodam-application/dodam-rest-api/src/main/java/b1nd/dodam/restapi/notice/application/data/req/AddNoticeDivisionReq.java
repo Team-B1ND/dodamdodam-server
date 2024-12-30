@@ -5,7 +5,7 @@ import b1nd.dodam.domain.rds.notice.entity.Notice;
 import b1nd.dodam.domain.rds.notice.entity.NoticeDivision;
 
 public record AddNoticeDivisionReq(
-        Long DivisionId
+        Long divisionId
 ) {
     public NoticeDivision toEntity(Notice notice, Division division){
         return NoticeDivision.builder()

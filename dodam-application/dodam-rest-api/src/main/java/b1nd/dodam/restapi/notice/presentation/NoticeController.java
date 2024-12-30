@@ -22,7 +22,7 @@ public class NoticeController {
         return noticeUseCase.register(generateNoticeReq);
     }
 
-    @PatchMapping("/{id}")
+    @PatchMapping("/division/{id}")
     public Response addStatus(
             @PathVariable Long id,
             @RequestBody AddNoticeDivisionReq addNoticeDivisionReq){
