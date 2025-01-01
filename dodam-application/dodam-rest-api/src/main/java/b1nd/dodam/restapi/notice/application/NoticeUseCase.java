@@ -7,7 +7,6 @@ import b1nd.dodam.domain.rds.division.service.DivisionService;
 import b1nd.dodam.domain.rds.member.entity.Member;
 import b1nd.dodam.domain.rds.notice.entity.Notice;
 import b1nd.dodam.domain.rds.notice.entity.NoticeDivision;
-import b1nd.dodam.domain.rds.notice.enumration.NoticeStatus;
 import b1nd.dodam.domain.rds.notice.service.NoticeDivisionService;
 import b1nd.dodam.domain.rds.notice.service.NoticeService;
 import b1nd.dodam.restapi.auth.infrastructure.security.support.MemberAuthenticationHolder;
@@ -20,7 +19,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 

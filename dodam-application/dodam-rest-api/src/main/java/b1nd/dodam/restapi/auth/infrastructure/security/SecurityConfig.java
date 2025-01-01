@@ -117,6 +117,10 @@ class SecurityConfig {
                 .requestMatchers(PATCH, "/divisions/**").authenticated()
                 .requestMatchers(DELETE, "/divisions/**").authenticated()
 
+                .requestMatchers(POST, "/notice").hasAnyRole(TEACHER, ADMIN)
+                .requestMatchers(PATCH, "/notice/division").hasAnyRole(TEACHER, ADMIN)
+                .requestMatchers(GET, "/notice/**").authenticated()
+
                 .anyRequest().authenticated()
                 .and()
                 .exceptionHandling()
