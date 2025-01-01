@@ -1,7 +1,9 @@
 package b1nd.dodam.restapi.notice.application;
 
+import b1nd.dodam.domain.rds.division.entity.Division;
 import b1nd.dodam.domain.rds.division.entity.DivisionMember;
 import b1nd.dodam.domain.rds.division.service.DivisionMemberService;
+import b1nd.dodam.domain.rds.division.service.DivisionService;
 import b1nd.dodam.domain.rds.member.entity.Member;
 import b1nd.dodam.domain.rds.notice.entity.Notice;
 import b1nd.dodam.domain.rds.notice.entity.NoticeDivision;
@@ -19,6 +21,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Component
 @RequiredArgsConstructor
@@ -27,6 +31,7 @@ public class NoticeUseCase {
 
     private final NoticeService noticeService;
     private final NoticeDivisionService noticeDivisionService;
+    private final DivisionService divisionService;
     private final DivisionMemberService divisionMemberService;
     private final MemberAuthenticationHolder memberAuthenticationHolder;
 
@@ -48,6 +53,23 @@ public class NoticeUseCase {
                 .toList();
 
         return ResponseData.of(HttpStatus.OK, "전체 공지 불러오기 성공", NoticeRes.of(notices, member));
+    }
+
+    public ResponseData<List<NoticeRes>> getBy(Long id){
+        Member member = memberAuthenticationHolder.current();
+        List<DivisionMember> divisionMembers = divisionMemberService.getByMember(member);
+
+        Set<Division> memberDivisions = divisionMembers.stream()
+                .map(DivisionMember::getDivision)
+                .collect(Collectors.toSet());
+
+        Division division = divisionService.getById(id);
+        List<Notice> notices = noticeDivisionService.getAllByDivision(division).parallelStream()
+                .filter(noticeDivision -> memberDivisions.contains(noticeDivision.getDivision()))
+                .map(NoticeDivision::getNotice)
+                .toList();
+
+        return ResponseData.of(HttpStatus.OK, "카테고리별 공지 불러오기 성공", NoticeRes.of(notices, member));
     }
 
 }

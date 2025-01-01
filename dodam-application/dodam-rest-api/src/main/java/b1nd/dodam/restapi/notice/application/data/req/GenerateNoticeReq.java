@@ -4,8 +4,6 @@ import b1nd.dodam.domain.rds.member.entity.Member;
 import b1nd.dodam.domain.rds.notice.entity.Notice;
 import b1nd.dodam.domain.rds.support.enumeration.FileType;
 
-import java.util.List;
-
 import static b1nd.dodam.domain.rds.notice.enumration.NoticeStatus.DRAFT;
 
 public record GenerateNoticeReq (

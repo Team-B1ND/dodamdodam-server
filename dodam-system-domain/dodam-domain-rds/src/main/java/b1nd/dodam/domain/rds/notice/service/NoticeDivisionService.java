@@ -1,6 +1,7 @@
 package b1nd.dodam.domain.rds.notice.service;
 
 import b1nd.dodam.domain.rds.division.entity.Division;
+import b1nd.dodam.domain.rds.notice.entity.Notice;
 import b1nd.dodam.domain.rds.notice.entity.NoticeDivision;
 import b1nd.dodam.domain.rds.notice.repository.NoticeDivisionRepository;
 import lombok.RequiredArgsConstructor;
@@ -22,8 +23,9 @@ public class NoticeDivisionService {
     public List<NoticeDivision> getAllByDivision(Division division){
         return noticeDivisionRepository.findAllByDivision(division);
     }
-    public Optional<NoticeDivision> getByDivision(Division division){
-        return noticeDivisionRepository.findByDivision(division);
+
+    public List<NoticeDivision> getAllByNotice(Notice notice){
+        return noticeDivisionRepository.findAllByNotice(notice);
     }
 
 }
