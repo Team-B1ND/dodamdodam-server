@@ -30,14 +30,14 @@ public class NoticeController {
         return noticeUseCase.getCreated();
     }
 
-    @GetMapping("/created/{id}")
+    @GetMapping("/{id}/division")
     public ResponseData<List<NoticeRes>> getBy(
             @PathVariable Long id
     ){
         return noticeUseCase.getBy(id);
     }
 
-    @PatchMapping("/division/{id}")
+    @PatchMapping("/{id}/create")
     public Response addStatus(
             @PathVariable Long id,
             @RequestBody AddNoticeDivisionReq addNoticeDivisionReq){
