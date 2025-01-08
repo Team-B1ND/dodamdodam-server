@@ -50,6 +50,7 @@ public class NoticeUseCase {
         return ResponseData.of(HttpStatus.OK, "공지 생성 성공", notice.getId());
     }
 
+    @Transactional(readOnly = true)
     public ResponseData<List<NoticeRes>> getNotices(Long lastId, int limit, NoticeStatus status){
         Member member = memberAuthenticationHolder.current();
         List<DivisionMember> divisionMembers = divisionMemberService.getByMember(member);
@@ -64,6 +65,7 @@ public class NoticeUseCase {
         return ResponseData.of(HttpStatus.OK, "전체 공지 불러오기 성공", NoticeRes.of(notices, member));
     }
 
+    @Transactional(readOnly = true)
     public ResponseData<List<NoticeRes>> getNoticesByDivision(Long id, Long lastId, int limit){
         Member member = memberAuthenticationHolder.current();
         List<DivisionMember> divisionMembers = divisionMemberService.getByMember(member);
