@@ -2,9 +2,9 @@ package b1nd.dodam.domain.rds.notice.exception;
 
 import b1nd.dodam.core.exception.CustomException;
 
-public final class NoticeNotFoundException extends CustomException {
+public final class NoticeDivisionNotFoundException extends CustomException {
 
-    public NoticeNotFoundException() {
+    public NoticeDivisionNotFoundException() {
 
         super(NoticeExceptionCode.NOT_FOUND);
 

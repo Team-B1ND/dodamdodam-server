@@ -7,7 +7,7 @@ import lombok.RequiredArgsConstructor;
 public enum NoticeExceptionCode implements ExceptionCode {
 
     NOT_APPLICANT(403, "작성자가 아님"),
-    NOT_FOUND(404, "없는 공지");
+    NOT_FOUND(404, "찾을 수 없음");
 
     private final int status;
     private final String message;

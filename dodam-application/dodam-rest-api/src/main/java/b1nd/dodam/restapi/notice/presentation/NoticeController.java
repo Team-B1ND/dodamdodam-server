@@ -1,11 +1,9 @@
 package b1nd.dodam.restapi.notice.presentation;
 
-import b1nd.dodam.restapi.notice.application.NoticeDivisionUseCase;
+import b1nd.dodam.domain.rds.notice.enumration.NoticeStatus;
 import b1nd.dodam.restapi.notice.application.NoticeUseCase;
-import b1nd.dodam.restapi.notice.application.data.req.AddNoticeDivisionReq;
 import b1nd.dodam.restapi.notice.application.data.req.GenerateNoticeReq;
 import b1nd.dodam.restapi.notice.application.data.res.NoticeRes;
-import b1nd.dodam.restapi.support.data.Response;
 import b1nd.dodam.restapi.support.data.ResponseData;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -18,7 +16,6 @@ import java.util.List;
 public class NoticeController {
 
     private final NoticeUseCase noticeUseCase;
-    private final NoticeDivisionUseCase noticeDivisionUseCase;
 
     @PostMapping
     public ResponseData<Long> generate(@RequestBody GenerateNoticeReq generateNoticeReq){
@@ -26,22 +23,22 @@ public class NoticeController {
     }
 
     @GetMapping
-    public ResponseData<List<NoticeRes>> getCreated(){
-        return noticeUseCase.getCreated();
+    public ResponseData<List<NoticeRes>> getByStatus(
+            @RequestParam Long lastId,
+            @RequestParam int limit,
+            @RequestParam NoticeStatus status
+
+    ){
+        return noticeUseCase.getNotices(lastId, limit, status);
     }
 
     @GetMapping("/{id}/division")
     public ResponseData<List<NoticeRes>> getBy(
-            @PathVariable Long id
-    ){
-        return noticeUseCase.getBy(id);
-    }
-
-    @PatchMapping("/{id}/create")
-    public Response addStatus(
             @PathVariable Long id,
-            @RequestBody AddNoticeDivisionReq addNoticeDivisionReq){
-        return noticeDivisionUseCase.addDivision(id, addNoticeDivisionReq);
+            @RequestParam Long lastId,
+            @RequestParam int limit
+    ){
+        return noticeUseCase.getNoticesByDivision(id, lastId, limit);
     }
 
 }
