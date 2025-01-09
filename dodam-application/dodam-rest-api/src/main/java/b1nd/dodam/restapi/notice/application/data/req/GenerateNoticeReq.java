@@ -18,10 +18,6 @@ public record GenerateNoticeReq (@NotEmpty String title, @NotEmpty String conten
                                  List<Long> divisions){
 
     public Notice toEntity(Member member) {
-        if (title == null || content == null) {
-            throw new IllegalArgumentException("Title or content cannot be null");
-        }
-
         Notice notice = Notice.builder()
                 .title(title)
                 .content(content)
@@ -43,10 +39,6 @@ public record GenerateNoticeReq (@NotEmpty String title, @NotEmpty String conten
     }
 
     public List<NoticeDivision> toEntity(Notice notice, List<Division> divisions) {
-        if (divisions == null || divisions.isEmpty()) {
-            throw new IllegalArgumentException("Divisions cannot be null or empty");
-        }
-
         return divisions.stream()
                 .map(division -> {
                     NoticeDivision noticeDivision = GenerateNoticeReq.toEntity(notice, division);
@@ -57,10 +49,6 @@ public record GenerateNoticeReq (@NotEmpty String title, @NotEmpty String conten
     }
 
     public static NoticeDivision toEntity(Notice notice, Division division){
-        if (notice == null || division == null) {
-            throw new IllegalArgumentException("Notice or Division cannot be null");
-        }
-
         return NoticeDivision.builder()
                 .notice(notice)
                 .division(division)
