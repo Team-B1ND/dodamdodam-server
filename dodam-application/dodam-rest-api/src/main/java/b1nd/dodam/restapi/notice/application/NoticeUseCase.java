@@ -20,8 +20,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 @Component
 @RequiredArgsConstructor
@@ -38,9 +36,9 @@ public class NoticeUseCase {
         Member member = memberAuthenticationHolder.current();
         Notice notice = noticeService.save(generateNoticeReq.toEntity(member));
 
-        List<Division> divisions = generateNoticeReq.divisionId().stream()
+        List<Division> divisions = generateNoticeReq.divisions().stream()
                 .map(divisionService::getById)
-                .collect(Collectors.toList());
+                .toList();
 
         List<NoticeDivision> noticeDivisions = generateNoticeReq.toEntity(notice, divisions);
 
@@ -51,35 +49,29 @@ public class NoticeUseCase {
     }
 
     @Transactional(readOnly = true)
-    public ResponseData<List<NoticeRes>> getNotices(Long lastId, int limit, NoticeStatus status){
+    public ResponseData<List<NoticeRes>> getNotices(Long lastId, int limit, NoticeStatus status) {
         Member member = memberAuthenticationHolder.current();
         List<DivisionMember> divisionMembers = divisionMemberService.getByMember(member);
 
-        List<Notice> notices = divisionMembers.parallelStream()
-                .map(DivisionMember::getDivision)
-                .flatMap(division -> noticeDivisionService.getAllByDivision(division, lastId, limit).stream())
-                .map(NoticeDivision::getNotice)
-                .filter(notice -> notice.getNoticeStatus().equals(status))
+        List<Long> divisionIds = divisionMembers.stream()
+                .map(divisionMember -> divisionMember.getDivision().getId())
                 .toList();
+
+        List<Notice> notices = noticeService.getAllByStatus(divisionIds, status, lastId, limit);
 
         return ResponseData.of(HttpStatus.OK, "전체 공지 불러오기 성공", NoticeRes.of(notices, member));
     }
 
     @Transactional(readOnly = true)
-    public ResponseData<List<NoticeRes>> getNoticesByDivision(Long id, Long lastId, int limit){
+    public ResponseData<List<NoticeRes>> getNoticesByDivision(Long divisionId, Long lastId, int limit){
         Member member = memberAuthenticationHolder.current();
-        List<DivisionMember> divisionMembers = divisionMemberService.getByMember(member);
+        Division division = divisionService.getById(divisionId);
 
-        Set<Division> memberDivisions = divisionMembers.stream()
-                .map(DivisionMember::getDivision)
-                .collect(Collectors.toSet());
-
-        Division division = divisionService.getById(id);
-        List<Notice> notices = noticeDivisionService.getAllByDivision(division, lastId, limit).parallelStream()
-                .filter(noticeDivision -> memberDivisions.contains(noticeDivision.getDivision()))
-                .map(NoticeDivision::getNotice)
+        List<Notice> notices = noticeService.getAllByDivision(member.getId(), division.getId(), lastId, limit)
+                .stream()
                 .toList();
 
         return ResponseData.of(HttpStatus.OK, "카테고리별 공지 불러오기 성공", NoticeRes.of(notices, member));
     }
+
 }
