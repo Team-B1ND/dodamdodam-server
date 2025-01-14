@@ -26,6 +26,10 @@ public class DivisionService {
                 .orElseThrow(DivisionNotFoundException::new);
     }
 
+    public List<Division> getAllByIds(List<Long> ids){
+        return divisionRepository.findAllById(ids);
+    }
+
     public void checkIsNotDuplicateName(String name) {
         if (divisionRepository.findByName(name).isPresent()) {
             throw new DivisionDuplicateException();

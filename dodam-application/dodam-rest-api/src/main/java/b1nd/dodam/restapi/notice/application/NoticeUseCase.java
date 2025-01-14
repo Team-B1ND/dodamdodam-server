@@ -36,9 +36,7 @@ public class NoticeUseCase {
         Member member = memberAuthenticationHolder.current();
         Notice notice = noticeService.save(generateNoticeReq.toEntity(member));
 
-        List<Division> divisions = generateNoticeReq.divisions().stream()
-                .map(divisionService::getById)
-                .toList();
+        List<Division> divisions = divisionService.getAllByIds(generateNoticeReq.divisions());
 
         List<NoticeDivision> noticeDivisions = generateNoticeReq.toEntity(notice, divisions);
 
