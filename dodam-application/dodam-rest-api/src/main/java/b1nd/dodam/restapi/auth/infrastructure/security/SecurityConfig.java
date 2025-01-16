@@ -1,6 +1,7 @@
 package b1nd.dodam.restapi.auth.infrastructure.security;
 
 import b1nd.dodam.core.exception.global.GlobalExceptionCode;
+import b1nd.dodam.restapi.auth.infrastructure.security.filter.DivisionPermissionInterceptor;
 import b1nd.dodam.restapi.support.exception.ErrorResponseSender;
 import b1nd.dodam.restapi.auth.infrastructure.security.filter.BroadcastMemberFilter;
 import b1nd.dodam.restapi.auth.infrastructure.security.filter.TokenExceptionFilter;
@@ -32,6 +33,7 @@ class SecurityConfig {
     private final TokenFilter tokenFilter;
     private final TokenExceptionFilter tokenExceptionFilter;
     private final BroadcastMemberFilter broadcastMemberFilter;
+    private final DivisionPermissionInterceptor divisionPermissionFilter;
     private final ErrorResponseSender errorResponseSender;
 
     @Bean
@@ -108,6 +110,12 @@ class SecurityConfig {
                 .requestMatchers(POST, "/recruit").hasRole(TEACHER)
                 .requestMatchers(PATCH, "/recruit/**").hasRole(TEACHER)
                 .requestMatchers(DELETE, "/recruit/**").hasRole(TEACHER)
+
+                .requestMatchers(POST, "/divisions").hasAnyRole(ADMIN, TEACHER)
+                .requestMatchers(POST, "/divisions/{id}/members/**").authenticated()
+                .requestMatchers(GET, "/divisions/**").authenticated()
+                .requestMatchers(PATCH, "/divisions/**").authenticated()
+                .requestMatchers(DELETE, "/divisions/**").authenticated()
 
                 .anyRequest().authenticated()
                 .and()
