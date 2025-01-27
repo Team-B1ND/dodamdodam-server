@@ -30,14 +30,18 @@ public class Student {
     @NotNull
     private int number;
 
+    @Column(unique = true)
+    private String code;
+
     private String parentPhone;
 
     @Builder
-    public Student(Member member, int grade, int room, int number) {
+    public Student(Member member, int grade, int room, int number, String code) {
         this.member = member;
         this.grade = grade;
         this.room = room;
         this.number = number;
+        this.code = code;
     }
 
     public void updateInfo(int grade, int room, int number) {

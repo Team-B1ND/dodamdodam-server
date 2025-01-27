@@ -1,7 +1,6 @@
 package b1nd.dodam.restapi.member.application;
 
 import b1nd.dodam.domain.rds.member.entity.Member;
-import b1nd.dodam.domain.rds.member.entity.Parent;
 import b1nd.dodam.domain.rds.member.entity.Student;
 import b1nd.dodam.domain.rds.member.entity.Teacher;
 import b1nd.dodam.domain.rds.member.enumeration.ActiveStatus;
@@ -13,7 +12,6 @@ import b1nd.dodam.restapi.auth.infrastructure.security.support.MemberAuthenticat
 import b1nd.dodam.restapi.member.application.data.req.*;
 import b1nd.dodam.restapi.support.data.Response;
 import b1nd.dodam.restapi.support.encrypt.Sha512PasswordEncoder;
-import io.micrometer.common.util.StringUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.context.ApplicationEventPublisher;
@@ -142,14 +140,6 @@ public class MemberCommandUseCase {
         Student student = studentRepository.getByMember(memberAuthenticationHolder.current());
         student.updateInfo(req.grade(), req.room(), req.number());
         return Response.noContent("내 학생 정보 수정 성공");
-    }
-
-    @CacheEvict(value = "members-cache", key = "'activeMembers'")
-    public Response updateStudentParentPhone(String id, UpdateStudentForAdminReq req){
-        Member member = memberRepository.getById(id);
-        Student student = studentRepository.getByMember(member);
-        student.updateParentPhone(req.parentPhone());
-        return Response.noContent("학생 정보 수정 성공");
     }
 
     @CacheEvict(value = "members-cache", key = "'activeMembers'")

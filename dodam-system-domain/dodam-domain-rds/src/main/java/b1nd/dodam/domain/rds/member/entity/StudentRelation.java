@@ -6,13 +6,13 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Getter
-@Entity(name = "student_code")
+@Entity(name = "student_relation")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class StudentCode {
+public class StudentRelation {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private String studentCode;
+    private int id ;
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "fk_student_id", nullable = false)

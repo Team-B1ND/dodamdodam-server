@@ -76,11 +76,6 @@ public class MemberController {
         return commandUseCase.updateStudentInfo(req);
     }
 
-    @PatchMapping("/student/info/{id}")
-    public Response updateStudentForAdmin(@PathVariable String id, @RequestBody UpdateStudentForAdminReq req){
-        return commandUseCase.updateStudentParentPhone(id, req);
-    }
-
     @PatchMapping("/teacher/info/{id}")
     public Response updateTeacherForAdmin(@PathVariable String id, @RequestBody UpdateTeacherForAdminReq req){
         return commandUseCase.updateTeacherForAdmin(id, req);
