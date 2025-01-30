@@ -1,13 +1,16 @@
 package b1nd.dodam.restapi.member.application;
 
 import b1nd.dodam.domain.rds.member.entity.Member;
+import b1nd.dodam.domain.rds.member.entity.Parent;
 import b1nd.dodam.domain.rds.member.entity.Student;
 import b1nd.dodam.domain.rds.member.entity.Teacher;
 import b1nd.dodam.domain.rds.member.enumeration.ActiveStatus;
 import b1nd.dodam.domain.rds.member.event.StudentRegisteredEvent;
 import b1nd.dodam.domain.rds.member.exception.BroadcastClubMemberDuplicateException;
 import b1nd.dodam.domain.rds.member.exception.MemberDuplicateException;
+import b1nd.dodam.domain.rds.member.exception.ParentNotFoundException;
 import b1nd.dodam.domain.rds.member.repository.*;
+import b1nd.dodam.domain.rds.member.service.MemberService;
 import b1nd.dodam.restapi.auth.infrastructure.security.support.MemberAuthenticationHolder;
 import b1nd.dodam.restapi.member.application.data.req.*;
 import b1nd.dodam.restapi.support.data.Response;
@@ -25,10 +28,12 @@ import java.util.List;
 @RequiredArgsConstructor
 public class MemberCommandUseCase {
 
+    private final MemberService memberService;
     private final MemberRepository memberRepository;
     private final StudentRepository studentRepository;
     private final TeacherRepository teacherRepository;
     private final ParentRepository parentRepository;
+    private final StudentRelationRepository studentRelationRepository;
     private final BroadcastClubMemberRepository broadcastClubMemberRepository;
     private final MemberAuthenticationHolder memberAuthenticationHolder;
     private final ApplicationEventPublisher eventPublisher;
@@ -55,8 +60,17 @@ public class MemberCommandUseCase {
     public Response join(JoinParentReq req) {
         checkIfIdIsDuplicate(req.id());
         Member member = memberRepository.save(req.mapToMember(encodePw(req.pw())));
-        parentRepository.save(req.mapToParent(member));
+        Parent parent = parentRepository.save(req.mapToParent(member));
+        req.relationInfo()
+                .forEach(relationInfo -> connectRelation(parent.getId(), relationInfo));
         return Response.created("학부모 회원가입 성공");
+    }
+
+    public void connectRelation(int id, ConnectStudentReq req){
+        Student student = memberService.checkCode(req.code());
+        Parent parent = parentRepository.findById(id)
+                .orElseThrow(ParentNotFoundException::new);
+        studentRelationRepository.save(req.mapToStudentRelation(student, parent));
     }
 
     private void checkIfIdIsDuplicate(String id) {

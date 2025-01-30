@@ -17,17 +17,13 @@ public class Parent {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @NotNull
-    private String relation;
-
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "fk_member_id", nullable = false)
     private Member member;
 
     @Builder
-    public Parent(int id, String relation, Member member) {
+    public Parent(int id, Member member) {
         this.id = id;
-        this.relation = relation;
         this.member = member;
     }
 }
