@@ -1,6 +1,7 @@
 package b1nd.dodam.restapi.member.application.data.req;
 
-import b1nd.dodam.domain.rds.member.entity.*;
+import b1nd.dodam.domain.rds.member.entity.Member;
+import b1nd.dodam.domain.rds.member.entity.Parent;
 import b1nd.dodam.domain.rds.member.enumeration.ActiveStatus;
 import b1nd.dodam.domain.rds.member.enumeration.MemberRole;
 import jakarta.validation.constraints.Email;

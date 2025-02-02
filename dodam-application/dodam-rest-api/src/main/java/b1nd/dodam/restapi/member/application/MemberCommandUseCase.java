@@ -5,6 +5,7 @@ import b1nd.dodam.domain.rds.member.entity.Parent;
 import b1nd.dodam.domain.rds.member.entity.Student;
 import b1nd.dodam.domain.rds.member.entity.Teacher;
 import b1nd.dodam.domain.rds.member.enumeration.ActiveStatus;
+import b1nd.dodam.domain.rds.member.event.ParentRegisteredEvent;
 import b1nd.dodam.domain.rds.member.event.StudentRegisteredEvent;
 import b1nd.dodam.domain.rds.member.exception.BroadcastClubMemberDuplicateException;
 import b1nd.dodam.domain.rds.member.exception.MemberDuplicateException;
@@ -63,6 +64,7 @@ public class MemberCommandUseCase {
         Parent parent = parentRepository.save(req.mapToParent(member));
         req.relationInfo()
                 .forEach(relationInfo -> connectRelation(parent.getId(), relationInfo));
+        eventPublisher.publishEvent(new ParentRegisteredEvent(parent));
         return Response.created("학부모 회원가입 성공");
     }
 
