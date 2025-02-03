@@ -34,7 +34,9 @@ public class PointEventHandler {
     @TransactionalEventListener
     public void listen(PointSMSEvent e) {
         gabiaSMSClient.send(new SendSmsReq(e.content(), e.phone()));
-        gabiaSMSClient.send(new SendSmsReq(e.content(), e.parentPhone()));
+        e.parentPhones().forEach(parentPhone ->
+                gabiaSMSClient.send(new SendSmsReq(e.content(), parentPhone))
+        );
     }
 
 }

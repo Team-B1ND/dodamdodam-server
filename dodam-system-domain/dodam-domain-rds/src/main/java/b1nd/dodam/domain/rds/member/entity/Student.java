@@ -8,6 +8,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Getter
 @Entity(name = "student")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -33,8 +36,8 @@ public class Student {
     @Column(unique = true)
     private String code;
 
-    private String parentPhone;
-
+    @OneToMany(mappedBy = "student", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<StudentRelation> studentRelations = new ArrayList<>();
     @Builder
     public Student(Member member, int grade, int room, int number, String code) {
         this.member = member;
@@ -50,9 +53,4 @@ public class Student {
         this.number = number;
     }
 
-    public void updateParentPhone(String parentPhone) {
-        if(StringUtils.isNotBlank(parentPhone)){
-            this.parentPhone = parentPhone;
-        }
-    }
 }

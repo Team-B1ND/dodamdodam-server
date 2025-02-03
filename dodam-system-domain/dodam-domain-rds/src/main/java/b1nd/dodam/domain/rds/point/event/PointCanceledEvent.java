@@ -1,3 +1,5 @@
 package b1nd.dodam.domain.rds.point.event;
 
-public record PointCanceledEvent(String content, String phone, String parentPhone) implements PointSMSEvent {}
+import java.util.List;
+
+public record PointCanceledEvent(String content, String phone, List<String> parentPhones) implements PointSMSEvent {}
