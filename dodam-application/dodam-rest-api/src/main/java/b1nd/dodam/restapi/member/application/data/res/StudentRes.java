@@ -10,8 +10,7 @@ public record StudentRes(
         String name,
         Integer grade,
         Integer room,
-        Integer number,
-        List<String> parentPhone
+        Integer number
 ) implements Serializable {
     public static StudentRes of(Student student) {
         if(student == null) {
@@ -21,12 +20,7 @@ public record StudentRes(
                 student.getId(),
                 student.getMember().getName(),
                 student.getGrade(), student.getRoom(),
-                student.getNumber(),
-                student.getStudentRelations()
-                        .stream()
-                        .map(studentRelation ->
-                                studentRelation.getParent().getMember().getPhone())
-                        .toList()
+                student.getNumber()
         );
     }
 }
