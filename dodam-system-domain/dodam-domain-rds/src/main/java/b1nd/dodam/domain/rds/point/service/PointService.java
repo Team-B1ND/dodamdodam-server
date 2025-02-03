@@ -1,7 +1,10 @@
 package b1nd.dodam.domain.rds.point.service;
 
+import b1nd.dodam.domain.rds.member.entity.Parent;
 import b1nd.dodam.domain.rds.member.entity.Student;
+import b1nd.dodam.domain.rds.member.entity.StudentRelation;
 import b1nd.dodam.domain.rds.member.entity.Teacher;
+import b1nd.dodam.domain.rds.member.repository.StudentRelationRepository;
 import b1nd.dodam.domain.rds.point.entity.Point;
 import b1nd.dodam.domain.rds.point.entity.PointReason;
 import b1nd.dodam.domain.rds.point.entity.PointScore;
@@ -16,12 +19,17 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class PointService {
 
+    private final StudentRelationRepository studentRelationRepository;
     private final PointRepository pointRepository;
     private final PointScoreRepository pointScoreRepository;
     private final PointReasonRepository pointReasonRepository;
@@ -54,16 +62,31 @@ public class PointService {
     }
 
     private void publishPointIssuedEvents(List<Student> students, PointReason reason) {
-        students.forEach(s -> eventPublisher.publishEvent(
-                PointMessageUtil.createIssuedEvent(s, reason)
-        ));
+        List<StudentRelation> relations = studentRelationRepository.findAllByStudents(students);
+
+        Map<Student, List<Parent>> studentParentMap = relations.stream()
+                .collect(Collectors.groupingBy(
+                        StudentRelation::getStudent,
+                        Collectors.mapping(StudentRelation::getParent, Collectors.toList())
+                ));
+
+        students.forEach(student -> {
+            List<Parent> parents = studentParentMap.getOrDefault(student, Collections.emptyList());
+            if (!parents.isEmpty()) {
+                parents.stream()
+                        .filter(Objects::nonNull)
+                        .forEach(parent -> eventPublisher.publishEvent(
+                                PointMessageUtil.createIssuedEvent(student, parent, reason)
+                        ));
+            }
+        });
     }
 
     public void cancel(int pointId) {
         Point point = pointRepository.getById(pointId);
         cancelPointScore(point.getStudent(), point.getReason());
         pointRepository.delete(point);
-        publishPointCanceledEvent(point.getReason(), point.getStudent());
+        publishPointCanceledEvent(point.getStudent(), point.getReason());
     }
 
     private void cancelPointScore(Student student, PointReason reason) {
@@ -71,8 +94,14 @@ public class PointService {
         score.cancel(reason);
     }
 
-    private void publishPointCanceledEvent(PointReason reason, Student student) {
-        eventPublisher.publishEvent(PointMessageUtil.createCanceledEvent(student, reason));
+    private void publishPointCanceledEvent(Student student, PointReason reason) {
+        List<Parent> parents = studentRelationRepository.findParentByStudent(student);
+
+        if (parents != null && !parents.isEmpty()) {
+            parents.forEach(parent ->
+                    eventPublisher.publishEvent(PointMessageUtil.createCanceledEvent(student, parent, reason))
+            );
+        }
     }
 
     public List<Point> getPointsByStudentAndType(Student student, PointType type) {

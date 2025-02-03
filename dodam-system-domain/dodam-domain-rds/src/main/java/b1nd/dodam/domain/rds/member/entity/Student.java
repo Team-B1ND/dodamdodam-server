@@ -6,10 +6,6 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.apache.commons.lang3.StringUtils;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @Getter
 @Entity(name = "student")
@@ -36,8 +32,6 @@ public class Student {
     @Column(unique = true)
     private String code;
 
-    @OneToMany(mappedBy = "student", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<StudentRelation> studentRelations = new ArrayList<>();
     @Builder
     public Student(Member member, int grade, int room, int number, String code) {
         this.member = member;
