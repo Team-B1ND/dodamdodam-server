@@ -11,10 +11,9 @@ import jakarta.validation.constraints.NotNull;
 import java.util.List;
 
 public record JoinParentReq(@NotEmpty String id, @NotEmpty String pw, @NotEmpty String name, @NotEmpty @Email String email,
-                            List<ConnectStudentReq> relationInfo, @NotNull boolean isAlarm, @NotEmpty String phone) {
+                            List<ConnectStudentReq> relationInfo, @NotEmpty String phone) {
     public Parent mapToParent(Member member) {
         return Parent.builder()
-                .isAlarm(isAlarm)
                 .member(member)
                 .build();
     }
@@ -27,6 +26,7 @@ public record JoinParentReq(@NotEmpty String id, @NotEmpty String pw, @NotEmpty 
                 .name(name)
                 .role(MemberRole.PARENT)
                 .phone(phone)
+                .isAlarm(true)
                 .status(ActiveStatus.PENDING)
                 .build();
     }

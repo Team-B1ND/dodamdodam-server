@@ -2,7 +2,9 @@ package b1nd.dodam.domain.rds.member.entity;
 
 import b1nd.dodam.domain.rds.member.enumeration.ActiveStatus;
 import b1nd.dodam.domain.rds.member.enumeration.MemberRole;
-import b1nd.dodam.domain.rds.member.exception.*;
+import b1nd.dodam.domain.rds.member.exception.ActiveMemberException;
+import b1nd.dodam.domain.rds.member.exception.MemberNotActiveException;
+import b1nd.dodam.domain.rds.member.exception.WrongPasswordException;
 import b1nd.dodam.domain.rds.support.entity.BaseEntity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
@@ -44,20 +46,23 @@ public class Member extends BaseEntity {
     @NotNull
     private String phone;
 
+    private boolean isAlarm;
+
     @JsonIgnore
     @Column(columnDefinition = "TEXT")
     private String pushToken;
 
     @Builder
-    public Member(String id, String pw, String name, String email, MemberRole role, ActiveStatus status, String profileImage, String phone) {
+    public Member(String id, String pw, String name, String email, MemberRole role, ActiveStatus status, String profileImage, String phone, boolean isAlarm) {
         this.id = id;
         this.pw = pw;
-        this.email = email;
         this.name = name;
+        this.email = email;
         this.role = role;
         this.status = status;
         this.profileImage = profileImage;
         this.phone = phone;
+        this.isAlarm = isAlarm;
     }
 
     public void updatePw(String pw) {
@@ -103,6 +108,10 @@ public class Member extends BaseEntity {
         if(StringUtils.isNotBlank(pushToken)){
             this.pushToken = pushToken;
         }
+    }
+
+    public void setAlarm(boolean alarm) {
+        isAlarm = alarm;
     }
 
 }

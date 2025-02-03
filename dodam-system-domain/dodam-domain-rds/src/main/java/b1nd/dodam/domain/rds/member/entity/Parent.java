@@ -15,15 +15,13 @@ public class Parent {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    private boolean isAlarm;
-
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "fk_member_id", nullable = false)
     private Member member;
 
     @Builder
-    public Parent(boolean isAlarm, Member member) {
-        this.isAlarm = isAlarm;
+    public Parent(Member member) {
         this.member = member;
     }
+
 }

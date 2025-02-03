@@ -116,4 +116,8 @@ public class MemberController {
         return queryUseCase.checkBroadcastClubMember(id);
     }
 
+    @PatchMapping("/alarm")
+    public Response updateIsAlarm(){
+        return commandUseCase.updateIsAlarm();
+    }
 }

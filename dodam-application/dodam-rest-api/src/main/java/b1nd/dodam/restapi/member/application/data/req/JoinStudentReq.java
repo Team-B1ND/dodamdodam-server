@@ -33,6 +33,8 @@ public record JoinStudentReq(@NotEmpty String id, @NotEmpty String pw, @NotEmpty
                 .name(name)
                 .role(MemberRole.STUDENT)
                 .phone(phone)
+                .isAlarm(true)
+
                 .status(ActiveStatus.PENDING)
                 .build();
     }

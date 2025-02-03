@@ -166,4 +166,11 @@ public class MemberCommandUseCase {
         return Response.noContent("선생 정보 수정 성공");
     }
 
+    public Response updateIsAlarm(){
+        Member member = memberAuthenticationHolder.current();
+        member = memberService.toggleAlarm(member);
+        memberRepository.save(member);
+        return Response.noContent("수신 상태 변경 선공");
+    }
+
 }
