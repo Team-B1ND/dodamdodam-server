@@ -1,12 +1,10 @@
 package b1nd.dodam.domain.rds.member.entity;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,6 +18,8 @@ public class Parent {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
+    private boolean isAlarm;
+
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "fk_member_id", nullable = false)
     private Member member;
@@ -28,8 +28,8 @@ public class Parent {
     private List<StudentRelation> studentRelations = new ArrayList<>();
 
     @Builder
-    public Parent(int id, Member member) {
-        this.id = id;
+    public Parent(boolean isAlarm, Member member) {
+        this.isAlarm = isAlarm;
         this.member = member;
     }
 }

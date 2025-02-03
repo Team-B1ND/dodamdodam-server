@@ -13,11 +13,6 @@ import org.springframework.stereotype.Service;
 public class MemberService {
 
     private final StudentRepository studentRepository;
-    private final StudentRelationRepository studentRelationRepository;
-
-    public void studentRelationSave(StudentRelation studentRelation){
-        studentRelationRepository.save(studentRelation);
-    }
 
     public Student checkCode(String code){
         return studentRepository.findByCode(code)
