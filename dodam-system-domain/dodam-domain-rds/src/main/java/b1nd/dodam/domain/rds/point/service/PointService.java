@@ -1,9 +1,6 @@
 package b1nd.dodam.domain.rds.point.service;
 
-import b1nd.dodam.domain.rds.member.entity.Parent;
-import b1nd.dodam.domain.rds.member.entity.Student;
-import b1nd.dodam.domain.rds.member.entity.StudentRelation;
-import b1nd.dodam.domain.rds.member.entity.Teacher;
+import b1nd.dodam.domain.rds.member.entity.*;
 import b1nd.dodam.domain.rds.member.repository.StudentRelationRepository;
 import b1nd.dodam.domain.rds.point.entity.Point;
 import b1nd.dodam.domain.rds.point.entity.PointReason;
@@ -75,6 +72,7 @@ public class PointService {
             if (!parents.isEmpty()) {
                 parents.stream()
                         .filter(Objects::nonNull)
+                        .filter(parent -> parent.getMember().isAlarm())
                         .forEach(parent -> eventPublisher.publishEvent(
                                 PointMessageUtil.createIssuedEvent(student, parent, reason)
                         ));
@@ -118,6 +116,10 @@ public class PointService {
 
     public List<PointScore> getAllScores() {
         return pointScoreRepository.findAll();
+    }
+
+    private boolean isAlarm(Member member) {
+        return member != null && member.isAlarm();
     }
 
 }
