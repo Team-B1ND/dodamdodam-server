@@ -1,6 +1,9 @@
 package b1nd.dodam.domain.rds.point.service;
 
-import b1nd.dodam.domain.rds.member.entity.*;
+import b1nd.dodam.domain.rds.member.entity.Member;
+import b1nd.dodam.domain.rds.member.entity.Parent;
+import b1nd.dodam.domain.rds.member.entity.Student;
+import b1nd.dodam.domain.rds.member.entity.Teacher;
 import b1nd.dodam.domain.rds.member.repository.StudentRelationRepository;
 import b1nd.dodam.domain.rds.point.entity.Point;
 import b1nd.dodam.domain.rds.point.entity.PointReason;
@@ -40,21 +43,18 @@ public class PointService {
     }
 
     private void publishPointIssuedEvents(List<Student> students, PointReason reason) {
-        Map<Student, List<Parent>> studentParentMap = studentRelationRepository.findAllByStudents(students)
-                .stream()
+        List<Object[]> parentsWithAlarm = studentRelationRepository.findParentsAndStudentsWithAlarmByStudents(students);
+
+        Map<Student, List<Parent>> studentParentMap = parentsWithAlarm.stream()
                 .collect(Collectors.groupingBy(
-                        StudentRelation::getStudent,
-                        Collectors.mapping(StudentRelation::getParent, Collectors.toList())
+                        obj -> (Student)obj[0],
+                        Collectors.mapping(obj -> (Parent)obj[1], Collectors.toList())
                 ));
 
         students.forEach(student -> {
-            if (student.getMember().isAlarm()) {
-                eventPublisher.publishEvent(PointMessageUtil.createIssuedEvent(student, null, reason));
-            }
+            eventPublisher.publishEvent(PointMessageUtil.createIssuedEvent(student, null, reason));
 
             studentParentMap.getOrDefault(student, Collections.emptyList())
-                    .stream()
-                    .filter(parent -> parent.getMember().isAlarm())
                     .forEach(parent -> eventPublisher.publishEvent(PointMessageUtil.createIssuedEvent(null, parent, reason)));
         });
     }
@@ -97,9 +97,8 @@ public class PointService {
             eventPublisher.publishEvent(PointMessageUtil.createCanceledEvent(student, null, reason));
         }
 
-        parents.stream()
-                .filter(parent -> parent.getMember().isAlarm())
-                .forEach(parent -> eventPublisher.publishEvent(PointMessageUtil.createCanceledEvent(null, parent, reason)));
+        parents.forEach(parent ->
+                eventPublisher.publishEvent(PointMessageUtil.createCanceledEvent(null, parent, reason)));
     }
 
     public List<Point> getPointsByStudentAndType(Student student, PointType type) {
