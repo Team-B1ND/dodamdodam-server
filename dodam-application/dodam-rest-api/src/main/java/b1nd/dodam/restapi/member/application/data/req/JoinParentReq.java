@@ -10,7 +10,7 @@ import jakarta.validation.constraints.NotNull;
 
 import java.util.List;
 
-public record JoinParentReq(@NotEmpty String id, @NotEmpty String pw, @NotEmpty String name, @NotEmpty @Email String email,
+public record JoinParentReq(@NotEmpty String id, @NotEmpty String pw, @NotEmpty String name,
                             List<ConnectStudentReq> relationInfo, @NotEmpty String phone) {
     public Parent mapToParent(Member member) {
         return Parent.builder()
@@ -22,7 +22,6 @@ public record JoinParentReq(@NotEmpty String id, @NotEmpty String pw, @NotEmpty 
         return Member.builder()
                 .id(id)
                 .pw(encodedPw)
-                .email(email)
                 .name(name)
                 .role(MemberRole.PARENT)
                 .phone(phone)
