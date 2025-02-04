@@ -19,7 +19,6 @@ import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
@@ -36,7 +35,28 @@ public class PointService {
         PointReason reason = pointReasonRepository.getById(reasonId);
         savePoints(teacher, students, reason, issueAt);
         saveScores(students, reason);
+
         publishPointIssuedEvents(students, reason);
+    }
+
+    private void publishPointIssuedEvents(List<Student> students, PointReason reason) {
+        Map<Student, List<Parent>> studentParentMap = studentRelationRepository.findAllByStudents(students)
+                .stream()
+                .collect(Collectors.groupingBy(
+                        StudentRelation::getStudent,
+                        Collectors.mapping(StudentRelation::getParent, Collectors.toList())
+                ));
+
+        students.forEach(student -> {
+            if (student.getMember().isAlarm()) {
+                eventPublisher.publishEvent(PointMessageUtil.createIssuedEvent(student, null, reason));
+            }
+
+            studentParentMap.getOrDefault(student, Collections.emptyList())
+                    .stream()
+                    .filter(parent -> parent.getMember().isAlarm())
+                    .forEach(parent -> eventPublisher.publishEvent(PointMessageUtil.createIssuedEvent(null, parent, reason)));
+        });
     }
 
     private void savePoints(Teacher teacher, List<Student> students, PointReason reason, LocalDate issueAt) {
@@ -58,28 +78,6 @@ public class PointService {
         );
     }
 
-    private void publishPointIssuedEvents(List<Student> students, PointReason reason) {
-        List<StudentRelation> relations = studentRelationRepository.findAllByStudents(students);
-
-        Map<Student, List<Parent>> studentParentMap = relations.stream()
-                .collect(Collectors.groupingBy(
-                        StudentRelation::getStudent,
-                        Collectors.mapping(StudentRelation::getParent, Collectors.toList())
-                ));
-
-        students.forEach(student -> {
-            List<Parent> parents = studentParentMap.getOrDefault(student, Collections.emptyList());
-            if (!parents.isEmpty()) {
-                parents.stream()
-                        .filter(Objects::nonNull)
-                        .filter(parent -> parent.getMember().isAlarm())
-                        .forEach(parent -> eventPublisher.publishEvent(
-                                PointMessageUtil.createIssuedEvent(student, parent, reason)
-                        ));
-            }
-        });
-    }
-
     public void cancel(int pointId) {
         Point point = pointRepository.getById(pointId);
         cancelPointScore(point.getStudent(), point.getReason());
@@ -95,11 +93,13 @@ public class PointService {
     private void publishPointCanceledEvent(Student student, PointReason reason) {
         List<Parent> parents = studentRelationRepository.findParentByStudent(student);
 
-        if (parents != null && !parents.isEmpty()) {
-            parents.forEach(parent ->
-                    eventPublisher.publishEvent(PointMessageUtil.createCanceledEvent(student, parent, reason))
-            );
+        if (student.getMember().isAlarm()) {
+            eventPublisher.publishEvent(PointMessageUtil.createCanceledEvent(student, null, reason));
         }
+
+        parents.stream()
+                .filter(parent -> parent.getMember().isAlarm())
+                .forEach(parent -> eventPublisher.publishEvent(PointMessageUtil.createCanceledEvent(null, parent, reason)));
     }
 
     public List<Point> getPointsByStudentAndType(Student student, PointType type) {
