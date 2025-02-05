@@ -20,6 +20,7 @@ include 'dodam-in-system-available:dodam-simple-storage-service-client'
 include 'dodam-in-system-available:dodam-codenary-client'
 include 'dodam-in-system-available:dodam-neis-meal-client'
 include 'dodam-in-system-available:dodam-firebase-client'
+include 'dodam-in-system-available:dodam-google-smtp-client'
 
 //dodam-application
 include 'dodam-application'
