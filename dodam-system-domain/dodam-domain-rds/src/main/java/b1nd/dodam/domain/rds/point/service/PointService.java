@@ -117,8 +117,4 @@ public class PointService {
         return pointScoreRepository.findAll();
     }
 
-    private boolean isAlarm(Member member) {
-        return member != null && member.isAlarm();
-    }
-
 }

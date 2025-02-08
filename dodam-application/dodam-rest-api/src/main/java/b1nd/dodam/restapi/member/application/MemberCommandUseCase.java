@@ -5,6 +5,7 @@ import b1nd.dodam.domain.rds.member.entity.Parent;
 import b1nd.dodam.domain.rds.member.entity.Student;
 import b1nd.dodam.domain.rds.member.entity.Teacher;
 import b1nd.dodam.domain.rds.member.enumeration.ActiveStatus;
+import b1nd.dodam.domain.rds.member.enumeration.AuthType;
 import b1nd.dodam.domain.rds.member.event.ParentRegisteredEvent;
 import b1nd.dodam.domain.rds.member.event.StudentRegisteredEvent;
 import b1nd.dodam.domain.rds.member.exception.BroadcastClubMemberDuplicateException;
@@ -12,10 +13,16 @@ import b1nd.dodam.domain.rds.member.exception.MemberDuplicateException;
 import b1nd.dodam.domain.rds.member.exception.ParentNotFoundException;
 import b1nd.dodam.domain.rds.member.repository.*;
 import b1nd.dodam.domain.rds.member.service.MemberService;
+import b1nd.dodam.domain.redis.member.service.MemberInfraService;
 import b1nd.dodam.restapi.auth.infrastructure.security.support.MemberAuthenticationHolder;
+import b1nd.dodam.restapi.auth.infrastructure.security.support.UserAgentHolder;
 import b1nd.dodam.restapi.member.application.data.req.*;
+import b1nd.dodam.restapi.member.application.data.res.AuthCodeRes;
 import b1nd.dodam.restapi.support.data.Response;
+import b1nd.dodam.restapi.support.data.ResponseData;
 import b1nd.dodam.restapi.support.encrypt.Sha512PasswordEncoder;
+import b1nd.dodam.restapi.support.util.RandomCode;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.context.ApplicationEventPublisher;
@@ -30,6 +37,7 @@ import java.util.List;
 public class MemberCommandUseCase {
 
     private final MemberService memberService;
+    private final MemberInfraService memberInfraService;
     private final MemberRepository memberRepository;
     private final StudentRepository studentRepository;
     private final TeacherRepository teacherRepository;
@@ -66,6 +74,21 @@ public class MemberCommandUseCase {
                 .forEach(relationInfo -> connectRelation(parent.getId(), relationInfo));
         eventPublisher.publishEvent(new ParentRegisteredEvent(parent));
         return Response.created("학부모 회원가입 성공");
+    }
+
+    public Response sendAuthCode(String phone){
+        int authCode = RandomCode.randomCode();
+        memberInfraService.updateAuthCode(AuthType.PHONE.toString(), phone, authCode);
+        memberService.issue(phone, authCode);
+        return ResponseData.ok("인증코드 발급 성공");
+    }
+
+    public Response verifyAuthCode(HttpServletRequest request, AuthType authType, VerifyAuthCodeReq verifyAuthCodeReq) {
+        String userAgent = UserAgentHolder.getUserAgent(request);
+        int storedCode = memberInfraService.getAuthCode(authType.toString(), verifyAuthCodeReq.identifier());
+        boolean verified = memberService.verifyAuthCode(storedCode, verifyAuthCodeReq.authCode());
+        memberInfraService.updateUserAgentValidation(userAgent, verified, authType.toString());
+        return Response.ok("인증 성공");
     }
 
     public void connectRelation(int id, ConnectStudentReq req){
@@ -164,13 +187,6 @@ public class MemberCommandUseCase {
         Teacher teacher = teacherRepository.getByMember(member);
         teacher.updateInfo(req.tel(), req.position());
         return Response.noContent("선생 정보 수정 성공");
-    }
-
-    public Response updateIsAlarm(){
-        Member member = memberAuthenticationHolder.current();
-        member = memberService.toggleAlarm(member);
-        memberRepository.save(member);
-        return Response.noContent("수신 상태 변경 선공");
     }
 
 }

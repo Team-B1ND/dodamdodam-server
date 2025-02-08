@@ -1,12 +1,15 @@
 package b1nd.dodam.restapi.member.presentation;
 
 import b1nd.dodam.domain.rds.member.enumeration.ActiveStatus;
+import b1nd.dodam.domain.rds.member.enumeration.AuthType;
 import b1nd.dodam.restapi.member.application.MemberCommandUseCase;
 import b1nd.dodam.restapi.member.application.MemberQueryUseCase;
 import b1nd.dodam.restapi.member.application.data.req.*;
+import b1nd.dodam.restapi.member.application.data.res.AuthCodeRes;
 import b1nd.dodam.restapi.member.application.data.res.MemberInfoRes;
 import b1nd.dodam.restapi.support.data.Response;
 import b1nd.dodam.restapi.support.data.ResponseData;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -22,23 +25,38 @@ public class MemberController {
     private final MemberQueryUseCase queryUseCase;
 
     @PostMapping("/join-student")
-    public Response join(@RequestBody @Valid JoinStudentReq req) {
+    public Response join(HttpServletRequest request,
+                         @RequestBody @Valid JoinStudentReq req) {
         return commandUseCase.join(req);
     }
 
     @PostMapping("/join-teacher")
-    public Response join(@RequestBody @Valid JoinTeacherReq req) {
+    public Response join(HttpServletRequest request,
+                         @RequestBody @Valid JoinTeacherReq req) {
         return commandUseCase.join(req);
     }
 
     @PostMapping("/join-parent")
-    public Response join(@RequestBody @Valid JoinParentReq req) {
+    public Response join(HttpServletRequest request,
+                         @RequestBody @Valid JoinParentReq req) {
         return commandUseCase.join(req);
     }
 
     @PostMapping("/broadcast-club-member")
     public Response apply(@RequestBody @Valid ApplyBroadcastClubMemberReq req) {
         return commandUseCase.apply(req);
+    }
+
+    @PostMapping("/auth-code")
+    public Response sendAuthCode(@RequestBody @Valid AuthCodeReq authCodeReq){
+        return commandUseCase.sendAuthCode(authCodeReq.phone());
+    }
+
+    @PostMapping("/auth-code/{type}")
+    public Response verifyAuthCode(HttpServletRequest request,
+                                   @PathVariable AuthType type,
+                                   @RequestBody @Valid VerifyAuthCodeReq req){
+        return commandUseCase.verifyAuthCode(request, type, req);
     }
 
     @DeleteMapping("/{id}")
@@ -116,8 +134,4 @@ public class MemberController {
         return queryUseCase.checkBroadcastClubMember(id);
     }
 
-    @PatchMapping("/alarm")
-    public Response updateIsAlarm(){
-        return commandUseCase.updateIsAlarm();
-    }
 }

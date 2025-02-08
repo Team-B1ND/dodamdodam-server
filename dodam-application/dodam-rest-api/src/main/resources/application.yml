@@ -39,6 +39,10 @@ redis:
     - host: ${REDIS_SLAVE_2_HOST}
       port: ${REDIS_SLAVE_2_PORT}
 
+auth:
+  code:
+    expiration: ${AUTH_CODE_EXPIRATION}
+
 logging.level:
   org.springframework.boot.autoconfigure: ERROR
 
