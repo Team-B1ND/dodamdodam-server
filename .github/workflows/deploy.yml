@@ -33,6 +33,7 @@ jobs:
           redis.slaves.0.port: ${{ secrets.REDIS_SLAVE_1_PORT }}
           redis.slaves.1.host: ${{ secrets.REDIS_SLAVE_2_HOST }}
           redis.slaves.1.port: ${{ secrets.REDIS_SLAVE_2_PORT }}
+          auth.code.expiration: ${{ secrets.AUTH_CODE_EXPIRATION }}
           app.token.generate: ${{ secrets.TOKEN_GENERATE_URL }}
           app.token.verify: ${{ secrets.TOKEN_VERIFY_URL }}
           app.token.refresh: ${{ secrets.TOKEN_REFRESH_URL }}
