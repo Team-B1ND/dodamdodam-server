@@ -15,8 +15,7 @@ public enum MemberExceptionCode implements ExceptionCode {
     TEACHER_NOT_FOUND(404, "없는 선생님"),
     MEMBER_DUPLICATION(409, "이미 존재하는 멤버"),
     BROADCAST_CLUB_MEMBER_DUPLICATION(409, "이미 존재하는 방송부원"),
-    CODE_NOT_FOUND(404, "없는 학생코드"),
-    AUTH_CODE_NOT_MATCH(403, "인증코드가 일치하지 않음");
+    CODE_NOT_FOUND(404, "없는 학생코드");
 
     private final int status;
     private final String message;

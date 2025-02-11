@@ -5,7 +5,6 @@ import b1nd.dodam.domain.rds.member.enumeration.AuthType;
 import b1nd.dodam.restapi.member.application.MemberCommandUseCase;
 import b1nd.dodam.restapi.member.application.MemberQueryUseCase;
 import b1nd.dodam.restapi.member.application.data.req.*;
-import b1nd.dodam.restapi.member.application.data.res.AuthCodeRes;
 import b1nd.dodam.restapi.member.application.data.res.MemberInfoRes;
 import b1nd.dodam.restapi.support.data.Response;
 import b1nd.dodam.restapi.support.data.ResponseData;
@@ -25,21 +24,21 @@ public class MemberController {
     private final MemberQueryUseCase queryUseCase;
 
     @PostMapping("/join-student")
-    public Response join(HttpServletRequest request,
+    public Response join(HttpServletRequest httpServletReq,
                          @RequestBody @Valid JoinStudentReq req) {
-        return commandUseCase.join(req);
+        return commandUseCase.join(httpServletReq, req);
     }
 
     @PostMapping("/join-teacher")
-    public Response join(HttpServletRequest request,
+    public Response join(HttpServletRequest httpServletReq,
                          @RequestBody @Valid JoinTeacherReq req) {
-        return commandUseCase.join(req);
+        return commandUseCase.join(httpServletReq, req);
     }
 
     @PostMapping("/join-parent")
-    public Response join(HttpServletRequest request,
+    public Response join(HttpServletRequest httpServletReq,
                          @RequestBody @Valid JoinParentReq req) {
-        return commandUseCase.join(req);
+        return commandUseCase.join(httpServletReq, req);
     }
 
     @PostMapping("/broadcast-club-member")

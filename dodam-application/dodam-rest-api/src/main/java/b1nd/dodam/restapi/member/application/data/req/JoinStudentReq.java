@@ -4,6 +4,7 @@ import b1nd.dodam.domain.rds.member.entity.Member;
 import b1nd.dodam.domain.rds.member.entity.Student;
 import b1nd.dodam.domain.rds.member.enumeration.ActiveStatus;
 import b1nd.dodam.domain.rds.member.enumeration.MemberRole;
+import b1nd.dodam.restapi.support.util.RandomCode;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
@@ -21,7 +22,7 @@ public record JoinStudentReq(@NotEmpty String id, @NotEmpty String pw, @NotEmpty
                 .grade(grade)
                 .room(room)
                 .number(number)
-                .code(this.randomCode())
+                .code(RandomCode.studentRandomCode())
                 .build();
     }
 
@@ -37,26 +38,6 @@ public record JoinStudentReq(@NotEmpty String id, @NotEmpty String pw, @NotEmpty
 
                 .status(ActiveStatus.PENDING)
                 .build();
-    }
-
-    private String randomCode() {
-        StringBuilder stringBuilder = new StringBuilder();
-        String random = UUID.randomUUID().toString();
-        byte[] uuid = random.getBytes(StandardCharsets.UTF_8);
-        byte[] hashBytes;
-
-        try {
-            MessageDigest messageDigest = MessageDigest.getInstance("SHA-256");
-            hashBytes = messageDigest.digest(uuid);
-        } catch (NoSuchAlgorithmException e) {
-            throw new RuntimeException();
-        }
-
-        for (int j = 0; j < 4; j++) {
-            stringBuilder.append(String.format("%02x", hashBytes[j]));
-        }
-
-        return stringBuilder.toString().toUpperCase();
     }
 
 }

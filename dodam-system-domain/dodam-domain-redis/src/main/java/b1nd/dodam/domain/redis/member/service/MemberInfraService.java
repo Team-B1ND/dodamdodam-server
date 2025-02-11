@@ -1,5 +1,7 @@
 package b1nd.dodam.domain.redis.member.service;
 
+import b1nd.dodam.domain.redis.member.exception.AuthCodeNotMatchException;
+import b1nd.dodam.domain.redis.member.exception.MemberInvalidException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -29,9 +31,13 @@ public class MemberInfraService {
                 .set(key, String.valueOf(authCode), Duration.ofMillis(AUTH_CODE_EXPIRATION));
     }
 
-    public int getAuthCode(String type, String identifier){
+    public void validateAuthCode(String identifier, int authCode, String type){
         String key = String.format("verify:%s:%s", type, identifier);
-        return Integer.parseInt(Objects.requireNonNull(redisTemplate.opsForValue().get(key)));
+        int storedAuthCode = Integer.parseInt(Objects.requireNonNull(redisTemplate.opsForValue().get(key)));
+
+        if (storedAuthCode != authCode) {
+            throw new AuthCodeNotMatchException();
+        }
     }
 
     private String hashUserAgent(String userAgent) {
@@ -44,14 +50,14 @@ public class MemberInfraService {
         }
     }
 
-    public boolean updateUserAgentValidation(String userAgent, boolean verified, String type) {
+    public boolean updateUserAgentValidation(String userAgent, String type) {
         String key = "session:" + hashUserAgent(userAgent);
 
         if (type.equals("EMAIL")) {
             return redisTemplate.opsForHash().hasKey(key, "PHONE");
         } else {
             Map<String, String> verificationStatus = new HashMap<>();
-            verificationStatus.put(type, String.valueOf(verified));
+            verificationStatus.put(type, String.valueOf(Boolean.TRUE));
 
             redisTemplate.opsForHash().putAll(key, verificationStatus);
             redisTemplate.expire(key, Duration.ofMinutes(15));
@@ -60,9 +66,16 @@ public class MemberInfraService {
         }
     }
 
-    public String getValidationUserAgent(String userAgent, String type){
+    public void validateUserAgent(String userAgent) {
         String key = "session:" + hashUserAgent(userAgent);
-        return redisTemplate.opsForValue().get(key);
+
+        if (!Boolean.TRUE.equals(redisTemplate.hasKey(key))) {
+            throw new MemberInvalidException();
+        }
+
+        if (!redisTemplate.opsForHash().hasKey(key, "EMAIL") || !redisTemplate.opsForHash().hasKey(key, "PHONE")) {
+            throw new MemberInvalidException();
+        }
     }
 
 }

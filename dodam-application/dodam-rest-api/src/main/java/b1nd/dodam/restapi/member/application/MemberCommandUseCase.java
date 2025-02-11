@@ -17,7 +17,6 @@ import b1nd.dodam.domain.redis.member.service.MemberInfraService;
 import b1nd.dodam.restapi.auth.infrastructure.security.support.MemberAuthenticationHolder;
 import b1nd.dodam.restapi.auth.infrastructure.security.support.UserAgentHolder;
 import b1nd.dodam.restapi.member.application.data.req.*;
-import b1nd.dodam.restapi.member.application.data.res.AuthCodeRes;
 import b1nd.dodam.restapi.support.data.Response;
 import b1nd.dodam.restapi.support.data.ResponseData;
 import b1nd.dodam.restapi.support.encrypt.Sha512PasswordEncoder;
@@ -47,8 +46,9 @@ public class MemberCommandUseCase {
     private final MemberAuthenticationHolder memberAuthenticationHolder;
     private final ApplicationEventPublisher eventPublisher;
 
-    public Response join(JoinStudentReq req) {
+    public Response join(HttpServletRequest httpServletReq, JoinStudentReq req) {
         checkIfIdIsDuplicate(req.id());
+        validateMember(httpServletReq);
         Member member = memberRepository.save(req.mapToMember(encodePw(req.pw())));
         Student student = studentRepository.save(req.mapToStudent(member));
         publishStudentRegisteredEvent(student);
@@ -59,21 +59,28 @@ public class MemberCommandUseCase {
         eventPublisher.publishEvent(new StudentRegisteredEvent(student));
     }
 
-    public Response join(JoinTeacherReq req) {
+    public Response join(HttpServletRequest httpServletReq, JoinTeacherReq req) {
         checkIfIdIsDuplicate(req.id());
+        validateMember(httpServletReq);
         Member member = memberRepository.save(req.mapToMember(encodePw(req.pw())));
         teacherRepository.save(req.mapToTeacher(member));
         return Response.created("선생님 회원가입 성공");
     }
 
-    public Response join(JoinParentReq req) {
+    public Response join(HttpServletRequest httpServletReq, JoinParentReq req) {
         checkIfIdIsDuplicate(req.id());
+        validateMember(httpServletReq);
         Member member = memberRepository.save(req.mapToMember(encodePw(req.pw())));
         Parent parent = parentRepository.save(req.mapToParent(member));
         req.relationInfo()
                 .forEach(relationInfo -> connectRelation(parent.getId(), relationInfo));
         eventPublisher.publishEvent(new ParentRegisteredEvent(parent));
         return Response.created("학부모 회원가입 성공");
+    }
+
+    private void validateMember(HttpServletRequest request){
+        String userAgent = UserAgentHolder.getUserAgent(request);
+        memberInfraService.validateUserAgent(userAgent);
     }
 
     public Response sendAuthCode(String phone){
@@ -85,9 +92,8 @@ public class MemberCommandUseCase {
 
     public Response verifyAuthCode(HttpServletRequest request, AuthType authType, VerifyAuthCodeReq verifyAuthCodeReq) {
         String userAgent = UserAgentHolder.getUserAgent(request);
-        int storedCode = memberInfraService.getAuthCode(authType.toString(), verifyAuthCodeReq.identifier());
-        boolean verified = memberService.verifyAuthCode(storedCode, verifyAuthCodeReq.authCode());
-        memberInfraService.updateUserAgentValidation(userAgent, verified, authType.toString());
+        memberInfraService.validateAuthCode(verifyAuthCodeReq.identifier(), verifyAuthCodeReq.authCode(), authType.toString());
+        memberInfraService.updateUserAgentValidation(userAgent, authType.toString());
         return Response.ok("인증 성공");
     }
 
