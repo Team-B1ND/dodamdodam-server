@@ -83,10 +83,10 @@ public class MemberCommandUseCase {
         memberInfraService.validateUserAgent(userAgent);
     }
 
-    public Response sendAuthCode(String phone){
+    public Response sendAuthCode(AuthType authType, AuthCodeReq authCodeReq){
         int authCode = RandomCode.randomCode();
-        memberInfraService.updateAuthCode(AuthType.PHONE.toString(), phone, authCode);
-        memberService.issue(phone, authCode);
+        memberInfraService.updateAuthCode(authType.toString(), authCodeReq.identifier(), authCode);
+        memberService.issue(authCodeReq.identifier(), authCode);
         return ResponseData.ok("인증코드 발급 성공");
     }
 

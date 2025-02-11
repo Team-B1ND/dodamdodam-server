@@ -46,12 +46,13 @@ public class MemberController {
         return commandUseCase.apply(req);
     }
 
-    @PostMapping("/auth-code")
-    public Response sendAuthCode(@RequestBody @Valid AuthCodeReq authCodeReq){
-        return commandUseCase.sendAuthCode(authCodeReq.phone());
+    @PostMapping("/auth-code/{type}")
+    public Response sendAuthCode(@PathVariable AuthType type,
+                                 @RequestBody @Valid AuthCodeReq authCodeReq){
+        return commandUseCase.sendAuthCode(type, authCodeReq);
     }
 
-    @PostMapping("/auth-code/{type}")
+    @PostMapping("/auth-code/{type}/verify")
     public Response verifyAuthCode(HttpServletRequest request,
                                    @PathVariable AuthType type,
                                    @RequestBody @Valid VerifyAuthCodeReq req){
