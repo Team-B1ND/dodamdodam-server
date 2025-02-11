@@ -1,7 +1,7 @@
 package b1nd.dodam.domain.redis.member.service;
 
 import b1nd.dodam.domain.redis.member.exception.AuthCodeNotMatchException;
-import b1nd.dodam.domain.redis.member.exception.MemberInvalidException;
+import b1nd.dodam.domain.redis.member.exception.AuthInvalidException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -50,31 +50,24 @@ public class MemberInfraService {
         }
     }
 
-    public boolean updateUserAgentValidation(String userAgent, String type) {
+    public void updateUserAgentValidation(String userAgent, String type) {
         String key = "session:" + hashUserAgent(userAgent);
 
-        if (type.equals("EMAIL")) {
-            return redisTemplate.opsForHash().hasKey(key, "PHONE");
-        } else {
-            Map<String, String> verificationStatus = new HashMap<>();
-            verificationStatus.put(type, String.valueOf(Boolean.TRUE));
-
-            redisTemplate.opsForHash().putAll(key, verificationStatus);
-            redisTemplate.expire(key, Duration.ofMinutes(15));
-
-            return true;
+        if ("EMAIL".equals(type) && redisTemplate.opsForHash().hasKey(key, "PHONE")) {
+            throw new AuthInvalidException();
         }
+
+        redisTemplate.opsForHash().put(key, type, Boolean.TRUE.toString());
+        redisTemplate.expire(key, Duration.ofMinutes(15));
     }
 
     public void validateUserAgent(String userAgent) {
         String key = "session:" + hashUserAgent(userAgent);
 
-        if (!Boolean.TRUE.equals(redisTemplate.hasKey(key))) {
-            throw new MemberInvalidException();
-        }
-
-        if (!redisTemplate.opsForHash().hasKey(key, "EMAIL") || !redisTemplate.opsForHash().hasKey(key, "PHONE")) {
-            throw new MemberInvalidException();
+        if (!Boolean.TRUE.equals(redisTemplate.hasKey(key)) ||
+                !redisTemplate.opsForHash().hasKey(key, "EMAIL") ||
+                !redisTemplate.opsForHash().hasKey(key, "PHONE")) {
+            throw new AuthInvalidException();
         }
     }
 
