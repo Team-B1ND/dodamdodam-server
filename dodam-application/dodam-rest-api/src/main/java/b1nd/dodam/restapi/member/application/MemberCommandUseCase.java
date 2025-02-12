@@ -35,7 +35,7 @@ import java.util.Optional;
 public class MemberCommandUseCase {
 
     private final MemberService memberService;
-    private final MemberRedisService memberInfraService;
+    private final MemberRedisService memberRedisService;
     private final MemberRepository memberRepository;
     private final StudentRepository studentRepository;
     private final TeacherRepository teacherRepository;
@@ -47,7 +47,7 @@ public class MemberCommandUseCase {
 
     public Response join(String userAgent, JoinStudentReq req) {
         checkIfIdIsDuplicate(req.id());
-        memberInfraService.validateUserAgent(userAgent);
+        memberRedisService.validateUserAgent(userAgent);
         Member member = memberRepository.save(req.mapToMember(encodePw(req.pw())));
         Student student = studentRepository.save(req.mapToStudent(member));
         publishStudentRegisteredEvent(student);
@@ -60,7 +60,7 @@ public class MemberCommandUseCase {
 
     public Response join(String userAgent, JoinTeacherReq req) {
         checkIfIdIsDuplicate(req.id());
-        memberInfraService.validateUserAgent(userAgent);
+        memberRedisService.validateUserAgent(userAgent);
         Member member = memberRepository.save(req.mapToMember(encodePw(req.pw())));
         teacherRepository.save(req.mapToTeacher(member));
         return Response.created("선생님 회원가입 성공");
@@ -68,7 +68,7 @@ public class MemberCommandUseCase {
 
     public Response join(String userAgent, JoinParentReq req) {
         checkIfIdIsDuplicate(req.id());
-        memberInfraService.validateUserAgent(userAgent);
+        memberRedisService.validateUserAgent(userAgent);
         Member member = memberRepository.save(req.mapToMember(encodePw(req.pw())));
         Parent parent = parentRepository.save(req.mapToParent(member));
         req.relationInfo()
@@ -79,20 +79,14 @@ public class MemberCommandUseCase {
 
     public Response sendAuthCode(AuthType authType, AuthCodeReq authCodeReq){
         int authCode = RandomCode.randomCode();
-        memberInfraService.updateAuthCode(authType, authCodeReq.identifier(), authCode);
+        memberRedisService.updateAuthCode(authType, authCodeReq.identifier(), authCode);
         memberService.issue(authCodeReq.identifier(), authCode);
         return ResponseData.ok("인증코드 발급 성공");
     }
 
     public Response verifyAuthCode(String userAgent, AuthType authType, VerifyAuthCodeReq req) {
-        memberInfraService.validateAuthCode(authType, req.identifier(), req.authCode());
-
-        Optional.ofNullable(req.phone())
-                .ifPresentOrElse(
-                        phone -> memberInfraService.updateUserAgentValidation(userAgent, authType, phone),
-                        () -> memberInfraService.updateUserAgentValidation(userAgent, authType)
-                );
-
+        memberRedisService.validateAuthCode(authType, req.identifier(), req.authCode());
+        memberRedisService.updateUserAgentValidation(userAgent, authType, req.phone());
         return Response.ok("인증 성공");
     }
 

@@ -5,6 +5,7 @@ import b1nd.dodam.domain.redis.member.exception.AuthCodeNotMatchException;
 import b1nd.dodam.domain.redis.member.exception.AuthInvalidException;
 import b1nd.dodam.domain.redis.support.config.MemberRedisProperties;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
@@ -13,7 +14,9 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.time.Duration;
 import java.util.Base64;
+import java.util.Optional;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class MemberRedisService {
@@ -48,17 +51,12 @@ public class MemberRedisService {
         }
     }
 
-    public void updateUserAgentValidation(String userAgent, AuthType authType) {
+    public void updateUserAgentValidation(String userAgent, AuthType authType, Optional<String> phone) {
         String key = memberRedisProperties.getAccess().key() + ":" + hashUserAgent(userAgent);
-        redisTemplate.opsForHash().put(key, authType.name(), Boolean.TRUE.toString());
-        redisTemplate.expire(key, Duration.ofMinutes(AUTH_ACCESS_EXPIRATION));
-    }
 
-    public void updateUserAgentValidation(String userAgent, AuthType authType, String phone) {
-        String key = memberRedisProperties.getAccess().key() + ":" + hashUserAgent(userAgent);
-        String phoneKey = String.format("%s:%s:%s", memberRedisProperties.getCode().key(), AuthType.PHONE, phone);
-
-        if (AuthType.EMAIL.equals(authType) && !Boolean.TRUE.equals(redisTemplate.hasKey(phoneKey))) {
+        if (AuthType.EMAIL.equals(authType) && phone.filter(p ->
+                !Boolean.TRUE.equals(redisTemplate.hasKey(String.format("%s:%s:%s", memberRedisProperties.getCode().key(), AuthType.PHONE, p))))
+                .isPresent()) {
             throw new AuthInvalidException();
         }
 
