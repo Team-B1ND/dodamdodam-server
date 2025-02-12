@@ -33,8 +33,8 @@ jobs:
           redis.slaves.0.port: ${{ secrets.REDIS_SLAVE_1_PORT }}
           redis.slaves.1.host: ${{ secrets.REDIS_SLAVE_2_HOST }}
           redis.slaves.1.port: ${{ secrets.REDIS_SLAVE_2_PORT }}
-          auth.code.key: ${{ secret.AUTH_CODE_KEY }}
-          auth.access.key: ${{ secret.AUTH_ACCESS_KEY }}
+          auth.code.key: ${{ secrets.AUTH_CODE_KEY }}
+          auth.access.key: ${{ secrets.AUTH_ACCESS_KEY }}
 
           app.token.generate: ${{ secrets.TOKEN_GENERATE_URL }}
           app.token.verify: ${{ secrets.TOKEN_VERIFY_URL }}
