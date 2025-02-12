@@ -1,5 +1,6 @@
 package b1nd.dodam.restapi.member.application;
 
+import b1nd.dodam.core.exception.global.InternalServerException;
 import b1nd.dodam.domain.rds.member.entity.Member;
 import b1nd.dodam.domain.rds.member.entity.Parent;
 import b1nd.dodam.domain.rds.member.entity.Student;
@@ -29,7 +30,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 
 @Component
 @Transactional(rollbackFor = Exception.class)
@@ -80,14 +80,17 @@ public class MemberCommandUseCase {
         return Response.created("학부모 회원가입 성공");
     }
 
-    public Response sendAuthCode(AuthType authType, AuthCodeReq authCodeReq){
+    public Response sendAuthCode(AuthType authType, AuthCodeReq authCodeReq) {
         int authCode = RandomCode.randomCode();
-        memberRedisService.updateAuthCode(authType, authCodeReq.identifier(), authCode);
-        smtpClient.composeTemplate(authCodeReq.identifier(), MemberMessageUtil.createMessage(authCode), authCode);
-        memberService.issue(authCodeReq.identifier(), authCode);
+        String identifier = authCodeReq.identifier();
+        memberRedisService.updateAuthCode(authType, identifier, authCode);
+        switch (authType) {
+            case EMAIL -> smtpClient.composeTemplate(identifier, MemberMessageUtil.createMessage(authCode), authCode);
+            case PHONE -> memberService.issue(identifier, authCode);
+            default -> throw new InternalServerException();
+        }
         return ResponseData.ok("인증코드 발급 성공");
     }
-
     public Response verifyAuthCode(String userAgent, AuthType authType, VerifyAuthCodeReq req) {
         memberRedisService.validateAuthCode(authType, req.identifier(), req.authCode());
         memberRedisService.updateUserAgentValidation(userAgent, authType, req.phone());
