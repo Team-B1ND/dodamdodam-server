@@ -4,6 +4,7 @@ import b1nd.dodam.domain.rds.division.entity.DivisionMember;
 import b1nd.dodam.domain.rds.division.enumeration.DivisionPermission;
 import b1nd.dodam.domain.rds.member.entity.Member;
 import b1nd.dodam.domain.rds.member.entity.Student;
+import b1nd.dodam.domain.rds.member.enumeration.MemberRole;
 
 import java.util.List;
 import java.util.Optional;
@@ -15,7 +16,8 @@ public record DivisionMemberRes(
         DivisionPermission permission,
         Integer grade,
         Integer room,
-        Integer number
+        Integer number,
+        MemberRole role
 ) {
 
     static public DivisionMemberRes of(DivisionMember divisionMember, Student student){
@@ -27,7 +29,8 @@ public record DivisionMemberRes(
                 divisionMember.getPermission(),
                 Optional.ofNullable(student).map(Student::getGrade).orElse(null),
                 Optional.ofNullable(student).map(Student::getRoom).orElse(null),
-                Optional.ofNullable(student).map(Student::getNumber).orElse(null)
+                Optional.ofNullable(student).map(Student::getNumber).orElse(null),
+                member.getRole()
         );
     }
 }

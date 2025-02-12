@@ -17,7 +17,7 @@ public record DivisionDetailRes(
                 division.getId(),
                 division.getName(),
                 division.getDescription(),
-                Optional.of(dm).map(DivisionMember::getPermission).orElse(null)
+                Optional.ofNullable(dm).map(DivisionMember::getPermission).orElse(null)
         );
     }
 }
