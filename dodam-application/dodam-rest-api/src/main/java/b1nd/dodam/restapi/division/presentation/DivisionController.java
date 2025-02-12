@@ -1,5 +1,6 @@
 package b1nd.dodam.restapi.division.presentation;
 
+import b1nd.dodam.domain.rds.division.enumeration.DivisionPermission;
 import b1nd.dodam.domain.rds.support.enumeration.ApprovalStatus;
 import b1nd.dodam.restapi.division.application.DivisionMemberUseCase;
 import b1nd.dodam.restapi.division.application.DivisionUseCase;
@@ -82,6 +83,15 @@ public class DivisionController {
             @RequestParam ApprovalStatus status
     ) {
         return divisionMemberUseCase.handleDivisionApplication(idList, status);
+    }
+
+    @PatchMapping("/{id}/members/{divisionMemberId}/permission")
+    public Response handleMemberPermission(
+            @PathVariable Long id,
+            @PathVariable Long divisionMemberId,
+            @RequestParam DivisionPermission permission
+    ) {
+        return divisionMemberUseCase.handleMemberPermission(divisionMemberId, permission);
     }
 
     @DeleteMapping("/{id}/members")
