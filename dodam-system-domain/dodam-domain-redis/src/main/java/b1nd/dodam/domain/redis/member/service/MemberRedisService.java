@@ -5,7 +5,6 @@ import b1nd.dodam.domain.redis.member.exception.AuthCodeNotMatchException;
 import b1nd.dodam.domain.redis.member.exception.AuthInvalidException;
 import b1nd.dodam.domain.redis.support.config.MemberRedisProperties;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
@@ -14,7 +13,6 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.time.Duration;
 import java.util.Base64;
-import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
