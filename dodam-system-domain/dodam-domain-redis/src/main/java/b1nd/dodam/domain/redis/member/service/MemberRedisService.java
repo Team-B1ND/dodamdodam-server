@@ -24,13 +24,13 @@ public class MemberRedisService {
     private final int AUTH_ACCESS_EXPIRATION = 15;
 
     public void updateAuthCode(AuthType authType, String identifier, int authCode) {
-        String key = String.format(memberRedisProperties.getCode().key() + ":%s:%s", authType, identifier);
+        String key = String.format("%s:%s:%s", memberRedisProperties.getCode().key(), authType, identifier);
         redisTemplate.opsForValue()
                 .set(key, String.valueOf(authCode), Duration.ofMinutes(AUTH_CODE_EXPIRATION));
     }
 
-    public void validateAuthCode(AuthType authType, String identifier, int authCode){
-        String key = String.format(memberRedisProperties.getCode().key() + ":%s:%s", authType, identifier);
+    public void validateAuthCode(AuthType authType, String identifier, int authCode) {
+        String key = String.format("%s:%s:%s", memberRedisProperties.getCode().key(), authType, identifier);
         String storedAuthCode = redisTemplate.opsForValue().get(key);
 
         if (storedAuthCode == null || Integer.parseInt(storedAuthCode) != authCode) {
@@ -50,21 +50,31 @@ public class MemberRedisService {
 
     public void updateUserAgentValidation(String userAgent, AuthType authType) {
         String key = memberRedisProperties.getAccess().key() + ":" + hashUserAgent(userAgent);
+        redisTemplate.opsForHash().put(key, authType.name(), Boolean.TRUE.toString());
+        redisTemplate.expire(key, Duration.ofMinutes(AUTH_ACCESS_EXPIRATION));
+    }
 
-        if (AuthType.EMAIL.equals(authType) && redisTemplate.opsForHash().hasKey(key, AuthType.PHONE)) {
+    public void updateUserAgentValidation(String userAgent, AuthType authType, String phone) {
+        String key = memberRedisProperties.getAccess().key() + ":" + hashUserAgent(userAgent);
+        String phoneKey = String.format("%s:%s:%s", memberRedisProperties.getCode().key(), AuthType.PHONE, phone);
+
+        if (AuthType.EMAIL.equals(authType) && !Boolean.TRUE.equals(redisTemplate.hasKey(phoneKey))) {
             throw new AuthInvalidException();
         }
 
-        redisTemplate.opsForHash().put(key, authType, Boolean.TRUE.toString());
+        redisTemplate.opsForHash().put(key, authType.name(), Boolean.TRUE.toString());
         redisTemplate.expire(key, Duration.ofMinutes(AUTH_ACCESS_EXPIRATION));
     }
 
     public void validateUserAgent(String userAgent) {
         String key = memberRedisProperties.getAccess().key() + ":" + hashUserAgent(userAgent);
 
-        if (!Boolean.TRUE.equals(redisTemplate.hasKey(key)) ||
-                !redisTemplate.opsForHash().hasKey(key, AuthType.EMAIL) ||
-                !redisTemplate.opsForHash().hasKey(key, AuthType.PHONE)) {
+        if (!Boolean.TRUE.equals(redisTemplate.hasKey(key))) {
+            throw new AuthInvalidException();
+        }
+
+        if (!redisTemplate.opsForHash().hasKey(key, AuthType.EMAIL.name()) ||
+                !redisTemplate.opsForHash().hasKey(key, AuthType.PHONE.name())) {
             throw new AuthInvalidException();
         }
     }

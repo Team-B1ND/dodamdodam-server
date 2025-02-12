@@ -5,7 +5,7 @@ import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 
-public enum MemberInfraExceptionCode implements ExceptionCode {
+public enum MemberRedisExceptionCode implements ExceptionCode {
 
     AUTH_CODE_NOT_MATCH(403, "인증코드가 일치하지 않음"),
     AUTH_INVALID(403, "유효하지 않은 인증");

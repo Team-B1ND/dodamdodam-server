@@ -4,7 +4,7 @@ import b1nd.dodam.core.exception.CustomException;
 
 public class AuthCodeNotMatchException extends CustomException {
     public AuthCodeNotMatchException() {
-        super(MemberInfraExceptionCode.AUTH_CODE_NOT_MATCH);
+        super(MemberRedisExceptionCode.AUTH_CODE_NOT_MATCH);
     }
 
 }

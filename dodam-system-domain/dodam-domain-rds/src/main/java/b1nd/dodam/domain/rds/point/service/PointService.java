@@ -91,7 +91,7 @@ public class PointService {
     }
 
     private void publishPointCanceledEvent(Student student, PointReason reason) {
-        List<Parent> parents = studentRelationRepository.findParentByStudent(student);
+        List<Parent> parents = studentRelationRepository.findByStudentAndParentMemberIsAlarmTrue(student);
 
         if (student.getMember().isAlarm()) {
             eventPublisher.publishEvent(PointMessageUtil.createCanceledEvent(student, null, reason));

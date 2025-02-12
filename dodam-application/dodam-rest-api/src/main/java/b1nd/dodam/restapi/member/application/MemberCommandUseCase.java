@@ -27,6 +27,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @Component
 @Transactional(rollbackFor = Exception.class)
@@ -83,9 +84,15 @@ public class MemberCommandUseCase {
         return ResponseData.ok("인증코드 발급 성공");
     }
 
-    public Response verifyAuthCode(String userAgent, AuthType authType, VerifyAuthCodeReq verifyAuthCodeReq) {
-        memberInfraService.validateAuthCode(authType, verifyAuthCodeReq.identifier(), verifyAuthCodeReq.authCode());
-        memberInfraService.updateUserAgentValidation(userAgent, authType);
+    public Response verifyAuthCode(String userAgent, AuthType authType, VerifyAuthCodeReq req) {
+        memberInfraService.validateAuthCode(authType, req.identifier(), req.authCode());
+
+        Optional.ofNullable(req.phone())
+                .ifPresentOrElse(
+                        phone -> memberInfraService.updateUserAgentValidation(userAgent, authType, phone),
+                        () -> memberInfraService.updateUserAgentValidation(userAgent, authType)
+                );
+
         return Response.ok("인증 성공");
     }
 
