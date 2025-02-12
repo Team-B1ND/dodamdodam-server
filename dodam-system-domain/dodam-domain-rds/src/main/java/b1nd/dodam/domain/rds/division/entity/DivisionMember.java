@@ -13,6 +13,11 @@ import java.util.List;
 
 @Getter
 @Entity(name = "division_member")
+@Table(
+        uniqueConstraints = {
+                @UniqueConstraint(name = "unique_member_division", columnNames = {"fk_member_id", "fk_division_id"})
+        }
+)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class DivisionMember {
     @Id
