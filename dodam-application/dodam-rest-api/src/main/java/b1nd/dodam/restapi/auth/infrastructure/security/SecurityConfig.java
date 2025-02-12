@@ -27,6 +27,7 @@ class SecurityConfig {
 
     private static final String STUDENT = "STUDENT";
     private static final String TEACHER = "TEACHER";
+    private static final String PARENT = "PARENT";
     private static final String ADMIN = "ADMIN";
 
     private final TokenFilter tokenFilter;
