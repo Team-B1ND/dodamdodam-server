@@ -10,8 +10,8 @@ public class MemberMessageUtil {
         return new MemberIssuedEvent(createMessage(authCode), phone);
     }
 
-    private static String createMessage(int authCode) {
-        return String.format("[인증번호: %s] 대구SW고 인증번호입니다.", authCode);
+    public static String createMessage(int authCode) {
+        return String.format("[인증번호: %s] 도담도담 인증을 진행해 주세요.", authCode);
     }
 
 }

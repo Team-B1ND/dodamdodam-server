@@ -9,6 +9,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
+
 @Service
 @RequiredArgsConstructor
 public class MemberService {
@@ -29,6 +32,11 @@ public class MemberService {
 
     public void issue(String phone, int authCode){
         eventPublisher.publishEvent(MemberMessageUtil.createIssuedEvent(phone, authCode));
+    }
+
+    public void sendAuthEmail(String email, int authCode){
+        URLDecoder.decode(email, StandardCharsets.UTF_8);
+
     }
 
 }

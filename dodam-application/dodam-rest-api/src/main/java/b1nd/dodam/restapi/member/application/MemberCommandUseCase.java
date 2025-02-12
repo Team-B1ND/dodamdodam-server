@@ -12,8 +12,10 @@ import b1nd.dodam.domain.rds.member.exception.MemberDuplicateException;
 import b1nd.dodam.domain.rds.member.exception.ParentNotFoundException;
 import b1nd.dodam.domain.rds.member.repository.*;
 import b1nd.dodam.domain.rds.member.service.MemberService;
+import b1nd.dodam.domain.rds.member.service.support.MemberMessageUtil;
 import b1nd.dodam.domain.redis.member.enumeration.AuthType;
 import b1nd.dodam.domain.redis.member.service.MemberRedisService;
+import b1nd.dodam.google.smtp.client.SMTPClient;
 import b1nd.dodam.restapi.auth.infrastructure.security.support.MemberAuthenticationHolder;
 import b1nd.dodam.restapi.member.application.data.req.*;
 import b1nd.dodam.restapi.support.data.Response;
@@ -44,6 +46,7 @@ public class MemberCommandUseCase {
     private final BroadcastClubMemberRepository broadcastClubMemberRepository;
     private final MemberAuthenticationHolder memberAuthenticationHolder;
     private final ApplicationEventPublisher eventPublisher;
+    private final SMTPClient smtpClient;
 
     public Response join(String userAgent, JoinStudentReq req) {
         checkIfIdIsDuplicate(req.id());
@@ -80,6 +83,7 @@ public class MemberCommandUseCase {
     public Response sendAuthCode(AuthType authType, AuthCodeReq authCodeReq){
         int authCode = RandomCode.randomCode();
         memberRedisService.updateAuthCode(authType, authCodeReq.identifier(), authCode);
+        smtpClient.composeTemplate(authCodeReq.identifier(), MemberMessageUtil.createMessage(authCode), authCode);
         memberService.issue(authCodeReq.identifier(), authCode);
         return ResponseData.ok("인증코드 발급 성공");
     }
