@@ -24,13 +24,13 @@ public class MemberRedisService {
     private final int AUTH_ACCESS_EXPIRATION = 15;
 
     public void updateAuthCode(AuthType authType, String identifier, int authCode) {
-        String key = String.format(memberRedisProperties.getCode().key()+"%s:%s", authType, identifier);
+        String key = String.format(memberRedisProperties.getCode().key()+":%s:%s", authType, identifier);
         redisTemplate.opsForValue()
                 .set(key, String.valueOf(authCode), Duration.ofMinutes(AUTH_CODE_EXPIRATION));
     }
 
     public void validateAuthCode(AuthType authType, String identifier, int authCode){
-        String key = String.format(memberRedisProperties.getCode().key()+"%s:%s", authType, identifier);
+        String key = String.format(memberRedisProperties.getCode().key()+":%s:%s", authType, identifier);
         String storedAuthCode = redisTemplate.opsForValue().get(key);
 
         if (storedAuthCode == null || Integer.parseInt(storedAuthCode) != authCode) {
@@ -49,7 +49,7 @@ public class MemberRedisService {
     }
 
     public void updateUserAgentValidation(String userAgent, AuthType authType) {
-        String key = memberRedisProperties.getAccess().key() + hashUserAgent(userAgent);
+        String key = memberRedisProperties.getAccess().key() + ":" + hashUserAgent(userAgent);
 
         if (AuthType.EMAIL.equals(authType) && redisTemplate.opsForHash().hasKey(key, AuthType.PHONE)) {
             throw new AuthInvalidException();
@@ -60,7 +60,7 @@ public class MemberRedisService {
     }
 
     public void validateUserAgent(String userAgent) {
-        String key = memberRedisProperties.getAccess().key() + hashUserAgent(userAgent);
+        String key = memberRedisProperties.getAccess().key() + ":" + hashUserAgent(userAgent);
 
         if (!Boolean.TRUE.equals(redisTemplate.hasKey(key)) ||
                 !redisTemplate.opsForHash().hasKey(key, AuthType.EMAIL) ||
