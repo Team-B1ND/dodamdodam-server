@@ -41,7 +41,9 @@ redis:
 
 auth:
   code:
-    expiration: ${AUTH_CODE_EXPIRATION}
+    key: ${AUTH_CODE_KEY}
+  access:
+    key: ${AUTH_ACCESS_KEY}
 
 logging.level:
   org.springframework.boot.autoconfigure: ERROR

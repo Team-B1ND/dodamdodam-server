@@ -5,7 +5,7 @@ import b1nd.dodam.domain.rds.member.entity.Parent;
 import b1nd.dodam.domain.rds.member.entity.Student;
 import b1nd.dodam.domain.rds.member.entity.Teacher;
 import b1nd.dodam.domain.rds.member.enumeration.ActiveStatus;
-import b1nd.dodam.domain.rds.member.enumeration.AuthType;
+import b1nd.dodam.domain.redis.member.enumeration.AuthType;
 import b1nd.dodam.domain.rds.member.event.ParentRegisteredEvent;
 import b1nd.dodam.domain.rds.member.event.StudentRegisteredEvent;
 import b1nd.dodam.domain.rds.member.exception.BroadcastClubMemberDuplicateException;
@@ -13,15 +13,13 @@ import b1nd.dodam.domain.rds.member.exception.MemberDuplicateException;
 import b1nd.dodam.domain.rds.member.exception.ParentNotFoundException;
 import b1nd.dodam.domain.rds.member.repository.*;
 import b1nd.dodam.domain.rds.member.service.MemberService;
-import b1nd.dodam.domain.redis.member.service.MemberInfraService;
+import b1nd.dodam.domain.redis.member.service.MemberRedisService;
 import b1nd.dodam.restapi.auth.infrastructure.security.support.MemberAuthenticationHolder;
-import b1nd.dodam.restapi.auth.infrastructure.security.support.UserAgentHolder;
 import b1nd.dodam.restapi.member.application.data.req.*;
 import b1nd.dodam.restapi.support.data.Response;
 import b1nd.dodam.restapi.support.data.ResponseData;
 import b1nd.dodam.restapi.support.encrypt.Sha512PasswordEncoder;
 import b1nd.dodam.restapi.support.util.RandomCode;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.context.ApplicationEventPublisher;
@@ -36,7 +34,7 @@ import java.util.List;
 public class MemberCommandUseCase {
 
     private final MemberService memberService;
-    private final MemberInfraService memberInfraService;
+    private final MemberRedisService memberInfraService;
     private final MemberRepository memberRepository;
     private final StudentRepository studentRepository;
     private final TeacherRepository teacherRepository;
@@ -46,9 +44,9 @@ public class MemberCommandUseCase {
     private final MemberAuthenticationHolder memberAuthenticationHolder;
     private final ApplicationEventPublisher eventPublisher;
 
-    public Response join(HttpServletRequest httpServletReq, JoinStudentReq req) {
+    public Response join(String userAgent, JoinStudentReq req) {
         checkIfIdIsDuplicate(req.id());
-        validateMember(httpServletReq);
+        memberInfraService.validateUserAgent(userAgent);
         Member member = memberRepository.save(req.mapToMember(encodePw(req.pw())));
         Student student = studentRepository.save(req.mapToStudent(member));
         publishStudentRegisteredEvent(student);
@@ -59,17 +57,17 @@ public class MemberCommandUseCase {
         eventPublisher.publishEvent(new StudentRegisteredEvent(student));
     }
 
-    public Response join(HttpServletRequest httpServletReq, JoinTeacherReq req) {
+    public Response join(String userAgent, JoinTeacherReq req) {
         checkIfIdIsDuplicate(req.id());
-        validateMember(httpServletReq);
+        memberInfraService.validateUserAgent(userAgent);
         Member member = memberRepository.save(req.mapToMember(encodePw(req.pw())));
         teacherRepository.save(req.mapToTeacher(member));
         return Response.created("선생님 회원가입 성공");
     }
 
-    public Response join(HttpServletRequest httpServletReq, JoinParentReq req) {
+    public Response join(String userAgent, JoinParentReq req) {
         checkIfIdIsDuplicate(req.id());
-        validateMember(httpServletReq);
+        memberInfraService.validateUserAgent(userAgent);
         Member member = memberRepository.save(req.mapToMember(encodePw(req.pw())));
         Parent parent = parentRepository.save(req.mapToParent(member));
         req.relationInfo()
@@ -78,22 +76,16 @@ public class MemberCommandUseCase {
         return Response.created("학부모 회원가입 성공");
     }
 
-    private void validateMember(HttpServletRequest request){
-        String userAgent = UserAgentHolder.getUserAgent(request);
-        memberInfraService.validateUserAgent(userAgent);
-    }
-
     public Response sendAuthCode(AuthType authType, AuthCodeReq authCodeReq){
         int authCode = RandomCode.randomCode();
-        memberInfraService.updateAuthCode(authType.toString(), authCodeReq.identifier(), authCode);
+        memberInfraService.updateAuthCode(authType, authCodeReq.identifier(), authCode);
         memberService.issue(authCodeReq.identifier(), authCode);
         return ResponseData.ok("인증코드 발급 성공");
     }
 
-    public Response verifyAuthCode(HttpServletRequest request, AuthType authType, VerifyAuthCodeReq verifyAuthCodeReq) {
-        String userAgent = UserAgentHolder.getUserAgent(request);
-        memberInfraService.validateAuthCode(verifyAuthCodeReq.identifier(), verifyAuthCodeReq.authCode(), authType.toString());
-        memberInfraService.updateUserAgentValidation(userAgent, authType.toString());
+    public Response verifyAuthCode(String userAgent, AuthType authType, VerifyAuthCodeReq verifyAuthCodeReq) {
+        memberInfraService.validateAuthCode(authType, verifyAuthCodeReq.identifier(), verifyAuthCodeReq.authCode());
+        memberInfraService.updateUserAgentValidation(userAgent, authType);
         return Response.ok("인증 성공");
     }
 

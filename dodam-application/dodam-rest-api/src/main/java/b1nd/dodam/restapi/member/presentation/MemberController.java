@@ -1,7 +1,8 @@
 package b1nd.dodam.restapi.member.presentation;
 
 import b1nd.dodam.domain.rds.member.enumeration.ActiveStatus;
-import b1nd.dodam.domain.rds.member.enumeration.AuthType;
+import b1nd.dodam.domain.redis.member.enumeration.AuthType;
+import b1nd.dodam.restapi.auth.infrastructure.security.support.MemberAuthenticationHolder;
 import b1nd.dodam.restapi.member.application.MemberCommandUseCase;
 import b1nd.dodam.restapi.member.application.MemberQueryUseCase;
 import b1nd.dodam.restapi.member.application.data.req.*;
@@ -26,19 +27,19 @@ public class MemberController {
     @PostMapping("/join-student")
     public Response join(HttpServletRequest httpServletReq,
                          @RequestBody @Valid JoinStudentReq req) {
-        return commandUseCase.join(httpServletReq, req);
+        return commandUseCase.join(MemberAuthenticationHolder.getUserAgent(httpServletReq), req);
     }
 
     @PostMapping("/join-teacher")
     public Response join(HttpServletRequest httpServletReq,
                          @RequestBody @Valid JoinTeacherReq req) {
-        return commandUseCase.join(httpServletReq, req);
+        return commandUseCase.join(MemberAuthenticationHolder.getUserAgent(httpServletReq), req);
     }
 
     @PostMapping("/join-parent")
     public Response join(HttpServletRequest httpServletReq,
                          @RequestBody @Valid JoinParentReq req) {
-        return commandUseCase.join(httpServletReq, req);
+        return commandUseCase.join(MemberAuthenticationHolder.getUserAgent(httpServletReq), req);
     }
 
     @PostMapping("/broadcast-club-member")
@@ -53,10 +54,10 @@ public class MemberController {
     }
 
     @PostMapping("/auth-code/{type}/verify")
-    public Response verifyAuthCode(HttpServletRequest request,
+    public Response verifyAuthCode(HttpServletRequest httpServletReq,
                                    @PathVariable AuthType type,
                                    @RequestBody @Valid VerifyAuthCodeReq req){
-        return commandUseCase.verifyAuthCode(request, type, req);
+        return commandUseCase.verifyAuthCode(MemberAuthenticationHolder.getUserAgent(httpServletReq), type, req);
     }
 
     @DeleteMapping("/{id}")
