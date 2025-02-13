@@ -48,9 +48,12 @@ public class DivisionMemberUseCase {
     }
 
     public Response applyDivision(Long id){
+        Division division = divisionService.getById(id);
+        Member currentMember = authHolder.current();
+        divisionMemberService.checkUniqueMemberInDivision(division, currentMember);
         divisionMemberService.saveWithBuild(
-                divisionService.getById(id),
-                List.of(authHolder.current()),
+                division,
+                List.of(currentMember),
                 ApprovalStatus.PENDING,
                 DivisionPermission.READER
         );

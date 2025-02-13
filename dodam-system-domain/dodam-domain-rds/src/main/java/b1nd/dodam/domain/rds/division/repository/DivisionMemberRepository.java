@@ -14,6 +14,8 @@ public interface DivisionMemberRepository extends JpaRepository<DivisionMember, 
 
     DivisionMember findByDivisionAndMember(Division division, Member member);
 
+    Boolean existsByDivisionAndMemberAndStatusNot(Division division, Member member, ApprovalStatus status);
+
     DivisionMember findByDivisionAndMemberAndStatus(Division division, Member member, ApprovalStatus status);
 
     @EntityGraph(attributePaths = {"division"})
