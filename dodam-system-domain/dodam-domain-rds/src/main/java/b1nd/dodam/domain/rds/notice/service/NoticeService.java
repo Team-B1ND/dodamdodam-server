@@ -1,6 +1,5 @@
 package b1nd.dodam.domain.rds.notice.service;
 
-import b1nd.dodam.domain.rds.division.entity.Division;
 import b1nd.dodam.domain.rds.notice.entity.Notice;
 import b1nd.dodam.domain.rds.notice.enumration.NoticeStatus;
 import b1nd.dodam.domain.rds.notice.exception.NoticeNotFoundException;
@@ -38,6 +37,10 @@ public class NoticeService {
 
     public List<Notice> getAllByStatus(List<Long> ids, NoticeStatus noticeStatus, Long lastId, int limit){
         return noticeRepository.findAllByNoticeStatus(ids, noticeStatus, lastId, PageRequest.of(0, limit));
+    }
+
+    public List<Notice> searchByKeyword(String keyword){
+        return noticeRepository.searchByKeyword(keyword);
     }
 
 }

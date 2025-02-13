@@ -1,7 +1,6 @@
 package b1nd.dodam.restapi.notice.application;
 
 import b1nd.dodam.domain.rds.division.entity.Division;
-import b1nd.dodam.domain.rds.division.entity.DivisionMember;
 import b1nd.dodam.domain.rds.division.service.DivisionMemberService;
 import b1nd.dodam.domain.rds.division.service.DivisionService;
 import b1nd.dodam.domain.rds.member.entity.Member;
@@ -49,15 +48,9 @@ public class NoticeUseCase {
     @Transactional(readOnly = true)
     public ResponseData<List<NoticeRes>> getNotices(Long lastId, int limit, NoticeStatus status) {
         Member member = memberAuthenticationHolder.current();
-        List<DivisionMember> divisionMembers = divisionMemberService.getByMember(member);
-
-        List<Long> divisionIds = divisionMembers.stream()
-                .map(divisionMember -> divisionMember.getDivision().getId())
-                .toList();
-
+        List<Long> divisionIds = divisionMemberService.getIdsByMember(member);
         List<Notice> notices = noticeService.getAllByStatus(divisionIds, status, lastId, limit);
-
-        return ResponseData.of(HttpStatus.OK, "전체 공지 불러오기 성공", NoticeRes.of(notices, member));
+        return ResponseData.of(HttpStatus.OK, "전체 공지 불러오기 성공", NoticeRes.of(notices));
     }
 
     @Transactional(readOnly = true)
@@ -69,7 +62,12 @@ public class NoticeUseCase {
                 .stream()
                 .toList();
 
-        return ResponseData.of(HttpStatus.OK, "카테고리별 공지 불러오기 성공", NoticeRes.of(notices, member));
+        return ResponseData.of(HttpStatus.OK, "카테고리별 공지 불러오기 성공", NoticeRes.of(notices));
+    }
+
+    public ResponseData<List<NoticeRes>> searchNotices(String keyword){
+        List<Notice> notices = noticeService.searchByKeyword(keyword);
+        return ResponseData.of(HttpStatus.OK, "공지 검색 성공", NoticeRes.of(notices));
     }
 
 }

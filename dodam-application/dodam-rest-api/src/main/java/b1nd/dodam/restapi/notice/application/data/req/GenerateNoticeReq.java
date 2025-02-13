@@ -54,4 +54,5 @@ public record GenerateNoticeReq (@NotEmpty String title, @NotEmpty String conten
                 .division(division)
                 .build();
     }
+
 }

@@ -1,6 +1,5 @@
 package b1nd.dodam.restapi.notice.application.data.res;
 
-import b1nd.dodam.domain.rds.member.entity.Member;
 import b1nd.dodam.domain.rds.notice.entity.Notice;
 import b1nd.dodam.domain.rds.notice.enumration.NoticeStatus;
 import b1nd.dodam.domain.rds.support.enumeration.FileType;
@@ -20,13 +19,13 @@ public record NoticeRes(
         MemberInfoRes memberInfoRes,
         LocalDateTime createdAt, LocalDateTime modifiedAt
 ) {
-    public static List<NoticeRes> of(List<Notice> notices, Member member) {
-        return notices.parallelStream()
-                .map(notice -> NoticeRes.of(notice, member))
-                .collect(Collectors.toList());
+    public static List<NoticeRes> of(List<Notice> notices) {
+        return notices.stream()
+                .map(NoticeRes::of)
+                .toList();
     }
 
-    public static NoticeRes of(Notice notice, Member member) {
+    public static NoticeRes of(Notice notice) {
         return new NoticeRes(
                 notice.getId(),
                 notice.getTitle(),
@@ -34,7 +33,7 @@ public record NoticeRes(
                 notice.getFileUrl(),
                 notice.getFileType(),
                 notice.getNoticeStatus(),
-                MemberInfoRes.of(member, null, null),
+                MemberInfoRes.of(notice.getMember(), null, null),
                 notice.getCreatedAt(),
                 notice.getModifiedAt()
         );

@@ -41,4 +41,10 @@ public class NoticeController {
         return noticeUseCase.getNoticesByDivision(id, lastId, limit);
     }
 
+    //TODO 페이징 적용
+    @GetMapping("/{keyword}")
+    public ResponseData<List<NoticeRes>> searchByKeyword(@PathVariable String keyword){
+        return noticeUseCase.searchNotices(keyword);
+    }
+
 }

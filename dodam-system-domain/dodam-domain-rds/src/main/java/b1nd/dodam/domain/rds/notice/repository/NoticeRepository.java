@@ -32,4 +32,7 @@ public interface NoticeRepository extends JpaRepository<Notice, Long> {
                                          @Param("noticeStatus") NoticeStatus noticeStatus,
                                          @Param("lastId") Long lastId, Pageable pageable);
 
+    @Query("SELECT n FROM notice n WHERE n.title LIKE CONCAT('%', :keyword, '%') OR n.content LIKE CONCAT('%', :keyword, '%') OR n.member.name LIKE CONCAT('%', :keyword, '%')")
+    List<Notice> searchByKeyword(@Param("keyword") String keyword);
+
 }
