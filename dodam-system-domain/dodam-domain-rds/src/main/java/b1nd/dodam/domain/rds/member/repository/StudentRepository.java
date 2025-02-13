@@ -50,4 +50,8 @@ public interface StudentRepository extends JpaRepository<Student, Integer> {
     @Query("SELECT s FROM student s WHERE s.id NOT IN :ids AND s.member.status = :activeStatus")
     List<Student> findAllByIdNotIn(@Param("ids") List<Integer> ids, @Param("activeStatus") ActiveStatus activeStatus);
 
+    Optional<Student> findByCode(String code);
+
+    boolean existsByCode(String code);
+
 }

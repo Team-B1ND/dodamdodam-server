@@ -31,6 +31,7 @@ public class PointService {
         PointReason reason = pointReasonRepository.getById(reasonId);
         savePoints(teacher, students, reason, issueAt);
         saveScores(students, reason);
+
         publishPointIssuedEvents(students, reason);
     }
 

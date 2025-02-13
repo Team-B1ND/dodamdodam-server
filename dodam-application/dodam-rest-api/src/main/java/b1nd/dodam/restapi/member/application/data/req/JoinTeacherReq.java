@@ -25,6 +25,7 @@ public record JoinTeacherReq(@NotEmpty String id, @NotEmpty String pw, @NotEmpty
                 .name(name)
                 .role(MemberRole.TEACHER)
                 .phone(phone)
+                .isAlarm(true)
                 .status(ActiveStatus.PENDING)
                 .build();
     }

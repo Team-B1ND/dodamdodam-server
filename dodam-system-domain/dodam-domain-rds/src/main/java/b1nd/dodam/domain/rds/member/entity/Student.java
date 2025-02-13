@@ -6,7 +6,6 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.apache.commons.lang3.StringUtils;
 
 @Getter
 @Entity(name = "student")
@@ -30,14 +29,16 @@ public class Student {
     @NotNull
     private int number;
 
-    private String parentPhone;
+    @Column(unique = true)
+    private String code;
 
     @Builder
-    public Student(Member member, int grade, int room, int number) {
+    public Student(Member member, int grade, int room, int number, String code) {
         this.member = member;
         this.grade = grade;
         this.room = room;
         this.number = number;
+        this.code = code;
     }
 
     public void updateInfo(int grade, int room, int number) {
@@ -46,9 +47,4 @@ public class Student {
         this.number = number;
     }
 
-    public void updateParentPhone(String parentPhone) {
-        if(StringUtils.isNotBlank(parentPhone)){
-            this.parentPhone = parentPhone;
-        }
-    }
 }

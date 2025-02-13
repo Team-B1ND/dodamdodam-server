@@ -5,15 +5,21 @@ import b1nd.dodam.domain.rds.member.entity.Parent;
 import b1nd.dodam.domain.rds.member.entity.Student;
 import b1nd.dodam.domain.rds.member.entity.Teacher;
 import b1nd.dodam.domain.rds.member.enumeration.ActiveStatus;
+import b1nd.dodam.domain.rds.member.event.ParentRegisteredEvent;
 import b1nd.dodam.domain.rds.member.event.StudentRegisteredEvent;
 import b1nd.dodam.domain.rds.member.exception.BroadcastClubMemberDuplicateException;
 import b1nd.dodam.domain.rds.member.exception.MemberDuplicateException;
+import b1nd.dodam.domain.rds.member.exception.ParentNotFoundException;
 import b1nd.dodam.domain.rds.member.repository.*;
+import b1nd.dodam.domain.rds.member.service.MemberService;
+import b1nd.dodam.domain.redis.member.enumeration.AuthType;
+import b1nd.dodam.domain.redis.member.service.MemberRedisService;
 import b1nd.dodam.restapi.auth.infrastructure.security.support.MemberAuthenticationHolder;
 import b1nd.dodam.restapi.member.application.data.req.*;
 import b1nd.dodam.restapi.support.data.Response;
+import b1nd.dodam.restapi.support.data.ResponseData;
 import b1nd.dodam.restapi.support.encrypt.Sha512PasswordEncoder;
-import io.micrometer.common.util.StringUtils;
+import b1nd.dodam.restapi.support.util.RandomCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.context.ApplicationEventPublisher;
@@ -27,16 +33,20 @@ import java.util.List;
 @RequiredArgsConstructor
 public class MemberCommandUseCase {
 
+    private final MemberService memberService;
+    private final MemberRedisService memberRedisService;
     private final MemberRepository memberRepository;
     private final StudentRepository studentRepository;
     private final TeacherRepository teacherRepository;
     private final ParentRepository parentRepository;
+    private final StudentRelationRepository studentRelationRepository;
     private final BroadcastClubMemberRepository broadcastClubMemberRepository;
     private final MemberAuthenticationHolder memberAuthenticationHolder;
     private final ApplicationEventPublisher eventPublisher;
 
-    public Response join(JoinStudentReq req) {
+    public Response join(String userAgent, JoinStudentReq req) {
         checkIfIdIsDuplicate(req.id());
+        memberRedisService.validateUserAgent(userAgent);
         Member member = memberRepository.save(req.mapToMember(encodePw(req.pw())));
         Student student = studentRepository.save(req.mapToStudent(member));
         publishStudentRegisteredEvent(student);
@@ -47,18 +57,43 @@ public class MemberCommandUseCase {
         eventPublisher.publishEvent(new StudentRegisteredEvent(student));
     }
 
-    public Response join(JoinTeacherReq req) {
+    public Response join(String userAgent, JoinTeacherReq req) {
         checkIfIdIsDuplicate(req.id());
+        memberRedisService.validateUserAgent(userAgent);
         Member member = memberRepository.save(req.mapToMember(encodePw(req.pw())));
         teacherRepository.save(req.mapToTeacher(member));
         return Response.created("선생님 회원가입 성공");
     }
 
-    public Response join(JoinParentReq req) {
+    public Response join(String userAgent, JoinParentReq req) {
         checkIfIdIsDuplicate(req.id());
+        memberRedisService.validateUserAgent(userAgent);
         Member member = memberRepository.save(req.mapToMember(encodePw(req.pw())));
-        parentRepository.save(req.mapToParent(member));
+        Parent parent = parentRepository.save(req.mapToParent(member));
+        req.relationInfo()
+                .forEach(relationInfo -> connectRelation(parent.getId(), relationInfo));
+        eventPublisher.publishEvent(new ParentRegisteredEvent(parent));
         return Response.created("학부모 회원가입 성공");
+    }
+
+    public Response sendAuthCode(AuthType authType, AuthCodeReq authCodeReq){
+        int authCode = RandomCode.randomCode();
+        memberRedisService.updateAuthCode(authType, authCodeReq.identifier(), authCode);
+        memberService.issue(authCodeReq.identifier(), authCode);
+        return ResponseData.ok("인증코드 발급 성공");
+    }
+
+    public Response verifyAuthCode(String userAgent, AuthType authType, VerifyAuthCodeReq req) {
+        memberRedisService.validateAuthCode(authType, req.identifier(), req.authCode());
+        memberRedisService.updateUserAgentValidation(userAgent, authType, req.phone());
+        return Response.ok("인증 성공");
+    }
+
+    public void connectRelation(int id, ConnectStudentReq req){
+        Student student = memberService.checkCode(req.code());
+        Parent parent = parentRepository.findById(id)
+                .orElseThrow(ParentNotFoundException::new);
+        studentRelationRepository.save(req.mapToStudentRelation(student, parent));
     }
 
     private void checkIfIdIsDuplicate(String id) {
@@ -142,14 +177,6 @@ public class MemberCommandUseCase {
         Student student = studentRepository.getByMember(memberAuthenticationHolder.current());
         student.updateInfo(req.grade(), req.room(), req.number());
         return Response.noContent("내 학생 정보 수정 성공");
-    }
-
-    @CacheEvict(value = "members-cache", key = "'activeMembers'")
-    public Response updateStudentParentPhone(String id, UpdateStudentForAdminReq req){
-        Member member = memberRepository.getById(id);
-        Student student = studentRepository.getByMember(member);
-        student.updateParentPhone(req.parentPhone());
-        return Response.noContent("학생 정보 수정 성공");
     }
 
     @CacheEvict(value = "members-cache", key = "'activeMembers'")

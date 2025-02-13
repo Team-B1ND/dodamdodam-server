@@ -39,6 +39,12 @@ redis:
     - host: ${REDIS_SLAVE_2_HOST}
       port: ${REDIS_SLAVE_2_PORT}
 
+auth:
+  code:
+    key: ${AUTH_CODE_KEY}
+  access:
+    key: ${AUTH_ACCESS_KEY}
+
 logging.level:
   org.springframework.boot.autoconfigure: ERROR
 

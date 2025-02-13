@@ -8,7 +8,9 @@ import b1nd.dodam.domain.rds.member.repository.BroadcastClubMemberRepository;
 import b1nd.dodam.domain.rds.member.repository.MemberRepository;
 import b1nd.dodam.domain.rds.member.repository.StudentRepository;
 import b1nd.dodam.domain.rds.member.repository.TeacherRepository;
+import b1nd.dodam.domain.rds.member.service.MemberService;
 import b1nd.dodam.restapi.auth.infrastructure.security.support.MemberAuthenticationHolder;
+import b1nd.dodam.restapi.member.application.data.req.GetMemberByCodeReq;
 import b1nd.dodam.restapi.member.application.data.res.MemberInfoRes;
 import b1nd.dodam.restapi.support.data.ResponseData;
 import lombok.RequiredArgsConstructor;
@@ -24,6 +26,7 @@ public class MemberQueryUseCase {
 
     private final MemberRepository memberRepository;
     private final StudentRepository studentRepository;
+    private final MemberService memberService;
     private final TeacherRepository teacherRepository;
     private final BroadcastClubMemberRepository broadcastClubMemberRepository;
     private final MemberAuthenticationHolder memberAuthenticationHolder;
@@ -78,6 +81,11 @@ public class MemberQueryUseCase {
 
     private ResponseData<Boolean> checkBroadcastClubMemberByMember(Member member) {
         return ResponseData.ok("방송부원 확인 성공", broadcastClubMemberRepository.existsByMember(member));
+    }
+
+    public ResponseData<MemberInfoRes> getMemberByCode(String code){
+        return ResponseData.ok("학생 조회 성공", this.getMemberInfo(memberService.checkCode(code)
+                .getMember()));
     }
 
 }
