@@ -135,9 +135,9 @@ public class MemberController {
         return queryUseCase.checkBroadcastClubMember(id);
     }
 
-    @GetMapping("/code")
-    public ResponseData<MemberInfoRes> getMemberByCode(@RequestBody @Valid GetMemberByCodeReq getMemberByCodeReq){
-        return queryUseCase.getMemberByCode(getMemberByCodeReq);
+    @GetMapping("/code/{code}")
+    public ResponseData<MemberInfoRes> getMemberByCode(@PathVariable String code){
+        return queryUseCase.getMemberByCode(code);
     }
 
 }

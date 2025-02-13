@@ -12,7 +12,6 @@ import b1nd.dodam.domain.rds.member.service.MemberService;
 import b1nd.dodam.restapi.auth.infrastructure.security.support.MemberAuthenticationHolder;
 import b1nd.dodam.restapi.member.application.data.req.GetMemberByCodeReq;
 import b1nd.dodam.restapi.member.application.data.res.MemberInfoRes;
-import b1nd.dodam.restapi.member.application.data.res.StudentRes;
 import b1nd.dodam.restapi.support.data.ResponseData;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -84,8 +83,8 @@ public class MemberQueryUseCase {
         return ResponseData.ok("방송부원 확인 성공", broadcastClubMemberRepository.existsByMember(member));
     }
 
-    public ResponseData<MemberInfoRes> getMemberByCode(GetMemberByCodeReq getMemberByCodeReq){
-        return ResponseData.ok("학생 조회 성공", this.getMemberInfo(memberService.checkCode(getMemberByCodeReq.code())
+    public ResponseData<MemberInfoRes> getMemberByCode(String code){
+        return ResponseData.ok("학생 조회 성공", this.getMemberInfo(memberService.checkCode(code)
                 .getMember()));
     }
 
