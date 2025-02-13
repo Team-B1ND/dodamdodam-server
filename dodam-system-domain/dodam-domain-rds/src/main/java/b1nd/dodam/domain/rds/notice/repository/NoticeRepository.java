@@ -19,6 +19,7 @@ public interface NoticeRepository extends JpaRepository<Notice, Long> {
         where dm.member.id = :memberId
         and d.id = :divisionId
         and n.id > :lastId
+        order by n.id asc
         """)
     List<Notice> findNoticesByMemberAndDivision(@Param("memberId") String memberId,
                                                 @Param("divisionId") Long divisionId,
@@ -32,6 +33,7 @@ public interface NoticeRepository extends JpaRepository<Notice, Long> {
         and n.noticeStatus = :noticeStatus
         and n.id > :lastId
         and (:keyword is null or n.title like %:keyword%)
+        order by n.id asc
         """)
     List<Notice> findAllByNoticeStatus(@Param("keyword") String keyword,
                                        @Param("ids") List<Long> ids,
