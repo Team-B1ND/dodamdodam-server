@@ -2,7 +2,6 @@ package b1nd.dodam.domain.rds.notice.entity;
 
 import b1nd.dodam.domain.rds.member.entity.Member;
 import b1nd.dodam.domain.rds.notice.enumration.NoticeStatus;
-import b1nd.dodam.domain.rds.recruitment.entity.RecruitmentFile;
 import b1nd.dodam.domain.rds.support.entity.BaseEntity;
 import b1nd.dodam.domain.rds.support.enumeration.FileType;
 import jakarta.persistence.*;

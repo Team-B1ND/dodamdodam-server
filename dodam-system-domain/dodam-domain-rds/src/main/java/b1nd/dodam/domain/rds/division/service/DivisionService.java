@@ -7,7 +7,6 @@ import b1nd.dodam.domain.rds.division.repository.DivisionRepository;
 import b1nd.dodam.domain.rds.member.entity.Member;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
