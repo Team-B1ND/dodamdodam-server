@@ -50,17 +50,19 @@ public class DivisionController {
     @GetMapping
     public ResponseData<List<DivisionOverviewRes>> getAllDivisions(
             @RequestParam Long lastId,
-            @RequestParam int limit
+            @RequestParam int limit,
+            @RequestParam String keyword
     ) {
-        return divisionUseCase.getDivisions(lastId, limit);
+        return divisionUseCase.getDivisions(lastId, limit, keyword);
     }
 
     @GetMapping("/my")
     public ResponseData<List<DivisionOverviewRes>> getMyDivisions(
             @RequestParam Long lastId,
-            @RequestParam int limit
+            @RequestParam int limit,
+            @RequestParam String keyword
     ) {
-        return divisionUseCase.getMyDivisions(lastId, limit);
+        return divisionUseCase.getMyDivisions(lastId, limit, keyword);
     }
 
     @PostMapping("/{id}/members/apply")
