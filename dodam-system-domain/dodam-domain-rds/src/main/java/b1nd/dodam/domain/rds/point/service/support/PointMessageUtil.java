@@ -1,6 +1,5 @@
 package b1nd.dodam.domain.rds.point.service.support;
 
-import b1nd.dodam.domain.rds.member.entity.Parent;
 import b1nd.dodam.domain.rds.member.entity.Student;
 import b1nd.dodam.domain.rds.point.entity.PointReason;
 import b1nd.dodam.domain.rds.point.enumeration.PointType;
@@ -12,25 +11,16 @@ public final class PointMessageUtil {
 
     private PointMessageUtil() {}
 
-    public static PointIssuedEvent createIssuedEvent(Student student, Parent parent, PointReason reason) {
-        String studentPhone = (student != null && student.getMember() != null) ? student.getMember().getPhone() : null;
-        String parentPhone = (parent != null && parent.getMember() != null) ? parent.getMember().getPhone() : null;
-
+    public static PointIssuedEvent createIssuedEvent(Student student, PointReason reason) {
         return new PointIssuedEvent(
-                createMessage(reason, student != null ? student.getMember().getName() : "", "발급"),
-                studentPhone,
-                parentPhone
+                createMessage(reason, student.getMember().getName(), "발급"), student.getMember().getPhone()
         );
     }
 
-    public static PointCanceledEvent createCanceledEvent(Student student, Parent parent, PointReason reason) {
-        String studentPhone = (student != null && student.getMember() != null) ? student.getMember().getPhone() : null;
-        String parentPhone = (parent != null && parent.getMember() != null) ? parent.getMember().getPhone() : null;
-
+    public static PointCanceledEvent createCanceledEvent(Student student, PointReason reason) {
         return new PointCanceledEvent(
-                createMessage(reason, student != null ? student.getMember().getName() : "", "취소"),
-                studentPhone,
-                parentPhone
+                createMessage(reason, student.getMember().getName(), "취소"),
+                student.getMember().getPhone()
         );
     }
 

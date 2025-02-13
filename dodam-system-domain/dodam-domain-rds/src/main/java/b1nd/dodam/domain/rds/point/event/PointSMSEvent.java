@@ -6,5 +6,4 @@ public interface PointSMSEvent {
 
     String phone();
 
-   String parentPhone();
 }
