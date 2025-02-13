@@ -31,7 +31,7 @@ public interface NoticeRepository extends JpaRepository<Notice, Long> {
         where nd.division.id in :ids
         and n.noticeStatus = :noticeStatus
         and n.id > :lastId
-        and n.title like %:keyword%
+        and (:keyword is null or n.title like %:keyword%)
         """)
     List<Notice> findAllByNoticeStatus(@Param("keyword") String keyword,
                                        @Param("ids") List<Long> ids,

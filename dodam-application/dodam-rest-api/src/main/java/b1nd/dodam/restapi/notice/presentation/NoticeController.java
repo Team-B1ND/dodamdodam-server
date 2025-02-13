@@ -22,9 +22,9 @@ public class NoticeController {
         return noticeUseCase.register(generateNoticeReq);
     }
 
-    @GetMapping("/{keyword}")
+    @GetMapping
     public ResponseData<List<NoticeRes>> getByStatus(
-            @PathVariable String keyword,
+            @RequestParam String keyword,
             @RequestParam Long lastId,
             @RequestParam int limit,
             @RequestParam NoticeStatus status
@@ -33,8 +33,8 @@ public class NoticeController {
     }
 
     @GetMapping("/{id}/division")
-    public ResponseData<List<NoticeRes>> getBy(
-            @PathVariable Long id,
+    public ResponseData<List<NoticeRes>> getById(
+            @RequestParam Long id,
             @RequestParam Long lastId,
             @RequestParam int limit
     ){
