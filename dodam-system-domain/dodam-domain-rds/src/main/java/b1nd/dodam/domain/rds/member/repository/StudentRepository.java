@@ -64,4 +64,9 @@ public interface StudentRepository extends JpaRepository<Student, Integer> {
         return findByMemberIn(members).stream()
                 .collect(Collectors.toMap(Student::getMember, student -> student));
     }
+  
+    Optional<Student> findByCode(String code);
+
+    boolean existsByCode(String code);
+
 }

@@ -1,12 +1,15 @@
 package b1nd.dodam.restapi.member.presentation;
 
 import b1nd.dodam.domain.rds.member.enumeration.ActiveStatus;
+import b1nd.dodam.domain.redis.member.enumeration.AuthType;
+import b1nd.dodam.restapi.auth.infrastructure.security.support.MemberAuthenticationHolder;
 import b1nd.dodam.restapi.member.application.MemberCommandUseCase;
 import b1nd.dodam.restapi.member.application.MemberQueryUseCase;
 import b1nd.dodam.restapi.member.application.data.req.*;
 import b1nd.dodam.restapi.member.application.data.res.MemberInfoRes;
 import b1nd.dodam.restapi.support.data.Response;
 import b1nd.dodam.restapi.support.data.ResponseData;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -22,18 +25,39 @@ public class MemberController {
     private final MemberQueryUseCase queryUseCase;
 
     @PostMapping("/join-student")
-    public Response join(@RequestBody @Valid JoinStudentReq req) {
-        return commandUseCase.join(req);
+    public Response join(HttpServletRequest httpServletReq,
+                         @RequestBody @Valid JoinStudentReq req) {
+        return commandUseCase.join(MemberAuthenticationHolder.getUserAgent(httpServletReq), req);
     }
 
     @PostMapping("/join-teacher")
-    public Response join(@RequestBody @Valid JoinTeacherReq req) {
-        return commandUseCase.join(req);
+    public Response join(HttpServletRequest httpServletReq,
+                         @RequestBody @Valid JoinTeacherReq req) {
+        return commandUseCase.join(MemberAuthenticationHolder.getUserAgent(httpServletReq), req);
+    }
+
+    @PostMapping("/join-parent")
+    public Response join(HttpServletRequest httpServletReq,
+                         @RequestBody @Valid JoinParentReq req) {
+        return commandUseCase.join(MemberAuthenticationHolder.getUserAgent(httpServletReq), req);
     }
 
     @PostMapping("/broadcast-club-member")
     public Response apply(@RequestBody @Valid ApplyBroadcastClubMemberReq req) {
         return commandUseCase.apply(req);
+    }
+
+    @PostMapping("/auth-code/{type}")
+    public Response sendAuthCode(@PathVariable AuthType type,
+                                 @RequestBody @Valid AuthCodeReq authCodeReq){
+        return commandUseCase.sendAuthCode(type, authCodeReq);
+    }
+
+    @PostMapping("/auth-code/{type}/verify")
+    public Response verifyAuthCode(HttpServletRequest httpServletReq,
+                                   @PathVariable AuthType type,
+                                   @RequestBody @Valid VerifyAuthCodeReq req){
+        return commandUseCase.verifyAuthCode(MemberAuthenticationHolder.getUserAgent(httpServletReq), type, req);
     }
 
     @DeleteMapping("/{id}")
@@ -69,11 +93,6 @@ public class MemberController {
     @PatchMapping("/student/info")
     public Response updateStudentInfo(@RequestBody UpdateStudentInfoReq req) {
         return commandUseCase.updateStudentInfo(req);
-    }
-
-    @PatchMapping("/student/info/{id}")
-    public Response updateStudentForAdmin(@PathVariable String id, @RequestBody UpdateStudentForAdminReq req){
-        return commandUseCase.updateStudentParentPhone(id, req);
     }
 
     @PatchMapping("/teacher/info/{id}")
@@ -114,6 +133,11 @@ public class MemberController {
     @GetMapping("/check/broadcast-club-member/{id}")
     public ResponseData<Boolean> checkBroadcastClubMember(@PathVariable String id) {
         return queryUseCase.checkBroadcastClubMember(id);
+    }
+
+    @GetMapping("/code/{code}")
+    public ResponseData<MemberInfoRes> getMemberByCode(@PathVariable String code){
+        return queryUseCase.getMemberByCode(code);
     }
 
 }

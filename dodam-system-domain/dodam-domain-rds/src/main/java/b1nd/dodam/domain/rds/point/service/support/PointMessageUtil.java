@@ -13,13 +13,14 @@ public final class PointMessageUtil {
 
     public static PointIssuedEvent createIssuedEvent(Student student, PointReason reason) {
         return new PointIssuedEvent(
-                createMessage(reason, student.getMember().getName(), "발급"), student.getMember().getPhone(), student.getParentPhone()
+                createMessage(reason, student.getMember().getName(), "발급"), student.getMember().getPhone()
         );
     }
 
     public static PointCanceledEvent createCanceledEvent(Student student, PointReason reason) {
         return new PointCanceledEvent(
-                createMessage(reason, student.getMember().getName(), "취소"), student.getMember().getPhone(), student.getParentPhone()
+                createMessage(reason, student.getMember().getName(), "취소"),
+                student.getMember().getPhone()
         );
     }
 

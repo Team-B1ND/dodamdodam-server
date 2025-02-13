@@ -91,5 +91,9 @@ public class DivisionMemberService {
             throw new DivisionMemberDuplicateException();
         }
     }
+  
+    public List<Long> getIdsByMember(Member member){
+        return repository.findDivisionIdByMember(member);
+    }
 
 }

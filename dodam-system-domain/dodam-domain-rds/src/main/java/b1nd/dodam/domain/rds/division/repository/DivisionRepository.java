@@ -38,4 +38,6 @@ public interface DivisionRepository extends JpaRepository<Division, Long> {
     );
 
     Optional<Division> findByName(String name);
+
+//    List<Division> findAllById(List<Long> ids);
 }
