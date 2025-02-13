@@ -4,6 +4,7 @@ import b1nd.dodam.core.exception.global.InvalidPermissionException;
 import b1nd.dodam.domain.rds.division.entity.Division;
 import b1nd.dodam.domain.rds.division.entity.DivisionMember;
 import b1nd.dodam.domain.rds.division.enumeration.DivisionPermission;
+import b1nd.dodam.domain.rds.division.exception.DivisionMemberDuplicateException;
 import b1nd.dodam.domain.rds.division.exception.DivisionMemberNotFoundException;
 import b1nd.dodam.domain.rds.division.repository.DivisionMemberRepository;
 import b1nd.dodam.domain.rds.member.entity.Member;
@@ -84,6 +85,13 @@ public class DivisionMemberService {
         return repository.findByDivisionAndStatus(division, status);
     }
 
+    public void checkUniqueMemberInDivision(Division division, Member member) {
+        boolean exists = repository.existsByDivisionAndMemberAndStatusNot(division, member, ApprovalStatus.REJECTED);
+        if (exists) {
+            throw new DivisionMemberDuplicateException();
+        }
+    }
+  
     public List<Long> getIdsByMember(Member member){
         return repository.findDivisionIdByMember(member);
     }
