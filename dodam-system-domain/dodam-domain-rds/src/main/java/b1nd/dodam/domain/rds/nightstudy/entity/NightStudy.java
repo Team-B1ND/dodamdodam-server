@@ -8,7 +8,6 @@ import b1nd.dodam.domain.rds.nightstudy.exception.NightStudyApplicationDurationP
 import b1nd.dodam.domain.rds.nightstudy.exception.ReasonForPhoneMissingException;
 import b1nd.dodam.domain.rds.support.entity.BaseEntity;
 import b1nd.dodam.domain.rds.support.enumeration.ApprovalStatus;
-import b1nd.dodam.domain.rds.support.enumeration.SchoolPlace;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -40,10 +39,6 @@ public class NightStudy extends BaseEntity {
 
     @NotNull
     @Enumerated(value = EnumType.STRING)
-    private SchoolPlace place;
-
-    @NotNull
-    @Enumerated(value = EnumType.STRING)
     private ApprovalStatus status;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -63,7 +58,7 @@ public class NightStudy extends BaseEntity {
     private LocalDate endAt;
 
     @Builder
-    public NightStudy(String content, boolean doNeedPhone, String reasonForPhone, SchoolPlace place, Student student,
+    public NightStudy(String content, boolean doNeedPhone, String reasonForPhone, Student student,
                       LocalDate startAt, LocalDate endAt) {
         isApplicationDuration();
         isInvalidStudyPeriod(startAt, endAt);
@@ -72,7 +67,6 @@ public class NightStudy extends BaseEntity {
         this.content = content;
         this.doNeedPhone = doNeedPhone;
         this.reasonForPhone = reasonForPhone;
-        this.place = place;
         this.status = ApprovalStatus.PENDING;
         this.student = student;
         this.startAt = startAt;
