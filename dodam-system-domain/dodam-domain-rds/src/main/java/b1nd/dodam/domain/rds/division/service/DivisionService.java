@@ -40,11 +40,11 @@ public class DivisionService {
     }
 
 
-    public List<Division> getByMember(Member member, Long lastId, int limit) {
-        return divisionRepository.findByMember(member, lastId, PageRequest.of(0, limit));
+    public List<Division> getByMember(Member member, Long lastId, int limit, String keyword) {
+        return divisionRepository.findByMember(member, lastId, keyword, PageRequest.of(0, limit));
     }
 
-    public List<Division> getAll(Long lastId, int limit) {
-        return divisionRepository.findNextPageWithCursor(lastId, PageRequest.of(0, limit));
+    public List<Division> getAll(Long lastId, int limit, String keyword) {
+        return divisionRepository.findNextPageWithCursor(lastId, keyword, PageRequest.of(0, limit));
     }
 }

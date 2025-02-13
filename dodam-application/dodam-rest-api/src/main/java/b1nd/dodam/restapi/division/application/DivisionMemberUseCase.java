@@ -1,6 +1,7 @@
 package b1nd.dodam.restapi.division.application;
 
 import b1nd.dodam.domain.rds.division.entity.Division;
+import b1nd.dodam.domain.rds.division.entity.DivisionMember;
 import b1nd.dodam.domain.rds.division.enumeration.DivisionPermission;
 import b1nd.dodam.domain.rds.division.service.DivisionMemberService;
 import b1nd.dodam.domain.rds.division.service.DivisionService;
@@ -56,6 +57,13 @@ public class DivisionMemberUseCase {
     public Response handleDivisionApplication(List<Long> idList, ApprovalStatus status) {
         divisionMemberService.modifyDivisionMembers(divisionMemberService.getByIds(idList), status);
         return Response.ok("조직 수락/거절/취소 성공");
+    }
+
+    public Response handleMemberPermission(Long divisionMemberId, DivisionPermission permission) {
+        DivisionMember divisionMember = divisionMemberService.getById(divisionMemberId);
+        divisionMember.modifyPermission(permission);
+        divisionMemberService.save(divisionMember);
+        return Response.ok("조직원 권한 수정 성공");
     }
 
     @Transactional(readOnly = true)

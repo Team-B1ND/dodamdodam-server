@@ -24,6 +24,10 @@ public class DivisionMemberService {
         repository.saveAll(divisionMembers);
     }
 
+    public void save(DivisionMember divisionMember) {
+        repository.save(divisionMember);
+    }
+
     public void saveWithBuild(Division division, List<Member> members, ApprovalStatus status, DivisionPermission permission) {
         repository.saveAll(members.stream()
                 .map(member -> DivisionMember.builder()
