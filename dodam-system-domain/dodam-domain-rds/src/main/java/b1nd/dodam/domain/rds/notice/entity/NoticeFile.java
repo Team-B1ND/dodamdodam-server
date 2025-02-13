@@ -3,7 +3,10 @@ package b1nd.dodam.domain.rds.notice.entity;
 import b1nd.dodam.domain.rds.support.enumeration.FileType;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
 @Entity(name = "notice_file")
@@ -13,11 +16,6 @@ public class NoticeFile {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    @Setter
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "fk_notice_id")
-    private Notice notice;
 
     @NotNull
     @Column(columnDefinition = "LONGTEXT")
@@ -29,13 +27,15 @@ public class NoticeFile {
     @NotNull
     private FileType fileType;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "fk_notice_id")
+    private Notice notice;
+
     @Builder
-    public NoticeFile(Long id, Notice notice, String fileUrl, String fileName, FileType fileType) {
-        this.id = id;
-        this.notice = notice;
+    public NoticeFile(String fileUrl, String fileName, FileType fileType, Notice notice) {
         this.fileUrl = fileUrl;
         this.fileName = fileName;
         this.fileType = fileType;
+        this.notice = notice;
     }
-
 }
