@@ -35,12 +35,8 @@ public class NoticeService {
         return noticeRepository.findNoticesByMemberAndDivision(memberId, divisionId, lastId, PageRequest.of(0, limit));
     }
 
-    public List<Notice> getAllByStatus(List<Long> ids, NoticeStatus noticeStatus, Long lastId, int limit){
-        return noticeRepository.findAllByNoticeStatus(ids, noticeStatus, lastId, PageRequest.of(0, limit));
-    }
-
-    public List<Notice> searchByKeyword(String keyword){
-        return noticeRepository.searchByKeyword(keyword);
+    public List<Notice> getAllByStatus(String keyword, List<Long> ids, NoticeStatus noticeStatus, Long lastId, int limit){
+        return noticeRepository.findAllByNoticeStatus(keyword, ids, noticeStatus, lastId, PageRequest.of(0, limit));
     }
 
 }

@@ -46,10 +46,10 @@ public class NoticeUseCase {
     }
 
     @Transactional(readOnly = true)
-    public ResponseData<List<NoticeRes>> getNotices(Long lastId, int limit, NoticeStatus status) {
+    public ResponseData<List<NoticeRes>> getNotices(String keyword, Long lastId, int limit, NoticeStatus status) {
         Member member = memberAuthenticationHolder.current();
         List<Long> divisionIds = divisionMemberService.getIdsByMember(member);
-        List<Notice> notices = noticeService.getAllByStatus(divisionIds, status, lastId, limit);
+        List<Notice> notices = noticeService.getAllByStatus(keyword, divisionIds, status, lastId, limit);
         return ResponseData.of(HttpStatus.OK, "전체 공지 불러오기 성공", NoticeRes.of(notices));
     }
 
@@ -63,11 +63,6 @@ public class NoticeUseCase {
                 .toList();
 
         return ResponseData.of(HttpStatus.OK, "카테고리별 공지 불러오기 성공", NoticeRes.of(notices));
-    }
-
-    public ResponseData<List<NoticeRes>> searchNotices(String keyword){
-        List<Notice> notices = noticeService.searchByKeyword(keyword);
-        return ResponseData.of(HttpStatus.OK, "공지 검색 성공", NoticeRes.of(notices));
     }
 
 }

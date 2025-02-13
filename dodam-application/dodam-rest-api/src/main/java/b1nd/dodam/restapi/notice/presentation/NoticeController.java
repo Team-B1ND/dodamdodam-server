@@ -22,14 +22,14 @@ public class NoticeController {
         return noticeUseCase.register(generateNoticeReq);
     }
 
-    @GetMapping
+    @GetMapping("/{keyword}")
     public ResponseData<List<NoticeRes>> getByStatus(
+            @PathVariable String keyword,
             @RequestParam Long lastId,
             @RequestParam int limit,
             @RequestParam NoticeStatus status
-
     ){
-        return noticeUseCase.getNotices(lastId, limit, status);
+        return noticeUseCase.getNotices(keyword, lastId, limit, status);
     }
 
     @GetMapping("/{id}/division")
@@ -39,12 +39,6 @@ public class NoticeController {
             @RequestParam int limit
     ){
         return noticeUseCase.getNoticesByDivision(id, lastId, limit);
-    }
-
-    //TODO 페이징 적용
-    @GetMapping("/{keyword}")
-    public ResponseData<List<NoticeRes>> searchByKeyword(@PathVariable String keyword){
-        return noticeUseCase.searchNotices(keyword);
     }
 
 }

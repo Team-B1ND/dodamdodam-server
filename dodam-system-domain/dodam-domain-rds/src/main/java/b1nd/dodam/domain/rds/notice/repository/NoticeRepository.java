@@ -11,28 +11,26 @@ import java.util.List;
 
 public interface NoticeRepository extends JpaRepository<Notice, Long> {
 
-    @Query("SELECT n FROM notice n " +
-            "JOIN n.noticeDivisions nd " +
-            "JOIN nd.division d " +
-            "JOIN division_member dm ON dm.division = d " +
-            "WHERE dm.member.id = :memberId " +
-            "AND d.id = :divisionId " +
-            "AND n.id > :lastId")
+    @Query("select n from notice n " +
+            "join n.noticeDivisions nd " +
+            "join nd.division d " +
+            "join division_member dm on dm.division = d " +
+            "where dm.member.id = :memberId " +
+            "and d.id = :divisionId " +
+            "and n.id > :lastId")
     List<Notice> findNoticesByMemberAndDivision(@Param("memberId") String memberId,
                                                 @Param("divisionId") Long divisionId,
                                                 @Param("lastId") Long lastId,
                                                 Pageable pageable);
 
-    @Query("SELECT n FROM notice n " +
-            "JOIN n.noticeDivisions nd " +
-            "WHERE nd.division.id IN :ids " +
-            "AND n.noticeStatus = :noticeStatus " +
-            "AND n.id > :lastId")
-    List<Notice> findAllByNoticeStatus(@Param("ids") List<Long> ids,
-                                         @Param("noticeStatus") NoticeStatus noticeStatus,
-                                         @Param("lastId") Long lastId, Pageable pageable);
-
-    @Query("SELECT n FROM notice n WHERE n.title LIKE CONCAT('%', :keyword, '%') OR n.content LIKE CONCAT('%', :keyword, '%') OR n.member.name LIKE CONCAT('%', :keyword, '%')")
-    List<Notice> searchByKeyword(@Param("keyword") String keyword);
-
+    @Query("select n from notice n " +
+            "join n.noticeDivisions nd " +
+            "WHERE nd.division.id in :ids " +
+            "and n.noticeStatus = :noticeStatus " +
+            "and n.id > :lastId " +
+            "and n.title like %:keyword%")
+    List<Notice> findAllByNoticeStatus(@Param("keyword") String keyword,
+                                       @Param("ids") List<Long> ids,
+                                       @Param("noticeStatus") NoticeStatus noticeStatus,
+                                       @Param("lastId") Long lastId, Pageable pageable);
 }
