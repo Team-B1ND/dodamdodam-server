@@ -52,4 +52,6 @@ public interface StudentRepository extends JpaRepository<Student, Integer> {
 
     Optional<Student> findByCode(String code);
 
+    boolean existsByCode(String code);
+
 }
