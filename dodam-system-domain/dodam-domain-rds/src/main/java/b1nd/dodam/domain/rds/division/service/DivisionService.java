@@ -7,7 +7,6 @@ import b1nd.dodam.domain.rds.division.repository.DivisionRepository;
 import b1nd.dodam.domain.rds.member.entity.Member;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -24,6 +23,10 @@ public class DivisionService {
     public Division getById(Long id) {
         return divisionRepository.findById(id)
                 .orElseThrow(DivisionNotFoundException::new);
+    }
+
+    public List<Division> getAllByIds(List<Long> ids){
+        return divisionRepository.findAllById(ids);
     }
 
     public void checkIsNotDuplicateName(String name) {

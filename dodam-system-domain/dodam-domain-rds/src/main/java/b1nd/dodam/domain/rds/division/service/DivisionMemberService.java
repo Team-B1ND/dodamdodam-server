@@ -79,4 +79,9 @@ public class DivisionMemberService {
     public List<DivisionMember> getByDivisionAndStatus(Division division, ApprovalStatus status) {
         return repository.findByDivisionAndStatus(division, status);
     }
+
+    public List<Long> getIdsByMember(Member member){
+        return repository.findDivisionIdByMember(member);
+    }
+
 }

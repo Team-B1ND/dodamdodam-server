@@ -21,4 +21,6 @@ public interface DivisionRepository extends JpaRepository<Division, Long> {
     List<Division> findNextPageWithCursor(@Param("lastId") Long lastId, Pageable pageable);
 
     Optional<Division> findByName(String name);
+
+//    List<Division> findAllById(List<Long> ids);
 }
