@@ -13,6 +13,7 @@ import java.util.Optional;
 
 public record DivisionMemberRes(
         Long id,
+        String memberId,
         String memberName,
         String profileImage,
         DivisionPermission permission,
@@ -26,6 +27,7 @@ public record DivisionMemberRes(
         Member member = divisionMember.getMember();
         return new DivisionMemberRes(
                 divisionMember.getId(),
+                member.getId(),
                 member.getName(),
                 member.getProfileImage(),
                 divisionMember.getPermission(),
