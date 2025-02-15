@@ -11,12 +11,6 @@ import java.util.Objects;
 @RequiredArgsConstructor
 public enum SchoolPlace {
 
-    PROGRAMMING_1("프로그래밍1실"),
-    PROGRAMMING_2("프로그래밍2실"),
-    PROGRAMMING_3("프로그래밍3실"),
-    KOREAN("국어실"),
-    MATH("수학실"),
-    SOCIETY("사회실"),
     HALL("강당"),
     AUDIOVISUAL_ROOM("시청각실"),
     NONE("장소 없음"),

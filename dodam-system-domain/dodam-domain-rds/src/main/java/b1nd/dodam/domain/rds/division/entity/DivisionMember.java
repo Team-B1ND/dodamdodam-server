@@ -44,4 +44,7 @@ public class DivisionMember {
     public void modifyStatus(ApprovalStatus status) {
         this.status = status;
     }
+    public void modifyPermission(DivisionPermission permission) {
+        this.permission = permission;
+    }
 }
