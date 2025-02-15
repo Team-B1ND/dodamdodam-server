@@ -20,6 +20,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Component
 @RequiredArgsConstructor
@@ -27,22 +29,23 @@ import java.util.List;
 public class NoticeUseCase {
 
     private final NoticeService noticeService;
-    private final NoticeDivisionService noticeDivisionService;
     private final DivisionService divisionService;
+    private final NoticeDivisionService noticeDivisionService;
     private final DivisionMemberService divisionMemberService;
     private final MemberAuthenticationHolder memberAuthenticationHolder;
 
-    public ResponseData<Long> register(GenerateNoticeReq generateNoticeReq){
+    public ResponseData<Long> register(GenerateNoticeReq generateNoticeReq) {
         Member member = memberAuthenticationHolder.current();
         Notice notice = noticeService.save(generateNoticeReq.toEntity(member));
 
+        List<NoticeFile> noticeFiles = generateNoticeReq.toNoticeFiles(notice);
+        noticeService.saveAllNoticeFiles(noticeFiles);
+
         List<Division> divisions = divisionService.getAllByIds(generateNoticeReq.divisions());
-
         List<NoticeDivision> noticeDivisions = generateNoticeReq.toEntity(notice, divisions);
-
-        noticeService.changeStatus(notice.getId(), NoticeStatus.CREATED);
         noticeDivisionService.saveAll(noticeDivisions);
 
+        noticeService.changeStatus(notice.getId(), NoticeStatus.CREATED);
         return ResponseData.of(HttpStatus.OK, "공지 생성 성공", notice.getId());
     }
 
@@ -51,17 +54,24 @@ public class NoticeUseCase {
         Member member = memberAuthenticationHolder.current();
         List<Long> divisionIds = divisionMemberService.getIdsByMember(member);
         List<Notice> notices = noticeService.getAllByStatus(keyword, divisionIds, status, lastId, limit);
-        List<NoticeFile> files = noticeService.getAllByNotice(notices);
-        return ResponseData.of(HttpStatus.OK, "전체 공지 불러오기 성공", NoticeRes.of(notices, files));
+        List<NoticeRes> noticeResList = convertToNoticeRes(notices);
+        return ResponseData.of(HttpStatus.OK, "전체 공지 불러오기 성공", noticeResList);
     }
 
     @Transactional(readOnly = true)
-    public ResponseData<List<NoticeRes>> getNoticesByDivision(Long divisionId, Long lastId, int limit){
+    public ResponseData<List<NoticeRes>> getNoticesByDivision(Long divisionId, Long lastId, int limit) {
         Member member = memberAuthenticationHolder.current();
         Division division = divisionService.getById(divisionId);
         List<Notice> notices = noticeService.getAllByDivision(member.getId(), division.getId(), lastId, limit);
-        List<NoticeFile> files = noticeService.getAllByNotice(notices);
-        return ResponseData.of(HttpStatus.OK, "카테고리별 공지 불러오기 성공", NoticeRes.of(notices, files));
+        List<NoticeRes> noticeResList = convertToNoticeRes(notices);
+        return ResponseData.of(HttpStatus.OK, "카테고리별 공지 불러오기 성공", noticeResList);
+    }
+
+    private List<NoticeRes> convertToNoticeRes(List<Notice> notices) {
+        Map<Long, List<NoticeFile>> noticeFileMap = noticeService.getNoticeFileMap(notices);
+        return notices.stream()
+                .map(notice -> NoticeRes.of(notice, noticeFileMap.getOrDefault(notice.getId(), List.of())))
+                .collect(Collectors.toList());
     }
 
 }

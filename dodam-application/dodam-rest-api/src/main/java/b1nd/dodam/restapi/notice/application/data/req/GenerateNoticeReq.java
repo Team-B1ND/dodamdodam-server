@@ -24,16 +24,22 @@ public record GenerateNoticeReq (@NotEmpty String title, @NotEmpty String conten
                 .noticeStatus(NoticeStatus.DRAFT)
                 .member(member)
                 .build();
-        if (files != null && !files.isEmpty()) {
-            files.forEach(file -> NoticeFile.builder()
-                    .fileUrl(file.url())
-                    .fileName(file.name())
-                    .fileType(file.fileType())
-                    .notice(notice)
-                    .build()
-            );
-        }
+
         return notice;
+    }
+
+    public List<NoticeFile> toNoticeFiles(Notice notice) {
+        if (files == null || files.isEmpty()) {
+            return List.of();
+        }
+        return files.stream()
+                .map(file -> NoticeFile.builder()
+                        .fileUrl(file.url())
+                        .fileName(file.name())
+                        .fileType(file.fileType())
+                        .notice(notice)
+                        .build())
+                .toList();
     }
 
     public List<NoticeDivision> toEntity(Notice notice, List<Division> divisions) {

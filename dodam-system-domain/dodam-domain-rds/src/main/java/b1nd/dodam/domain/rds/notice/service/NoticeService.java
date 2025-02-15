@@ -10,7 +10,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -23,6 +26,10 @@ public class NoticeService {
     public Notice save(Notice notice){
         noticeRepository.save(notice);
         return notice;
+    }
+
+    public void saveAllNoticeFiles(List<NoticeFile> noticeFiles){
+        noticeFileRepository.saveAll(noticeFiles);
     }
 
     public void changeStatus(Long id, NoticeStatus noticeStatus){
@@ -40,15 +47,21 @@ public class NoticeService {
     }
 
     public List<Notice> getAllByStatus(String keyword, List<Long> ids, NoticeStatus noticeStatus, Long lastId, int limit) {
-        // 페이지 번호를 계산합니다. lastId가 있다면, 해당 id를 기준으로 다음 페이지를 요청합니다.
-        int page = (lastId == null) ? 0 : (int) (lastId / limit);
-
-        return noticeRepository.findAllByNoticeStatus(keyword, ids, noticeStatus, lastId, PageRequest.of(page, limit));
+        return noticeRepository.findAllByNoticeStatus(keyword, ids, noticeStatus, lastId, PageRequest.of(0, limit));
     }
 
-    public List<NoticeFile> getAllByNotice(List<Notice> notices){
+    public List<NoticeFile> getAllByNotices(List<Notice> notices){
         return noticeFileRepository.findAllByNoticeIn(notices);
     }
 
+    public Map<Long, List<NoticeFile>> getNoticeFileMap(List<Notice> notices) {
+        if (notices.isEmpty()) {
+            return Collections.emptyMap();
+        }
+
+        return getAllByNotices(notices)
+                .stream()
+                .collect(Collectors.groupingBy(noticeFile -> noticeFile.getNotice().getId()));
+    }
 
 }

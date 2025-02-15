@@ -30,6 +30,7 @@ public class MemberRedisService {
         String key = String.format("%s:%s:%s", memberRedisProperties.getCode().key(), authType, identifier);
         redisTemplate.opsForValue()
                 .set(key, String.valueOf(authCode), Duration.ofMinutes(AUTH_CODE_EXPIRATION));
+        log.info("{}", authCode);
     }
 
     public void validateAuthCode(AuthType authType, String identifier, int authCode) {
