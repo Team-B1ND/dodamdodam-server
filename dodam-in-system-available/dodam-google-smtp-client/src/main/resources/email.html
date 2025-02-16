@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>도담도담 이메일 인증</title>
+  <style>
+    body {
+      font-family: 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+    .email-wrapper {
+      max-width: 480px;
+      margin: 40px auto;
+      background-color: #ffffff;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      padding: 40px 20px;
+      text-align: center;
+    }
+    .logo img {
+      width: 120px;
+      margin-bottom: 20px;
+    }
+    .title {
+      font-size: 20px;
+      font-weight: bold;
+      color: #333;
+      margin-bottom: 10px;
+    }
+    .description {
+      font-size: 14px;
+      color: #666;
+      line-height: 1.6;
+      margin-bottom: 24px;
+    }
+    .code-box {
+      display: inline-block;
+      background-color: #F1F5FF;
+      color: #005FCC;
+      font-size: 28px;
+      font-weight: bold;
+      padding: 15px 40px;
+      border-radius: 8px;
+      margin-bottom: 24px;
+    }
+    .footer {
+      font-size: 12px;
+      color: #999;
+      margin-top: 20px;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+<table width="100%" cellpadding="0" cellspacing="0">
+  <tr>
+    <td style="background-color: #F4F4F7; padding: 40px 0;">
+      <div class="email-wrapper">
+        <div class="logo">
+          <img src="https://dodamdodam-storage.s3.ap-northeast-2.amazonaws.com/dodamdodam-storage/bd135a96-6f05-48a9-9e82-10616686a53ddodam_logo.png" alt="Dodam Logo" />
+        </div>
+        <div class="title">이메일 인증번호 확인</div>
+        <div class="description">
+          도담도담 회원가입을 위한 인증번호입니다.<br />
+          아래 인증번호를 진행 중인 화면에 입력해 주세요.
+        </div>
+        <div class="code-box">{authCode}</div>
+      </div>
+    </td>
+  </tr>
+  <tr>
+    <td colspan="2" style="background-color: #F4F4F7; font-family:'-apple-system',BlinkMacSystemFont,'Apple SD Gothic Neo','Malgun Gothic',sans-serif;font-size:14px;line-height:20px;color:#888888;letter-spacing:-0.5px;word-break:keep-all;text-align:center;padding:10px 0;">
+      본 메일은 발신 전문으로, 문의는 처리되지 않습니다.
+    </td>
+  </tr>
+  <tr>
+    <td height="40"></td> <!-- 하단 여백 확보 -->
+  </tr>
+</table>
+</body>
+</html>

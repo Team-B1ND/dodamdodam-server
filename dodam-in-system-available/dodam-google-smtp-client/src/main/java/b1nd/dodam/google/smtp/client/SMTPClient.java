@@ -1,10 +1,12 @@
 package b1nd.dodam.google.smtp.client;
 
 import b1nd.dodam.core.exception.global.InternalServerException;
+import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
@@ -22,7 +24,7 @@ public class SMTPClient {
 
     public void composeTemplate(String targetEmail, String title, int authCode){
         try {
-            ClassPathResource resource = new ClassPathResource("authEmail.html");
+            ClassPathResource resource = new ClassPathResource("email.html");
             BufferedReader reader = new BufferedReader(
                     new InputStreamReader(resource.getInputStream(), StandardCharsets.UTF_8));
             String templateContent = reader.lines().collect(Collectors.joining("\n"));
@@ -36,11 +38,16 @@ public class SMTPClient {
 
     @Async
     public void sendEmail(String targetEmail, String title, String content) {
-        SimpleMailMessage message = new SimpleMailMessage();
-        message.setTo(targetEmail);
-        message.setSubject(title);
-        message.setText(content);
-        mailSender.send(message);
+        MimeMessage mimeMessage = mailSender.createMimeMessage();
+        try {
+            MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true, "UTF-8");
+            helper.setTo(targetEmail);
+            helper.setSubject(title);
+            helper.setText(content, true);
+            mailSender.send(mimeMessage);
+        } catch (Exception e) {
+            throw new InternalServerException();
+        }
     }
 
 }
