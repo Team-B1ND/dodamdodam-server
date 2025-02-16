@@ -50,7 +50,7 @@ public class NoticeService {
         return noticeRepository.findAllByNoticeStatus(keyword, ids, noticeStatus, lastId, PageRequest.of(0, limit));
     }
 
-    public List<NoticeFile> getAllByNotices(List<Notice> notices){
+    public List<NoticeFile> getFilesByNotices(List<Notice> notices){
         return noticeFileRepository.findAllByNoticeIn(notices);
     }
 
@@ -58,7 +58,7 @@ public class NoticeService {
         if (notices.isEmpty()) {
             return Collections.emptyMap();
         }
-        return getAllByNotices(notices)
+        return getFilesByNotices(notices)
                 .stream()
                 .collect(Collectors.groupingBy(noticeFile -> noticeFile.getNotice().getId()));
     }

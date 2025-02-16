@@ -17,10 +17,10 @@ public interface NoticeRepository extends JpaRepository<Notice, Long> {
             join nd.division d
             join division_member dm on dm.division = d
             where dm.member.id = :memberId
-            and d.id = :divisionId
-            and n.id > :lastId
+            and (:lastId is null or n.id < :lastId)
+            and (:divisionId is null or d.id = :divisionId)
             order by n.createdAt desc
-            """)
+        """)
     List<Notice> findNoticesByMemberAndDivision(@Param("memberId") String memberId,
                                                 @Param("divisionId") Long divisionId,
                                                 @Param("lastId") Long lastId,
@@ -31,10 +31,10 @@ public interface NoticeRepository extends JpaRepository<Notice, Long> {
             join notice_division nd on nd.notice.id = n.id
             where nd.division.id in :ids
             and n.noticeStatus = :noticeStatus
-            and n.id > :lastId
-            and (:keyword is null or n.title like %:keyword%)
+            and (:lastId is null or n.id < :lastId)
+            and n.title like %:keyword%
             order by n.createdAt desc
-    """)
+        """)
     List<Notice> findAllByNoticeStatus(@Param("keyword") String keyword,
                                        @Param("ids") List<Long> ids,
                                        @Param("noticeStatus") NoticeStatus noticeStatus,

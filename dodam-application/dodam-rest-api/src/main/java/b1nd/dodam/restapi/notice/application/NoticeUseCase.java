@@ -62,8 +62,7 @@ public class NoticeUseCase {
     @Transactional(readOnly = true)
     public ResponseData<List<NoticeRes>> getNoticesByDivision(Long divisionId, Long lastId, int limit) {
         Member member = memberAuthenticationHolder.current();
-        Division division = divisionService.getById(divisionId);
-        List<Notice> notices = noticeService.getAllByDivision(member.getId(), division.getId(), lastId, limit);
+        List<Notice> notices = noticeService.getAllByDivision(member.getId(), divisionId, lastId, limit);
         List<NoticeRes> noticeResList = convertToNoticeRes(notices);
         return ResponseData.of(HttpStatus.OK, "카테고리별 공지 불러오기 성공", noticeResList);
     }

@@ -26,26 +26,24 @@ public class NoticeController {
     @GetMapping
     public ResponseData<List<NoticeRes>> getByStatus(
             @RequestParam String keyword,
-            @RequestParam Long lastId,
+            @RequestParam(required = false) Long lastId,
             @RequestParam int limit,
             @RequestParam NoticeStatus status
     ){
         return noticeUseCase.getNotices(keyword, lastId, limit, status);
     }
 
-    @GetMapping("/{id}/division")
+    @GetMapping("/division")
     public ResponseData<List<NoticeRes>> getById(
-            @PathVariable Long id,
-            @RequestParam Long lastId,
+            @RequestParam(required = false) Long id,
+            @RequestParam(required = false) Long lastId,
             @RequestParam int limit
     ){
         return noticeUseCase.getNoticesByDivision(id, lastId, limit);
     }
 
     @DeleteMapping("/{id}")
-    public Response deleteById(
-            @PathVariable Long id
-    ){
+    public Response deleteById(@PathVariable Long id){
         return noticeUseCase.deleteNotice(id);
     }
 
