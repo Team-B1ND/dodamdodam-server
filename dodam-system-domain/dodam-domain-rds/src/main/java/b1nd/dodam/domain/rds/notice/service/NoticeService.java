@@ -1,9 +1,14 @@
 package b1nd.dodam.domain.rds.notice.service;
 
+import b1nd.dodam.domain.rds.member.entity.Member;
 import b1nd.dodam.domain.rds.notice.entity.Notice;
+import b1nd.dodam.domain.rds.notice.entity.NoticeDivision;
 import b1nd.dodam.domain.rds.notice.entity.NoticeFile;
 import b1nd.dodam.domain.rds.notice.enumration.NoticeStatus;
+import b1nd.dodam.domain.rds.notice.exception.NoticeDivisionNotFoundException;
 import b1nd.dodam.domain.rds.notice.exception.NoticeNotFoundException;
+import b1nd.dodam.domain.rds.notice.exception.UserNotAuthorException;
+import b1nd.dodam.domain.rds.notice.repository.NoticeDivisionRepository;
 import b1nd.dodam.domain.rds.notice.repository.NoticeFileRepository;
 import b1nd.dodam.domain.rds.notice.repository.NoticeRepository;
 import lombok.RequiredArgsConstructor;
@@ -20,16 +25,29 @@ import java.util.stream.Collectors;
 public class NoticeService {
 
     private final NoticeRepository noticeRepository;
-
     private final NoticeFileRepository noticeFileRepository;
+    private final NoticeDivisionRepository noticeDivisionRepository;
+
+    public void save(NoticeDivision noticeDivision){
+        noticeDivisionRepository.save(noticeDivision);
+    }
 
     public Notice save(Notice notice){
         noticeRepository.save(notice);
         return notice;
     }
 
+    public NoticeDivision getNoticeDivisionById(Long id){
+        return noticeDivisionRepository.findById(id)
+                .orElseThrow(NoticeDivisionNotFoundException::new);
+    }
+
     public void saveAllNoticeFiles(List<NoticeFile> noticeFiles){
         noticeFileRepository.saveAll(noticeFiles);
+    }
+
+    public void saveAll(List<NoticeDivision> noticeDivisions){
+        noticeDivisionRepository.saveAll(noticeDivisions);
     }
 
     public void changeStatus(Long id, NoticeStatus noticeStatus){
@@ -63,7 +81,12 @@ public class NoticeService {
                 .collect(Collectors.groupingBy(noticeFile -> noticeFile.getNotice().getId()));
     }
 
-    public void deleteNotice(Notice notice){
+    public void deleteNotice(Notice notice, Member member){
+        if (!notice.getMember().getId().equals(member.getId())){
+            throw new UserNotAuthorException();
+        }
+        noticeFileRepository.deleteByNotice(notice);
+        noticeDivisionRepository.deleteByNotice(notice);
         noticeRepository.delete(notice);
     }
 

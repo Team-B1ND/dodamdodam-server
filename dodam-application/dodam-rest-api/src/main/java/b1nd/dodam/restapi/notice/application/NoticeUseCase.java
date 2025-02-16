@@ -8,7 +8,6 @@ import b1nd.dodam.domain.rds.notice.entity.Notice;
 import b1nd.dodam.domain.rds.notice.entity.NoticeDivision;
 import b1nd.dodam.domain.rds.notice.entity.NoticeFile;
 import b1nd.dodam.domain.rds.notice.enumration.NoticeStatus;
-import b1nd.dodam.domain.rds.notice.service.NoticeDivisionService;
 import b1nd.dodam.domain.rds.notice.service.NoticeService;
 import b1nd.dodam.restapi.auth.infrastructure.security.support.MemberAuthenticationHolder;
 import b1nd.dodam.restapi.notice.application.data.req.GenerateNoticeReq;
@@ -31,7 +30,6 @@ public class NoticeUseCase {
 
     private final NoticeService noticeService;
     private final DivisionService divisionService;
-    private final NoticeDivisionService noticeDivisionService;
     private final DivisionMemberService divisionMemberService;
     private final MemberAuthenticationHolder memberAuthenticationHolder;
 
@@ -44,7 +42,7 @@ public class NoticeUseCase {
 
         List<Division> divisions = divisionService.getAllByIds(generateNoticeReq.divisions());
         List<NoticeDivision> noticeDivisions = generateNoticeReq.toEntity(notice, divisions);
-        noticeDivisionService.saveAll(noticeDivisions);
+        noticeService.saveAll(noticeDivisions);
 
         noticeService.changeStatus(notice.getId(), NoticeStatus.CREATED);
         return ResponseData.of(HttpStatus.OK, "공지 생성 성공", notice.getId());
@@ -68,8 +66,9 @@ public class NoticeUseCase {
     }
 
     public Response deleteNotice(Long id){
+        Member member = memberAuthenticationHolder.current();
         Notice notice = noticeService.getById(id);
-        noticeService.deleteNotice(notice);
+        noticeService.deleteNotice(notice, member);
          return Response.ok("공지 삭제 성공");
     }
 

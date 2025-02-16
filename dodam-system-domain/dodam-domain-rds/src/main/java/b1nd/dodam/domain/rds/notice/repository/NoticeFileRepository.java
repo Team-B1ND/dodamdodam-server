@@ -9,5 +9,6 @@ import java.util.List;
 public interface NoticeFileRepository extends JpaRepository<NoticeFile, Long> {
 
     List<NoticeFile> findAllByNoticeIn(List<Notice> notices);
+    void deleteByNotice(Notice notice);
 
 }
