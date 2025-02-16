@@ -1,14 +1,13 @@
-package b1nd.dodam.domain.rds.division.exception;
+package b1nd.dodam.domain.rds.notice.exception;
 
 import b1nd.dodam.core.exception.ExceptionCode;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
-public enum DivisionExceptionCode implements ExceptionCode {
-    DIVISION_NOT_FOUND(404, "없는 조직"),
-    DIVISION_MEMBER_NOT_FOUNT(404, "없는 조직원"),
-    DIVISION_NAME_DUPLICATE(400, "중복되는 이름"),
-    DIVISION_MEMBER_DUPLICATE(409, "존재하는 조직원");
+public enum NoticeExceptionCode implements ExceptionCode {
+
+    NOT_APPLICANT(403, "작성자가 아님"),
+    NOT_FOUND(404, "찾을 수 없음");
 
     private final int status;
     private final String message;
@@ -27,4 +26,5 @@ public enum DivisionExceptionCode implements ExceptionCode {
     public String getMessage() {
         return this.message;
     }
+
 }

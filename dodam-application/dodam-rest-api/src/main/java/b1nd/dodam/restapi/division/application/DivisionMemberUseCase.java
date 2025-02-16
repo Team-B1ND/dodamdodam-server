@@ -1,9 +1,12 @@
 package b1nd.dodam.restapi.division.application;
 
 import b1nd.dodam.domain.rds.division.entity.Division;
+import b1nd.dodam.domain.rds.division.entity.DivisionMember;
 import b1nd.dodam.domain.rds.division.enumeration.DivisionPermission;
 import b1nd.dodam.domain.rds.division.service.DivisionMemberService;
 import b1nd.dodam.domain.rds.division.service.DivisionService;
+import b1nd.dodam.domain.rds.member.entity.Member;
+import b1nd.dodam.domain.rds.member.entity.Student;
 import b1nd.dodam.domain.rds.member.repository.MemberRepository;
 import b1nd.dodam.domain.rds.member.repository.StudentRepository;
 import b1nd.dodam.domain.rds.support.enumeration.ApprovalStatus;
@@ -17,6 +20,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
 
 @Component
 @RequiredArgsConstructor
@@ -44,9 +48,12 @@ public class DivisionMemberUseCase {
     }
 
     public Response applyDivision(Long id){
+        Division division = divisionService.getById(id);
+        Member currentMember = authHolder.current();
+        divisionMemberService.checkUniqueMemberInDivision(division, currentMember);
         divisionMemberService.saveWithBuild(
-                divisionService.getById(id),
-                List.of(authHolder.current()),
+                division,
+                List.of(currentMember),
                 ApprovalStatus.PENDING,
                 DivisionPermission.READER
         );
@@ -58,14 +65,19 @@ public class DivisionMemberUseCase {
         return Response.ok("조직 수락/거절/취소 성공");
     }
 
+    public Response handleMemberPermission(Long divisionMemberId, DivisionPermission permission) {
+        DivisionMember divisionMember = divisionMemberService.getById(divisionMemberId);
+        divisionMember.modifyPermission(permission);
+        divisionMemberService.save(divisionMember);
+        return Response.ok("조직원 권한 수정 성공");
+    }
+
     @Transactional(readOnly = true)
     public ResponseData<List<DivisionMemberRes>> getDivisionMemberByDivisionId(Long id, ApprovalStatus status) {
         Division division = divisionService.getById(id);
-        List<DivisionMemberRes> response = divisionMemberService.getByDivisionAndStatus(division, status)
-                .parallelStream()
-                .map(dm -> DivisionMemberRes.of(dm, studentRepository.getByMember(dm.getMember())))
-                .toList();
-        return ResponseData.ok("조직 내 멤버 조회 성공", response);
+        List<DivisionMember> divisionMembers = divisionMemberService.getByDivisionAndStatus(division, status);
+        Map<Member, Student> studentMap = studentRepository.getStudentMapByDivisionMembers(divisionMembers);
+        return ResponseData.ok("조직 내 멤버 조회 성공", DivisionMemberRes.of(divisionMembers, studentMap));
     }
 
     @Transactional(readOnly = true)

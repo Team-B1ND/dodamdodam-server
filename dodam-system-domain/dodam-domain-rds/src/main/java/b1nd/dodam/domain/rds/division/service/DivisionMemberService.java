@@ -4,6 +4,7 @@ import b1nd.dodam.core.exception.global.InvalidPermissionException;
 import b1nd.dodam.domain.rds.division.entity.Division;
 import b1nd.dodam.domain.rds.division.entity.DivisionMember;
 import b1nd.dodam.domain.rds.division.enumeration.DivisionPermission;
+import b1nd.dodam.domain.rds.division.exception.DivisionMemberDuplicateException;
 import b1nd.dodam.domain.rds.division.exception.DivisionMemberNotFoundException;
 import b1nd.dodam.domain.rds.division.repository.DivisionMemberRepository;
 import b1nd.dodam.domain.rds.member.entity.Member;
@@ -22,6 +23,10 @@ public class DivisionMemberService {
     public void modifyDivisionMembers(List<DivisionMember> divisionMembers, ApprovalStatus status) {
         divisionMembers.forEach(divisionMember -> divisionMember.modifyStatus(status));
         repository.saveAll(divisionMembers);
+    }
+
+    public void save(DivisionMember divisionMember) {
+        repository.save(divisionMember);
     }
 
     public void saveWithBuild(Division division, List<Member> members, ApprovalStatus status, DivisionPermission permission) {
@@ -79,4 +84,16 @@ public class DivisionMemberService {
     public List<DivisionMember> getByDivisionAndStatus(Division division, ApprovalStatus status) {
         return repository.findByDivisionAndStatus(division, status);
     }
+
+    public void checkUniqueMemberInDivision(Division division, Member member) {
+        boolean exists = repository.existsByDivisionAndMemberAndStatusNot(division, member, ApprovalStatus.REJECTED);
+        if (exists) {
+            throw new DivisionMemberDuplicateException();
+        }
+    }
+  
+    public List<Long> getIdsByMember(Member member){
+        return repository.findDivisionIdByMember(member);
+    }
+
 }

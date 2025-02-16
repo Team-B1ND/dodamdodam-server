@@ -1,5 +1,6 @@
 package b1nd.dodam.restapi.division.presentation;
 
+import b1nd.dodam.domain.rds.division.enumeration.DivisionPermission;
 import b1nd.dodam.domain.rds.support.enumeration.ApprovalStatus;
 import b1nd.dodam.restapi.division.application.DivisionMemberUseCase;
 import b1nd.dodam.restapi.division.application.DivisionUseCase;
@@ -49,17 +50,19 @@ public class DivisionController {
     @GetMapping
     public ResponseData<List<DivisionOverviewRes>> getAllDivisions(
             @RequestParam Long lastId,
-            @RequestParam int limit
+            @RequestParam int limit,
+            @RequestParam String keyword
     ) {
-        return divisionUseCase.getDivisions(lastId, limit);
+        return divisionUseCase.getDivisions(lastId, limit, keyword);
     }
 
     @GetMapping("/my")
     public ResponseData<List<DivisionOverviewRes>> getMyDivisions(
             @RequestParam Long lastId,
-            @RequestParam int limit
+            @RequestParam int limit,
+            @RequestParam String keyword
     ) {
-        return divisionUseCase.getMyDivisions(lastId, limit);
+        return divisionUseCase.getMyDivisions(lastId, limit, keyword);
     }
 
     @PostMapping("/{id}/members/apply")
@@ -82,6 +85,15 @@ public class DivisionController {
             @RequestParam ApprovalStatus status
     ) {
         return divisionMemberUseCase.handleDivisionApplication(idList, status);
+    }
+
+    @PatchMapping("/{id}/members/{divisionMemberId}/permission")
+    public Response handleMemberPermission(
+            @PathVariable Long id,
+            @PathVariable Long divisionMemberId,
+            @RequestParam DivisionPermission permission
+    ) {
+        return divisionMemberUseCase.handleMemberPermission(divisionMemberId, permission);
     }
 
     @DeleteMapping("/{id}/members")

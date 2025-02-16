@@ -61,14 +61,17 @@ public class DivisionUseCase {
     }
 
     @Transactional(readOnly = true)
-    public ResponseData<List<DivisionOverviewRes>> getMyDivisions(Long lastId, int limit){
-        List<Division> divisions = divisionService.getByMember(authHolder.current(), lastId, limit);
+    public ResponseData<List<DivisionOverviewRes>> getMyDivisions(Long lastId, int limit, String keyword){
+        List<Division> divisions = divisionService.getByMember(authHolder.current(), lastId, limit, keyword);
         return ResponseData.ok("내 조직 조회 성공", DivisionOverviewRes.of(divisions));
     }
 
     @Transactional(readOnly = true)
-    public ResponseData<List<DivisionOverviewRes>> getDivisions(Long lastId, int limit){
-        return ResponseData.ok("전체 조직 조회 성공", DivisionOverviewRes.of(divisionService.getAll(lastId, limit)));
+    public ResponseData<List<DivisionOverviewRes>> getDivisions(Long lastId, int limit, String keyword){
+        return ResponseData.ok(
+                "전체 조직 조회 성공",
+                DivisionOverviewRes.of(divisionService.getAll(lastId, limit, keyword))
+        );
     }
 
     private Division getDivisionByIdWithValidateAdmin(Long id){

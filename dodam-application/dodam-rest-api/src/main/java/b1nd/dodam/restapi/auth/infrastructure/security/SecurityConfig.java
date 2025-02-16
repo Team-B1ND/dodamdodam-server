@@ -58,6 +58,7 @@ class SecurityConfig {
                 .requestMatchers(POST, "/member/**").permitAll()
                 .requestMatchers(GET, "/member/my").authenticated()
                 .requestMatchers(GET, "/member/check/broadcast-club-member").hasAnyRole(STUDENT, ADMIN)
+                .requestMatchers(GET, "/member/code/**").permitAll()
                 .requestMatchers(GET, "/member/**").hasAnyRole(TEACHER, ADMIN)
                 .requestMatchers(PATCH, "/member/student/info/**").hasAnyRole(STUDENT, ADMIN)
                 .requestMatchers(PATCH, "/member/teacher/info/**").hasAnyRole(TEACHER, ADMIN)
@@ -116,6 +117,10 @@ class SecurityConfig {
                 .requestMatchers(GET, "/divisions/**").authenticated()
                 .requestMatchers(PATCH, "/divisions/**").authenticated()
                 .requestMatchers(DELETE, "/divisions/**").authenticated()
+
+                .requestMatchers(POST, "/notice").hasAnyRole(TEACHER, ADMIN)
+                .requestMatchers(PATCH, "/notice/{id}/create").hasAnyRole(TEACHER, ADMIN)
+                .requestMatchers(GET, "/notice/**").authenticated()
 
                 .anyRequest().authenticated()
                 .and()

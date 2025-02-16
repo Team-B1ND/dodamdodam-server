@@ -1,5 +1,6 @@
 package b1nd.dodam.domain.rds.member.repository;
 
+import b1nd.dodam.domain.rds.division.entity.DivisionMember;
 import b1nd.dodam.domain.rds.member.entity.Member;
 import b1nd.dodam.domain.rds.member.entity.Student;
 import b1nd.dodam.domain.rds.member.enumeration.ActiveStatus;
@@ -10,7 +11,9 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 public interface StudentRepository extends JpaRepository<Student, Integer> {
 
@@ -50,6 +53,20 @@ public interface StudentRepository extends JpaRepository<Student, Integer> {
     @Query("SELECT s FROM student s WHERE s.id NOT IN :ids AND s.member.status = :activeStatus")
     List<Student> findAllByIdNotIn(@Param("ids") List<Integer> ids, @Param("activeStatus") ActiveStatus activeStatus);
 
+    @EntityGraph(attributePaths = {"member"})
+    List<Student> findByMemberIn(List<Member> member);
+
+    default Map<Member, Student> getStudentMapByDivisionMembers(List<DivisionMember> divisionMembers) {
+        List<Member> members = divisionMembers.stream()
+                .map(DivisionMember::getMember)
+                .toList();
+
+        return findByMemberIn(members).stream()
+                .collect(Collectors.toMap(Student::getMember, student -> student));
+    }
+  
     Optional<Student> findByCode(String code);
+
+    boolean existsByCode(String code);
 
 }

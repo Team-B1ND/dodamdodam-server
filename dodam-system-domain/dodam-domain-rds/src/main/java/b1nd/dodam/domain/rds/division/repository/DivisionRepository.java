@@ -10,15 +10,34 @@ import java.util.List;
 import java.util.Optional;
 
 public interface DivisionRepository extends JpaRepository<Division, Long> {
-    @Query("SELECT d FROM division d " +
-            "JOIN division_member dm ON dm.division = d " +
-            "WHERE dm.member = :member " +
-            "AND d.id > :lastId " +
-            "ORDER BY d.id ASC")
-    List<Division> findByMember(@Param("member") Member member, @Param("lastId") Long lastId, Pageable pageable);
+    @Query("""
+    SELECT d FROM division d 
+    JOIN division_member dm ON dm.division = d 
+    WHERE dm.member = :member 
+    AND d.id > :lastId 
+    AND (:keyword IS NULL OR d.name LIKE %:keyword% OR d.description LIKE %:keyword%) 
+    ORDER BY d.id ASC
+""")
+    List<Division> findByMember(
+            @Param("member") Member member,
+            @Param("lastId") Long lastId,
+            @Param("keyword") String keyword,
+            Pageable pageable
+    );
 
-    @Query("SELECT d FROM division d WHERE d.id > :lastId ORDER BY d.id ASC")
-    List<Division> findNextPageWithCursor(@Param("lastId") Long lastId, Pageable pageable);
+    @Query("""
+    SELECT d FROM division d 
+    WHERE d.id > :lastId 
+    AND (:keyword IS NULL OR d.name LIKE %:keyword%)
+    ORDER BY d.id ASC
+    """)
+    List<Division> findNextPageWithCursor(
+            @Param("lastId") Long lastId,
+            @Param("keyword") String keyword,
+            Pageable pageable
+    );
 
     Optional<Division> findByName(String name);
+
+//    List<Division> findAllById(List<Long> ids);
 }

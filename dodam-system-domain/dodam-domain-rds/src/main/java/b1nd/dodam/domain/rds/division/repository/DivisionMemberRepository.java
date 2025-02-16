@@ -6,6 +6,8 @@ import b1nd.dodam.domain.rds.member.entity.Member;
 import b1nd.dodam.domain.rds.support.enumeration.ApprovalStatus;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 
@@ -13,6 +15,8 @@ public interface DivisionMemberRepository extends JpaRepository<DivisionMember, 
     void deleteAllByDivision(Division division);
 
     DivisionMember findByDivisionAndMember(Division division, Member member);
+
+    Boolean existsByDivisionAndMemberAndStatusNot(Division division, Member member, ApprovalStatus status);
 
     DivisionMember findByDivisionAndMemberAndStatus(Division division, Member member, ApprovalStatus status);
 
@@ -23,4 +27,8 @@ public interface DivisionMemberRepository extends JpaRepository<DivisionMember, 
     List<DivisionMember> findByDivisionAndStatus(Division division, ApprovalStatus status);
 
     Long countByDivisionAndStatus(Division division, ApprovalStatus status);
+
+    @Query("select dm.division.id from division_member dm where dm.member = :member")
+    List<Long> findDivisionIdByMember(@Param("member") Member member);
+
 }
