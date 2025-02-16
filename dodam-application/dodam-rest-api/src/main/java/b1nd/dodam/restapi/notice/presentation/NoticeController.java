@@ -4,6 +4,7 @@ import b1nd.dodam.domain.rds.notice.enumration.NoticeStatus;
 import b1nd.dodam.restapi.notice.application.NoticeUseCase;
 import b1nd.dodam.restapi.notice.application.data.req.GenerateNoticeReq;
 import b1nd.dodam.restapi.notice.application.data.res.NoticeRes;
+import b1nd.dodam.restapi.support.data.Response;
 import b1nd.dodam.restapi.support.data.ResponseData;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -34,11 +35,18 @@ public class NoticeController {
 
     @GetMapping("/{id}/division")
     public ResponseData<List<NoticeRes>> getById(
-            @RequestParam Long id,
+            @PathVariable Long id,
             @RequestParam Long lastId,
             @RequestParam int limit
     ){
         return noticeUseCase.getNoticesByDivision(id, lastId, limit);
+    }
+
+    @DeleteMapping("/{id}")
+    public Response deleteById(
+            @PathVariable Long id
+    ){
+        return noticeUseCase.deleteNotice(id);
     }
 
 }

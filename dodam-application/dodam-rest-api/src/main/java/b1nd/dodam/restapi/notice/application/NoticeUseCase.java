@@ -13,6 +13,7 @@ import b1nd.dodam.domain.rds.notice.service.NoticeService;
 import b1nd.dodam.restapi.auth.infrastructure.security.support.MemberAuthenticationHolder;
 import b1nd.dodam.restapi.notice.application.data.req.GenerateNoticeReq;
 import b1nd.dodam.restapi.notice.application.data.res.NoticeRes;
+import b1nd.dodam.restapi.support.data.Response;
 import b1nd.dodam.restapi.support.data.ResponseData;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -65,6 +66,12 @@ public class NoticeUseCase {
         List<Notice> notices = noticeService.getAllByDivision(member.getId(), division.getId(), lastId, limit);
         List<NoticeRes> noticeResList = convertToNoticeRes(notices);
         return ResponseData.of(HttpStatus.OK, "카테고리별 공지 불러오기 성공", noticeResList);
+    }
+
+    public Response deleteNotice(Long id){
+        Notice notice = noticeService.getById(id);
+        noticeService.deleteNotice(notice);
+         return Response.ok("공지 삭제 성공");
     }
 
     private List<NoticeRes> convertToNoticeRes(List<Notice> notices) {

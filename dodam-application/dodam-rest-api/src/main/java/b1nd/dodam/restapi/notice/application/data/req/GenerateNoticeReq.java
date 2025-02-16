@@ -10,9 +10,6 @@ import b1nd.dodam.restapi.notice.application.data.File;
 import jakarta.validation.constraints.NotEmpty;
 
 import java.util.List;
-import java.util.stream.Collectors;
-
-import static b1nd.dodam.domain.rds.notice.enumration.NoticeStatus.DRAFT;
 
 public record GenerateNoticeReq (@NotEmpty String title, @NotEmpty String content, List<File> files,
                                  List<Long> divisions){

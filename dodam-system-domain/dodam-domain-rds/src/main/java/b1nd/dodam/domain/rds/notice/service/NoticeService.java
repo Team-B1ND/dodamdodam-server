@@ -58,10 +58,13 @@ public class NoticeService {
         if (notices.isEmpty()) {
             return Collections.emptyMap();
         }
-
         return getAllByNotices(notices)
                 .stream()
                 .collect(Collectors.groupingBy(noticeFile -> noticeFile.getNotice().getId()));
+    }
+
+    public void deleteNotice(Notice notice){
+        noticeRepository.delete(notice);
     }
 
 }
