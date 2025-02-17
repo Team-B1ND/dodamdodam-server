@@ -5,6 +5,7 @@ import b1nd.dodam.domain.rds.club.enumeration.ClubType;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -36,4 +37,14 @@ public class Club {
     @NotNull
     @Enumerated(EnumType.STRING)
     private ClubState state;
+
+    @Builder
+    public Club(String name, String shortDescription, String description, String subject, ClubType type, ClubState state) {
+        this.name = name;
+        this.shortDescription = shortDescription;
+        this.description = description;
+        this.subject = subject;
+        this.type = type;
+        this.state = state;
+    }
 }
