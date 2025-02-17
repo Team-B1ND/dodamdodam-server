@@ -1,5 +1,6 @@
 package b1nd.dodam.domain.rds.club.entity;
 
+import b1nd.dodam.domain.rds.club.enumeration.ClubState;
 import b1nd.dodam.domain.rds.club.enumeration.ClubType;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
@@ -31,4 +32,8 @@ public class Club {
     @NotNull
     @Enumerated(EnumType.STRING)
     private ClubType type;
+
+    @NotNull
+    @Enumerated(EnumType.STRING)
+    private ClubState state;
 }
