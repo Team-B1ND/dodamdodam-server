@@ -28,18 +28,18 @@ public class ClubUseCase {
     public Response delete(UUID id) {
         Student student = studentRepository.getByMember(authHolder.current());
         Club club = clubService.findById(id);
-        clubStudentService.validateClubMemberAndOwner(club, student);
+        clubStudentService.validateClubMemberAndDirector(club, student);
         clubService.deleteClub(club);
         return Response.noContent("동아리 삭제됨");
     }
 
     public Response save(CreateClubReq req, List<Integer> studentIds) {
-        Student owner = studentRepository.getByMember(authHolder.current());
+        Student director = studentRepository.getByMember(authHolder.current());
         clubService.checkIsNameDuplicated(req.name());
-        clubStudentService.validateClubOwnerDuplicated(owner);
+        clubStudentService.validateClubDirectorDuplicated(director);
         Club club = req.toEntity();
         clubService.save(club);
-        clubStudentService.saveOwner(club, owner);
+        clubStudentService.saveDirector(club, director);
         clubStudentService.saveWithBuild(club, studentRepository.getByIds(studentIds), ClubStudentStatus.WAITING);
         return Response.created("동아리 생성 완료");
     }

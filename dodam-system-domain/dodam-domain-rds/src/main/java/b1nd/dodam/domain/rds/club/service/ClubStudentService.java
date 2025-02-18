@@ -20,19 +20,19 @@ import java.util.List;
 public class ClubStudentService {
     private final ClubStudentRepository clubStudentRepository;
 
-    public void validateClubOwnerDuplicated(Student student) {
+    public void validateClubDirectorDuplicated(Student student) {
         if(clubStudentRepository.existsByStudentAndPermission(student, ClubPermission.DIRECTOR)) {
             throw new AlreadyClubOwnerException();
         }
     }
 
-    public void validateClubMemberAndOwner(Club club, Student student) {
+    public void validateClubMemberAndDirector(Club club, Student student) {
         if(!clubStudentRepository.existsByClubAndStudentAndPermission(club, student, ClubPermission.DIRECTOR)) {
             throw new ClubPermissionDeniedException();
         }
     }
 
-    public void saveOwner(Club club, Student student) {
+    public void saveDirector(Club club, Student student) {
         rejectActivityClubMember(student);
 
         clubStudentRepository.save(ClubMember.builder()
