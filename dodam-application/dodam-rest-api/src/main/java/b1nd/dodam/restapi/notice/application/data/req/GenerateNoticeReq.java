@@ -39,13 +39,13 @@ public record GenerateNoticeReq (@NotEmpty String title, @NotEmpty String conten
                 .toList();
     }
 
-    public List<NoticeDivision> toEntity(Notice notice, List<Division> divisions) {
+    public List<NoticeDivision> toNoticeDivisions(Notice notice, List<Division> divisions) {
         return divisions.stream()
-                .map(division -> GenerateNoticeReq.toEntity(notice, division))
+                .map(division -> GenerateNoticeReq.toNoticeDivision(notice, division))
                 .toList();
     }
 
-    public static NoticeDivision toEntity(Notice notice, Division division){
+    public static NoticeDivision toNoticeDivision(Notice notice, Division division){
         return NoticeDivision.builder()
                 .notice(notice)
                 .division(division)

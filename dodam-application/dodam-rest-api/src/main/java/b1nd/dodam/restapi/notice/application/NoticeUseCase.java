@@ -1,5 +1,6 @@
 package b1nd.dodam.restapi.notice.application;
 
+import b1nd.dodam.domain.rds.division.entity.Division;
 import b1nd.dodam.domain.rds.division.service.DivisionMemberService;
 import b1nd.dodam.domain.rds.division.service.DivisionService;
 import b1nd.dodam.domain.rds.member.entity.Member;
@@ -36,8 +37,8 @@ public class NoticeUseCase {
     public ResponseData<Long> register(GenerateNoticeReq generateNoticeReq) {
         Member member = memberAuthenticationHolder.current();
         Notice notice = noticeService.save(generateNoticeReq.toEntity(member));
-        List<NoticeDivision> noticeDivisions = generateNoticeReq.toEntity(notice, divisionService.getAllByIds(generateNoticeReq.divisions()));
-        saveFilesAndDivisions(generateNoticeReq.toNoticeFiles(notice), noticeDivisions);
+        List<Division> divisions = divisionService.getAllByIds(generateNoticeReq.divisions());
+        saveFilesAndDivisions(generateNoticeReq.toNoticeFiles(notice), generateNoticeReq.toNoticeDivisions(notice, divisions));
         return ResponseData.of(HttpStatus.OK, "공지 생성 성공", notice.getId());
     }
 
