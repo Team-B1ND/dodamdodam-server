@@ -19,13 +19,9 @@ import java.util.List;
 public class ClubMemberService {
     private final ClubMemberRepository clubMemberRepository;
 
-    public void rejectActivityClubMember(Member member) {
-        List<ClubMember> clubMembers = clubMemberRepository.findAllByMemberAndClub_Type(member, ClubType.CREATIVE_ACTIVITY_CLUB);
-        clubMembers.forEach(m -> m.modifyStatus(ClubMemberStatus.REJECTED));
-        clubMemberRepository.saveAll(clubMembers);
-    }
-
     public void saveOwner(Club club, Member member) {
+        rejectActivityClubMember(member);
+
         clubMemberRepository.save(ClubMember.builder()
                 .member(member)
                 .clubStatus(ClubMemberStatus.ALLOWED)
@@ -49,5 +45,11 @@ public class ClubMemberService {
         } catch (DataIntegrityViolationException e) {
             throw new AlreadyInTheClubException();
         }
+    }
+
+    private void rejectActivityClubMember(Member member) {
+        List<ClubMember> clubMembers = clubMemberRepository.findAllByMemberAndClub_Type(member, ClubType.CREATIVE_ACTIVITY_CLUB);
+        clubMembers.forEach(m -> m.modifyStatus(ClubMemberStatus.REJECTED));
+        clubMemberRepository.saveAll(clubMembers);
     }
 }

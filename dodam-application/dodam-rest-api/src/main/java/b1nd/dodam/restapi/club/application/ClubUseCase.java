@@ -30,7 +30,6 @@ public class ClubUseCase {
         Club club = req.toEntity();
         clubService.save(club);
         Member owner = authHolder.current();
-        clubMemberService.rejectActivityClubMember(owner);
         clubMemberService.saveOwner(club, owner);
         clubMemberService.saveWithBuild(club, memberIdList.stream().map(memberRepository::getById).toList(), ClubMemberStatus.WAITING);
         return Response.created("동아리 생성 완료");
