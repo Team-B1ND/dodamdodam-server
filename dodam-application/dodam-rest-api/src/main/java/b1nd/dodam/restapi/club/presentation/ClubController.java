@@ -4,6 +4,7 @@ import b1nd.dodam.restapi.club.application.ClubUseCase;
 import b1nd.dodam.restapi.club.application.data.req.CreateClubReq;
 import b1nd.dodam.restapi.club.application.data.req.UpdateClubInfoReq;
 import b1nd.dodam.restapi.support.data.Response;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,8 +19,8 @@ public class ClubController {
 
     @PostMapping
     public Response create(
-            @RequestBody CreateClubReq req,
-            @RequestParam List<Integer> studentIds
+            @RequestParam List<Integer> studentIds,
+            @RequestBody @Valid CreateClubReq req
     ) {
         return clubUseCase.save(req, studentIds);
     }
@@ -34,7 +35,7 @@ public class ClubController {
     @PatchMapping("/{id}")
     public Response update(
             @PathVariable UUID id,
-            @RequestBody UpdateClubInfoReq req
+            @RequestBody @Valid UpdateClubInfoReq req
     ) {
         return clubUseCase.update(id, req);
     }

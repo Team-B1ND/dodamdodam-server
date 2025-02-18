@@ -3,16 +3,16 @@ package b1nd.dodam.restapi.club.application.data.req;
 import b1nd.dodam.domain.rds.club.entity.Club;
 import b1nd.dodam.domain.rds.club.enumeration.ClubStatus;
 import b1nd.dodam.domain.rds.club.enumeration.ClubType;
-import b1nd.dodam.domain.rds.support.enumeration.ApprovalStatus;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 
 public record CreateClubReq(
-    @NotBlank String name,
-    @NotNull String subject,
-    @NotBlank String shortDescription,
-    String description,
-    ClubType type
+    @Size(max = 14) @NotBlank String name,
+    @Size(max = 4) @NotBlank String subject,
+    @Size(max = 17) @NotBlank String shortDescription,
+    @NotBlank String description,
+    @NotNull ClubType type
 ) {
     public Club toEntity() {
         return Club.builder()
