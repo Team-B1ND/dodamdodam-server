@@ -1,6 +1,7 @@
 package b1nd.dodam.domain.rds.club.entity;
 
 import b1nd.dodam.domain.rds.club.enumeration.ClubPermission;
+import b1nd.dodam.domain.rds.club.enumeration.ClubPriority;
 import b1nd.dodam.domain.rds.club.enumeration.ClubStatus;
 import b1nd.dodam.domain.rds.member.entity.Student;
 import jakarta.persistence.*;
@@ -37,7 +38,8 @@ public class ClubMember {
     @Enumerated(EnumType.STRING)
     private ClubStatus clubStatus;
 
-    private int choiceNumber;
+    @Enumerated(EnumType.STRING)
+    private ClubPriority priority;
 
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
@@ -52,10 +54,10 @@ public class ClubMember {
     private Club club;
 
     @Builder
-    public ClubMember(Student student, Club club, int choiceNumber, ClubStatus clubStatus, ClubPermission permission) {
+    public ClubMember(Student student, Club club, ClubPriority priority, ClubStatus clubStatus, ClubPermission permission) {
         this.student = student;
         this.club = club;
-        this.choiceNumber = choiceNumber;
+        this.priority = priority;
         this.clubStatus = clubStatus;
         this.permission = permission;
     }
