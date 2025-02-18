@@ -21,13 +21,13 @@ public class ClubStudentService {
     private final ClubStudentRepository clubStudentRepository;
 
     public void validateClubOwnerDuplicated(Student student) {
-        if(clubStudentRepository.existsByStudentAndPermission(student, ClubPermission.OWNER)) {
+        if(clubStudentRepository.existsByStudentAndPermission(student, ClubPermission.DIRECTOR)) {
             throw new AlreadyClubOwnerException();
         }
     }
 
     public void validateClubMemberAndOwner(Club club, Student student) {
-        if(!clubStudentRepository.existsByClubAndStudentAndPermission(club, student, ClubPermission.OWNER)) {
+        if(!clubStudentRepository.existsByClubAndStudentAndPermission(club, student, ClubPermission.DIRECTOR)) {
             throw new ClubPermissionDeniedException();
         }
     }
@@ -39,7 +39,7 @@ public class ClubStudentService {
                 .student(student)
                 .clubStatus(ClubStudentStatus.ALLOWED)
                 .club(club)
-                .permission(ClubPermission.OWNER)
+                .permission(ClubPermission.DIRECTOR)
                 .build()
         );
     }
