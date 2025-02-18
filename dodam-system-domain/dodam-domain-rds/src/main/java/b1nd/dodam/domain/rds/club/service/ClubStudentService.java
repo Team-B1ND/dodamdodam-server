@@ -21,28 +21,13 @@ import java.util.List;
 public class ClubStudentService {
     private final ClubStudentRepository clubStudentRepository;
 
-    private ClubMember createLeader(Club club, Student student) {
-        rejectActivityClubMember(student);
-        validateByLeaderDuplicated(student, club);
-        return ClubMember.builder()
-                .student(student)
-                .clubStatus(ClubStatus.ALLOWED)
-                .club(club)
-                .permission(ClubPermission.CLUB_LEADER)
-                .build();
-    }
-
     public void saveWithBuild(Club club, Student leader, List<Student> students) {
+        rejectActivityClubMember(leader);
+        validateByLeaderDuplicated(leader, club);
         validateClubMemberDuplicated(students, club);
         List<ClubMember> clubMembers = new ArrayList<>(students.stream()
-            .map(student -> ClubMember.builder()
-                .student(student)
-                .clubStatus(ClubStatus.PENDING)
-                .club(club)
-                .permission(ClubPermission.CLUB_MEMBER)
-                .build()
-            ).toList());
-        clubMembers.add(0, createLeader(club, leader));
+                .map(student -> createMember(club, student, ClubPermission.CLUB_MEMBER, ClubStatus.WAITING)).toList());
+        clubMembers.add(0, createMember(club, leader,  ClubPermission.CLUB_LEADER, ClubStatus.ALLOWED));
         clubStudentRepository.saveAll(clubMembers);
     }
 
@@ -71,5 +56,14 @@ public class ClubStudentService {
         List<ClubMember> clubMembers = clubStudentRepository.findAllByStudentAndClub_Type(student, ClubType.CREATIVE_ACTIVITY_CLUB);
         clubMembers.forEach(m -> m.modifyStatus(ClubStatus.REJECTED));
         clubStudentRepository.saveAll(clubMembers);
+    }
+
+    private ClubMember createMember(Club club, Student student, ClubPermission clubPermission, ClubStatus clubStatus) {
+        return ClubMember.builder()
+                .club(club)
+                .student(student)
+                .permission(clubPermission)
+                .clubStatus(clubStatus)
+                .build();
     }
 }
