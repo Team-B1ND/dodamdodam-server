@@ -27,14 +27,14 @@ public class ClubController {
 
     @DeleteMapping("/{id}")
     public Response delete(
-            @PathVariable UUID id
+            @PathVariable Long id
     ) {
         return clubUseCase.delete(id);
     }
 
     @PatchMapping("/{id}")
     public Response update(
-            @PathVariable UUID id,
+            @PathVariable Long id,
             @RequestBody @Valid UpdateClubInfoReq req
     ) {
         return clubUseCase.update(id, req);

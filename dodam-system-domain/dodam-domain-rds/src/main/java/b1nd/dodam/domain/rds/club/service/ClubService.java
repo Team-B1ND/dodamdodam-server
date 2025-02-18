@@ -7,8 +7,6 @@ import b1nd.dodam.domain.rds.club.repository.ClubRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.UUID;
-
 @Service
 @RequiredArgsConstructor
 public class ClubService {
@@ -24,7 +22,7 @@ public class ClubService {
         clubRepository.save(club);
     }
 
-    public Club findById(UUID id) {
+    public Club findById(Long id) {
         return clubRepository.findById(id)
                 .orElseThrow(ClubNotFoundException::new);
     }
