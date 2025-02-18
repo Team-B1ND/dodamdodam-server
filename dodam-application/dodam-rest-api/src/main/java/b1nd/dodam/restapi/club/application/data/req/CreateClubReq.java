@@ -7,12 +7,15 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
+import java.util.List;
+
 public record CreateClubReq(
     @Size(max = 14) @NotBlank String name,
     @Size(max = 4) @NotBlank String subject,
     @Size(max = 17) @NotBlank String shortDescription,
     @NotBlank String description,
-    @NotNull ClubType type
+    @NotNull ClubType type,
+    @NotNull List<Integer> studentIds
 ) {
     public Club toEntity() {
         return Club.builder()
