@@ -3,7 +3,7 @@ package b1nd.dodam.domain.rds.club.service;
 import b1nd.dodam.domain.rds.club.entity.Club;
 import b1nd.dodam.domain.rds.club.entity.ClubStudent;
 import b1nd.dodam.domain.rds.club.enumeration.ClubPermission;
-import b1nd.dodam.domain.rds.club.enumeration.ClubMemberStatus;
+import b1nd.dodam.domain.rds.club.enumeration.ClubStudentStatus;
 import b1nd.dodam.domain.rds.club.enumeration.ClubType;
 import b1nd.dodam.domain.rds.club.exception.AlreadyInTheClubException;
 import b1nd.dodam.domain.rds.club.repository.ClubMemberRepository;
@@ -24,19 +24,19 @@ public class ClubStudentService {
 
         clubMemberRepository.save(ClubStudent.builder()
                 .student(student)
-                .clubStatus(ClubMemberStatus.ALLOWED)
+                .clubStatus(ClubStudentStatus.ALLOWED)
                 .club(club)
                 .permission(ClubPermission.OWNER)
                 .build()
         );
     }
 
-    public void saveWithBuild(Club club, List<Student> students, ClubMemberStatus clubMemberStatus) {
+    public void saveWithBuild(Club club, List<Student> students, ClubStudentStatus clubStudentStatus) {
         try {
             clubMemberRepository.saveAll(students.stream()
                     .map(student -> ClubStudent.builder()
                             .student(student)
-                            .clubStatus(clubMemberStatus)
+                            .clubStatus(clubStudentStatus)
                             .club(club)
                             .permission(ClubPermission.MEMBER)
                             .build()
@@ -49,7 +49,7 @@ public class ClubStudentService {
 
     private void rejectActivityClubMember(Student student) {
         List<ClubStudent> clubStudents = clubMemberRepository.findAllByStudentAndClub_Type(student, ClubType.CREATIVE_ACTIVITY_CLUB);
-        clubStudents.forEach(m -> m.modifyStatus(ClubMemberStatus.REJECTED));
+        clubStudents.forEach(m -> m.modifyStatus(ClubStudentStatus.REJECTED));
         clubMemberRepository.saveAll(clubStudents);
     }
 }

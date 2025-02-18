@@ -1,7 +1,7 @@
 package b1nd.dodam.domain.rds.club.entity;
 
 import b1nd.dodam.domain.rds.club.enumeration.ClubPermission;
-import b1nd.dodam.domain.rds.club.enumeration.ClubMemberStatus;
+import b1nd.dodam.domain.rds.club.enumeration.ClubStudentStatus;
 import b1nd.dodam.domain.rds.member.entity.Student;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
@@ -35,7 +35,7 @@ public class ClubStudent {
 
     @NotNull
     @Enumerated(EnumType.STRING)
-    private ClubMemberStatus clubStatus;
+    private ClubStudentStatus clubStatus;
 
     private int choiceNumber;
 
@@ -52,7 +52,7 @@ public class ClubStudent {
     private Club club;
 
     @Builder
-    public ClubStudent(Student student, Club club, int choiceNumber, ClubMemberStatus clubStatus, ClubPermission permission) {
+    public ClubStudent(Student student, Club club, int choiceNumber, ClubStudentStatus clubStatus, ClubPermission permission) {
         this.student = student;
         this.club = club;
         this.choiceNumber = choiceNumber;
@@ -60,7 +60,7 @@ public class ClubStudent {
         this.permission = permission;
     }
 
-    public void modifyStatus(ClubMemberStatus status) {
+    public void modifyStatus(ClubStudentStatus status) {
         this.clubStatus = status;
     }
 }
