@@ -3,7 +3,7 @@ package b1nd.dodam.domain.rds.club.service;
 import b1nd.dodam.domain.rds.club.entity.Club;
 import b1nd.dodam.domain.rds.club.entity.ClubMember;
 import b1nd.dodam.domain.rds.club.enumeration.ClubPermission;
-import b1nd.dodam.domain.rds.club.enumeration.ClubStudentStatus;
+import b1nd.dodam.domain.rds.club.enumeration.ClubStatus;
 import b1nd.dodam.domain.rds.club.enumeration.ClubType;
 import b1nd.dodam.domain.rds.club.exception.AlreadyClubOwnerException;
 import b1nd.dodam.domain.rds.club.exception.AlreadyUserJoinCreativeClubException;
@@ -27,14 +27,14 @@ public class ClubStudentService {
         }
         clubStudentRepository.save(ClubMember.builder()
                 .student(student)
-                .clubStudentStatus(ClubStudentStatus.ALLOWED)
+                .clubStatus(ClubStatus.ALLOWED)
                 .club(club)
                 .permission(ClubPermission.DIRECTOR)
                 .build()
         );
     }
 
-    public void saveWithBuild(Club club, List<Student> students, ClubStudentStatus clubStudentStatus) {
+    public void saveWithBuild(Club club, List<Student> students, ClubStatus clubStatus) {
         if (clubStudentRepository.existsByStudentInAndClub(students, club)) {
             throw new AlreadyUserJoinCreativeClubException();
         }
@@ -44,7 +44,7 @@ public class ClubStudentService {
         clubStudentRepository.saveAll(students.stream()
                 .map(student -> ClubMember.builder()
                         .student(student)
-                        .clubStudentStatus(clubStudentStatus)
+                        .clubStatus(clubStatus)
                         .club(club)
                         .permission(ClubPermission.MEMBER)
                         .build()
@@ -65,14 +65,14 @@ public class ClubStudentService {
     }
 
     private void validateClubMemberDuplicated(List<Student> students) {
-        if (clubStudentRepository.existsByStudentInAndClubStatusAndClub_Type(students, ClubStudentStatus.ALLOWED, ClubType.CREATIVE_ACTIVITY_CLUB)) {
+        if (clubStudentRepository.existsByStudentInAndClubStatusAndClub_Type(students, ClubStatus.ALLOWED, ClubType.CREATIVE_ACTIVITY_CLUB)) {
             throw new AlreadyUserJoinCreativeClubException();
         }
     }
 
     private void rejectActivityClubMember(Student student) {
         List<ClubMember> clubMembers = clubStudentRepository.findAllByStudentAndClub_Type(student, ClubType.CREATIVE_ACTIVITY_CLUB);
-        clubMembers.forEach(m -> m.modifyStatus(ClubStudentStatus.REJECTED));
+        clubMembers.forEach(m -> m.modifyStatus(ClubStatus.REJECTED));
         clubStudentRepository.saveAll(clubMembers);
     }
 }
