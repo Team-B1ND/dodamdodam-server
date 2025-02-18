@@ -4,5 +4,4 @@ import b1nd.dodam.domain.rds.notice.entity.NoticeDivision;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface NoticeDivisionRepository extends JpaRepository<NoticeDivision, Long> {
-
 }

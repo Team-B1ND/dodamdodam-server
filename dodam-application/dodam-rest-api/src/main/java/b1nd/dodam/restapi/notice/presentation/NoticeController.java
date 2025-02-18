@@ -1,9 +1,10 @@
 package b1nd.dodam.restapi.notice.presentation;
 
-import b1nd.dodam.domain.rds.notice.enumration.NoticeStatus;
 import b1nd.dodam.restapi.notice.application.NoticeUseCase;
 import b1nd.dodam.restapi.notice.application.data.req.GenerateNoticeReq;
+import b1nd.dodam.restapi.notice.application.data.req.ModifyNoticeReq;
 import b1nd.dodam.restapi.notice.application.data.res.NoticeRes;
+import b1nd.dodam.restapi.support.data.Response;
 import b1nd.dodam.restapi.support.data.ResponseData;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -22,23 +23,33 @@ public class NoticeController {
         return noticeUseCase.register(generateNoticeReq);
     }
 
+    @PatchMapping("/{id}")
+    public Response modify(@PathVariable Long id,
+                           @RequestBody ModifyNoticeReq modifyNoticeReq){
+        return noticeUseCase.modify(id, modifyNoticeReq);
+    }
+
     @GetMapping
     public ResponseData<List<NoticeRes>> getByStatus(
             @RequestParam String keyword,
-            @RequestParam Long lastId,
-            @RequestParam int limit,
-            @RequestParam NoticeStatus status
+            @RequestParam(required = false) Long lastId,
+            @RequestParam int limit
     ){
-        return noticeUseCase.getNotices(keyword, lastId, limit, status);
+        return noticeUseCase.getNotices(keyword, lastId, limit);
     }
 
-    @GetMapping("/{id}/division")
+    @GetMapping("/division")
     public ResponseData<List<NoticeRes>> getById(
-            @RequestParam Long id,
-            @RequestParam Long lastId,
+            @RequestParam(required = false) Long id,
+            @RequestParam(required = false) Long lastId,
             @RequestParam int limit
     ){
         return noticeUseCase.getNoticesByDivision(id, lastId, limit);
+    }
+
+    @DeleteMapping("/{id}")
+    public Response deleteById(@PathVariable Long id){
+        return noticeUseCase.deleteNotice(id);
     }
 
 }
