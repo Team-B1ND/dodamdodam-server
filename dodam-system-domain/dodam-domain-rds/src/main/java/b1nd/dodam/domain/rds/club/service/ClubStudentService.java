@@ -22,9 +22,7 @@ public class ClubStudentService {
 
     public void saveLeader(Club club, Student student) {
         rejectActivityClubMember(student);
-        if (club.getType() == ClubType.CREATIVE_ACTIVITY_CLUB) {
-            validateByLeaderDuplicated(student);
-        }
+        validateByLeaderDuplicated(student, club);
         clubStudentRepository.save(ClubMember.builder()
                 .student(student)
                 .clubStatus(ClubStatus.ALLOWED)
@@ -38,9 +36,7 @@ public class ClubStudentService {
         if (clubStudentRepository.existsByStudentInAndClub(students, club)) {
             throw new AlreadyUserJoinCreativeClubException();
         }
-        if (club.getType() == ClubType.CREATIVE_ACTIVITY_CLUB) {
-            validateClubMemberDuplicated(students);
-        }
+        validateClubMemberDuplicated(students, club);
         clubStudentRepository.saveAll(students.stream()
                 .map(student -> ClubMember.builder()
                         .student(student)
@@ -58,14 +54,14 @@ public class ClubStudentService {
         }
     }
 
-    private void validateByLeaderDuplicated(Student student) {
-        if(clubStudentRepository.existsByStudentAndPermissionAndClub_Type(student, ClubPermission.CLUB_LEADER, ClubType.CREATIVE_ACTIVITY_CLUB)) {
+    private void validateByLeaderDuplicated(Student student, Club club) {
+        if(club.getType() == ClubType.CREATIVE_ACTIVITY_CLUB && clubStudentRepository.existsByStudentAndPermissionAndClub_Type(student, ClubPermission.CLUB_LEADER, ClubType.CREATIVE_ACTIVITY_CLUB)) {
             throw new AlreadyClubLeaderException();
         }
     }
 
-    private void validateClubMemberDuplicated(List<Student> students) {
-        if (clubStudentRepository.existsByStudentInAndClubStatusAndClub_Type(students, ClubStatus.ALLOWED, ClubType.CREATIVE_ACTIVITY_CLUB)) {
+    private void validateClubMemberDuplicated(List<Student> students, Club club) {
+        if (club.getType() == ClubType.CREATIVE_ACTIVITY_CLUB && clubStudentRepository.existsByStudentInAndClubStatusAndClub_Type(students, ClubStatus.ALLOWED, ClubType.CREATIVE_ACTIVITY_CLUB)) {
             throw new AlreadyUserJoinCreativeClubException();
         }
     }
