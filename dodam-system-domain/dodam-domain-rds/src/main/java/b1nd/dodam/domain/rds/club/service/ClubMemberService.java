@@ -34,10 +34,11 @@ public class ClubMemberService {
     public void saveWithBuild(Club club, List<Member> members, ClubStatus clubStatus) {
         clubMemberRepository.saveAll(members.stream()
             .map(member -> ClubMember.builder()
-                .club(club)
-                .member(member)
-                .clubStatus(clubStatus)
-                .build()
+                 .member(member)
+                 .clubStatus(clubStatus)
+                 .club(club)
+                 .permission(ClubPermission.MEMBER)
+                 .build()
             ).toList()
         );
     }
