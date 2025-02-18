@@ -1,7 +1,7 @@
 package b1nd.dodam.domain.rds.club.entity;
 
-import b1nd.dodam.domain.rds.club.enumeration.ClubState;
 import b1nd.dodam.domain.rds.club.enumeration.ClubType;
+import b1nd.dodam.domain.rds.support.enumeration.ApprovalStatus;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
@@ -36,10 +36,10 @@ public class Club {
 
     @NotNull
     @Enumerated(EnumType.STRING)
-    private ClubState state;
+    private ApprovalStatus state;
 
     @Builder
-    public Club(String name, String shortDescription, String description, String subject, ClubType type, ClubState state) {
+    public Club(String name, String shortDescription, String description, String subject, ClubType type, ApprovalStatus state) {
         this.name = name;
         this.shortDescription = shortDescription;
         this.description = description;
