@@ -84,13 +84,18 @@ public class MemberCommandUseCase {
         int authCode = RandomCode.randomCode();
         String identifier = authCodeReq.identifier();
         memberRedisService.updateAuthCode(authType, identifier, authCode);
+        checkType(authType, identifier, authCode);
+        return ResponseData.ok("인증코드 발급 성공");
+    }
+
+    private void checkType(AuthType authType, String identifier, int authCode){
         switch (authType) {
-            case EMAIL -> smtpClient.composeTemplate(identifier, MemberMessageUtil.createMessage(authCode), authCode);
+            case EMAIL -> smtpClient.composeEmailTemplate(identifier, MemberMessageUtil.createMessage(authCode), authCode);
             case PHONE -> memberService.issue(identifier, authCode);
             default -> throw new InternalServerException();
         }
-        return ResponseData.ok("인증코드 발급 성공");
     }
+
     public Response verifyAuthCode(String userAgent, AuthType authType, VerifyAuthCodeReq req) {
         memberRedisService.validateAuthCode(authType, req.identifier(), req.authCode());
         memberRedisService.updateUserAgentValidation(userAgent, authType, req.phone());

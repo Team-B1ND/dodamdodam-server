@@ -4,7 +4,6 @@ import b1nd.dodam.core.exception.global.InternalServerException;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.ClassPathResource;
-import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.annotation.Async;
@@ -22,9 +21,9 @@ public class SMTPClient {
 
     private final JavaMailSender mailSender;
 
-    public void composeTemplate(String targetEmail, String title, int authCode){
+    public void composeEmailTemplate(String targetEmail, String title, int authCode){
         try {
-            ClassPathResource resource = new ClassPathResource("email.html");
+            ClassPathResource resource = new ClassPathResource("authEmail.html");
             BufferedReader reader = new BufferedReader(
                     new InputStreamReader(resource.getInputStream(), StandardCharsets.UTF_8));
             String templateContent = reader.lines().collect(Collectors.joining("\n"));
