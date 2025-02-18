@@ -30,14 +30,12 @@ public interface NoticeRepository extends JpaRepository<Notice, Long> {
             select n from notice n
             join notice_division nd on nd.notice.id = n.id
             where nd.division.id in :ids
-            and n.noticeStatus = :noticeStatus
             and (:lastId is null or n.id < :lastId)
             and n.title like %:keyword%
             order by n.createdAt desc
         """)
     List<Notice> findAllByNoticeStatus(@Param("keyword") String keyword,
                                        @Param("ids") List<Long> ids,
-                                       @Param("noticeStatus") NoticeStatus noticeStatus,
                                        @Param("lastId") Long lastId,
                                        Pageable pageable);
 

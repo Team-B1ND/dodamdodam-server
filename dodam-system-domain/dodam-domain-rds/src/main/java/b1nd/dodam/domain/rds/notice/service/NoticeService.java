@@ -64,8 +64,8 @@ public class NoticeService {
         return noticeRepository.findNoticesByMemberAndDivision(memberId, divisionId, lastId, PageRequest.of(0, limit));
     }
 
-    public List<Notice> getAllByStatus(String keyword, List<Long> ids, NoticeStatus noticeStatus, Long lastId, int limit) {
-        return noticeRepository.findAllByNoticeStatus(keyword, ids, noticeStatus, lastId, PageRequest.of(0, limit));
+    public List<Notice> getAllByStatus(String keyword, List<Long> ids, Long lastId, int limit) {
+        return noticeRepository.findAllByNoticeStatus(keyword, ids, lastId, PageRequest.of(0, limit));
     }
 
     public List<NoticeFile> getFilesByNotices(List<Notice> notices){
@@ -85,9 +85,7 @@ public class NoticeService {
         if (!notice.getMember().getId().equals(member.getId())){
             throw new UserNotAuthorException();
         }
-        noticeFileRepository.deleteByNotice(notice);
-        noticeDivisionRepository.deleteByNotice(notice);
-        noticeRepository.delete(notice);
+        notice.setNoticeStatus(NoticeStatus.DELETED);
     }
 
 }

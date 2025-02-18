@@ -1,6 +1,5 @@
 package b1nd.dodam.restapi.notice.presentation;
 
-import b1nd.dodam.domain.rds.notice.enumration.NoticeStatus;
 import b1nd.dodam.restapi.notice.application.NoticeUseCase;
 import b1nd.dodam.restapi.notice.application.data.req.GenerateNoticeReq;
 import b1nd.dodam.restapi.notice.application.data.res.NoticeRes;
@@ -27,10 +26,9 @@ public class NoticeController {
     public ResponseData<List<NoticeRes>> getByStatus(
             @RequestParam String keyword,
             @RequestParam(required = false) Long lastId,
-            @RequestParam int limit,
-            @RequestParam NoticeStatus status
+            @RequestParam int limit
     ){
-        return noticeUseCase.getNotices(keyword, lastId, limit, status);
+        return noticeUseCase.getNotices(keyword, lastId, limit);
     }
 
     @GetMapping("/division")

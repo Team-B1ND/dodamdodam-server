@@ -49,10 +49,10 @@ public class NoticeUseCase {
     }
 
     @Transactional(readOnly = true)
-    public ResponseData<List<NoticeRes>> getNotices(String keyword, Long lastId, int limit, NoticeStatus status) {
+    public ResponseData<List<NoticeRes>> getNotices(String keyword, Long lastId, int limit) {
         Member member = memberAuthenticationHolder.current();
         List<Long> divisionIds = divisionMemberService.getIdsByMember(member);
-        List<Notice> notices = noticeService.getAllByStatus(keyword, divisionIds, status, lastId, limit);
+        List<Notice> notices = noticeService.getAllByStatus(keyword, divisionIds, lastId, limit);
         List<NoticeRes> noticeResList = convertToNoticeRes(notices);
         return ResponseData.of(HttpStatus.OK, "전체 공지 불러오기 성공", noticeResList);
     }
