@@ -5,7 +5,6 @@ import b1nd.dodam.domain.redis.member.exception.AuthCodeNotMatchException;
 import b1nd.dodam.domain.redis.member.exception.AuthInvalidException;
 import b1nd.dodam.domain.redis.support.config.MemberRedisProperties;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
@@ -16,7 +15,6 @@ import java.time.Duration;
 import java.util.Base64;
 import java.util.Optional;
 
-@Slf4j
 @Service
 @RequiredArgsConstructor
 public class MemberRedisService {
@@ -30,7 +28,6 @@ public class MemberRedisService {
         String key = String.format("%s:%s:%s", memberRedisProperties.getCode().key(), authType, identifier);
         redisTemplate.opsForValue()
                 .set(key, String.valueOf(authCode), Duration.ofMinutes(AUTH_CODE_EXPIRATION));
-        log.info("{}", authCode);
     }
 
     public void validateAuthCode(AuthType authType, String identifier, int authCode) {
