@@ -2,6 +2,7 @@ package b1nd.dodam.restapi.notice.presentation;
 
 import b1nd.dodam.restapi.notice.application.NoticeUseCase;
 import b1nd.dodam.restapi.notice.application.data.req.GenerateNoticeReq;
+import b1nd.dodam.restapi.notice.application.data.req.ModifyNoticeReq;
 import b1nd.dodam.restapi.notice.application.data.res.NoticeRes;
 import b1nd.dodam.restapi.support.data.Response;
 import b1nd.dodam.restapi.support.data.ResponseData;
@@ -20,6 +21,12 @@ public class NoticeController {
     @PostMapping
     public ResponseData<Long> generate(@RequestBody GenerateNoticeReq generateNoticeReq){
         return noticeUseCase.register(generateNoticeReq);
+    }
+
+    @PatchMapping("/{id}")
+    public Response modify(@PathVariable Long id,
+                           @RequestBody ModifyNoticeReq modifyNoticeReq){
+        return noticeUseCase.modify(id, modifyNoticeReq);
     }
 
     @GetMapping

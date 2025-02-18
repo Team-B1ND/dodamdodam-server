@@ -18,7 +18,7 @@ public record GenerateNoticeReq (@NotEmpty String title, @NotEmpty String conten
         Notice notice = Notice.builder()
                 .title(title)
                 .content(content)
-                .noticeStatus(NoticeStatus.DRAFT)
+                .noticeStatus(NoticeStatus.CREATED)
                 .member(member)
                 .build();
 

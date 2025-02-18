@@ -1,6 +1,5 @@
 package b1nd.dodam.restapi.notice.application;
 
-import b1nd.dodam.domain.rds.division.entity.Division;
 import b1nd.dodam.domain.rds.division.service.DivisionMemberService;
 import b1nd.dodam.domain.rds.division.service.DivisionService;
 import b1nd.dodam.domain.rds.member.entity.Member;
@@ -11,6 +10,7 @@ import b1nd.dodam.domain.rds.notice.enumration.NoticeStatus;
 import b1nd.dodam.domain.rds.notice.service.NoticeService;
 import b1nd.dodam.restapi.auth.infrastructure.security.support.MemberAuthenticationHolder;
 import b1nd.dodam.restapi.notice.application.data.req.GenerateNoticeReq;
+import b1nd.dodam.restapi.notice.application.data.req.ModifyNoticeReq;
 import b1nd.dodam.restapi.notice.application.data.res.NoticeRes;
 import b1nd.dodam.restapi.support.data.Response;
 import b1nd.dodam.restapi.support.data.ResponseData;
@@ -36,16 +36,20 @@ public class NoticeUseCase {
     public ResponseData<Long> register(GenerateNoticeReq generateNoticeReq) {
         Member member = memberAuthenticationHolder.current();
         Notice notice = noticeService.save(generateNoticeReq.toEntity(member));
-
-        List<NoticeFile> noticeFiles = generateNoticeReq.toNoticeFiles(notice);
-        noticeService.saveAllNoticeFiles(noticeFiles);
-
-        List<Division> divisions = divisionService.getAllByIds(generateNoticeReq.divisions());
-        List<NoticeDivision> noticeDivisions = generateNoticeReq.toEntity(notice, divisions);
-        noticeService.saveAll(noticeDivisions);
-
-        noticeService.changeStatus(notice.getId(), NoticeStatus.CREATED);
+        List<NoticeDivision> noticeDivisions = generateNoticeReq.toEntity(notice, divisionService.getAllByIds(generateNoticeReq.divisions()));
+        saveFilesAndDivisions(generateNoticeReq.toNoticeFiles(notice), noticeDivisions);
         return ResponseData.of(HttpStatus.OK, "공지 생성 성공", notice.getId());
+    }
+
+    private void saveFilesAndDivisions(List<NoticeFile> noticeFiles, List<NoticeDivision> noticeDivisions){
+        noticeService.saveAllNoticeFiles(noticeFiles);
+        noticeService.saveAll(noticeDivisions);
+    }
+
+    public Response modify(Long id, ModifyNoticeReq modifyNoticeReq){
+        Member member = memberAuthenticationHolder.current();
+        noticeService.updateNotice(id, member, modifyNoticeReq.title(), modifyNoticeReq.content());
+        return Response.ok("공지 수정 성공");
     }
 
     @Transactional(readOnly = true)
@@ -67,8 +71,7 @@ public class NoticeUseCase {
 
     public Response deleteNotice(Long id){
         Member member = memberAuthenticationHolder.current();
-        Notice notice = noticeService.getById(id);
-        noticeService.deleteNotice(notice, member);
+        noticeService.changeStatus(id, member, NoticeStatus.DELETED);
          return Response.ok("공지 삭제 성공");
     }
 
