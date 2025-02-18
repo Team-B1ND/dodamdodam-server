@@ -60,12 +60,7 @@ public class NoticeService {
     public void updateNotice(Long id, Member member, String title, String content){
         Notice notice = getById(id);
         checkPermission(notice, member);
-        if (title != null){
-            notice.setTitle(title);
-        }
-        if (content != null){
-            notice.setContent(content);
-        }
+        notice.updateNotice(title, content);
     }
 
     private void checkPermission(Notice notice, Member member) {

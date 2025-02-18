@@ -58,16 +58,14 @@ public class NoticeUseCase {
         Member member = memberAuthenticationHolder.current();
         List<Long> divisionIds = divisionMemberService.getIdsByMember(member);
         List<Notice> notices = noticeService.getAllByStatus(keyword, divisionIds, lastId, limit);
-        List<NoticeRes> noticeResList = convertToNoticeRes(notices);
-        return ResponseData.of(HttpStatus.OK, "전체 공지 불러오기 성공", noticeResList);
+        return ResponseData.of(HttpStatus.OK, "전체 공지 불러오기 성공", convertToNoticeRes(notices));
     }
 
     @Transactional(readOnly = true)
     public ResponseData<List<NoticeRes>> getNoticesByDivision(Long divisionId, Long lastId, int limit) {
         Member member = memberAuthenticationHolder.current();
         List<Notice> notices = noticeService.getAllByDivision(member.getId(), divisionId, lastId, limit);
-        List<NoticeRes> noticeResList = convertToNoticeRes(notices);
-        return ResponseData.of(HttpStatus.OK, "카테고리별 공지 불러오기 성공", noticeResList);
+        return ResponseData.of(HttpStatus.OK, "카테고리별 공지 불러오기 성공", convertToNoticeRes(notices));
     }
 
     public Response deleteNotice(Long id){
