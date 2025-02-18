@@ -2,7 +2,7 @@ package b1nd.dodam.domain.rds.club.entity;
 
 import b1nd.dodam.domain.rds.club.enumeration.ClubPermission;
 import b1nd.dodam.domain.rds.club.enumeration.ClubMemberStatus;
-import b1nd.dodam.domain.rds.member.entity.Member;
+import b1nd.dodam.domain.rds.member.entity.Student;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
@@ -43,7 +43,7 @@ public class ClubMember {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "fk_member_id", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
-    private Member member;
+    private Student student;
 
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
@@ -52,8 +52,8 @@ public class ClubMember {
     private Club club;
 
     @Builder
-    public ClubMember(Member member, Club club, int choiceNumber, ClubMemberStatus clubStatus, ClubPermission permission) {
-        this.member = member;
+    public ClubMember(Student student, Club club, int choiceNumber, ClubMemberStatus clubStatus, ClubPermission permission) {
+        this.student = student;
         this.club = club;
         this.choiceNumber = choiceNumber;
         this.clubStatus = clubStatus;

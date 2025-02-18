@@ -2,6 +2,8 @@ package b1nd.dodam.domain.rds.club.entity;
 
 import b1nd.dodam.domain.rds.club.enumeration.ClubStatus;
 import b1nd.dodam.domain.rds.club.enumeration.ClubType;
+import b1nd.dodam.domain.rds.member.entity.Teacher;
+import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
@@ -34,6 +36,10 @@ public class Club {
     @Enumerated(EnumType.STRING)
     private ClubType type;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "fk_teacher_id")
+    private Teacher teacher;
+
     @NotNull
     @Enumerated(EnumType.STRING)
     private ClubStatus state;
@@ -46,5 +52,9 @@ public class Club {
         this.subject = subject;
         this.type = type;
         this.state = state;
+    }
+
+    public void join(Teacher teacher) {
+        this.teacher = teacher;
     }
 }

@@ -5,11 +5,12 @@ import b1nd.dodam.domain.rds.club.enumeration.ClubMemberStatus;
 import b1nd.dodam.domain.rds.club.service.ClubMemberService;
 import b1nd.dodam.domain.rds.club.service.ClubService;
 import b1nd.dodam.domain.rds.member.entity.Member;
+import b1nd.dodam.domain.rds.member.entity.Student;
 import b1nd.dodam.domain.rds.member.repository.MemberRepository;
+import b1nd.dodam.domain.rds.member.repository.StudentRepository;
 import b1nd.dodam.restapi.auth.infrastructure.security.support.MemberAuthenticationHolder;
 import b1nd.dodam.restapi.club.application.data.req.CreateClubReq;
 import b1nd.dodam.restapi.support.data.Response;
-import b1nd.dodam.restapi.support.data.ResponseData;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,15 +24,16 @@ public class ClubUseCase {
     private final ClubService clubService;
     private final ClubMemberService clubMemberService;
     private final MemberRepository memberRepository;
+    private final StudentRepository studentRepository;
     private final MemberAuthenticationHolder authHolder;
 
-    public Response save(CreateClubReq req, List<String>memberIdList) {
+    public Response save(CreateClubReq req, List<String>studentIdList) {
         clubService.checkIsNameDuplicated(req.name());
         Club club = req.toEntity();
         clubService.save(club);
-        Member owner = authHolder.current();
+        Student owner = studentRepository.getByMember(authHolder.current());
         clubMemberService.saveOwner(club, owner);
-        clubMemberService.saveWithBuild(club, memberIdList.stream().map(memberRepository::getById).toList(), ClubMemberStatus.WAITING);
+//        clubMemberService.saveWithBuild(club, studentIdList.stream().map(memberRepository::getById).toList(), ClubMemberStatus.WAITING);
         return Response.created("동아리 생성 완료");
     }
 }
