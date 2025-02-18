@@ -17,8 +17,8 @@ public class ClubController {
     @PostMapping
     public Response create(
             @RequestBody CreateClubReq req,
-            @RequestParam List<String> memberIdList
+            @RequestParam List<Integer> studentIds
     ) {
-        return clubUseCase.save(req, memberIdList);
+        return clubUseCase.save(req, studentIds);
     }
 }

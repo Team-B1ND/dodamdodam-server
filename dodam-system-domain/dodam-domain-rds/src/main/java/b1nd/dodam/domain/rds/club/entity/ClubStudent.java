@@ -13,18 +13,18 @@ import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
 @Getter
-@Entity(name = "club_member")
+@Entity(name = "club_student")
 @Table(uniqueConstraints = {
         @UniqueConstraint(
-                name = "unique_member_club_index",
+                name = "unique_student_club_index",
                 columnNames = {
-                        "fk_member_id",
+                        "fk_student_id",
                         "fk_club_id"
                 }
         )
 })
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class ClubMember {
+public class ClubStudent {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -41,7 +41,7 @@ public class ClubMember {
 
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "fk_member_id", nullable = false)
+    @JoinColumn(name = "fk_student_id", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Student student;
 
@@ -52,7 +52,7 @@ public class ClubMember {
     private Club club;
 
     @Builder
-    public ClubMember(Student student, Club club, int choiceNumber, ClubMemberStatus clubStatus, ClubPermission permission) {
+    public ClubStudent(Student student, Club club, int choiceNumber, ClubMemberStatus clubStatus, ClubPermission permission) {
         this.student = student;
         this.club = club;
         this.choiceNumber = choiceNumber;
