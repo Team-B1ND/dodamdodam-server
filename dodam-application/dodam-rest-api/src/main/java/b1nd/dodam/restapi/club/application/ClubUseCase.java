@@ -14,6 +14,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.UUID;
 
 @Component
 @RequiredArgsConstructor
@@ -23,6 +24,14 @@ public class ClubUseCase {
     private final ClubStudentService clubStudentService;
     private final StudentRepository studentRepository;
     private final MemberAuthenticationHolder authHolder;
+
+    public Response delete(UUID id) {
+        Student student = studentRepository.getByMember(authHolder.current());
+        Club club = clubService.findById(id);
+        clubStudentService.validateClubMemberAndOwner(club, student);
+        clubService.deleteClub(club);
+        return Response.noContent("동아리 삭제됨");
+    }
 
     public Response save(CreateClubReq req, List<Integer> studentIds) {
         Student owner = studentRepository.getByMember(authHolder.current());

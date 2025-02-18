@@ -7,6 +7,7 @@ import b1nd.dodam.domain.rds.club.enumeration.ClubStudentStatus;
 import b1nd.dodam.domain.rds.club.enumeration.ClubType;
 import b1nd.dodam.domain.rds.club.exception.AlreadyClubOwnerException;
 import b1nd.dodam.domain.rds.club.exception.AlreadyInTheClubException;
+import b1nd.dodam.domain.rds.club.exception.ClubPermissionDeniedException;
 import b1nd.dodam.domain.rds.club.repository.ClubStudentRepository;
 import b1nd.dodam.domain.rds.member.entity.Student;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +23,12 @@ public class ClubStudentService {
     public void validateClubOwnerDuplicated(Student student) {
         if(clubStudentRepository.existsByStudentAndPermission(student, ClubPermission.OWNER)) {
             throw new AlreadyClubOwnerException();
+        }
+    }
+
+    public void validateClubMemberAndOwner(Club club, Student student) {
+        if(!clubStudentRepository.existsByClubAndStudentAndPermission(club, student, ClubPermission.OWNER)) {
+            throw new ClubPermissionDeniedException();
         }
     }
 
