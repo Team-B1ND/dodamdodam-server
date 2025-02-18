@@ -1,7 +1,6 @@
 package b1nd.dodam.restapi.club.application;
 
 import b1nd.dodam.domain.rds.club.entity.Club;
-import b1nd.dodam.domain.rds.club.enumeration.ClubStatus;
 import b1nd.dodam.domain.rds.club.service.ClubService;
 import b1nd.dodam.domain.rds.club.service.ClubStudentService;
 import b1nd.dodam.domain.rds.member.entity.Student;
@@ -25,11 +24,10 @@ public class ClubUseCase {
 
     public Response save(CreateClubReq req) {
         clubService.checkIsNameDuplicated(req.name());
+        Student leader = studentRepository.getByMember(authHolder.current());
         Club club = req.toEntity();
         clubService.save(club);
-        Student leader = studentRepository.getByMember(authHolder.current());
-        clubStudentService.saveLeader(club, leader);
-        clubStudentService.saveWithBuild(club, studentRepository.getByIds(req.studentIds()), ClubStatus.WAITING);
+        clubStudentService.saveWithBuild(club, leader, studentRepository.getByIds(req.studentIds()));
         return Response.created("동아리 생성 완료");
     }
 

@@ -13,6 +13,7 @@ import b1nd.dodam.domain.rds.member.entity.Student;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -20,32 +21,29 @@ import java.util.List;
 public class ClubStudentService {
     private final ClubStudentRepository clubStudentRepository;
 
-    public void saveLeader(Club club, Student student) {
+    private ClubMember createLeader(Club club, Student student) {
         rejectActivityClubMember(student);
         validateByLeaderDuplicated(student, club);
-        clubStudentRepository.save(ClubMember.builder()
+        return ClubMember.builder()
                 .student(student)
                 .clubStatus(ClubStatus.ALLOWED)
                 .club(club)
                 .permission(ClubPermission.CLUB_LEADER)
-                .build()
-        );
+                .build();
     }
 
-    public void saveWithBuild(Club club, List<Student> students, ClubStatus clubStatus) {
-        if (clubStudentRepository.existsByStudentInAndClub(students, club)) {
-            throw new AlreadyUserJoinCreativeClubException();
-        }
+    public void saveWithBuild(Club club, Student leader, List<Student> students) {
         validateClubMemberDuplicated(students, club);
-        clubStudentRepository.saveAll(students.stream()
-                .map(student -> ClubMember.builder()
-                        .student(student)
-                        .clubStatus(clubStatus)
-                        .club(club)
-                        .permission(ClubPermission.CLUB_MEMBER)
-                        .build()
-                ).toList()
-        );
+        List<ClubMember> clubMembers = new ArrayList<>(students.stream()
+            .map(student -> ClubMember.builder()
+                .student(student)
+                .clubStatus(ClubStatus.PENDING)
+                .club(club)
+                .permission(ClubPermission.CLUB_MEMBER)
+                .build()
+            ).toList());
+        clubMembers.add(0, createLeader(club, leader));
+        clubStudentRepository.saveAll(clubMembers);
     }
 
     public void validateByClubMemberAndLeader(Club club, Student student) {
@@ -61,6 +59,9 @@ public class ClubStudentService {
     }
 
     private void validateClubMemberDuplicated(List<Student> students, Club club) {
+        if (clubStudentRepository.existsByStudentInAndClub(students, club)) {
+            throw new AlreadyUserJoinCreativeClubException();
+        }
         if (club.getType() == ClubType.CREATIVE_ACTIVITY_CLUB && clubStudentRepository.existsByStudentInAndClubStatusAndClub_Type(students, ClubStatus.ALLOWED, ClubType.CREATIVE_ACTIVITY_CLUB)) {
             throw new AlreadyUserJoinCreativeClubException();
         }
