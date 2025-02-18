@@ -5,7 +5,9 @@ import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 public enum ClubExceptionCode implements ExceptionCode {
-    CLUB_NAME_DUPLICATE(400, "이름이 중복됩니다.");
+    CLUB_NAME_DUPLICATE(400, "이름이 중복됩니다."),
+    ALREADY_IN_THE_CLUB(400, "자신은 동아리에 초대할 수 없습니다.")
+    ;
 
     private final int status;
     private final String message;

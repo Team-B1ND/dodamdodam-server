@@ -1,5 +1,6 @@
 package b1nd.dodam.domain.rds.club.entity;
 
+import b1nd.dodam.domain.rds.club.enumeration.ClubStatus;
 import b1nd.dodam.domain.rds.club.enumeration.ClubType;
 import b1nd.dodam.domain.rds.support.enumeration.ApprovalStatus;
 import jakarta.persistence.*;
@@ -36,10 +37,10 @@ public class Club {
 
     @NotNull
     @Enumerated(EnumType.STRING)
-    private ApprovalStatus state;
+    private ClubStatus state;
 
     @Builder
-    public Club(String name, String shortDescription, String description, String subject, ClubType type, ApprovalStatus state) {
+    public Club(String name, String shortDescription, String description, String subject, ClubType type, ClubStatus state) {
         this.name = name;
         this.shortDescription = shortDescription;
         this.description = description;

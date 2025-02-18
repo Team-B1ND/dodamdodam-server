@@ -1,7 +1,7 @@
 package b1nd.dodam.restapi.club.application;
 
 import b1nd.dodam.domain.rds.club.entity.Club;
-import b1nd.dodam.domain.rds.club.enumeration.ClubStatus;
+import b1nd.dodam.domain.rds.club.enumeration.ClubMemberStatus;
 import b1nd.dodam.domain.rds.club.service.ClubMemberService;
 import b1nd.dodam.domain.rds.club.service.ClubService;
 import b1nd.dodam.domain.rds.member.entity.Member;
@@ -29,9 +29,9 @@ public class ClubUseCase {
         Club club = req.toEntity();
         clubService.save(club);
         Member owner = authHolder.current();
-        clubMemberService.deleteActivityClubMember(owner);
+        clubMemberService.rejectActivityClubMember(owner);
         clubMemberService.saveOwner(club, owner);
-        clubMemberService.saveWithBuild(club, memberIdList.stream().map(memberRepository::getById).toList(), ClubStatus.WAITING);
+        clubMemberService.saveWithBuild(club, memberIdList.stream().map(memberRepository::getById).toList(), ClubMemberStatus.WAITING);
         return Response.created("동아리 생성 완료");
     }
 }

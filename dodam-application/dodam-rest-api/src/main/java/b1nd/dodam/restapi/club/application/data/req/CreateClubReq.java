@@ -1,6 +1,7 @@
 package b1nd.dodam.restapi.club.application.data.req;
 
 import b1nd.dodam.domain.rds.club.entity.Club;
+import b1nd.dodam.domain.rds.club.enumeration.ClubStatus;
 import b1nd.dodam.domain.rds.club.enumeration.ClubType;
 import b1nd.dodam.domain.rds.support.enumeration.ApprovalStatus;
 import jakarta.validation.constraints.NotBlank;
@@ -20,7 +21,7 @@ public record CreateClubReq(
                 .description(description)
                 .subject(subject)
                 .type(type)
-                .state(ApprovalStatus.PENDING)
+                .state(ClubStatus.PENDING)
                 .build();
     }
 }
