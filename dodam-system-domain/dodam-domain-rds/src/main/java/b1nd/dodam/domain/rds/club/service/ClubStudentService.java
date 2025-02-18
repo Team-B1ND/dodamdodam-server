@@ -13,8 +13,8 @@ import b1nd.dodam.domain.rds.member.entity.Student;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -25,9 +25,9 @@ public class ClubStudentService {
         rejectActivityClubMember(leader);
         validateByLeaderDuplicated(leader, club);
         validateClubMemberDuplicated(students, club);
-        List<ClubMember> clubMembers = new ArrayList<>(students.stream()
-                .map(student -> createMember(club, student, ClubPermission.CLUB_MEMBER, ClubStatus.WAITING)).toList());
-        clubMembers.add(0, createMember(club, leader,  ClubPermission.CLUB_LEADER, ClubStatus.ALLOWED));
+        List<ClubMember> clubMembers = students.stream()
+            .map(student -> createMember(club, student, ClubPermission.CLUB_MEMBER, ClubStatus.WAITING)).collect(Collectors.toList());
+        clubMembers.add(createMember(club, leader, ClubPermission.CLUB_LEADER, ClubStatus.ALLOWED));
         clubStudentRepository.saveAll(clubMembers);
     }
 
