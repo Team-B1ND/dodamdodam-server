@@ -12,7 +12,6 @@ public record CreateClubReq(
     @NotBlank String shortDescription,
     String description,
     ClubType type
-    //TODO:: 멤버 리스트
 ) {
     public Club toEntity() {
         return Club.builder()

@@ -1,8 +1,8 @@
 package b1nd.dodam.domain.rds.club.entity;
 
 import b1nd.dodam.domain.rds.club.enumeration.ClubPermission;
+import b1nd.dodam.domain.rds.club.enumeration.ClubStatus;
 import b1nd.dodam.domain.rds.member.entity.Member;
-import b1nd.dodam.domain.rds.support.enumeration.ApprovalStatus;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
@@ -26,7 +26,7 @@ public class ClubMember {
 
     @NotNull
     @Enumerated(EnumType.STRING)
-    private ApprovalStatus approvalStatus;
+    private ClubStatus clubStatus;
 
     private int choiceNumber;
 
@@ -43,11 +43,11 @@ public class ClubMember {
     private Club club;
 
     @Builder
-    public ClubMember(Member member, Club club,  int choiceNumber, ApprovalStatus approvalStatus, ClubPermission permission) {
+    public ClubMember(Member member, Club club, int choiceNumber, ClubStatus clubStatus, ClubPermission permission) {
         this.member = member;
         this.club = club;
         this.choiceNumber = choiceNumber;
-        this.approvalStatus = approvalStatus;
+        this.clubStatus = clubStatus;
         this.permission = permission;
     }
 }

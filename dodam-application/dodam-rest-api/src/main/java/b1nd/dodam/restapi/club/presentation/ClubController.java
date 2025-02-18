@@ -19,6 +19,6 @@ public class ClubController {
             @RequestBody CreateClubReq req,
             @RequestParam List<String> memberIdList
     ) {
-        return clubUseCase.save(req);
+        return clubUseCase.save(req, memberIdList);
     }
 }
