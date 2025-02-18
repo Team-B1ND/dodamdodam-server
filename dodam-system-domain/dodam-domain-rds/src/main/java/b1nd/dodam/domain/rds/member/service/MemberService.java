@@ -27,7 +27,7 @@ public class MemberService {
         return member;
     }
 
-    public void issue(String phone, int authCode){
+    public void composeSMSTemplate(String phone, int authCode){
         eventPublisher.publishEvent(MemberMessageUtil.createIssuedEvent(phone, authCode));
     }
 
