@@ -1,10 +1,11 @@
 package b1nd.dodam.domain.rds.club.service;
 
 import b1nd.dodam.domain.rds.club.entity.Club;
-import b1nd.dodam.domain.rds.club.entity.ClubStudent;
+import b1nd.dodam.domain.rds.club.entity.ClubMember;
 import b1nd.dodam.domain.rds.club.enumeration.ClubPermission;
 import b1nd.dodam.domain.rds.club.enumeration.ClubStudentStatus;
 import b1nd.dodam.domain.rds.club.enumeration.ClubType;
+import b1nd.dodam.domain.rds.club.exception.AlreadyClubOwnerException;
 import b1nd.dodam.domain.rds.club.exception.AlreadyInTheClubException;
 import b1nd.dodam.domain.rds.club.repository.ClubStudentRepository;
 import b1nd.dodam.domain.rds.member.entity.Student;
@@ -18,10 +19,16 @@ import java.util.List;
 public class ClubStudentService {
     private final ClubStudentRepository clubStudentRepository;
 
+    public void validateClubOwnerDuplicated(Student student) {
+        if(clubStudentRepository.existsByStudentAndPermission(student, ClubPermission.OWNER)) {
+            throw new AlreadyClubOwnerException();
+        }
+    }
+
     public void saveOwner(Club club, Student student) {
         rejectActivityClubMember(student);
 
-        clubStudentRepository.save(ClubStudent.builder()
+        clubStudentRepository.save(ClubMember.builder()
                 .student(student)
                 .clubStatus(ClubStudentStatus.ALLOWED)
                 .club(club)
@@ -35,7 +42,7 @@ public class ClubStudentService {
             throw new AlreadyInTheClubException();
         }
         clubStudentRepository.saveAll(students.stream()
-                .map(student -> ClubStudent.builder()
+                .map(student -> ClubMember.builder()
                         .student(student)
                         .clubStatus(clubStudentStatus)
                         .club(club)
@@ -46,8 +53,8 @@ public class ClubStudentService {
     }
 
     private void rejectActivityClubMember(Student student) {
-        List<ClubStudent> clubStudents = clubStudentRepository.findAllByStudentAndClub_Type(student, ClubType.CREATIVE_ACTIVITY_CLUB);
-        clubStudents.forEach(m -> m.modifyStatus(ClubStudentStatus.REJECTED));
-        clubStudentRepository.saveAll(clubStudents);
+        List<ClubMember> clubMembers = clubStudentRepository.findAllByStudentAndClub_Type(student, ClubType.CREATIVE_ACTIVITY_CLUB);
+        clubMembers.forEach(m -> m.modifyStatus(ClubStudentStatus.REJECTED));
+        clubStudentRepository.saveAll(clubMembers);
     }
 }
