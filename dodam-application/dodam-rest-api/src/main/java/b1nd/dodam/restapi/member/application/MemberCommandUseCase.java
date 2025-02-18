@@ -90,8 +90,8 @@ public class MemberCommandUseCase {
 
     private void checkType(AuthType authType, String identifier, int authCode){
         switch (authType) {
-            case EMAIL -> smtpClient.composeEmailTemplate(identifier, MemberMessageUtil.createMessage(authCode), authCode);
-            case PHONE -> memberService.composeSMSTemplate(identifier, authCode);
+            case EMAIL -> smtpClient.issueAuthEmail(identifier, MemberMessageUtil.createMessage(authCode), authCode);
+            case PHONE -> memberService.issueAuthSMS(identifier, authCode);
             default -> throw new InternalServerException();
         }
     }

@@ -21,7 +21,7 @@ public class SMTPClient {
 
     private final JavaMailSender mailSender;
 
-    public void composeEmailTemplate(String targetEmail, String title, int authCode){
+    public void issueAuthEmail(String targetEmail, String title, int authCode){
         try {
             ClassPathResource resource = new ClassPathResource("authEmail.html");
             BufferedReader reader = new BufferedReader(
