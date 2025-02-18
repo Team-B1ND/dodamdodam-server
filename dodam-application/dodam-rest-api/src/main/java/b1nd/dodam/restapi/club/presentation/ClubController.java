@@ -3,7 +3,6 @@ package b1nd.dodam.restapi.club.presentation;
 import b1nd.dodam.restapi.club.application.ClubUseCase;
 import b1nd.dodam.restapi.club.application.data.req.CreateClubReq;
 import b1nd.dodam.restapi.support.data.Response;
-import jakarta.websocket.server.PathParam;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
