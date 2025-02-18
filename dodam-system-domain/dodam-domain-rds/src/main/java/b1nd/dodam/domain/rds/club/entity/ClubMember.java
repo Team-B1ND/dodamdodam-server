@@ -35,7 +35,7 @@ public class ClubMember {
 
     @NotNull
     @Enumerated(EnumType.STRING)
-    private ClubMemberStatus clubMemberStatus;
+    private ClubMemberStatus clubStatus;
 
     private int choiceNumber;
 
@@ -52,15 +52,15 @@ public class ClubMember {
     private Club club;
 
     @Builder
-    public ClubMember(Member member, Club club, int choiceNumber, ClubMemberStatus clubMemberStatus, ClubPermission permission) {
+    public ClubMember(Member member, Club club, int choiceNumber, ClubMemberStatus clubStatus, ClubPermission permission) {
         this.member = member;
         this.club = club;
         this.choiceNumber = choiceNumber;
-        this.clubMemberStatus = clubMemberStatus;
+        this.clubStatus = clubStatus;
         this.permission = permission;
     }
 
     public void modifyStatus(ClubMemberStatus status) {
-        this.clubMemberStatus = status;
+        this.clubStatus = status;
     }
 }

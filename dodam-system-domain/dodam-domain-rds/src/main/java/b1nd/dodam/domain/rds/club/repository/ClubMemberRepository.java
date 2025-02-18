@@ -8,6 +8,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
 public interface ClubMemberRepository extends JpaRepository<ClubMember, Long> {
-    void deleteAllByMemberAndClub_Type(Member member, ClubType clubType);
     List<ClubMember> findAllByMemberAndClub_Type(Member member, ClubType clubType);
 }
