@@ -34,8 +34,8 @@ public class NoticeService {
     }
 
     public Notice save(Notice notice){
-        noticeRepository.save(notice);
-        return notice;
+        Notice savedNotice = noticeRepository.save(notice);
+        return savedNotice;
     }
 
     public NoticeDivision getNoticeDivisionById(Long id){
@@ -55,12 +55,14 @@ public class NoticeService {
         Notice notice = getById(id);
         checkPermission(notice, member);
         notice.setNoticeStatus(noticeStatus);
+        save(notice);
     }
 
     public void updateNotice(Long id, Member member, String title, String content){
         Notice notice = getById(id);
         checkPermission(notice, member);
         notice.updateNotice(title, content);
+        save(notice);
     }
 
     private void checkPermission(Notice notice, Member member) {
