@@ -5,7 +5,7 @@ import b1nd.dodam.domain.rds.club.entity.ClubMember;
 import b1nd.dodam.domain.rds.club.enumeration.ClubPermission;
 import b1nd.dodam.domain.rds.club.enumeration.ClubStatus;
 import b1nd.dodam.domain.rds.club.enumeration.ClubType;
-import b1nd.dodam.domain.rds.club.exception.AlreadyClubOwnerException;
+import b1nd.dodam.domain.rds.club.exception.AlreadyClubLeaderException;
 import b1nd.dodam.domain.rds.club.exception.AlreadyUserJoinCreativeClubException;
 import b1nd.dodam.domain.rds.club.exception.ClubPermissionDeniedException;
 import b1nd.dodam.domain.rds.club.repository.ClubStudentRepository;
@@ -20,16 +20,16 @@ import java.util.List;
 public class ClubStudentService {
     private final ClubStudentRepository clubStudentRepository;
 
-    public void saveDirector(Club club, Student student) {
+    public void saveLeader(Club club, Student student) {
         rejectActivityClubMember(student);
         if (club.getType() == ClubType.CREATIVE_ACTIVITY_CLUB) {
-            validateClubDirectorDuplicated(student);
+            validateByLeaderDuplicated(student);
         }
         clubStudentRepository.save(ClubMember.builder()
                 .student(student)
                 .clubStatus(ClubStatus.ALLOWED)
                 .club(club)
-                .permission(ClubPermission.DIRECTOR)
+                .permission(ClubPermission.CLUB_LEADER)
                 .build()
         );
     }
@@ -46,21 +46,21 @@ public class ClubStudentService {
                         .student(student)
                         .clubStatus(clubStatus)
                         .club(club)
-                        .permission(ClubPermission.MEMBER)
+                        .permission(ClubPermission.CLUB_MEMBER)
                         .build()
                 ).toList()
         );
     }
 
-    public void validateClubMemberAndDirector(Club club, Student student) {
-        if(!clubStudentRepository.existsByClubAndStudentAndPermission(club, student, ClubPermission.DIRECTOR)) {
+    public void validateByClubMemberAndLeader(Club club, Student student) {
+        if(!clubStudentRepository.existsByClubAndStudentAndPermission(club, student, ClubPermission.CLUB_LEADER)) {
             throw new ClubPermissionDeniedException();
         }
     }
 
-    private void validateClubDirectorDuplicated(Student student) {
-        if(clubStudentRepository.existsByStudentAndPermissionAndClub_Type(student, ClubPermission.DIRECTOR, ClubType.CREATIVE_ACTIVITY_CLUB)) {
-            throw new AlreadyClubOwnerException();
+    private void validateByLeaderDuplicated(Student student) {
+        if(clubStudentRepository.existsByStudentAndPermissionAndClub_Type(student, ClubPermission.CLUB_LEADER, ClubType.CREATIVE_ACTIVITY_CLUB)) {
+            throw new AlreadyClubLeaderException();
         }
     }
 

@@ -14,8 +14,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-
 @Component
 @RequiredArgsConstructor
 @Transactional(rollbackFor = Exception.class)
@@ -29,8 +27,8 @@ public class ClubUseCase {
         clubService.checkIsNameDuplicated(req.name());
         Club club = req.toEntity();
         clubService.save(club);
-        Student director = studentRepository.getByMember(authHolder.current());
-        clubStudentService.saveDirector(club, director);
+        Student leader = studentRepository.getByMember(authHolder.current());
+        clubStudentService.saveLeader(club, leader);
         clubStudentService.saveWithBuild(club, studentRepository.getByIds(req.studentIds()), ClubStatus.WAITING);
         return Response.created("동아리 생성 완료");
     }
@@ -38,7 +36,7 @@ public class ClubUseCase {
     public Response delete(Long id) {
         Student student = studentRepository.getByMember(authHolder.current());
         Club club = clubService.findById(id);
-        clubStudentService.validateClubMemberAndDirector(club, student);
+        clubStudentService.validateByClubMemberAndLeader(club, student);
         clubService.deleteClub(club);
         return Response.ok("동아리 삭제됨");
     }
@@ -46,7 +44,7 @@ public class ClubUseCase {
     public Response update(Long id, UpdateClubInfoReq req) {
         Student student = studentRepository.getByMember(authHolder.current());
         Club club = clubService.findById(id);
-        clubStudentService.validateClubMemberAndDirector(club, student);
+        clubStudentService.validateByClubMemberAndLeader(club, student);
         club.updateInfo(req.name(), req.subject(), req.shortDescription(), req.description());
         clubService.save(club);
         return Response.ok("동아리 정보 업데이트됨");
