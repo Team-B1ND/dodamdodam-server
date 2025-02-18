@@ -36,7 +36,6 @@ public class ClubUseCase {
     public Response save(CreateClubReq req, List<Integer> studentIds) {
         Student director = studentRepository.getByMember(authHolder.current());
         clubService.checkIsNameDuplicated(req.name());
-        clubStudentService.validateClubDirectorDuplicated(director);
         Club club = req.toEntity();
         clubService.save(club);
         clubStudentService.saveDirector(club, director);

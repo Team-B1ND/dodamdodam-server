@@ -52,11 +52,11 @@ public class ClubMember {
     private Club club;
 
     @Builder
-    public ClubMember(Student student, Club club, int choiceNumber, ClubStudentStatus clubStatus, ClubPermission permission) {
+    public ClubMember(Student student, Club club, int choiceNumber, ClubStudentStatus clubStudentStatus, ClubPermission permission) {
         this.student = student;
         this.club = club;
         this.choiceNumber = choiceNumber;
-        this.clubStatus = clubStatus;
+        this.clubStatus = clubStudentStatus;
         this.permission = permission;
     }
 
