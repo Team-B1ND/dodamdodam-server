@@ -1,7 +1,6 @@
 package b1nd.dodam.restapi.club.application;
 
 import b1nd.dodam.domain.rds.club.entity.Club;
-import b1nd.dodam.domain.rds.club.enumeration.ClubStatus;
 import b1nd.dodam.domain.rds.club.enumeration.ClubStudentStatus;
 import b1nd.dodam.domain.rds.club.service.ClubService;
 import b1nd.dodam.domain.rds.club.service.ClubStudentService;
@@ -27,6 +26,16 @@ public class ClubUseCase {
     private final StudentRepository studentRepository;
     private final MemberAuthenticationHolder authHolder;
 
+    public Response save(CreateClubReq req, List<Integer> studentIds) {
+        clubService.checkIsNameDuplicated(req.name());
+        Club club = req.toEntity();
+        clubService.save(club);
+        Student director = studentRepository.getByMember(authHolder.current());
+        clubStudentService.saveDirector(club, director);
+        clubStudentService.saveWithBuild(club, studentRepository.getByIds(studentIds), ClubStudentStatus.WAITING);
+        return Response.created("동아리 생성 완료");
+    }
+
     public Response delete(UUID id) {
         Student student = studentRepository.getByMember(authHolder.current());
         Club club = clubService.findById(id);
@@ -42,15 +51,5 @@ public class ClubUseCase {
         club.updateInfo(req.name(), req.subject(), req.shortDescription(), req.description());
         clubService.save(club);
         return Response.ok("동아리 정보 업데이트됨");
-    }
-
-    public Response save(CreateClubReq req, List<Integer> studentIds) {
-        clubService.checkIsNameDuplicated(req.name());
-        Club club = req.toEntity();
-        clubService.save(club);
-        Student director = studentRepository.getByMember(authHolder.current());
-        clubStudentService.saveDirector(club, director);
-        clubStudentService.saveWithBuild(club, studentRepository.getByIds(studentIds), ClubStudentStatus.WAITING);
-        return Response.created("동아리 생성 완료");
     }
 }

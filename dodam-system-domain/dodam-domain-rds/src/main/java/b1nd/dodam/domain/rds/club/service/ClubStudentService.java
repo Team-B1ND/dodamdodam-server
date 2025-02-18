@@ -6,7 +6,6 @@ import b1nd.dodam.domain.rds.club.enumeration.ClubPermission;
 import b1nd.dodam.domain.rds.club.enumeration.ClubStudentStatus;
 import b1nd.dodam.domain.rds.club.enumeration.ClubType;
 import b1nd.dodam.domain.rds.club.exception.AlreadyClubOwnerException;
-import b1nd.dodam.domain.rds.club.exception.AlreadyInTheClubException;
 import b1nd.dodam.domain.rds.club.exception.AlreadyUserJoinCreativeClubException;
 import b1nd.dodam.domain.rds.club.exception.ClubPermissionDeniedException;
 import b1nd.dodam.domain.rds.club.repository.ClubStudentRepository;
@@ -20,12 +19,6 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ClubStudentService {
     private final ClubStudentRepository clubStudentRepository;
-
-    public void validateClubMemberAndDirector(Club club, Student student) {
-        if(!clubStudentRepository.existsByClubAndStudentAndPermission(club, student, ClubPermission.DIRECTOR)) {
-            throw new ClubPermissionDeniedException();
-        }
-    }
 
     public void saveDirector(Club club, Student student) {
         rejectActivityClubMember(student);
@@ -43,7 +36,7 @@ public class ClubStudentService {
 
     public void saveWithBuild(Club club, List<Student> students, ClubStudentStatus clubStudentStatus) {
         if (clubStudentRepository.existsByStudentInAndClub(students, club)) {
-            throw new AlreadyInTheClubException();
+            throw new AlreadyUserJoinCreativeClubException();
         }
         if (club.getType() == ClubType.CREATIVE_ACTIVITY_CLUB) {
             validateClubMemberDuplicated(students);
@@ -57,6 +50,12 @@ public class ClubStudentService {
                         .build()
                 ).toList()
         );
+    }
+
+    public void validateClubMemberAndDirector(Club club, Student student) {
+        if(!clubStudentRepository.existsByClubAndStudentAndPermission(club, student, ClubPermission.DIRECTOR)) {
+            throw new ClubPermissionDeniedException();
+        }
     }
 
     private void validateClubDirectorDuplicated(Student student) {
