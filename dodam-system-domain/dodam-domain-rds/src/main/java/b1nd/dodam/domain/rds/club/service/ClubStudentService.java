@@ -13,6 +13,7 @@ import b1nd.dodam.domain.rds.member.entity.Member;
 import b1nd.dodam.domain.rds.member.entity.Student;
 import b1nd.dodam.domain.rds.member.repository.StudentRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -20,6 +21,7 @@ import java.util.Set;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class ClubStudentService {
@@ -64,15 +66,16 @@ public class ClubStudentService {
         }
         validateClubMember(List.of(leader), ClubPermission.CLUB_LEADER, AlreadyClubLeaderException::new);
         validateClubMember(students, null, AlreadyUserJoinCreativeClubException::new);
+
     }
 
     private void validateClubMember(List<Student> students, ClubPermission permission, Supplier<RuntimeException> supplier) {
-        if (clubStudentRepository.findByStudentInAndPermissionAndClubStatusAndClub_TypeAndClub_StateNot(
+        if (!clubStudentRepository.findByStudentInAndPermissionAndClubStatusAndClub_TypeAndClub_StateNot(
                 students,
                 permission,
                 ClubStatus.ALLOWED,
                 ClubType.CREATIVE_ACTIVITY_CLUB,
-                ClubStatus.DELETED) != null) {
+                ClubStatus.DELETED).isEmpty()) {
             throw supplier.get();
         }
     }
