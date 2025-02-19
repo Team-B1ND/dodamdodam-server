@@ -11,7 +11,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
 public interface ClubStudentRepository extends JpaRepository<ClubMember, Long> {
-    List<ClubMember> findAllByStudentAndClub_Type(Student student, ClubType clubType);
+    List<ClubMember> findAllByStudentAndPermissionAndClub_Type(Student student, ClubPermission permission, ClubType clubType);
 
     boolean existsByClubAndStudentAndPermission(Club club, Student student, ClubPermission permission);
 

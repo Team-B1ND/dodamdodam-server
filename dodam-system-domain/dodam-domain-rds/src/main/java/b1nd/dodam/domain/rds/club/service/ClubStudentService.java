@@ -47,7 +47,7 @@ public class ClubStudentService {
     }
 
     private void rejectActivityClubMember(Student student) {
-        List<ClubMember> clubMembers = clubStudentRepository.findAllByStudentAndClub_Type(student, ClubType.CREATIVE_ACTIVITY_CLUB);
+        List<ClubMember> clubMembers = clubStudentRepository.findAllByStudentAndPermissionAndClub_Type(student, ClubPermission.CLUB_MEMBER, ClubType.CREATIVE_ACTIVITY_CLUB);
         clubMembers.forEach(m -> m.modifyStatus(ClubStatus.REJECTED));
         clubStudentRepository.saveAll(clubMembers);
     }
