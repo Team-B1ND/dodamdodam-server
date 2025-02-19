@@ -32,17 +32,15 @@ public class ClubUseCase {
     }
 
     public Response delete(Long id) {
-        Student student = studentRepository.getByMember(authHolder.current());
         Club club = clubService.findById(id);
-        clubStudentService.validateByClubMemberAndLeader(club, student);
+        clubStudentService.validateByClubLeader(club, authHolder.current());
         clubService.deleteClub(club);
         return Response.ok("동아리 삭제됨");
     }
 
     public Response update(Long id, UpdateClubInfoReq req) {
-        Student student = studentRepository.getByMember(authHolder.current());
         Club club = clubService.findById(id);
-        clubStudentService.validateByClubMemberAndLeader(club, student);
+        clubStudentService.validateByClubLeader(club, authHolder.current());
         club.updateInfo(req.name(), req.subject(), req.shortDescription(), req.description());
         clubService.save(club);
         return Response.ok("동아리 정보 업데이트됨");

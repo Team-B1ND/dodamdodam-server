@@ -9,7 +9,9 @@ import b1nd.dodam.domain.rds.club.exception.AlreadyClubLeaderException;
 import b1nd.dodam.domain.rds.club.exception.AlreadyUserJoinCreativeClubException;
 import b1nd.dodam.domain.rds.club.exception.ClubPermissionDeniedException;
 import b1nd.dodam.domain.rds.club.repository.ClubStudentRepository;
+import b1nd.dodam.domain.rds.member.entity.Member;
 import b1nd.dodam.domain.rds.member.entity.Student;
+import b1nd.dodam.domain.rds.member.repository.StudentRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -21,6 +23,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class ClubStudentService {
     private final ClubStudentRepository clubStudentRepository;
+    private final StudentRepository studentRepository;
 
     public void saveWithBuild(Club club, Student leader, List<Student> students) {
         rejectActivityClubMember(leader);
@@ -32,8 +35,9 @@ public class ClubStudentService {
         clubStudentRepository.saveAll(clubMembers);
     }
 
-    public void validateByClubMemberAndLeader(Club club, Student student) {
-        if(!clubStudentRepository.existsByClubAndStudentAndPermission(club, student, ClubPermission.CLUB_LEADER)) {
+    public void validateByClubLeader(Club club, Member student) {
+        Student leader = studentRepository.getByMember(student);
+        if(!clubStudentRepository.existsByClubAndStudentAndPermission(club, leader, ClubPermission.CLUB_LEADER)) {
             throw new ClubPermissionDeniedException();
         }
     }
