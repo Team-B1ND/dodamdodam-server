@@ -14,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -23,10 +24,10 @@ public class ClubStudentService {
 
     public void saveWithBuild(Club club, Student leader, List<Student> students) {
         rejectActivityClubMember(leader);
-        validateByLeaderDuplicated(leader, club);
-        validateClubMemberDuplicated(students, club);
-        List<ClubMember> clubMembers = students.stream()
-            .map(student -> createMember(club, student, ClubPermission.CLUB_MEMBER, ClubStatus.WAITING)).collect(Collectors.toList());
+        validateLeaderInList(leader, students);
+        validateByLeaderAndClubMemberDuplicated(leader, students, club);
+        Set<ClubMember> clubMembers = students.stream()
+            .map(student -> createMember(club, student, ClubPermission.CLUB_MEMBER, ClubStatus.WAITING)).collect(Collectors.toSet());
         clubMembers.add(createMember(club, leader, ClubPermission.CLUB_LEADER, ClubStatus.ALLOWED));
         clubStudentRepository.saveAll(clubMembers);
     }
@@ -37,17 +38,20 @@ public class ClubStudentService {
         }
     }
 
-    private void validateByLeaderDuplicated(Student student, Club club) {
-        if(club.getType() == ClubType.CREATIVE_ACTIVITY_CLUB && clubStudentRepository.existsByStudentAndPermissionAndClub_Type(student, ClubPermission.CLUB_LEADER, ClubType.CREATIVE_ACTIVITY_CLUB)) {
-            throw new AlreadyClubLeaderException();
+    private void validateLeaderInList(Student leader, List<Student> students) {
+        if (students.stream().anyMatch(s -> s.getId() == leader.getId())) {
+            throw new AlreadyUserJoinCreativeClubException();
         }
     }
 
-    private void validateClubMemberDuplicated(List<Student> students, Club club) {
-        if (clubStudentRepository.existsByStudentInAndClub(students, club)) {
-            throw new AlreadyUserJoinCreativeClubException();
+    private void validateByLeaderAndClubMemberDuplicated(Student leader, List<Student> students, Club club) {
+        if (club.getType() == ClubType.SELF_DIRECT_ACTIVITY_CLUB) {
+            return;
         }
-        if (club.getType() == ClubType.CREATIVE_ACTIVITY_CLUB && clubStudentRepository.existsByStudentInAndClubStatusAndClub_Type(students, ClubStatus.ALLOWED, ClubType.CREATIVE_ACTIVITY_CLUB)) {
+        if (clubStudentRepository.existsByStudentAndPermissionAndClub_Type(leader, ClubPermission.CLUB_LEADER, ClubType.CREATIVE_ACTIVITY_CLUB)) {
+            throw new AlreadyClubLeaderException();
+        }
+        if (clubStudentRepository.existsByStudentInAndClubStatusAndClub_Type(students, ClubStatus.ALLOWED, ClubType.CREATIVE_ACTIVITY_CLUB)) {
             throw new AlreadyUserJoinCreativeClubException();
         }
     }

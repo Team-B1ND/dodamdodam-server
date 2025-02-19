@@ -18,10 +18,9 @@ public class ClubController {
 
     @PostMapping
     public Response create(
-            @RequestParam List<Integer> studentIds,
             @RequestBody @Valid CreateClubReq req
     ) {
-        return clubUseCase.save(req, studentIds);
+        return clubUseCase.save(req);
     }
 
     @DeleteMapping("/{id}")
