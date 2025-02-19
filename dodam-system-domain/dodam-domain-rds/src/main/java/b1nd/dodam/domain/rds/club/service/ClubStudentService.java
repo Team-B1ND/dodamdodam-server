@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Set;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 @Service
@@ -61,11 +62,18 @@ public class ClubStudentService {
         if (club.getType() == ClubType.SELF_DIRECT_ACTIVITY_CLUB) {
             return;
         }
-        if (clubStudentRepository.existsByStudentAndPermissionAndClub_Type(leader, ClubPermission.CLUB_LEADER, ClubType.CREATIVE_ACTIVITY_CLUB)) {
-            throw new AlreadyClubLeaderException();
-        }
-        if (clubStudentRepository.existsByStudentInAndClubStatusAndClub_TypeAndClub_State(students, ClubStatus.ALLOWED, ClubType.CREATIVE_ACTIVITY_CLUB, ClubStatus.DELETED)) {
-            throw new AlreadyUserJoinCreativeClubException();
+        validateClubMember(List.of(leader), ClubPermission.CLUB_LEADER, AlreadyClubLeaderException::new);
+        validateClubMember(students, null, AlreadyUserJoinCreativeClubException::new);
+    }
+
+    private void validateClubMember(List<Student> students, ClubPermission permission, Supplier<RuntimeException> supplier) {
+        if (clubStudentRepository.findByStudentInAndPermissionAndClubStatusAndClub_TypeAndClub_StateNot(
+                students,
+                permission,
+                ClubStatus.ALLOWED,
+                ClubType.CREATIVE_ACTIVITY_CLUB,
+                ClubStatus.DELETED) != null) {
+            throw supplier.get();
         }
     }
 
