@@ -13,6 +13,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Component
 @RequiredArgsConstructor
 @Transactional(rollbackFor = Exception.class)
@@ -27,7 +29,9 @@ public class ClubUseCase {
         Student leader = studentRepository.getByMember(authHolder.current());
         Club club = req.toEntity();
         clubService.save(club);
-        clubStudentService.saveWithBuild(club, leader, studentRepository.getByIds(req.studentIds()));
+        List<Student> students = studentRepository.getByIds(req.studentIds());
+        clubStudentService.validateAndRejectLeader(club, leader, students);
+        clubStudentService.saveWithBuild(club, leader, students);
         return Response.created("동아리 생성 완료");
     }
 

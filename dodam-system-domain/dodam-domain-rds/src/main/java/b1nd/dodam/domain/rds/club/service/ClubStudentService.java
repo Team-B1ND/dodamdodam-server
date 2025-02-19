@@ -25,21 +25,30 @@ public class ClubStudentService {
     private final ClubStudentRepository clubStudentRepository;
     private final StudentRepository studentRepository;
 
-    public void saveWithBuild(Club club, Student leader, List<Student> students) {
+    public void validateAndRejectLeader(Club club, Student leader, List<Student> students) {
         rejectActivityClubMember(leader);
         validateLeaderInList(leader, students);
         validateByLeaderAndClubMemberDuplicated(leader, students, club);
+    }
+
+    public void saveWithBuild(Club club, Student leader, List<Student> students) {
         Set<ClubMember> clubMembers = students.stream()
             .map(student -> createMember(club, student, ClubPermission.CLUB_MEMBER, ClubStatus.WAITING)).collect(Collectors.toSet());
         clubMembers.add(createMember(club, leader, ClubPermission.CLUB_LEADER, ClubStatus.ALLOWED));
         clubStudentRepository.saveAll(clubMembers);
     }
 
-    public void validateByClubLeader(Club club, Member student) {
-        Student leader = studentRepository.getByMember(student);
+    public void validateByClubLeader(Club club, Member member) {
+        Student leader = studentRepository.getByMember(member);
         if(!clubStudentRepository.existsByClubAndStudentAndPermission(club, leader, ClubPermission.CLUB_LEADER)) {
             throw new ClubPermissionDeniedException();
         }
+    }
+
+    private void rejectActivityClubMember(Student student) {
+        List<ClubMember> clubMembers = clubStudentRepository.findAllByStudentAndClub_Type(student, ClubType.CREATIVE_ACTIVITY_CLUB);
+        clubMembers.forEach(m -> m.modifyStatus(ClubStatus.REJECTED));
+        clubStudentRepository.saveAll(clubMembers);
     }
 
     private void validateLeaderInList(Student leader, List<Student> students) {
@@ -58,12 +67,6 @@ public class ClubStudentService {
         if (clubStudentRepository.existsByStudentInAndClubStatusAndClub_TypeAndClub_State(students, ClubStatus.ALLOWED, ClubType.CREATIVE_ACTIVITY_CLUB, ClubStatus.DELETED)) {
             throw new AlreadyUserJoinCreativeClubException();
         }
-    }
-
-    private void rejectActivityClubMember(Student student) {
-        List<ClubMember> clubMembers = clubStudentRepository.findAllByStudentAndClub_Type(student, ClubType.CREATIVE_ACTIVITY_CLUB);
-        clubMembers.forEach(m -> m.modifyStatus(ClubStatus.REJECTED));
-        clubStudentRepository.saveAll(clubMembers);
     }
 
     private ClubMember createMember(Club club, Student student, ClubPermission clubPermission, ClubStatus clubStatus) {
