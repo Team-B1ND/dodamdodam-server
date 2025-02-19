@@ -5,7 +5,6 @@ import b1nd.dodam.domain.rds.club.entity.ClubMember;
 import b1nd.dodam.domain.rds.club.enumeration.ClubPermission;
 import b1nd.dodam.domain.rds.club.enumeration.ClubStatus;
 import b1nd.dodam.domain.rds.club.enumeration.ClubType;
-import b1nd.dodam.domain.rds.club.exception.AlreadyClubLeaderException;
 import b1nd.dodam.domain.rds.club.exception.AlreadyUserJoinCreativeClubException;
 import b1nd.dodam.domain.rds.club.exception.ClubPermissionDeniedException;
 import b1nd.dodam.domain.rds.club.repository.ClubStudentRepository;
@@ -17,8 +16,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Set;
-import java.util.function.Supplier;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 @RequiredArgsConstructor
@@ -62,19 +61,13 @@ public class ClubStudentService {
         if (club.getType() == ClubType.SELF_DIRECT_ACTIVITY_CLUB) {
             return;
         }
-        validateClubMember(List.of(leader), ClubPermission.CLUB_LEADER, AlreadyClubLeaderException::new);
-        validateClubMember(students, null, AlreadyUserJoinCreativeClubException::new);
-
-    }
-
-    private void validateClubMember(List<Student> students, ClubPermission permission, Supplier<RuntimeException> supplier) {
-        if (!clubStudentRepository.findByStudentInAndPermissionAndClubStatusAndClub_TypeAndClub_StateNot(
-                students,
-                permission,
+        if (!clubStudentRepository.findByStudentInAndClubStatusAndClub_TypeAndClub_StateNot(
+                Stream.concat(Stream.of(leader), students.stream()).toList(),
                 ClubStatus.ALLOWED,
                 ClubType.CREATIVE_ACTIVITY_CLUB,
-                ClubStatus.DELETED).isEmpty()) {
-            throw supplier.get();
+                ClubStatus.DELETED).isEmpty()
+        ) {
+            throw new AlreadyUserJoinCreativeClubException();
         }
     }
 

@@ -7,9 +7,8 @@ import lombok.RequiredArgsConstructor;
 public enum ClubExceptionCode implements ExceptionCode {
     CLUB_NAME_DUPLICATE(400, "이름이 중복됩니다."),
     CLUB_NOT_FOUND_EXCEPTION(404, "동아리를 찾을 수 없습니다."),
-    ALREADY_USER_JOIN_CREATIVE_CLUB(400, "초대할 수 없는 유저입니다"),
+    ALREADY_USER_JOIN_CREATIVE_CLUB(400, "초대할 수 없는 학생입니다"),
     CLUB_PERMISSION_DENIED(403, "동아리 권한이 부족합니다."),
-    ALREADY_CLUB_LEADER(409, "이미 다른 창체 동아리의 부장입니다"),
     ;
 
     private final int status;
