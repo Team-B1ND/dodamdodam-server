@@ -26,7 +26,6 @@ public interface ClubStudentRepository extends JpaRepository<ClubMember, Long> {
     AND cs.club.state <> :state
     """)
     List<ClubMember> findByStudentInAndPermissionAndClubStatusAndClub_TypeAndClub_StateNot(
-//            List<Student> student, ClubPermission permission, ClubStatus clubStatus, ClubType clubType, ClubStatus state
             @Param("students") List<Student> students,
             @Param("permission") ClubPermission permission,
             @Param("status") ClubStatus status,
