@@ -54,6 +54,11 @@ public class Club extends BaseEntity {
         this.state = state;
     }
 
+    public void updateStatus(String name, ClubStatus clubStatus) {
+        this.name = name;
+        this.state = clubStatus;
+    }
+
     public void join(Teacher teacher) {
         this.teacher = teacher;
     }

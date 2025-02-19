@@ -55,7 +55,7 @@ public class ClubStudentService {
         if (clubStudentRepository.existsByStudentAndPermissionAndClub_Type(leader, ClubPermission.CLUB_LEADER, ClubType.CREATIVE_ACTIVITY_CLUB)) {
             throw new AlreadyClubLeaderException();
         }
-        if (clubStudentRepository.existsByStudentInAndClubStatusAndClub_Type(students, ClubStatus.ALLOWED, ClubType.CREATIVE_ACTIVITY_CLUB)) {
+        if (clubStudentRepository.existsByStudentInAndClubStatusAndClub_TypeAndClub_State(students, ClubStatus.ALLOWED, ClubType.CREATIVE_ACTIVITY_CLUB, ClubStatus.DELETED)) {
             throw new AlreadyUserJoinCreativeClubException();
         }
     }

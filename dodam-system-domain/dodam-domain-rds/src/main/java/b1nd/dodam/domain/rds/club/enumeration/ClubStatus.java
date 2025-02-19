@@ -5,4 +5,5 @@ public enum ClubStatus {
     PENDING,
     REJECTED,
     WAITING,
+    DELETED
 }
