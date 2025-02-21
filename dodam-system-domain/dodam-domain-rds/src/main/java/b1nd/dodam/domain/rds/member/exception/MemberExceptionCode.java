@@ -13,9 +13,11 @@ public enum MemberExceptionCode implements ExceptionCode {
     STUDENT_NOT_FOUND(404, "없는 학생"),
     PARENT_NOT_FOUND(404, "없는 부모님 정보"),
     TEACHER_NOT_FOUND(404, "없는 선생님"),
-    MEMBER_DUPLICATION(409, "이미 존재하는 멤버"),
-    BROADCAST_CLUB_MEMBER_DUPLICATION(409, "이미 존재하는 방송부원"),
-    CODE_NOT_FOUND(404, "없는 학생코드");
+    MEMBER_DUPLICATED(409, "이미 존재하는 멤버"),
+    BROADCAST_CLUB_MEMBER_DUPLICATED(409, "이미 존재하는 방송부원"),
+    CODE_NOT_FOUND(404, "없는 학생코드"),
+    CHILD_DUPLICATED(409, "이미 존재하는 자녀")
+    ;
 
     private final int status;
     private final String message;
