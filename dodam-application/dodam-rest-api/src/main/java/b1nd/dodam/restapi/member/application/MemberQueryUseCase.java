@@ -91,10 +91,8 @@ public class MemberQueryUseCase {
     public ResponseData<List<StudentRelationRes>> getStudentByPatent(){
         Member member = memberAuthenticationHolder.current();
         List<StudentRelationRes> studentRelationRes =
-                memberService.getStudentRelationByMember(member)
-                .stream()
-                .map(StudentRelationRes::of)
-                .toList();
+                memberService.getStudentRelationByMember(member).stream()
+                .map(StudentRelationRes::of).toList();
         return ResponseData.ok("자녀 조회 성공", studentRelationRes);
     }
 

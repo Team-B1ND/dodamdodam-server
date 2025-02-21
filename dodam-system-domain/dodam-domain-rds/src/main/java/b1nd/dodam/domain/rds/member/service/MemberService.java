@@ -36,12 +36,8 @@ public class MemberService {
     }
 
     public List<StudentRelation> getStudentRelationByMember(Member member){
-        Parent parent = getParentByMember(member);
+        Parent parent = parentRepository.findByMember(member);
         return studentRelationRepository.findByParent(parent);
-    }
-
-    private Parent getParentByMember(Member member){
-        return parentRepository.findByMember(member);
     }
 
     public Member toggleAlarm(Member member) {
