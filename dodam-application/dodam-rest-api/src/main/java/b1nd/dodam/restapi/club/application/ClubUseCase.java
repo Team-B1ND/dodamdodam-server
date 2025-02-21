@@ -26,12 +26,11 @@ public class ClubUseCase {
 
     public Response save(CreateClubReq req) {
         clubService.checkIsNameDuplicated(req.name());
-        Student leader = studentRepository.getByMember(authHolder.current());
         Club club = req.toEntity();
-        clubService.save(club);
+        Student leader = studentRepository.getByMember(authHolder.current());
         List<Student> students = studentRepository.getByIds(req.studentIds());
         clubStudentService.validateAndRejectLeader(club, leader, students);
-        clubStudentService.saveWithBuild(club, leader, students);
+        clubService.saveClubAndMember(club, leader, students);
         return Response.created("동아리 생성 완료");
     }
 

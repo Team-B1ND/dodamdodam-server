@@ -15,8 +15,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Service
@@ -29,13 +27,6 @@ public class ClubStudentService {
         rejectActivityClubMember(leader);
         validateLeaderInList(leader, students);
         validateByLeaderAndClubMemberDuplicated(leader, students, club);
-    }
-
-    public void saveWithBuild(Club club, Student leader, List<Student> students) {
-        Set<ClubMember> clubMembers = students.stream()
-            .map(student -> createMember(club, student, ClubPermission.CLUB_MEMBER, ClubStatus.WAITING)).collect(Collectors.toSet());
-        clubMembers.add(createMember(club, leader, ClubPermission.CLUB_LEADER, ClubStatus.ALLOWED));
-        clubStudentRepository.saveAll(clubMembers);
     }
 
     public void validateByClubLeader(Club club, Member member) {
@@ -69,14 +60,5 @@ public class ClubStudentService {
         ) {
             throw new AlreadyUserJoinCreativeClubException();
         }
-    }
-
-    private ClubMember createMember(Club club, Student student, ClubPermission clubPermission, ClubStatus clubStatus) {
-        return ClubMember.builder()
-                .club(club)
-                .student(student)
-                .permission(clubPermission)
-                .clubStatus(clubStatus)
-                .build();
     }
 }
