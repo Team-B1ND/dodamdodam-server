@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class ClubService {
     private final ClubRepository clubRepository;
-    private final String deleted =  "_deleted";
+    private final String DELETED_PREFIX =  "_deleted";
 
     public void checkIsNameDuplicated(String name){
         if(clubRepository.existsByName(name)){
@@ -35,7 +35,7 @@ public class ClubService {
     }
 
     public void deleteClub(Club club) {
-        club.updateStatus(club.getName() + deleted, ClubStatus.DELETED);
+        club.updateStatus(club.getName() + DELETED_PREFIX, ClubStatus.DELETED);
         clubRepository.save(club);
     }
 }
