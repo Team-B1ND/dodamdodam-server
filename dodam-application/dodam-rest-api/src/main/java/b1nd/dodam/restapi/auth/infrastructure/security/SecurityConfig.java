@@ -1,11 +1,11 @@
 package b1nd.dodam.restapi.auth.infrastructure.security;
 
 import b1nd.dodam.core.exception.global.GlobalExceptionCode;
-import b1nd.dodam.restapi.auth.infrastructure.security.filter.DivisionPermissionInterceptor;
-import b1nd.dodam.restapi.support.exception.ErrorResponseSender;
 import b1nd.dodam.restapi.auth.infrastructure.security.filter.BroadcastMemberFilter;
+import b1nd.dodam.restapi.auth.infrastructure.security.filter.DivisionPermissionInterceptor;
 import b1nd.dodam.restapi.auth.infrastructure.security.filter.TokenExceptionFilter;
 import b1nd.dodam.restapi.auth.infrastructure.security.filter.TokenFilter;
+import b1nd.dodam.restapi.support.exception.ErrorResponseSender;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -55,10 +55,12 @@ class SecurityConfig {
                 .requestMatchers(POST, "/auth/**").permitAll()
 
                 .requestMatchers(POST, "/member/broadcast-club-member").hasRole(ADMIN)
+                .requestMatchers(POST, "/member/relation").hasAnyRole(PARENT)
                 .requestMatchers(POST, "/member/**").permitAll()
                 .requestMatchers(GET, "/member/my").authenticated()
                 .requestMatchers(GET, "/member/check/broadcast-club-member").hasAnyRole(STUDENT, ADMIN)
                 .requestMatchers(GET, "/member/code/**").permitAll()
+                .requestMatchers(GET, "/member/relation").hasAnyRole(PARENT)
                 .requestMatchers(GET, "/member/**").hasAnyRole(TEACHER, ADMIN)
                 .requestMatchers(PATCH, "/member/student/info/**").hasAnyRole(STUDENT, ADMIN)
                 .requestMatchers(PATCH, "/member/teacher/info/**").hasAnyRole(TEACHER, ADMIN)

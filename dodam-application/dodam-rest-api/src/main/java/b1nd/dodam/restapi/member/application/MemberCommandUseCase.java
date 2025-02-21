@@ -8,8 +8,8 @@ import b1nd.dodam.domain.rds.member.entity.Teacher;
 import b1nd.dodam.domain.rds.member.enumeration.ActiveStatus;
 import b1nd.dodam.domain.rds.member.event.ParentRegisteredEvent;
 import b1nd.dodam.domain.rds.member.event.StudentRegisteredEvent;
-import b1nd.dodam.domain.rds.member.exception.BroadcastClubMemberDuplicateException;
-import b1nd.dodam.domain.rds.member.exception.MemberDuplicateException;
+import b1nd.dodam.domain.rds.member.exception.BroadcastClubMemberDuplicatedException;
+import b1nd.dodam.domain.rds.member.exception.MemberDuplicatedException;
 import b1nd.dodam.domain.rds.member.exception.ParentNotFoundException;
 import b1nd.dodam.domain.rds.member.repository.*;
 import b1nd.dodam.domain.rds.member.service.MemberService;
@@ -102,16 +102,23 @@ public class MemberCommandUseCase {
         return Response.ok("인증 성공");
     }
 
+    public Response addChild(ConnectStudentReq req){
+        Parent parent = parentRepository.findByMember(memberAuthenticationHolder.current());
+        connectRelation(parent.getId(), req);
+        return Response.ok("자녀추가 성공");
+    }
+
     public void connectRelation(int id, ConnectStudentReq req){
         Student student = memberService.checkCode(req.code());
         Parent parent = parentRepository.findById(id)
                 .orElseThrow(ParentNotFoundException::new);
+        memberService.checkDuplicateStudent(student);
         studentRelationRepository.save(req.mapToStudentRelation(student, parent));
     }
 
     private void checkIfIdIsDuplicate(String id) {
         if(memberRepository.existsById(id)) {
-            throw new MemberDuplicateException();
+            throw new MemberDuplicatedException();
         }
     }
 
@@ -128,7 +135,7 @@ public class MemberCommandUseCase {
 
     private void checkIfMemberIsAlreadyBroadcastClubMember(Member member) {
         if(broadcastClubMemberRepository.existsByMember(member)) {
-            throw new BroadcastClubMemberDuplicateException();
+            throw new BroadcastClubMemberDuplicatedException();
         }
     }
 
