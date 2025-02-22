@@ -10,7 +10,7 @@ import java.util.List;
 
 public interface StudentRelationRepository extends JpaRepository<StudentRelation, Integer> {
 
-    @EntityGraph(attributePaths = {"student"})
+    @EntityGraph(attributePaths = {"student", "student.member", "parent", "parent.member"})
     List<StudentRelation> findByParent(Parent parent);
     boolean existsByStudent(Student student);
 
