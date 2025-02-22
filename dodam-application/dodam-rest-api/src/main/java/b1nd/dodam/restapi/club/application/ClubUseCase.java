@@ -8,7 +8,9 @@ import b1nd.dodam.domain.rds.member.repository.StudentRepository;
 import b1nd.dodam.restapi.auth.infrastructure.security.support.MemberAuthenticationHolder;
 import b1nd.dodam.restapi.club.application.data.req.CreateClubReq;
 import b1nd.dodam.restapi.club.application.data.req.UpdateClubInfoReq;
+import b1nd.dodam.restapi.club.application.data.res.ClubDetailRes;
 import b1nd.dodam.restapi.support.data.Response;
+import b1nd.dodam.restapi.support.data.ResponseData;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -46,5 +48,10 @@ public class ClubUseCase {
         clubStudentService.validateByClubLeader(club, authHolder.current());
         clubService.update(club, req.name(), req.subject(), req.shortDescription(), req.description());
         return Response.ok("동아리 정보 업데이트됨");
+    }
+
+    @Transactional(readOnly = true)
+    public ResponseData<ClubDetailRes> getClubDetail(Long id) {
+        return ResponseData.ok("동아리 상세 정보", ClubDetailRes.of(clubService.findById(id)));
     }
 }
