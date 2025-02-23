@@ -14,7 +14,7 @@ public record CreateClubReq(
     @Size(max = 4) @NotBlank String subject,
     @Size(max = 17) @NotBlank String shortDescription,
     @NotBlank String description,
-    @NotNull String image,
+    @NotBlank String image,
     @NotNull ClubType type,
     @NotNull List<Integer> studentIds
 ) {
