@@ -7,6 +7,7 @@ import b1nd.dodam.restapi.member.application.MemberCommandUseCase;
 import b1nd.dodam.restapi.member.application.MemberQueryUseCase;
 import b1nd.dodam.restapi.member.application.data.req.*;
 import b1nd.dodam.restapi.member.application.data.res.MemberInfoRes;
+import b1nd.dodam.restapi.member.application.data.res.StudentRelationRes;
 import b1nd.dodam.restapi.support.data.Response;
 import b1nd.dodam.restapi.support.data.ResponseData;
 import jakarta.servlet.http.HttpServletRequest;
@@ -58,6 +59,11 @@ public class MemberController {
                                    @PathVariable AuthType type,
                                    @RequestBody @Valid VerifyAuthCodeReq req){
         return commandUseCase.verifyAuthCode(MemberAuthenticationHolder.getUserAgent(httpServletReq), type, req);
+    }
+
+    @PostMapping("/relation")
+    public Response addChild(@RequestBody ConnectStudentReq req){
+        return commandUseCase.addChild(req);
     }
 
     @DeleteMapping("/{id}")
@@ -138,6 +144,11 @@ public class MemberController {
     @GetMapping("/code/{code}")
     public ResponseData<MemberInfoRes> getMemberByCode(@PathVariable String code){
         return queryUseCase.getMemberByCode(code);
+    }
+
+    @GetMapping("/relation")
+    public ResponseData<List<StudentRelationRes>> getStudentRelations(){
+        return queryUseCase.getStudentByPatent();
     }
 
 }
