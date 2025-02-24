@@ -43,7 +43,7 @@ public class ClubMemberService {
     }
 
     public Student getClubLeader(Long clubId) {
-        return clubMemberRepository.getByClubAndPermission(clubRepository.getByClubId(clubId), ClubPermission.CLUB_LEADER).getStudent();
+        return clubMemberRepository.getByClubAndPermissionAndStatus(clubRepository.getByClubId(clubId), ClubPermission.CLUB_LEADER, ClubStatus.ALLOWED).getStudent();
     }
 
     public void validateAndRejectLeader(Club club, Student leader, List<Student> students) {
