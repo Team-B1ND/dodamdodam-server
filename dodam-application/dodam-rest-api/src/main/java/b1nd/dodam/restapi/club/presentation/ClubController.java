@@ -59,6 +59,11 @@ public class ClubController {
         return clubUseCase.update(id, req);
     }
 
+    @GetMapping
+    public ResponseData<List<ClubDetailRes>> getClubs() {
+        return clubUseCase.getClubs();
+    }
+
     @GetMapping("/{id}")
     public ResponseData<ClubDetailRes> getClubDetail(
             @PathVariable Long id

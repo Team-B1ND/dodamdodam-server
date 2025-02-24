@@ -51,6 +51,11 @@ public class ClubUseCase {
     }
 
     @Transactional(readOnly = true)
+    public ResponseData<List<ClubDetailRes>> getClubs() {
+        return ResponseData.ok("전체 동아리", clubService.findAll().stream().map(ClubDetailRes::of).toList());
+    }
+
+    @Transactional(readOnly = true)
     public ResponseData<ClubDetailRes> getClubDetail(Long id) {
         return ResponseData.ok("동아리 상세 정보", ClubDetailRes.of(clubService.findById(id)));
     }
