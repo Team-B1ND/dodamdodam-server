@@ -48,6 +48,6 @@ public class ClubMemberUseCase {
 
     @Transactional(readOnly = true)
     public ResponseData<List<ClubStudentRes>> getActiveClubMembers(Long id) {
-        return ResponseData.ok("동아리 모든 멤버 로드됨", clubMemberService.getActiveClubMembers(id).stream().map(ClubStudentRes::of).toList());
+        return ResponseData.ok("동아리 멤버 로드됨", clubMemberService.getActiveClubMembers(id).stream().map(ClubStudentRes::of).toList());
     }
 }
