@@ -19,7 +19,7 @@ import java.util.stream.Stream;
 
 @Service
 @RequiredArgsConstructor
-public class ClubStudentService {
+public class ClubMemberService {
     private final ClubStudentRepository clubStudentRepository;
     private final StudentRepository studentRepository;
 
@@ -34,6 +34,11 @@ public class ClubStudentService {
         if(!clubStudentRepository.existsByClubAndStudentAndPermission(club, leader, ClubPermission.CLUB_LEADER)) {
             throw new ClubPermissionDeniedException();
         }
+    }
+
+    public List<ClubMember> getJoinRequests(Member member) {
+        Student student = studentRepository.getByMember(member);
+        return clubStudentRepository.findByStudentAndClubStatus(student, ClubStatus.WAITING);
     }
 
     private void rejectActivityClubMember(Student student) {
