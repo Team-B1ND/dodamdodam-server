@@ -28,11 +28,25 @@ public class ClubController {
         return clubUseCase.save(req);
     }
 
+    @PostMapping("/join-requests/{id}")
+    public Response acceptClubJoinRequest(
+            @PathVariable Long id
+    ) {
+        return clubMemberUseCase.acceptClubJoinRequestReceived(id);
+    }
+
     @DeleteMapping("/{id}")
     public Response delete(
             @PathVariable Long id
     ) {
         return clubUseCase.delete(id);
+    }
+
+    @DeleteMapping("/join-requests/{id}")
+    public Response rejectClubJoinRequest(
+            @PathVariable Long id
+    ) {
+        return clubMemberUseCase.rejectClubJoinRequestReceived(id);
     }
 
     @PatchMapping("/{id}")

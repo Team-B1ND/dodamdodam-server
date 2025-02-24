@@ -7,7 +7,7 @@ import b1nd.dodam.domain.rds.club.enumeration.ClubStatus;
 import b1nd.dodam.domain.rds.club.enumeration.ClubType;
 import b1nd.dodam.domain.rds.club.exception.AlreadyUserJoinCreativeClubException;
 import b1nd.dodam.domain.rds.club.exception.ClubPermissionDeniedException;
-import b1nd.dodam.domain.rds.club.repository.ClubStudentRepository;
+import b1nd.dodam.domain.rds.club.repository.ClubMemberRepository;
 import b1nd.dodam.domain.rds.member.entity.Member;
 import b1nd.dodam.domain.rds.member.entity.Student;
 import b1nd.dodam.domain.rds.member.repository.StudentRepository;
@@ -20,8 +20,25 @@ import java.util.stream.Stream;
 @Service
 @RequiredArgsConstructor
 public class ClubMemberService {
-    private final ClubStudentRepository clubStudentRepository;
+    private final ClubMemberRepository clubMemberRepository;
     private final StudentRepository studentRepository;
+
+    public void setClubMemberStatus(Long clubMemberId, Member member, ClubStatus clubStatus) {
+        Student student = studentRepository.getByMember(member);
+        ClubMember clubMember = clubMemberRepository.getByIdAndStudent(clubMemberId, student);
+        clubMember.modifyStatus(clubStatus);
+
+        if (clubStatus == ClubStatus.ALLOWED && clubMember.getClub().getType() == ClubType.CREATIVE_ACTIVITY_CLUB) {
+            rejectActivityClubMember(student);
+        }
+
+        clubMemberRepository.save(clubMember);
+    }
+
+    public List<ClubMember> getJoinRequests(Member member) {
+        Student student = studentRepository.getByMember(member);
+        return clubMemberRepository.findByStudentAndClubStatus(student, ClubStatus.WAITING);
+    }
 
     public void validateAndRejectLeader(Club club, Student leader, List<Student> students) {
         rejectActivityClubMember(leader);
@@ -31,20 +48,15 @@ public class ClubMemberService {
 
     public void validateByClubLeader(Club club, Member member) {
         Student leader = studentRepository.getByMember(member);
-        if(!clubStudentRepository.existsByClubAndStudentAndPermission(club, leader, ClubPermission.CLUB_LEADER)) {
+        if(!clubMemberRepository.existsByClubAndStudentAndPermission(club, leader, ClubPermission.CLUB_LEADER)) {
             throw new ClubPermissionDeniedException();
         }
     }
 
-    public List<ClubMember> getJoinRequests(Member member) {
-        Student student = studentRepository.getByMember(member);
-        return clubStudentRepository.findByStudentAndClubStatus(student, ClubStatus.WAITING);
-    }
-
     private void rejectActivityClubMember(Student student) {
-        List<ClubMember> clubMembers = clubStudentRepository.findAllByStudentAndPermissionAndClub_Type(student, ClubPermission.CLUB_MEMBER, ClubType.CREATIVE_ACTIVITY_CLUB);
+        List<ClubMember> clubMembers = clubMemberRepository.findAllByStudentAndPermissionAndClub_Type(student, ClubPermission.CLUB_MEMBER, ClubType.CREATIVE_ACTIVITY_CLUB);
         clubMembers.forEach(m -> m.modifyStatus(ClubStatus.REJECTED));
-        clubStudentRepository.saveAll(clubMembers);
+        clubMemberRepository.saveAll(clubMembers);
     }
 
     private void validateLeaderInList(Student leader, List<Student> students) {
@@ -57,7 +69,7 @@ public class ClubMemberService {
         if (club.getType() == ClubType.SELF_DIRECT_ACTIVITY_CLUB) {
             return;
         }
-        if (!clubStudentRepository.findByStudentInAndClubStatusAndClub_TypeAndClub_StateNot(
+        if (!clubMemberRepository.findByStudentInAndClubStatusAndClub_TypeAndClub_StateNot(
                 Stream.concat(Stream.of(leader), students.stream()).toList(),
                 ClubStatus.ALLOWED,
                 ClubType.CREATIVE_ACTIVITY_CLUB,
