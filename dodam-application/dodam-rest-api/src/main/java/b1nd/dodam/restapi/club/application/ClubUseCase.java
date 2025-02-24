@@ -44,7 +44,7 @@ public class ClubUseCase {
     public Response update(Long id, UpdateClubInfoReq req) {
         Club club = clubService.findById(id);
         clubStudentService.validateByClubLeader(club, authHolder.current());
-        clubService.update(club, req.name(), req.subject(), req.shortDescription(), req.description());
+        clubService.update(club, req.name(), req.subject(), req.shortDescription(), req.description(), req.image());
         return Response.ok("동아리 정보 업데이트됨");
     }
 }

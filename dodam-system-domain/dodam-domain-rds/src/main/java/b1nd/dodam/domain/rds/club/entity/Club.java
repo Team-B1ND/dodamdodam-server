@@ -30,6 +30,9 @@ public class Club extends BaseEntity {
     private String description;
 
     @NotNull
+    private String image;
+
+    @NotNull
     private String subject;
 
     @NotNull
@@ -45,10 +48,11 @@ public class Club extends BaseEntity {
     private ClubStatus state;
 
     @Builder
-    public Club(String name, String shortDescription, String description, String subject, ClubType type, ClubStatus state) {
+    public Club(String name, String shortDescription, String description, String image, String subject, ClubType type, ClubStatus state) {
         this.name = name;
         this.shortDescription = shortDescription;
         this.description = description;
+        this.image = image;
         this.subject = subject;
         this.type = type;
         this.state = state;
@@ -63,10 +67,11 @@ public class Club extends BaseEntity {
         this.teacher = teacher;
     }
 
-    public void updateInfo(String name, String subject, String shortDescription, String description) {
+    public void updateInfo(String name, String subject, String shortDescription, String description, String image) {
         this.name = name;
         this.subject = subject;
         this.shortDescription = shortDescription;
         this.description = description;
+        this.image = image;
     }
 }
