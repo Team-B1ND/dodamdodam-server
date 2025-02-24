@@ -10,12 +10,12 @@ public record ClubMemberRes(
     ClubStatus status,
     ClubDetailRes club
 ) {
-    public static ClubMemberRes of(ClubMember clubmember) {
+    public static ClubMemberRes of(ClubMember clubMember) {
         return new ClubMemberRes(
-            clubmember.getId(),
-            clubmember.getPermission(),
-            clubmember.getClubStatus(),
-            ClubDetailRes.of(clubmember.getClub())
+            clubMember.getId(),
+            clubMember.getPermission(),
+            clubMember.getClubStatus(),
+            ClubDetailRes.of(clubMember.getClub())
         );
     }
 }

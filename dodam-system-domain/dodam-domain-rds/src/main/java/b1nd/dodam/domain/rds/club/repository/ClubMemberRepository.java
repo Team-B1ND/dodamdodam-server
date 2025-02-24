@@ -7,6 +7,7 @@ import b1nd.dodam.domain.rds.club.enumeration.ClubStatus;
 import b1nd.dodam.domain.rds.club.enumeration.ClubType;
 import b1nd.dodam.domain.rds.club.exception.ClubMemberNotFoundException;
 import b1nd.dodam.domain.rds.member.entity.Student;
+import jakarta.validation.constraints.NotNull;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
@@ -26,6 +27,10 @@ public interface ClubMemberRepository extends JpaRepository<ClubMember, Long> {
     boolean existsByClubAndStudentAndPermission(Club club, Student student, ClubPermission permission);
 
     List<ClubMember> findByStudentAndClubStatus(Student student, ClubStatus clubStatus);
+
+    List<ClubMember> findAllByClubAndPermission(Club club, ClubPermission permission);
+
+    List<ClubMember> findAllByClubAndClubStatus(Club club, ClubStatus clubStatus);
 
     Optional<ClubMember> findByClubAndPermissionAndClubStatus(Club club, ClubPermission permission, ClubStatus clubStatus);
 

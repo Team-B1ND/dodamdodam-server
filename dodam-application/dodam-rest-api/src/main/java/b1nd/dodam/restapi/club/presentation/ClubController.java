@@ -6,6 +6,7 @@ import b1nd.dodam.restapi.club.application.data.req.CreateClubReq;
 import b1nd.dodam.restapi.club.application.data.req.UpdateClubInfoReq;
 import b1nd.dodam.restapi.club.application.data.res.ClubDetailRes;
 import b1nd.dodam.restapi.club.application.data.res.ClubMemberRes;
+import b1nd.dodam.restapi.club.application.data.res.ClubStudentRes;
 import b1nd.dodam.restapi.member.application.data.res.StudentRes;
 import b1nd.dodam.restapi.support.data.Response;
 import b1nd.dodam.restapi.support.data.ResponseData;
@@ -75,5 +76,19 @@ public class ClubController {
     @GetMapping("/join-requests/received")
     public ResponseData<List<ClubMemberRes>> getJoinRequests() {
         return clubMemberUseCase.getClubJoinRequestsReceived();
+    }
+
+    @GetMapping("/{id}/all-members")
+    public ResponseData<List<ClubStudentRes>> getAllClubMembers(
+            @PathVariable Long id
+    ) {
+        return clubMemberUseCase.getAllClubMembers(id);
+    }
+
+    @GetMapping("/{id}/members")
+    public ResponseData<List<ClubStudentRes>> getClubMembers(
+            @PathVariable Long id
+    ) {
+        return clubMemberUseCase.getActiveClubMembers(id);
     }
 }

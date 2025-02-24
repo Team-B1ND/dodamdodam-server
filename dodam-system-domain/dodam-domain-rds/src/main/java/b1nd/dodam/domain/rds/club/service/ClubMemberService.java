@@ -46,6 +46,16 @@ public class ClubMemberService {
         return clubMemberRepository.getByClubAndPermissionAndStatus(clubRepository.getByClubId(clubId), ClubPermission.CLUB_LEADER, ClubStatus.ALLOWED).getStudent();
     }
 
+    public List<ClubMember> getActiveClubMembers(Long clubId) {
+        return clubMemberRepository.findAllByClubAndClubStatus(clubRepository.getByClubId(clubId), ClubStatus.ALLOWED);
+    }
+
+    public List<ClubMember> getAllClubMembers(Member leader, Long clubId) {
+        Club club = clubRepository.getByClubId(clubId);
+        validateByClubLeader(club, leader);
+        return clubMemberRepository.findAllByClubAndPermission(club, ClubPermission.CLUB_MEMBER);
+    }
+
     public void validateAndRejectLeader(Club club, Student leader, List<Student> students) {
         rejectActivityClubMember(leader);
         validateLeaderInList(leader, students);
