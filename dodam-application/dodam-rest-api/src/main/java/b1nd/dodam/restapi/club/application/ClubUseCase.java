@@ -3,7 +3,6 @@ package b1nd.dodam.restapi.club.application;
 import b1nd.dodam.domain.rds.club.entity.Club;
 import b1nd.dodam.domain.rds.club.service.ClubMemberService;
 import b1nd.dodam.domain.rds.club.service.ClubService;
-import b1nd.dodam.domain.rds.club.service.ClubStudentService;
 import b1nd.dodam.domain.rds.member.entity.Student;
 import b1nd.dodam.domain.rds.member.repository.StudentRepository;
 import b1nd.dodam.restapi.auth.infrastructure.security.support.MemberAuthenticationHolder;
@@ -47,7 +46,7 @@ public class ClubUseCase {
     public Response update(Long id, UpdateClubInfoReq req) {
         Club club = clubService.findById(id);
         clubMemberService.validateByClubLeader(club, authHolder.current());
-        clubService.update(club, req.name(), req.subject(), req.shortDescription(), req.description());
+        clubService.update(club, req.name(), req.subject(), req.shortDescription(), req.description(), req.image());
         return Response.ok("동아리 정보 업데이트됨");
     }
 

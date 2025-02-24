@@ -17,11 +17,17 @@ public interface ClubMemberRepository extends JpaRepository<ClubMember, Long> {
         return findByIdAndStudent(id, student).orElseThrow(ClubMemberNotFoundException::new);
     }
 
+    default ClubMember getByClubAndPermission(Club club, ClubPermission permission) {
+        return findByClubAndPermission(club, permission).orElseThrow(ClubMemberNotFoundException::new);
+    }
+
     List<ClubMember> findAllByStudentAndPermissionAndClub_Type(Student student, ClubPermission permission, ClubType clubType);
 
     boolean existsByClubAndStudentAndPermission(Club club, Student student, ClubPermission permission);
 
     List<ClubMember> findByStudentAndClubStatus(Student student, ClubStatus clubStatus);
+
+    Optional<ClubMember> findByClubAndPermission(Club club, ClubPermission permission);
 
     Optional<ClubMember> findByIdAndStudent(Long id, Student student);
 

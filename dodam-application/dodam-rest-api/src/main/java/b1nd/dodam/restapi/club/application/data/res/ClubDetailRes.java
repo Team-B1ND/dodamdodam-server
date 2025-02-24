@@ -11,6 +11,7 @@ public record ClubDetailRes(
     String shortDescription,
     String description,
     String subject,
+    String image,
     ClubType type,
     TeacherRes teacher,
     ClubStatus state
@@ -26,6 +27,7 @@ public record ClubDetailRes(
             club.getShortDescription(),
             club.getDescription(),
             club.getSubject(),
+            club.getImage(),
             club.getType(),
             TeacherRes.of(club.getTeacher()),
             club.getState()

@@ -8,6 +8,7 @@ import b1nd.dodam.domain.rds.club.enumeration.ClubType;
 import b1nd.dodam.domain.rds.club.exception.AlreadyUserJoinCreativeClubException;
 import b1nd.dodam.domain.rds.club.exception.ClubPermissionDeniedException;
 import b1nd.dodam.domain.rds.club.repository.ClubMemberRepository;
+import b1nd.dodam.domain.rds.club.repository.ClubRepository;
 import b1nd.dodam.domain.rds.member.entity.Member;
 import b1nd.dodam.domain.rds.member.entity.Student;
 import b1nd.dodam.domain.rds.member.repository.StudentRepository;
@@ -20,6 +21,7 @@ import java.util.stream.Stream;
 @Service
 @RequiredArgsConstructor
 public class ClubMemberService {
+    private final ClubRepository clubRepository;
     private final ClubMemberRepository clubMemberRepository;
     private final StudentRepository studentRepository;
 
@@ -38,6 +40,10 @@ public class ClubMemberService {
     public List<ClubMember> getJoinRequests(Member member) {
         Student student = studentRepository.getByMember(member);
         return clubMemberRepository.findByStudentAndClubStatus(student, ClubStatus.WAITING);
+    }
+
+    public Student getClubLeader(Long clubId) {
+        return clubMemberRepository.getByClubAndPermission(clubRepository.getByClubId(clubId), ClubPermission.CLUB_LEADER).getStudent();
     }
 
     public void validateAndRejectLeader(Club club, Student leader, List<Student> students) {

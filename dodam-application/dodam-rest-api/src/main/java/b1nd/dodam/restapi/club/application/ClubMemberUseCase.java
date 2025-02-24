@@ -1,16 +1,15 @@
 package b1nd.dodam.restapi.club.application;
 
 import b1nd.dodam.domain.rds.club.enumeration.ClubStatus;
-import b1nd.dodam.domain.rds.club.service.ClubService;
 import b1nd.dodam.domain.rds.club.service.ClubMemberService;
 import b1nd.dodam.restapi.auth.infrastructure.security.support.MemberAuthenticationHolder;
 import b1nd.dodam.restapi.club.application.data.res.ClubMemberRes;
+import b1nd.dodam.restapi.member.application.data.res.StudentRes;
 import b1nd.dodam.restapi.support.data.Response;
 import b1nd.dodam.restapi.support.data.ResponseData;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.List;
 
@@ -31,7 +30,13 @@ public class ClubMemberUseCase {
         return Response.ok("동아리 가입 거절됨");
     }
 
+    @Transactional(readOnly = true)
     public ResponseData<List<ClubMemberRes>> getClubJoinRequestsReceived() {
         return ResponseData.ok("받은 부원 제안", clubMemberService.getJoinRequests(authenticationHolder.current()).stream().map(ClubMemberRes::of).toList());
+    }
+
+    @Transactional(readOnly = true)
+    public ResponseData<StudentRes> getClubLeader(Long id) {
+        return ResponseData.ok("부장 로드됨", StudentRes.of(clubMemberService.getClubLeader(id)));
     }
 }
