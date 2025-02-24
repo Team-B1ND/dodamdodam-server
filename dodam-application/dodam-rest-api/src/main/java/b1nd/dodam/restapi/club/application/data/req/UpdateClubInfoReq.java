@@ -7,5 +7,6 @@ public record UpdateClubInfoReq(
     @Size(max = 10) @NotBlank String name,
     @Size(max = 17) @NotBlank String shortDescription,
     @NotBlank String description,
+    @NotBlank String image,
     @Size(max = 4) @NotBlank String subject
 ) {}

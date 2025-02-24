@@ -23,14 +23,14 @@ public class ClubService {
     private final ClubMemberRepository clubMemberRepository;
     private final String DELETED_PREFIX =  "_deleted";
 
-    public void checkIsNameDuplicated(String name){
-        if(clubRepository.existsByName(name)){
+    public void checkIsNameDuplicated(String name) {
+        if (clubRepository.existsByName(name)) {
             throw new ClubDuplicateException();
         }
     }
 
-    public void update(Club club, String name, String subject, String shortDescription, String description) {
-        club.updateInfo(name, subject, shortDescription, description);
+    public void update(Club club, String name, String subject, String shortDescription, String description, String image) {
+        club.updateInfo(name, subject, shortDescription, description, image);
         clubRepository.save(club);
     }
 

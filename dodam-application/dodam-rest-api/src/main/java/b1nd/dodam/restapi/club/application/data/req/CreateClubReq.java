@@ -14,6 +14,7 @@ public record CreateClubReq(
     @Size(max = 4) @NotBlank String subject,
     @Size(max = 17) @NotBlank String shortDescription,
     @NotBlank String description,
+    @NotBlank String image,
     @NotNull ClubType type,
     @NotNull List<Integer> studentIds
 ) {
@@ -22,6 +23,7 @@ public record CreateClubReq(
                 .name(name)
                 .shortDescription(shortDescription)
                 .description(description)
+                .image(image)
                 .subject(subject)
                 .type(type)
                 .state(ClubStatus.PENDING)

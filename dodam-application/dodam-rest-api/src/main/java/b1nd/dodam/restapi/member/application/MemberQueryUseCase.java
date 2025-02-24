@@ -10,8 +10,8 @@ import b1nd.dodam.domain.rds.member.repository.StudentRepository;
 import b1nd.dodam.domain.rds.member.repository.TeacherRepository;
 import b1nd.dodam.domain.rds.member.service.MemberService;
 import b1nd.dodam.restapi.auth.infrastructure.security.support.MemberAuthenticationHolder;
-import b1nd.dodam.restapi.member.application.data.req.GetMemberByCodeReq;
 import b1nd.dodam.restapi.member.application.data.res.MemberInfoRes;
+import b1nd.dodam.restapi.member.application.data.res.StudentRelationRes;
 import b1nd.dodam.restapi.support.data.ResponseData;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -26,8 +26,8 @@ public class MemberQueryUseCase {
 
     private final MemberRepository memberRepository;
     private final StudentRepository studentRepository;
-    private final MemberService memberService;
     private final TeacherRepository teacherRepository;
+    private final MemberService memberService;
     private final BroadcastClubMemberRepository broadcastClubMemberRepository;
     private final MemberAuthenticationHolder memberAuthenticationHolder;
 
@@ -86,6 +86,14 @@ public class MemberQueryUseCase {
     public ResponseData<MemberInfoRes> getMemberByCode(String code){
         return ResponseData.ok("학생 조회 성공", this.getMemberInfo(memberService.checkCode(code)
                 .getMember()));
+    }
+
+    public ResponseData<List<StudentRelationRes>> getStudentByPatent(){
+        Member member = memberAuthenticationHolder.current();
+        List<StudentRelationRes> studentRelationRes =
+                memberService.getStudentRelationByMember(member).stream()
+                .map(StudentRelationRes::of).toList();
+        return ResponseData.ok("자녀 조회 성공", studentRelationRes);
     }
 
 }
