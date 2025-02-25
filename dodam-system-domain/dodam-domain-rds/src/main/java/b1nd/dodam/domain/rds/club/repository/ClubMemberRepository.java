@@ -9,6 +9,7 @@ import b1nd.dodam.domain.rds.club.exception.ClubMemberNotFoundException;
 import b1nd.dodam.domain.rds.member.entity.Student;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
 import java.util.Optional;
@@ -31,6 +32,14 @@ public interface ClubMemberRepository extends JpaRepository<ClubMember, Long> {
     List<ClubMember> findAllByClubAndPermission(Club club, ClubPermission permission);
 
     List<ClubMember> findAllByClubAndClubStatus(Club club, ClubStatus clubStatus);
+
+    @Query("""
+    SELECT s FROM student s
+    LEFT JOIN club_member cm ON s.id = cm.student.id AND cm.clubStatus = 'ALLOWED'
+    WHERE cm.student.id IS NULL
+    AND s.grade = 2
+    """)
+    List<Student> findSecondGradeStudentsNotInClubMember();
 
     Optional<ClubMember> findByClubAndPermissionAndClubStatus(Club club, ClubPermission permission, ClubStatus clubStatus);
 

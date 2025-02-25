@@ -37,6 +37,10 @@ public class ClubMemberService {
         clubMemberRepository.save(clubMember);
     }
 
+    public List<Student> getSecondGradeStudent() {
+        return clubMemberRepository.findSecondGradeStudentsNotInClubMember();
+    }
+
     public List<ClubMember> getJoinRequests(Member member) {
         Student student = studentRepository.getByMember(member);
         return clubMemberRepository.findByStudentAndClubStatus(student, ClubStatus.WAITING);

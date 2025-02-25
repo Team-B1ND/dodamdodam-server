@@ -32,6 +32,11 @@ public class ClubMemberUseCase {
     }
 
     @Transactional(readOnly = true)
+    public ResponseData<List<StudentRes>> getSecondGradeStudents() {
+        return ResponseData.ok("2학년 로드됨", clubMemberService.getSecondGradeStudent().stream().map(StudentRes::of).toList());
+    }
+
+    @Transactional(readOnly = true)
     public ResponseData<List<ClubMemberRes>> getClubJoinRequestsReceived() {
         return ResponseData.ok("받은 부원 제안", clubMemberService.getJoinRequests(authenticationHolder.current()).stream().map(ClubMemberRes::of).toList());
     }
