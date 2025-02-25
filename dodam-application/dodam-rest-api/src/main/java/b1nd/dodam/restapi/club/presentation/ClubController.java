@@ -77,7 +77,7 @@ public class ClubController {
     }
 
     @GetMapping("{id}/leader")
-    public ResponseData<StudentRes> getClubLeader(
+    public ResponseData<ClubStudentRes> getClubLeader(
             @PathVariable Long id
     ) {
         return clubMemberUseCase.getClubLeader(id);

@@ -46,8 +46,8 @@ public class ClubMemberService {
         return clubMemberRepository.findByStudentAndClubStatus(student, ClubStatus.WAITING);
     }
 
-    public Student getClubLeader(Long clubId) {
-        return clubMemberRepository.getByClubAndPermissionAndStatus(clubRepository.getByClubId(clubId), ClubPermission.CLUB_LEADER, ClubStatus.ALLOWED).getStudent();
+    public ClubMember getClubLeader(Long clubId) {
+        return clubMemberRepository.getByClubAndPermissionAndStatus(clubRepository.getByClubId(clubId), ClubPermission.CLUB_LEADER, ClubStatus.ALLOWED);
     }
 
     public List<ClubMember> getActiveClubMembers(Long clubId) {

@@ -42,8 +42,8 @@ public class ClubMemberUseCase {
     }
 
     @Transactional(readOnly = true)
-    public ResponseData<StudentRes> getClubLeader(Long id) {
-        return ResponseData.ok("부장 로드됨", StudentRes.of(clubMemberService.getClubLeader(id)));
+    public ResponseData<ClubStudentRes> getClubLeader(Long id) {
+        return ResponseData.ok("부장 로드됨", ClubStudentRes.of(clubMemberService.getClubLeader(id)));
     }
 
     @Transactional(readOnly = true)

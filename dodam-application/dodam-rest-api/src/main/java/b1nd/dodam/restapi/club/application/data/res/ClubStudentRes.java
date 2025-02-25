@@ -9,14 +9,24 @@ public record ClubStudentRes(
     Long id,
     ClubStatus status,
     ClubPermission permission,
-    StudentRes student
-) {
+    int studentId,
+    String name,
+    Integer grade,
+    Integer room,
+    Integer number,
+    String profileImage
+    ) {
     public static ClubStudentRes of(ClubMember clubMember) {
         return new ClubStudentRes(
             clubMember.getId(),
             clubMember.getClubStatus(),
             clubMember.getPermission(),
-            StudentRes.of(clubMember.getStudent())
+            clubMember.getStudent().getId(),
+            clubMember.getStudent().getMember().getName(),
+            clubMember.getStudent().getGrade(),
+            clubMember.getStudent().getRoom(),
+            clubMember.getStudent().getNumber(),
+            clubMember.getStudent().getMember().getProfileImage()
         );
     }
 }
