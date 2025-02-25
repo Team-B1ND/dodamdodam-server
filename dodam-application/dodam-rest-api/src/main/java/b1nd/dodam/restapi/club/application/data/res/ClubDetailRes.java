@@ -6,7 +6,7 @@ import b1nd.dodam.domain.rds.club.enumeration.ClubType;
 import b1nd.dodam.restapi.member.application.data.res.TeacherRes;
 
 public record ClubDetailRes(
-    Long id,
+    long id,
     String name,
     String shortDescription,
     String description,
@@ -17,7 +17,7 @@ public record ClubDetailRes(
     ClubStatus state
 ) {
     public static ClubDetailRes of(Club club) {
-        if (club == null) {
+        if (club == null || club.getName().isEmpty()) {
             return null;
         }
 

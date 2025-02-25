@@ -5,14 +5,14 @@ import b1nd.dodam.domain.rds.club.enumeration.ClubPermission;
 import b1nd.dodam.domain.rds.club.enumeration.ClubStatus;
 
 public record ClubStudentRes(
-    Long id,
+    long id,
     ClubStatus status,
     ClubPermission permission,
     int studentId,
     String name,
-    Integer grade,
-    Integer room,
-    Integer number,
+    int grade,
+    int room,
+    int number,
     String profileImage
     ) {
     public static ClubStudentRes of(ClubMember clubMember) {

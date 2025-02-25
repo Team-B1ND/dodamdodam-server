@@ -33,30 +33,30 @@ public class ClubUseCase {
         List<Student> students = studentRepository.getByIds(req.studentIds());
         clubMemberService.validateAndRejectLeader(club, leader, students);
         clubService.saveClubAndMember(club, leader, students);
-        return Response.created("동아리 생성 완료");
+        return Response.created("동아리 생성 성공");
     }
 
     public Response delete(Long id) {
         Club club = clubService.findById(id);
         clubMemberService.validateByClubLeader(club, authHolder.current());
         clubService.deleteClub(club);
-        return Response.ok("동아리 삭제됨");
+        return Response.ok("동아리 삭제 성공");
     }
 
     public Response update(Long id, UpdateClubInfoReq req) {
         Club club = clubService.findById(id);
         clubMemberService.validateByClubLeader(club, authHolder.current());
         clubService.update(club, req.name(), req.subject(), req.shortDescription(), req.description(), req.image());
-        return Response.ok("동아리 정보 업데이트됨");
+        return Response.ok("동아리 정보 업데이트 성공");
     }
 
     @Transactional(readOnly = true)
     public ResponseData<List<ClubDetailRes>> getClubs() {
-        return ResponseData.ok("전체 동아리", clubService.findAll().stream().map(ClubDetailRes::of).toList());
+        return ResponseData.ok("전체 동아리 불러오기 성공", clubService.findAll().stream().map(ClubDetailRes::of).toList());
     }
 
     @Transactional(readOnly = true)
     public ResponseData<ClubDetailRes> getClubDetail(Long id) {
-        return ResponseData.ok("동아리 상세 정보", ClubDetailRes.of(clubService.findById(id)));
+        return ResponseData.ok("동아리 상세 정보 불러오기 성공", ClubDetailRes.of(clubService.findById(id)));
     }
 }

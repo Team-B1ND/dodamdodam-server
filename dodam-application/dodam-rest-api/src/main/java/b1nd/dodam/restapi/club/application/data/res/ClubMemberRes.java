@@ -5,7 +5,7 @@ import b1nd.dodam.domain.rds.club.enumeration.ClubPermission;
 import b1nd.dodam.domain.rds.club.enumeration.ClubStatus;
 
 public record ClubMemberRes(
-    Long id,
+    long id,
     ClubPermission clubPermission,
     ClubStatus status,
     ClubDetailRes club
