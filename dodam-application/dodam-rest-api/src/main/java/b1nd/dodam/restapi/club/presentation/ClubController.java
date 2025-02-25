@@ -8,6 +8,7 @@ import b1nd.dodam.restapi.club.application.data.res.ClubDetailRes;
 import b1nd.dodam.restapi.club.application.data.res.ClubMemberRes;
 import b1nd.dodam.restapi.club.application.data.res.ClubStudentRes;
 import b1nd.dodam.restapi.member.application.data.res.StudentRes;
+import b1nd.dodam.restapi.member.application.data.res.StudentWithImageRes;
 import b1nd.dodam.restapi.support.data.Response;
 import b1nd.dodam.restapi.support.data.ResponseData;
 import jakarta.validation.Valid;
@@ -60,7 +61,7 @@ public class ClubController {
     }
 
     @GetMapping("/members")
-    public ResponseData<List<StudentRes>> getSecondGradeMembers() {
+    public ResponseData<List<StudentWithImageRes>> getSecondGradeMembers() {
         return clubMemberUseCase.getSecondGradeStudents();
     }
 

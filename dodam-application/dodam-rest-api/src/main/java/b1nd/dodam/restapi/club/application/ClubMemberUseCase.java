@@ -6,6 +6,7 @@ import b1nd.dodam.restapi.auth.infrastructure.security.support.MemberAuthenticat
 import b1nd.dodam.restapi.club.application.data.res.ClubMemberRes;
 import b1nd.dodam.restapi.club.application.data.res.ClubStudentRes;
 import b1nd.dodam.restapi.member.application.data.res.StudentRes;
+import b1nd.dodam.restapi.member.application.data.res.StudentWithImageRes;
 import b1nd.dodam.restapi.support.data.Response;
 import b1nd.dodam.restapi.support.data.ResponseData;
 import lombok.RequiredArgsConstructor;
@@ -32,8 +33,8 @@ public class ClubMemberUseCase {
     }
 
     @Transactional(readOnly = true)
-    public ResponseData<List<StudentRes>> getSecondGradeStudents() {
-        return ResponseData.ok("2학년 로드됨", clubMemberService.getSecondGradeStudent().stream().map(StudentRes::of).toList());
+    public ResponseData<List<StudentWithImageRes>> getSecondGradeStudents() {
+        return ResponseData.ok("2학년 로드됨", clubMemberService.getSecondGradeStudent().stream().map(StudentWithImageRes::of).toList());
     }
 
     @Transactional(readOnly = true)

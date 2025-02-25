@@ -3,7 +3,6 @@ package b1nd.dodam.restapi.club.application.data.res;
 import b1nd.dodam.domain.rds.club.entity.ClubMember;
 import b1nd.dodam.domain.rds.club.enumeration.ClubPermission;
 import b1nd.dodam.domain.rds.club.enumeration.ClubStatus;
-import b1nd.dodam.restapi.member.application.data.res.StudentRes;
 
 public record ClubStudentRes(
     Long id,
