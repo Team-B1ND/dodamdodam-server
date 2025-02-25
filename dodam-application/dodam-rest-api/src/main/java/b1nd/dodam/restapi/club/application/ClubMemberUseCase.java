@@ -21,6 +21,10 @@ public class ClubMemberUseCase {
     private final ClubMemberService clubMemberService;
     private final MemberAuthenticationHolder authenticationHolder;
 
+    public Response ClubJoinRequestReceived() {
+
+    }
+
     public Response acceptClubJoinRequestReceived(Long id) {
         clubMemberService.setClubMemberStatus(id,authenticationHolder.current(), ClubStatus.ALLOWED);
         return Response.ok("동아리 가입 수락 성공");
