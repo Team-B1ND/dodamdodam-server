@@ -48,6 +48,11 @@ public class ClubMemberService {
         return clubMemberRepository.findSecondGradeStudentsNotInClubMember();
     }
 
+    public List<Club> findUserClub(Member member) {
+        return clubMemberRepository.findAllByStudent(studentRepository.getByMember(member))
+            .stream().map(ClubMember::getClub).toList();
+    }
+
     public List<ClubMember> getJoinRequests(Member member) {
         Student student = studentRepository.getByMember(member);
         return clubMemberRepository.findByStudentAndClubStatus(student, ClubStatus.WAITING);

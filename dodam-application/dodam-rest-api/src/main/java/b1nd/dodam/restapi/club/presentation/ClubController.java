@@ -67,6 +67,11 @@ public class ClubController {
         return clubUseCase.update(id, req);
     }
 
+    @GetMapping("/my")
+    public ResponseData<List<ClubDetailRes>> getMyClubs() {
+        return clubUseCase.getMyClubs();
+    }
+
     @GetMapping("/members")
     public ResponseData<List<StudentWithImageRes>> getSecondGradeMembers() {
         return clubMemberUseCase.getSecondGradeStudents();
