@@ -10,7 +10,8 @@ public enum BusExceptionCode implements ExceptionCode {
     BUS_FULL_OF_SEAT(400,"버스 좌석 만료"),
     BUS_ALREADY_APPLIED(409,"이미 신청한 버스"),
     BUS_MEMBER_NOT_FOUND(404, "없는 버스 멤버"),
-    BUS_NOT_FOUND(404, "없는 버스");
+    BUS_NOT_FOUND(404, "없는 버스"),
+    BUS_ACCESS_DENIED(403, "버스 권한 부족");
 
     private final int status;
     private final String message;

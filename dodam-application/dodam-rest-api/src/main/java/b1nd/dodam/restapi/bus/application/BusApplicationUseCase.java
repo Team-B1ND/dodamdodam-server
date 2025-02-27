@@ -9,11 +9,14 @@ import b1nd.dodam.domain.rds.bus.repository.BusRepository;
 import b1nd.dodam.domain.rds.member.entity.Student;
 import b1nd.dodam.domain.rds.member.repository.StudentRepository;
 import b1nd.dodam.restapi.auth.infrastructure.security.support.MemberAuthenticationHolder;
+import b1nd.dodam.restapi.bus.application.data.res.BusSeatRes;
 import b1nd.dodam.restapi.support.data.Response;
+import b1nd.dodam.restapi.support.data.ResponseData;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 
 @Component
@@ -26,13 +29,13 @@ public class BusApplicationUseCase {
     private final StudentRepository studentRepository;
     private final MemberAuthenticationHolder memberAuthenticationHolder;
 
-    public Response modifyStatus(int busId) {
+    public Response modifyStatus(int busId, int seatNumber) {
         Student student = studentRepository.getByMember(memberAuthenticationHolder.current());
         Optional<BusApplication> busApplication = busApplicationRepository.findByStudentAndBus_LeaveTimeAfter(student, ZonedDateTimeUtil.nowToLocalDateTime());
 
         return busApplication
                 .map(application -> handleExistingApplication(busId, application))
-                .orElseGet(() -> applyForNewBus(busId, student));
+                .orElseGet(() -> applyForNewBus(busId, student, seatNumber));
     }
 
     private Response handleExistingApplication(int busId, BusApplication currentApplication) {
@@ -41,12 +44,13 @@ public class BusApplicationUseCase {
                 : updateToNewBus(busId, currentApplication);
     }
 
-    private Response applyForNewBus(int busId, Student student) {
+    private Response applyForNewBus(int busId, Student student, int seatNumber) {
         Bus bus = adjustApplicationCount(busId, true);
         busApplicationRepository.save(
                 BusApplication.builder()
                         .bus(bus)
                         .student(student)
+                        .seatNumber(seatNumber)
                         .build()
         );
         return Response.created("버스 신청 성공");
@@ -81,6 +85,12 @@ public class BusApplicationUseCase {
                 .build()
         );
         return Response.created("버스 신청 성공");
+    }
+
+    public ResponseData<BusSeatRes> getSeatNumbers(int busId) {
+        Bus bus = busRepository.getById(busId);
+        List<BusApplication> busApplications = busApplicationRepository.findByBus(bus);
+        return ResponseData.ok("버스 좌석 번호 조회 성공", BusSeatRes.of(busApplications));
     }
 
     private void checkIfTheApplicationExists(Student student) {

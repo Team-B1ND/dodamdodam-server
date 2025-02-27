@@ -5,6 +5,7 @@ import b1nd.dodam.restapi.bus.application.BusApplicationUseCase;
 import b1nd.dodam.restapi.bus.application.BusUseCase;
 import b1nd.dodam.restapi.bus.application.data.req.BusReq;
 import b1nd.dodam.restapi.bus.application.data.res.BusRes;
+import b1nd.dodam.restapi.bus.application.data.res.BusSeatRes;
 import b1nd.dodam.restapi.support.data.Response;
 import b1nd.dodam.restapi.support.data.ResponseData;
 import jakarta.validation.Valid;
@@ -55,14 +56,22 @@ public class BusController {
         return busUseCase.getByDate(year, month, day);
     }
 
-    @PatchMapping("/apply/status/{id}")
-    public Response modifyStatus(@PathVariable int id){
-        return busApplicationUseCase.modifyStatus(id);
+    @PatchMapping("/apply/status/{id}/{seatNumber}")
+    public Response modifyStatus(
+            @PathVariable int id,
+            @PathVariable(required = false) int seatNumber
+    ) {
+        return busApplicationUseCase.modifyStatus(id, seatNumber);
     }
 
     @GetMapping("/apply")
     public ResponseData<Bus> getMy() {
         return busUseCase.getMy();
+    }
+
+    @GetMapping("/{id}/seats")
+    public ResponseData<BusSeatRes> getSeats(@PathVariable int id) {
+        return busApplicationUseCase.getSeatNumbers(id);
     }
 
     @PostMapping("/apply/{id}")
