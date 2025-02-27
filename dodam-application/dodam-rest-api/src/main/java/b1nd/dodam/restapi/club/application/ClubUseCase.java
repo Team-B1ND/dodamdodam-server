@@ -62,6 +62,6 @@ public class ClubUseCase {
 
     @Transactional(readOnly = true)
     public ResponseData<List<ClubDetailRes>> getMyClubs() {
-        return ResponseData.ok("나의 동아리 불러오기 성공", clubMemberService.findUserClub(authHolder.current()).stream().map(ClubDetailRes::of).toList());
+        return ResponseData.ok("나의 동아리 불러오기 성공", clubMemberService.findUserAllowedClub(authHolder.current()).stream().map(ClubDetailRes::of).toList());
     }
 }

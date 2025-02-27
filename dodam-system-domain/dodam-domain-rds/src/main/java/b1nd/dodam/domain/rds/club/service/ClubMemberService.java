@@ -14,6 +14,7 @@ import b1nd.dodam.domain.rds.member.entity.Member;
 import b1nd.dodam.domain.rds.member.entity.Student;
 import b1nd.dodam.domain.rds.member.repository.StudentRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -21,6 +22,7 @@ import java.util.stream.Stream;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class ClubMemberService {
     private final ClubRepository clubRepository;
     private final ClubMemberRepository clubMemberRepository;
@@ -47,8 +49,8 @@ public class ClubMemberService {
         return clubMemberRepository.findSecondGradeStudentsNotInClubMember();
     }
 
-    public List<Club> findUserClub(Member member) {
-        return clubMemberRepository.findAllByStudent(studentRepository.getByMember(member))
+    public List<Club> findUserAllowedClub(Member member) {
+        return clubMemberRepository.findByStudentAndClubStatus(studentRepository.getByMember(member), ClubStatus.ALLOWED)
             .stream().map(ClubMember::getClub).toList();
     }
 
