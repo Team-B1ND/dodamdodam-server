@@ -3,7 +3,6 @@ package b1nd.dodam.domain.rds.club.service;
 import b1nd.dodam.domain.rds.club.entity.Club;
 import b1nd.dodam.domain.rds.club.entity.ClubMember;
 import b1nd.dodam.domain.rds.club.enumeration.ClubPermission;
-import b1nd.dodam.domain.rds.club.enumeration.ClubPriority;
 import b1nd.dodam.domain.rds.club.enumeration.ClubStatus;
 import b1nd.dodam.domain.rds.club.enumeration.ClubType;
 import b1nd.dodam.domain.rds.club.exception.AlreadyUserJoinCreativeClubException;
@@ -85,8 +84,8 @@ public class ClubMemberService {
         }
     }
 
-    public void validateByClubAndStudent(Club club, Student student) {
-        if (clubMemberRepository.findByClubAndStudent(club, student) != null) {
+    public void validateByClubAndStudent(Club clubId, Student student) {
+        if (!clubMemberRepository.findByClubAndStudent(clubId, student).isEmpty()) {
             throw new ClubJoinedException();
         }
     }
