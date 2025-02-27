@@ -3,7 +3,6 @@ package b1nd.dodam.domain.rds.club.entity;
 import b1nd.dodam.domain.rds.club.enumeration.ClubPermission;
 import b1nd.dodam.domain.rds.club.enumeration.ClubPriority;
 import b1nd.dodam.domain.rds.club.enumeration.ClubStatus;
-import b1nd.dodam.domain.rds.club.enumeration.ClubType;
 import b1nd.dodam.domain.rds.member.entity.Student;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
@@ -13,6 +12,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
+
+import java.time.LocalDateTime;
 
 @Getter
 @Entity(name = "club_member")
@@ -54,11 +55,10 @@ public class ClubMember {
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Club club;
 
-    @NotNull
     private String introduction;
 
     @Builder
-    public ClubMember(Student student, Club club, ClubPriority priority, ClubStatus clubStatus, ClubPermission permission, String introduction) {
+    public ClubMember(Student student, Club club, ClubPriority priority, ClubStatus clubStatus, ClubPermission permission, String introduction, LocalDateTime applyAt) {
         this.student = student;
         this.club = club;
         this.priority = priority;

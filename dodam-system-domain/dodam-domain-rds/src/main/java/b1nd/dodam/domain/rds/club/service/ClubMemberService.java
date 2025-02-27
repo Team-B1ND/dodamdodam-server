@@ -3,6 +3,7 @@ package b1nd.dodam.domain.rds.club.service;
 import b1nd.dodam.domain.rds.club.entity.Club;
 import b1nd.dodam.domain.rds.club.entity.ClubMember;
 import b1nd.dodam.domain.rds.club.enumeration.ClubPermission;
+import b1nd.dodam.domain.rds.club.enumeration.ClubPriority;
 import b1nd.dodam.domain.rds.club.enumeration.ClubStatus;
 import b1nd.dodam.domain.rds.club.enumeration.ClubType;
 import b1nd.dodam.domain.rds.club.exception.AlreadyUserJoinCreativeClubException;
@@ -24,6 +25,10 @@ public class ClubMemberService {
     private final ClubRepository clubRepository;
     private final ClubMemberRepository clubMemberRepository;
     private final StudentRepository studentRepository;
+
+    public void saveClubMember(ClubMember clubMember) {
+        clubMemberRepository.save(clubMember);
+    }
 
     public void setClubMemberStatus(Long clubMemberId, Member member, ClubStatus clubStatus) {
         Student student = studentRepository.getByMember(member);
