@@ -12,7 +12,6 @@ import jakarta.validation.constraints.NotNull;
 
 public record JoinClubMemberReq(
         @NotNull Long clubId,
-        @NotNull ClubType clubType,
         ClubPriority clubPriority,
         @NotBlank String introduction) {
 
@@ -23,6 +22,7 @@ public record JoinClubMemberReq(
                 .priority(clubPriority)
                 .student(student)
                 .club(club)
+                .introduction(introduction)
                 .build();
     }
 }

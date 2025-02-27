@@ -1,6 +1,7 @@
 package b1nd.dodam.restapi.club.application;
 
 import b1nd.dodam.domain.rds.club.enumeration.ClubStatus;
+import b1nd.dodam.domain.rds.club.repository.ClubRepository;
 import b1nd.dodam.domain.rds.club.service.ClubMemberService;
 import b1nd.dodam.domain.rds.member.entity.Student;
 import b1nd.dodam.domain.rds.member.repository.StudentRepository;
@@ -25,11 +26,14 @@ public class ClubMemberUseCase {
     private final ClubMemberService clubMemberService;
     private final MemberAuthenticationHolder authenticationHolder;
     private final StudentRepository studentRepository;
+    private final ClubRepository clubRepository;
 
-    public Response JoinClub(List<JoinClubMemberReq> joinClubMemberReqs) {
+    public Response joinClubs(List<JoinClubMemberReq> joinClubMemberReqs) {
         Student student = studentRepository.getByMember(authenticationHolder.current());
-        joinClubMemberReqs.forEach(req -> clubMemberService.saveClubMember(joinClubMemberReqs);
-        clubMemberService.saveClubMember(joinClubMemberReqs);
+        clubMemberService.saveClubMembers(joinClubMemberReqs.parallelStream()
+            .map(req -> req.toEntity(student, clubRepository.getByClubIdAndState(req.clubId(), ClubStatus.ALLOWED)))
+            .toList()
+        );
         return Response.ok("동아리 입부 신청 성공");
     }
 

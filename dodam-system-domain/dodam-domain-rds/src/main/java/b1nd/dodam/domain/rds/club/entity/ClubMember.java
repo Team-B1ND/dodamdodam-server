@@ -55,6 +55,7 @@ public class ClubMember {
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Club club;
 
+    @Column(columnDefinition = "TEXT")
     private String introduction;
 
     @Builder
