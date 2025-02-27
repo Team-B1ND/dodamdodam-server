@@ -6,7 +6,6 @@ import b1nd.dodam.domain.rds.club.enumeration.ClubPermission;
 import b1nd.dodam.domain.rds.club.enumeration.ClubStatus;
 import b1nd.dodam.domain.rds.club.enumeration.ClubType;
 import b1nd.dodam.domain.rds.club.exception.ClubMemberNotFoundException;
-import b1nd.dodam.domain.rds.member.entity.Member;
 import b1nd.dodam.domain.rds.member.entity.Student;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -19,8 +18,8 @@ public interface ClubMemberRepository extends JpaRepository<ClubMember, Long> {
         return findByIdAndStudent(id, student).orElseThrow(ClubMemberNotFoundException::new);
     }
 
-    default ClubMember getByClubAndPermissionAndStatus(Club club, ClubPermission permission, ClubStatus status) {
-        return findByClubAndPermissionAndClubStatus(club, permission, status).orElseThrow(ClubMemberNotFoundException::new);
+    default ClubMember getByClub_IdAndPermissionAndStatus(Long club, ClubPermission permission, ClubStatus status) {
+        return findByClub_IdAndPermissionAndClubStatus(club, permission, status).orElseThrow(ClubMemberNotFoundException::new);
     }
 
     List<ClubMember> findAllByStudentAndPermissionAndClub_Type(Student student, ClubPermission permission, ClubType clubType);
@@ -31,7 +30,7 @@ public interface ClubMemberRepository extends JpaRepository<ClubMember, Long> {
 
     List<ClubMember> findAllByClubAndPermission(Club club, ClubPermission permission);
 
-    List<ClubMember> findAllByClubAndClubStatus(Club club, ClubStatus clubStatus);
+    List<ClubMember> findAllByClub_IdAndClubStatus(Long clubId, ClubStatus clubStatus);
 
     @Query("""
     SELECT s, m FROM student s
@@ -42,7 +41,7 @@ public interface ClubMemberRepository extends JpaRepository<ClubMember, Long> {
     """)
     List<Student> findSecondGradeStudentsNotInClubMember();
 
-    Optional<ClubMember> findByClubAndPermissionAndClubStatus(Club club, ClubPermission permission, ClubStatus clubStatus);
+    Optional<ClubMember> findByClub_IdAndPermissionAndClubStatus(Long club, ClubPermission permission, ClubStatus clubStatus);
 
     Optional<ClubMember> findByIdAndStudent(Long id, Student student);
 
