@@ -21,14 +21,9 @@ public class ClubMemberUseCase {
     private final ClubMemberService clubMemberService;
     private final MemberAuthenticationHolder authenticationHolder;
 
-    public Response acceptClubJoinRequestReceived(Long id) {
-        clubMemberService.setClubMemberStatus(id,authenticationHolder.current(), ClubStatus.ALLOWED);
-        return Response.ok("동아리 가입 수락 성공");
-    }
-
-    public Response rejectClubJoinRequestReceived(Long id) {
-        clubMemberService.setClubMemberStatus(id, authenticationHolder.current(), ClubStatus.REJECTED);
-        return Response.ok("동아리 가입 거절 성공");
+    public Response updateClubJoinRequestReceived(Long id, ClubStatus clubStatus) {
+        clubMemberService.setClubMemberStatus(id,authenticationHolder.current(), clubStatus);
+        return Response.ok("동아리 가입 업데이트 성공");
     }
 
     @Transactional(readOnly = true)
