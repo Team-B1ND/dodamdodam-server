@@ -47,11 +47,11 @@ public class ClubMemberService {
     }
 
     public ClubMember getClubLeader(Long clubId) {
-        return clubMemberRepository.getByClub_IdAndPermissionAndStatus(clubId, ClubPermission.CLUB_LEADER, ClubStatus.ALLOWED);
+        return clubMemberRepository.getByClubAndPermissionAndStatus(clubRepository.getByClubId(clubId), ClubPermission.CLUB_LEADER, ClubStatus.ALLOWED);
     }
 
     public List<ClubMember> getActiveClubMembers(Long clubId) {
-        return clubMemberRepository.findAllByClub_IdAndClubStatus(clubId, ClubStatus.ALLOWED);
+        return clubMemberRepository.findAllByClubAndClubStatus(clubRepository.getByClubId(clubId), ClubStatus.ALLOWED);
     }
 
     public List<ClubMember> getAllClubMembers(Member leader, Long clubId) {
