@@ -1,5 +1,6 @@
 package b1nd.dodam.restapi.club.presentation;
 
+import b1nd.dodam.domain.rds.club.enumeration.ClubStatus;
 import b1nd.dodam.restapi.club.application.ClubMemberUseCase;
 import b1nd.dodam.restapi.club.application.ClubUseCase;
 import b1nd.dodam.restapi.club.application.data.req.CreateClubReq;
@@ -42,7 +43,7 @@ public class ClubController {
     public Response acceptClubJoinRequest(
             @PathVariable Long id
     ) {
-        return clubMemberUseCase.acceptClubJoinRequestReceived(id);
+        return clubMemberUseCase.updateClubJoinRequestReceived(id, ClubStatus.ALLOWED);
     }
 
     @DeleteMapping("/{id}")
@@ -56,7 +57,7 @@ public class ClubController {
     public Response rejectClubJoinRequest(
             @PathVariable Long id
     ) {
-        return clubMemberUseCase.rejectClubJoinRequestReceived(id);
+        return clubMemberUseCase.updateClubJoinRequestReceived(id, ClubStatus.REJECTED);
     }
 
     @PatchMapping("/{id}")
