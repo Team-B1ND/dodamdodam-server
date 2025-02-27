@@ -13,6 +13,8 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
+import java.time.LocalDateTime;
+
 @Getter
 @Entity(name = "club_member")
 @Table(uniqueConstraints = {
@@ -53,13 +55,16 @@ public class ClubMember {
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Club club;
 
+    private String introduction;
+
     @Builder
-    public ClubMember(Student student, Club club, ClubPriority priority, ClubStatus clubStatus, ClubPermission permission) {
+    public ClubMember(Student student, Club club, ClubPriority priority, ClubStatus clubStatus, ClubPermission permission, String introduction, LocalDateTime applyAt) {
         this.student = student;
         this.club = club;
         this.priority = priority;
         this.clubStatus = clubStatus;
         this.permission = permission;
+        this.introduction = introduction;
     }
 
     public void modifyStatus(ClubStatus clubStatus) {
