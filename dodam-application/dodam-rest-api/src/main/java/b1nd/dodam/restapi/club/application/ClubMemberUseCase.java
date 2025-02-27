@@ -26,7 +26,7 @@ public class ClubMemberUseCase {
     private final MemberAuthenticationHolder authenticationHolder;
     private final StudentRepository studentRepository;
 
-    public Response JoinClub(List<JoinClubMemberReq> joinClubMemberReqs) {
+    public Response joinClub(List<JoinClubMemberReq> joinClubMemberReqs) {
         Student student = studentRepository.getByMember(authenticationHolder.current());
         joinClubMemberReqs.forEach(req -> clubMemberService.saveClubMember(joinClubMemberReqs);
         clubMemberService.saveClubMember(joinClubMemberReqs);
