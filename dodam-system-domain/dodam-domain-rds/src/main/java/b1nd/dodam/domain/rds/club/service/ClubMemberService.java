@@ -7,6 +7,7 @@ import b1nd.dodam.domain.rds.club.enumeration.ClubPriority;
 import b1nd.dodam.domain.rds.club.enumeration.ClubStatus;
 import b1nd.dodam.domain.rds.club.enumeration.ClubType;
 import b1nd.dodam.domain.rds.club.exception.AlreadyUserJoinCreativeClubException;
+import b1nd.dodam.domain.rds.club.exception.ClubJoinedException;
 import b1nd.dodam.domain.rds.club.exception.ClubPermissionDeniedException;
 import b1nd.dodam.domain.rds.club.repository.ClubMemberRepository;
 import b1nd.dodam.domain.rds.club.repository.ClubRepository;
@@ -26,8 +27,9 @@ public class ClubMemberService {
     private final ClubMemberRepository clubMemberRepository;
     private final StudentRepository studentRepository;
 
-    public void saveClubMember(ClubMember clubMember) {
-        clubMemberRepository.save(clubMember);
+    public void saveClubMembers(List<ClubMember> clubMember) {
+        clubMember.forEach(c -> validateByClubAndStudent(c.getClub(), c.getStudent()));
+        clubMemberRepository.saveAll(clubMember);
     }
 
     public void setClubMemberStatus(Long clubMemberId, Member member, ClubStatus clubStatus) {
@@ -75,6 +77,12 @@ public class ClubMemberService {
         Student leader = studentRepository.getByMember(member);
         if(!clubMemberRepository.existsByClubAndStudentAndPermission(club, leader, ClubPermission.CLUB_LEADER)) {
             throw new ClubPermissionDeniedException();
+        }
+    }
+
+    public void validateByClubAndStudent(Club club, Student student) {
+        if (clubMemberRepository.findByClubAndStudent(club, student) != null) {
+            throw new ClubJoinedException();
         }
     }
 

@@ -35,7 +35,7 @@ public class ClubController {
     public Response joinRequest(
             @RequestBody @Valid List<JoinClubMemberReq> req
     ) {
-        return
+        return clubMemberUseCase.joinClubs(req);
     }
 
     @PostMapping("/join-requests/{id}")
