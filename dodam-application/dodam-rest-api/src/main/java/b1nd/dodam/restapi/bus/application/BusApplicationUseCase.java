@@ -92,7 +92,7 @@ public class BusApplicationUseCase {
 
     public ResponseData<BusSeatRes> getSeatNumbers(int busId) {
         Bus bus = busRepository.getById(busId);
-        List<BusApplication> busApplications = busApplicationRepository.findByBus(bus);
+        List<BusApplication> busApplications = busApplicationRepository.findByBusAndStatusNot(bus, BusApplicationStatus.EXPIRED);
         return ResponseData.ok("버스 좌석 번호 조회 성공", BusSeatRes.of(busApplications));
     }
 

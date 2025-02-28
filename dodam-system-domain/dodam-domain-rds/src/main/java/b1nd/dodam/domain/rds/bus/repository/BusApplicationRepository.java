@@ -28,7 +28,7 @@ public interface BusApplicationRepository extends JpaRepository<BusApplication, 
                 .orElseThrow(BusApplicationNotFoundException::new);
     }
 
-    List<BusApplication> findByBus(Bus bus);
+    List<BusApplication> findByBusAndStatusNot(Bus bus, BusApplicationStatus status);
 
     BusApplication findByStatusAndStudent_Member(BusApplicationStatus status, Member member);
 }
