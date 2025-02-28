@@ -50,7 +50,7 @@ public class MemberCommandUseCase {
 
     public Response join(String userAgent, JoinStudentReq req) {
         checkIfIdIsDuplicate(req.id());
-//        memberRedisService.validateUserAgent(userAgent);
+        memberRedisService.validateUserAgent(userAgent);
         Member member = memberRepository.save(req.mapToMember(encodePw(req.pw())));
         Student student = studentRepository.save(req.mapToStudent(member));
         publishStudentRegisteredEvent(student);
