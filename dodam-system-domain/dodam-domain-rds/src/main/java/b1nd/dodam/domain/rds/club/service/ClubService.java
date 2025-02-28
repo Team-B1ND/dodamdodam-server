@@ -7,6 +7,7 @@ import b1nd.dodam.domain.rds.club.enumeration.ClubStatus;
 import b1nd.dodam.domain.rds.club.exception.ClubDuplicateException;
 import b1nd.dodam.domain.rds.club.repository.ClubMemberRepository;
 import b1nd.dodam.domain.rds.club.repository.ClubRepository;
+import b1nd.dodam.domain.rds.member.entity.Member;
 import b1nd.dodam.domain.rds.member.entity.Student;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -47,6 +48,13 @@ public class ClubService {
 
     public Club findById(Long id) {
         return clubRepository.getByClubId(id);
+    }
+
+    public List<Club> getUserClubStatus(Student student) {
+        return clubMemberRepository.findByStudentAndPermission(student, ClubPermission.CLUB_LEADER)
+                .stream()
+                .map(ClubMember::getClub)
+                .collect(Collectors.toList());
     }
 
     public void deleteClub(Club club) {

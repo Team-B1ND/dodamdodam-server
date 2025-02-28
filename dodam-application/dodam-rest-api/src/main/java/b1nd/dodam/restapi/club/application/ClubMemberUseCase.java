@@ -66,9 +66,4 @@ public class ClubMemberUseCase {
     public ResponseData<List<ClubStudentRes>> getActiveClubMembers(Long id) {
         return ResponseData.ok("동아리 멤버 불러오기 성공", clubMemberService.getActiveClubMembers(id).stream().map(ClubStudentRes::of).toList());
     }
-
-    @Transactional(readOnly = true)
-    public ResponseData<List<ClubMember>> getUserClubStatus() {
-        return ResponseData.ok("사용자의 동아리 상태 불러오기 성공", clubMemberService.getCreateClubRequests(authenticationHolder.current()));
-    }
 }
