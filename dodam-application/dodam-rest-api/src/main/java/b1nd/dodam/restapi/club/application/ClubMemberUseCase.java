@@ -68,7 +68,7 @@ public class ClubMemberUseCase {
     }
 
     @Transactional(readOnly = true)
-    public ResponseData<List<ClubMember>> getCreateClubRequests() {
-        return ResponseData.ok("개설 신청한 동아리 불러오기 성공", clubMemberService.getCreateClubRequests(authenticationHolder.current()));
+    public ResponseData<List<ClubMember>> getUserClubStatus() {
+        return ResponseData.ok("사용자의 동아리 상태 불러오기 성공", clubMemberService.getCreateClubRequests(authenticationHolder.current()));
     }
 }

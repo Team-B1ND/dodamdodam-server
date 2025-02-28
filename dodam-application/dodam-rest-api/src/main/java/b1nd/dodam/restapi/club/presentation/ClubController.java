@@ -117,8 +117,8 @@ public class ClubController {
         return clubMemberUseCase.getActiveClubMembers(id);
     }
 
-    @GetMapping("/create-requests")
-    public ResponseData<List<ClubMember>> getCreateClubRequests() {
-        return clubMemberUseCase.getCreateClubRequests();
+    @GetMapping("/my/status")
+    public ResponseData<List<ClubMember>> getMyClubStatus() {
+        return clubMemberUseCase.getUserClubStatus();
     }
 }
