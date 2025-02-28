@@ -1,5 +1,6 @@
 package b1nd.dodam.restapi.club.presentation;
 
+import b1nd.dodam.domain.rds.club.entity.ClubMember;
 import b1nd.dodam.domain.rds.club.enumeration.ClubStatus;
 import b1nd.dodam.restapi.club.application.ClubMemberUseCase;
 import b1nd.dodam.restapi.club.application.ClubUseCase;
@@ -114,5 +115,10 @@ public class ClubController {
             @PathVariable Long id
     ) {
         return clubMemberUseCase.getActiveClubMembers(id);
+    }
+
+    @GetMapping("/create-requests")
+    public ResponseData<List<ClubMember>> getCreateClubRequests() {
+        return clubMemberUseCase.getCreateClubRequests();
     }
 }

@@ -5,11 +5,10 @@ import b1nd.dodam.domain.rds.club.entity.ClubMember;
 import b1nd.dodam.domain.rds.club.enumeration.ClubPermission;
 import b1nd.dodam.domain.rds.club.enumeration.ClubStatus;
 import b1nd.dodam.domain.rds.club.exception.ClubDuplicateException;
-import b1nd.dodam.domain.rds.club.repository.ClubRepository;
 import b1nd.dodam.domain.rds.club.repository.ClubMemberRepository;
+import b1nd.dodam.domain.rds.club.repository.ClubRepository;
 import b1nd.dodam.domain.rds.member.entity.Student;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

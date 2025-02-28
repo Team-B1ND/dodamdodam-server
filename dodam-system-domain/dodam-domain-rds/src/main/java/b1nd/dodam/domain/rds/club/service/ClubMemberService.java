@@ -73,6 +73,10 @@ public class ClubMemberService {
         return clubMemberRepository.findAllByClubAndPermission(club, ClubPermission.CLUB_MEMBER);
     }
 
+    public List<ClubMember> getCreateClubRequests(Member member) {
+        return clubMemberRepository.findByStudentAndPermission(studentRepository.getByMember(member), ClubPermission.CLUB_LEADER);
+    }
+
     public void validateAndRejectLeader(Club club, Student leader, List<Student> students) {
         rejectActivityClubMember(leader);
         validateLeaderInList(leader, students);
