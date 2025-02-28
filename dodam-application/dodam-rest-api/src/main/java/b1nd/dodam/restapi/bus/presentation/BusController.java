@@ -93,12 +93,12 @@ public class BusController {
         return busApplicationUseCase.cancel();
     }
 
-    @GetMapping("qr-code/nonce")
+    @GetMapping("/qr-code/nonce")
     public ResponseData<BusQrcodeNonceRes> getNonce() {
         return busQrcodeUseCase.issueNonce();
     }
 
-    @GetMapping("qr-code/scan")
+    @PostMapping("/qr-code/scan")
     public Response scanQRCode(
             HttpServletRequest httpServletReq,
             @RequestParam String memberId,
