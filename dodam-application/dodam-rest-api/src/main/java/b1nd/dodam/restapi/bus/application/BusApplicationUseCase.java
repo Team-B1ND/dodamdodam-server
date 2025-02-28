@@ -3,6 +3,7 @@ package b1nd.dodam.restapi.bus.application;
 import b1nd.dodam.core.util.ZonedDateTimeUtil;
 import b1nd.dodam.domain.rds.bus.entity.Bus;
 import b1nd.dodam.domain.rds.bus.entity.BusApplication;
+import b1nd.dodam.domain.rds.bus.enumeration.BusApplicationStatus;
 import b1nd.dodam.domain.rds.bus.exception.BusAlreadyAppliedException;
 import b1nd.dodam.domain.rds.bus.repository.BusApplicationRepository;
 import b1nd.dodam.domain.rds.bus.repository.BusRepository;
@@ -34,14 +35,14 @@ public class BusApplicationUseCase {
         Optional<BusApplication> busApplication = busApplicationRepository.findByStudentAndBus_LeaveTimeAfter(student, ZonedDateTimeUtil.nowToLocalDateTime());
 
         return busApplication
-                .map(application -> handleExistingApplication(busId, application))
+                .map(application -> handleExistingApplication(busId, application, seatNumber))
                 .orElseGet(() -> applyForNewBus(busId, student, seatNumber));
     }
 
-    private Response handleExistingApplication(int busId, BusApplication currentApplication) {
+    private Response handleExistingApplication(int busId, BusApplication currentApplication, int seatNumber) {
         return currentApplication.getBus().getId() == busId
                 ? cancelCurrentApplication(currentApplication)
-                : updateToNewBus(busId, currentApplication);
+                : updateToNewBus(busId, currentApplication, seatNumber);
     }
 
     private Response applyForNewBus(int busId, Student student, int seatNumber) {
@@ -51,15 +52,16 @@ public class BusApplicationUseCase {
                         .bus(bus)
                         .student(student)
                         .seatNumber(seatNumber)
+                        .status(BusApplicationStatus.NOT_BOARDING)
                         .build()
         );
         return Response.created("버스 신청 성공");
     }
 
-    private Response updateToNewBus(int busId, BusApplication currentApplication) {
+    private Response updateToNewBus(int busId, BusApplication currentApplication, int seatNumber) {
         Bus newBus = adjustApplicationCount(busId, true);
         adjustApplicationCount(currentApplication.getBus().getId(), false);
-        currentApplication.updateBus(newBus);
+        currentApplication.updateBus(newBus, seatNumber);
         return Response.noContent("버스 신청 수정 성공");
     }
 
@@ -82,6 +84,7 @@ public class BusApplicationUseCase {
         busApplicationRepository.save(BusApplication.builder()
                 .bus(increaseApplicationCount(busId))
                 .student(student)
+                .status(BusApplicationStatus.NOT_BOARDING)
                 .build()
         );
         return Response.created("버스 신청 성공");
@@ -102,7 +105,7 @@ public class BusApplicationUseCase {
     public Response modify(int newBusId) {
         BusApplication application = getMy();
         decreaseApplicationCount(application.getBus().getId());
-        application.updateBus(increaseApplicationCount(newBusId));
+        application.updateBus(increaseApplicationCount(newBusId), null);
         return Response.noContent("버스 신청 수정 성공");
     }
 

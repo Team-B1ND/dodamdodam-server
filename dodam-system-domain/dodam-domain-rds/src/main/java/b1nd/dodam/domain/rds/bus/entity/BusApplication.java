@@ -1,6 +1,6 @@
 package b1nd.dodam.domain.rds.bus.entity;
 
-import b1nd.dodam.domain.rds.bus.enumeration.BusStatus;
+import b1nd.dodam.domain.rds.bus.enumeration.BusApplicationStatus;
 import b1nd.dodam.domain.rds.member.entity.Student;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
@@ -20,10 +20,10 @@ public class BusApplication {
 
     @NotNull
     @Enumerated(EnumType.STRING)
-    private BusStatus status;
+    private BusApplicationStatus status;
 
     @NotNull
-    private int seatNumber;
+    private Integer seatNumber;
 
     @OneToOne
     @JoinColumn(name = "fk_student_id", nullable = false)
@@ -34,7 +34,7 @@ public class BusApplication {
     private Bus bus;
 
     @Builder
-    public BusApplication(int id, BusStatus status, int seatNumber, Student student, Bus bus) {
+    public BusApplication(int id, BusApplicationStatus status, int seatNumber, Student student, Bus bus) {
         this.id = id;
         this.status = status;
         this.seatNumber = seatNumber;
@@ -42,8 +42,15 @@ public class BusApplication {
         this.bus = bus;
     }
 
-    public void updateBus(Bus bus) {
+    public void updateBus(Bus bus, Integer seatNumber) {
         this.bus = bus;
+        if (seatNumber != null) {
+            this.seatNumber = seatNumber;
+        }
+    }
+
+    public void updateStatus(BusApplicationStatus status) {
+        this.status = status;
     }
 
 }

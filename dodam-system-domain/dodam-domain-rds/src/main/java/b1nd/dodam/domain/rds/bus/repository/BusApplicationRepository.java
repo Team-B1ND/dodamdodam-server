@@ -2,7 +2,9 @@ package b1nd.dodam.domain.rds.bus.repository;
 
 import b1nd.dodam.domain.rds.bus.entity.Bus;
 import b1nd.dodam.domain.rds.bus.entity.BusApplication;
+import b1nd.dodam.domain.rds.bus.enumeration.BusApplicationStatus;
 import b1nd.dodam.domain.rds.bus.exception.BusApplicationNotFoundException;
+import b1nd.dodam.domain.rds.member.entity.Member;
 import b1nd.dodam.domain.rds.member.entity.Student;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -28,4 +30,5 @@ public interface BusApplicationRepository extends JpaRepository<BusApplication, 
 
     List<BusApplication> findByBus(Bus bus);
 
+    BusApplication findByStatusAndStudent_Member(BusApplicationStatus status, Member member);
 }

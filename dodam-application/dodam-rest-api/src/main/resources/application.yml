@@ -91,7 +91,8 @@ app:
     url: ${MELON_URL}
   discord:
     url: ${DISCORD_URL}
-
+  qr-code:
+    apiKey: ${QR_CODE_API_KEY}
 cloud:
   aws:
     credentials:
