@@ -70,8 +70,8 @@ public class ClubController {
     }
 
     @GetMapping("/joined")
-    public ResponseData<List<ClubStatusRes>> getMyClubs() {
-        return clubMemberUseCase.getMyClubs();
+    public ResponseData<List<ClubStatusRes>> getJoinedClubs() {
+        return clubMemberUseCase.getJoinedClubs();
     }
 
     @GetMapping("/members")
