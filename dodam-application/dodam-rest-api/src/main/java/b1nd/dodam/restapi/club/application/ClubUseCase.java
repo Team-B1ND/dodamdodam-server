@@ -1,8 +1,10 @@
 package b1nd.dodam.restapi.club.application;
 
 import b1nd.dodam.domain.rds.club.entity.Club;
+import b1nd.dodam.domain.rds.club.enumeration.ClubTimeType;
 import b1nd.dodam.domain.rds.club.service.ClubMemberService;
 import b1nd.dodam.domain.rds.club.service.ClubService;
+import b1nd.dodam.domain.rds.club.service.ClubTimeService;
 import b1nd.dodam.domain.rds.member.entity.Student;
 import b1nd.dodam.domain.rds.member.repository.StudentRepository;
 import b1nd.dodam.restapi.auth.infrastructure.security.support.MemberAuthenticationHolder;
@@ -22,11 +24,13 @@ import java.util.List;
 @Transactional(rollbackFor = Exception.class)
 public class ClubUseCase {
     private final ClubService clubService;
+    private final ClubTimeService clubTimeService;
     private final ClubMemberService clubMemberService;
     private final StudentRepository studentRepository;
     private final MemberAuthenticationHolder authHolder;
 
     public Response save(CreateClubReq req) {
+        clubTimeService.validateApplicationDuration(ClubTimeType.CLUB_CREATE);
         clubService.checkIsNameDuplicated(req.name());
         Club club = req.toEntity();
         Student leader = studentRepository.getByMember(authHolder.current());
