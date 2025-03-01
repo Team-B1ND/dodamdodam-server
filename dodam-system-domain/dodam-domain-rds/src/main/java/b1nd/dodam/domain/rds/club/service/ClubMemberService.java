@@ -18,6 +18,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Service
@@ -52,6 +53,13 @@ public class ClubMemberService {
     public List<Club> findUserAllowedClub(Member member) {
         return clubMemberRepository.findByStudentAndClubStatus(studentRepository.getByMember(member), ClubStatus.ALLOWED)
             .stream().map(ClubMember::getClub).toList();
+    }
+
+    public List<Club> getStudentClubStatus(Student student) {
+        return clubMemberRepository.findByStudentAndPermission(student, ClubPermission.CLUB_LEADER)
+                .stream()
+                .map(ClubMember::getClub)
+                .collect(Collectors.toList());
     }
 
     public List<ClubMember> getJoinRequests(Member member) {

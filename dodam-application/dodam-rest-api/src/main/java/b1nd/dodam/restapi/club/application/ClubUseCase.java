@@ -1,7 +1,6 @@
 package b1nd.dodam.restapi.club.application;
 
 import b1nd.dodam.domain.rds.club.entity.Club;
-import b1nd.dodam.domain.rds.club.entity.ClubMember;
 import b1nd.dodam.domain.rds.club.service.ClubMemberService;
 import b1nd.dodam.domain.rds.club.service.ClubService;
 import b1nd.dodam.domain.rds.member.entity.Student;
@@ -67,7 +66,7 @@ public class ClubUseCase {
     }
 
     @Transactional(readOnly = true)
-    public ResponseData<List<Club>> getUserClubStatus() {
-        return ResponseData.ok("사용자의 동아리 상태 불러오기 성공", clubService.getUserClubStatus(studentRepository.getByMember(authHolder.current())));
+    public ResponseData<List<Club>> getStudentClubStatus() {
+        return ResponseData.ok("사용자의 동아리 상태 불러오기 성공", clubMemberService.getStudentClubStatus(studentRepository.getByMember(authHolder.current())));
     }
 }
