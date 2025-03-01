@@ -5,7 +5,7 @@ import b1nd.dodam.domain.rds.club.entity.ClubMember;
 import b1nd.dodam.domain.rds.club.enumeration.ClubPermission;
 import b1nd.dodam.domain.rds.club.enumeration.ClubStatus;
 import b1nd.dodam.domain.rds.club.enumeration.ClubType;
-import b1nd.dodam.domain.rds.club.exception.AlreadyUserJoinCreativeClubException;
+import b1nd.dodam.domain.rds.club.exception.InvalidClubMemberInviteException;
 import b1nd.dodam.domain.rds.club.exception.ClubPermissionDeniedException;
 import b1nd.dodam.domain.rds.club.repository.ClubMemberRepository;
 import b1nd.dodam.domain.rds.club.repository.ClubRepository;
@@ -85,7 +85,7 @@ public class ClubMemberService {
 
     private void validateLeaderInList(Student leader, List<Student> students) {
         if (students.stream().anyMatch(s -> s.getId() == leader.getId())) {
-            throw new AlreadyUserJoinCreativeClubException();
+            throw new InvalidClubMemberInviteException();
         }
     }
 
@@ -99,7 +99,7 @@ public class ClubMemberService {
                 ClubType.CREATIVE_ACTIVITY_CLUB,
                 ClubStatus.DELETED).isEmpty()
         ) {
-            throw new AlreadyUserJoinCreativeClubException();
+            throw new InvalidClubMemberInviteException();
         }
     }
 }
