@@ -17,7 +17,7 @@ public record JoinClubMemberReq(
     public ClubMember toEntity(Student student, Club club) {
         return ClubMember.builder()
                 .permission(ClubPermission.CLUB_MEMBER)
-                .clubStatus(ClubStatus.PENDING)
+                .clubStatus(ClubStatus.WAITING)
                 .priority(clubPriority)
                 .student(student)
                 .club(club)
