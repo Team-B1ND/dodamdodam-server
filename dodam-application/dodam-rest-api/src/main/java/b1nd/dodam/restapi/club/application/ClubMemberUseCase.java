@@ -1,5 +1,6 @@
 package b1nd.dodam.restapi.club.application;
 
+import b1nd.dodam.domain.rds.club.entity.Club;
 import b1nd.dodam.domain.rds.club.entity.ClubMember;
 import b1nd.dodam.domain.rds.club.enumeration.ClubStatus;
 import b1nd.dodam.domain.rds.club.repository.ClubRepository;
@@ -8,6 +9,7 @@ import b1nd.dodam.domain.rds.member.entity.Student;
 import b1nd.dodam.domain.rds.member.repository.StudentRepository;
 import b1nd.dodam.restapi.auth.infrastructure.security.support.MemberAuthenticationHolder;
 import b1nd.dodam.restapi.club.application.data.req.JoinClubMemberReq;
+import b1nd.dodam.restapi.club.application.data.res.ClubDetailRes;
 import b1nd.dodam.restapi.club.application.data.res.ClubMemberRes;
 import b1nd.dodam.restapi.club.application.data.res.ClubStudentRes;
 import b1nd.dodam.restapi.member.application.data.res.StudentWithImageRes;
@@ -65,5 +67,15 @@ public class ClubMemberUseCase {
     @Transactional(readOnly = true)
     public ResponseData<List<ClubStudentRes>> getActiveClubMembers(Long id) {
         return ResponseData.ok("동아리 멤버 불러오기 성공", clubMemberService.getActiveClubMembers(id).stream().map(ClubStudentRes::of).toList());
+    }
+
+    @Transactional(readOnly = true)
+    public ResponseData<List<ClubDetailRes>> getMyClubs() {
+        return ResponseData.ok("나의 동아리 불러오기 성공", clubMemberService.findUserAllowedClub(authenticationHolder.current()).stream().map(ClubDetailRes::of).toList());
+    }
+
+    @Transactional(readOnly = true)
+    public ResponseData<List<Club>> getStudentClubStatus() {
+        return ResponseData.ok("사용자의 동아리 상태 불러오기 성공", clubMemberService.getStudentClubStatus(studentRepository.getByMember(authenticationHolder.current())));
     }
 }
