@@ -50,9 +50,8 @@ public class ClubMemberService {
         return clubMemberRepository.findSecondGradeStudentsNotInClubMember();
     }
 
-    public List<Club> findUserAllowedClub(Member member) {
-        return clubMemberRepository.findByStudentAndClubStatus(studentRepository.getByMember(member), ClubStatus.ALLOWED)
-            .stream().map(ClubMember::getClub).toList();
+    public List<ClubMember> findUserAllowedClub(Member member) {
+        return clubMemberRepository.findByStudentAndClubStatus(studentRepository.getByMember(member), ClubStatus.ALLOWED);
     }
 
     public List<Club> getStudentClubStatus(Student student) {

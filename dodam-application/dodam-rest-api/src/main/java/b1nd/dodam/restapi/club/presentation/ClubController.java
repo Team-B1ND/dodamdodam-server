@@ -1,6 +1,5 @@
 package b1nd.dodam.restapi.club.presentation;
 
-import b1nd.dodam.domain.rds.club.entity.Club;
 import b1nd.dodam.domain.rds.club.enumeration.ClubStatus;
 import b1nd.dodam.restapi.club.application.ClubMemberUseCase;
 import b1nd.dodam.restapi.club.application.ClubUseCase;
@@ -9,6 +8,7 @@ import b1nd.dodam.restapi.club.application.data.req.JoinClubMemberReq;
 import b1nd.dodam.restapi.club.application.data.req.UpdateClubInfoReq;
 import b1nd.dodam.restapi.club.application.data.res.ClubDetailRes;
 import b1nd.dodam.restapi.club.application.data.res.ClubMemberRes;
+import b1nd.dodam.restapi.club.application.data.res.ClubStatusRes;
 import b1nd.dodam.restapi.club.application.data.res.ClubStudentRes;
 import b1nd.dodam.restapi.member.application.data.res.StudentWithImageRes;
 import b1nd.dodam.restapi.support.data.Response;
@@ -69,8 +69,8 @@ public class ClubController {
         return clubUseCase.update(id, req);
     }
 
-    @GetMapping("/my")
-    public ResponseData<List<ClubDetailRes>> getMyClubs() {
+    @GetMapping("/joined")
+    public ResponseData<List<ClubStatusRes>> getMyClubs() {
         return clubMemberUseCase.getMyClubs();
     }
 
@@ -117,8 +117,8 @@ public class ClubController {
         return clubMemberUseCase.getActiveClubMembers(id);
     }
 
-    @GetMapping("/my/status")
-    public ResponseData<List<Club>> getMyClubStatus() {
+    @GetMapping("/my")
+    public ResponseData<List<ClubDetailRes>> getMyClubStatus() {
         return clubMemberUseCase.getStudentClubStatus();
     }
 }
