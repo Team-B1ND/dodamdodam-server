@@ -89,11 +89,11 @@ public class BusUseCase {
 
     public ResponseData<Bus> getMy() {
         Student student = studentRepository.getByMember(memberAuthenticationHolder.current());
-        if (student.getCanBusBoard() == Boolean.FALSE){
+        if (student.getBusSubscribe() == Boolean.FALSE){
             throw new BusPermissionException();
         }
         return ResponseData.ok("신청한 버스 조회 성공",
-                busRepository.findBusByStatusAndStudent(
+                busApplicationRepository.findBusByStatusAndStudent(
                         BusStatus.ACTIVATE,
                         ZonedDateTimeUtil.nowToLocalDateTime(),
                         student.getId()

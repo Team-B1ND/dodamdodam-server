@@ -25,18 +25,6 @@ public interface BusRepository extends JpaRepository<Bus, Integer> {
 
     List<Bus> findAllByOrderByIdDesc(Pageable pageable);
 
-    @Query(value = """
-        SELECT id, leave_time, status FROM bus b
-        WHERE b.leave_time >= :now
-        AND b.status = :status
-        AND EXISTS (
-            SELECT 1
-            FROM bus_member bm
-            WHERE bm.fk_student_id = :studentId
-            AND bm.fk_bus_id = b.id
-        )""",nativeQuery = true)
-    Bus findBusByStatusAndStudent(@Param("status") BusStatus status, @Param("now") LocalDateTime now, @Param("studentId") int studentId);
-
     @Query("select b from bus b where b.leaveTime LIKE concat(:localDate, '%')")
     List<Bus> findAllByLeaveTime(LocalDate localDate);
 

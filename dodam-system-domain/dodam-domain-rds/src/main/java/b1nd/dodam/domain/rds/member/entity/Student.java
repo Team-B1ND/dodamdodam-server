@@ -32,17 +32,17 @@ public class Student {
     @Column(unique = true)
     private String code;
 
-    private Boolean canBusBoard;
+    private Boolean busSubscribe;
 
     @Builder
-    public Student(int id, Member member, int grade, int room, int number, String code, Boolean canBusBoard) {
+    public Student(int id, Member member, int grade, int room, int number, String code, Boolean busSubscribe) {
         this.id = id;
         this.member = member;
         this.grade = grade;
         this.room = room;
         this.number = number;
         this.code = code;
-        this.canBusBoard = canBusBoard;
+        this.busSubscribe = busSubscribe;
     }
 
     public void updateInfo(int grade, int room, int number) {
