@@ -25,7 +25,7 @@ public class ClubTimeService {
     public void validateApplicationDuration(ClubTimeType clubTimeType) {
         ClubTime time = getClubTime(clubTimeType);
         LocalDate today = LocalDate.now();
-        if (time.getStart().isBefore(today)  && time.getEnd().isAfter(today)) {
+        if (today.isBefore(time.getStart()) || today.isAfter(time.getEnd())) {
             throw new ClubApplicationDurationPassedException();
         }
     }

@@ -13,6 +13,6 @@ public class ClubTimeUseCase {
 
     public Response save(ClubTimeReq req) {
         clubTimeService.setClubTime(req.toEntity());
-        return Response.created("시간 설정됨");
+        return Response.created("시간 설정 성공");
     }
 }
