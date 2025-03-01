@@ -41,6 +41,10 @@ public class ClubMemberService {
         return clubMemberRepository.findSecondGradeStudentsNotInClubMember();
     }
 
+    public List<Student> getAllGradeStudent() {
+        return studentRepository.findAll();
+    }
+
     public List<ClubMember> getJoinRequests(Member member) {
         Student student = studentRepository.getByMember(member);
         return clubMemberRepository.findByStudentAndClubStatus(student, ClubStatus.WAITING);

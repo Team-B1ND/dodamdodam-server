@@ -2,6 +2,7 @@ package b1nd.dodam.restapi.club.application;
 
 import b1nd.dodam.domain.rds.club.enumeration.ClubStatus;
 import b1nd.dodam.domain.rds.club.service.ClubMemberService;
+import b1nd.dodam.domain.rds.member.service.MemberService;
 import b1nd.dodam.restapi.auth.infrastructure.security.support.MemberAuthenticationHolder;
 import b1nd.dodam.restapi.club.application.data.res.ClubMemberRes;
 import b1nd.dodam.restapi.club.application.data.res.ClubStudentRes;
@@ -29,6 +30,11 @@ public class ClubMemberUseCase {
     @Transactional(readOnly = true)
     public ResponseData<List<StudentWithImageRes>> getSecondGradeStudents() {
         return ResponseData.ok("2학년 불러오기 성공", clubMemberService.getSecondGradeStudent().stream().map(StudentWithImageRes::of).toList());
+    }
+
+    @Transactional(readOnly = true)
+    public ResponseData<List<StudentWithImageRes>> getAllGradeStudents() {
+        return ResponseData.ok("전학년 불러오기 성공", clubMemberService.getAllGradeStudent().stream().map(StudentWithImageRes::of).toList());
     }
 
     @Transactional(readOnly = true)

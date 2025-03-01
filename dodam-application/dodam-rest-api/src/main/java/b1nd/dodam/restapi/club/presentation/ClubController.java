@@ -7,6 +7,7 @@ import b1nd.dodam.restapi.club.application.ClubUseCase;
 import b1nd.dodam.restapi.club.application.data.req.ClubTimeReq;
 import b1nd.dodam.restapi.club.application.data.req.CreateClubReq;
 import b1nd.dodam.restapi.club.application.data.req.UpdateClubInfoReq;
+import b1nd.dodam.restapi.club.application.data.req.UpdateClubReq;
 import b1nd.dodam.restapi.club.application.data.res.ClubDetailRes;
 import b1nd.dodam.restapi.club.application.data.res.ClubMemberRes;
 import b1nd.dodam.restapi.club.application.data.res.ClubStudentRes;
@@ -32,6 +33,14 @@ public class ClubController {
             @RequestBody @Valid CreateClubReq req
     ) {
         return clubUseCase.save(req);
+    }
+
+    @PostMapping("/{id}/state")
+    public Response state(
+        @PathVariable Long id,
+        @RequestBody @Valid UpdateClubReq req
+    ) {
+        return clubUseCase.update(id, req);
     }
 
     @PostMapping("/join-requests/{id}")
@@ -67,12 +76,17 @@ public class ClubController {
             @PathVariable Long id,
             @RequestBody @Valid UpdateClubInfoReq req
     ) {
-        return clubUseCase.update(id, req);
+        return clubUseCase.updateInfo(id, req);
     }
 
     @GetMapping("/members")
     public ResponseData<List<StudentWithImageRes>> getSecondGradeMembers() {
         return clubMemberUseCase.getSecondGradeStudents();
+    }
+
+    @GetMapping("/members/self")
+    public ResponseData<List<StudentWithImageRes>> getAllMembers() {
+        return clubMemberUseCase.getAllGradeStudents();
     }
 
     @GetMapping

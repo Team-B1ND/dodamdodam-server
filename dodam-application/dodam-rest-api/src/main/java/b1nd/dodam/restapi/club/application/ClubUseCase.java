@@ -10,6 +10,7 @@ import b1nd.dodam.domain.rds.member.repository.StudentRepository;
 import b1nd.dodam.restapi.auth.infrastructure.security.support.MemberAuthenticationHolder;
 import b1nd.dodam.restapi.club.application.data.req.CreateClubReq;
 import b1nd.dodam.restapi.club.application.data.req.UpdateClubInfoReq;
+import b1nd.dodam.restapi.club.application.data.req.UpdateClubReq;
 import b1nd.dodam.restapi.club.application.data.res.ClubDetailRes;
 import b1nd.dodam.restapi.support.data.Response;
 import b1nd.dodam.restapi.support.data.ResponseData;
@@ -47,10 +48,18 @@ public class ClubUseCase {
         return Response.ok("동아리 삭제 성공");
     }
 
-    public Response update(Long id, UpdateClubInfoReq req) {
+    public Response update(Long id, UpdateClubReq req) {
+        Club club = clubService.findById(id);
+        club.updateStatus(req.status(), req.reason());
+        clubService.update(club);
+        return Response.ok("동아리 상태 변경 성공");
+    }
+
+    public Response updateInfo(Long id, UpdateClubInfoReq req) {
         Club club = clubService.findById(id);
         clubMemberService.validateByClubLeader(club, authHolder.current());
-        clubService.update(club, req.name(), req.subject(), req.shortDescription(), req.description(), req.image());
+        club.updateInfo(req.name(), req.subject(), req.shortDescription(), req.description(), req.image());
+        clubService.update(club);
         return Response.ok("동아리 정보 업데이트 성공");
     }
 
