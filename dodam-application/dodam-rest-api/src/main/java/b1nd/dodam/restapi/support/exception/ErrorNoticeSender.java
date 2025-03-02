@@ -2,12 +2,14 @@ package b1nd.dodam.restapi.support.exception;
 
 import b1nd.dodam.discord.webhook.client.DiscordWebhookClient;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
 import java.util.Arrays;
 
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class ErrorNoticeSender {
@@ -34,6 +36,7 @@ public class ErrorNoticeSender {
                 + getStackTrace(e)
                 + "\n```";
 
+        log.error("{}{}", title, description);
         discordWebHookClient.notice("", title, description);
     }
 

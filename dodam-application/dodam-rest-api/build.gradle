@@ -16,6 +16,7 @@ dependencies {
     implementation project(':dodam-in-system-available:dodam-firebase-client')
     implementation project(':dodam-in-system-available:dodam-simple-storage-service-client')
     implementation project(':dodam-in-system-available:dodam-google-smtp-client')
+    implementation project(':dodam-in-system-available:dodam-qrcode-client')
 
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-security'

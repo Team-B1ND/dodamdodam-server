@@ -36,12 +36,12 @@ public class Bus {
     private int peopleLimit;
 
     @NotNull
-    @Column(columnDefinition = "BIGINT DEFAULT 0")
-    private int applyCount;
-
-    @NotNull
     @Enumerated(EnumType.STRING)
     private BusStatus status;
+
+    @NotNull
+    @Column(columnDefinition = "BIGINT DEFAULT 0")
+    private int applyCount;
 
     @NotNull
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
@@ -52,18 +52,18 @@ public class Bus {
     private LocalTime timeRequired;
 
     @Builder
-    public Bus(String busName, String description, int peopleLimit, BusStatus status, LocalDateTime leaveTime, LocalTime timeRequired) {
+    public Bus(String busName, String description, int peopleLimit, BusStatus status, int applyCount, LocalDateTime leaveTime, LocalTime timeRequired) {
         this.busName = busName;
         this.description = description;
         this.peopleLimit = peopleLimit;
         this.status = status;
+        this.applyCount = applyCount;
         this.leaveTime = leaveTime;
         this.timeRequired = timeRequired;
     }
 
     public void updateBus(String busName, String description, LocalDateTime leaveTime, LocalTime timeRequired, int peopleLimit) {
         checkIfTheBusHasDeparted();
-
         updateApplyIfNotEmpty(busName, value -> this.busName = value);
         updateApplyIfNotEmpty(description, value -> this.description = value);
         updateApplyIfNotEmpty(leaveTime, value -> this.leaveTime = value);
