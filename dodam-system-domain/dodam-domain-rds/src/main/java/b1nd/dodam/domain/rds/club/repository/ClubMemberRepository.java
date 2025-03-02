@@ -10,6 +10,7 @@ import b1nd.dodam.domain.rds.member.entity.Student;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 import java.util.Optional;
@@ -30,11 +31,29 @@ public interface ClubMemberRepository extends JpaRepository<ClubMember, Long> {
     @EntityGraph(attributePaths = {"club", "club.teacher"})
     List<ClubMember> findByStudentAndClubStatus(Student student, ClubStatus clubStatus);
 
+    List<ClubMember> findByStudentAndPermission(Student student, ClubPermission permission);
+
     @EntityGraph(attributePaths = {"student", "student.member"})
     List<ClubMember> findAllByClubAndPermission(Club club, ClubPermission permission);
 
     @EntityGraph(attributePaths = {"student", "student.member"})
     List<ClubMember> findAllByClubAndClubStatus(Club club, ClubStatus clubStatus);
+
+    @Query("""
+    SELECT c FROM club c
+    LEFT JOIN club_member cm ON c.id = cm.club.id
+        AND cm.student = :student
+        AND cm.clubStatus != :status
+    WHERE c.id = :clubId
+    AND c.state = :state
+    AND cm.id IS NULL
+""")
+    Club findClubIfNotMember(
+            @Param("clubId") Long clubId,
+            @Param("state") ClubStatus state,
+            @Param("student") Student student,
+            @Param("status") ClubStatus status
+    );
 
     @Query("""
     SELECT s, m FROM student s
@@ -50,4 +69,6 @@ public interface ClubMemberRepository extends JpaRepository<ClubMember, Long> {
     Optional<ClubMember> findByIdAndStudent(Long id, Student student);
 
     List<ClubMember> findByStudentInAndClubStatusAndClub_TypeAndClub_StateNot(List<Student> students, ClubStatus clubStatus, ClubType clubType, ClubStatus state);
+
+    List<ClubMember> findByClubAndStudent(Club club, Student student);
 }

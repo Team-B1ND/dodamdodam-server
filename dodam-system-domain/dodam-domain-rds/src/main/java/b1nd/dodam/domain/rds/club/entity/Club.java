@@ -30,6 +30,7 @@ public class Club extends BaseEntity {
     private String description;
 
     @NotNull
+    @Column(columnDefinition = "TEXT")
     private String image;
 
     @NotNull
