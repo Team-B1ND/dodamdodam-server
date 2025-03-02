@@ -80,6 +80,8 @@ class SecurityConfig {
                 .requestMatchers(GET, "/bus").permitAll()
                 .requestMatchers("/bus/apply/**").hasAnyRole(STUDENT, ADMIN)
                 .requestMatchers("/bus/**").hasRole(TEACHER)
+                .requestMatchers("/bus/qr-code/**").hasAnyRole(STUDENT, ADMIN)
+                .requestMatchers("/bus/qr-code/scan").permitAll()
 
                 .requestMatchers(POST, "/night-study").hasRole(STUDENT)
                 .requestMatchers(DELETE, "/night-study/**").hasRole(STUDENT)

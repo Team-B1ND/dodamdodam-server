@@ -22,7 +22,7 @@ public record JoinStudentReq(@NotEmpty String id, @NotEmpty String pw, @NotEmpty
                 .grade(grade)
                 .room(room)
                 .number(number)
-                .code(RandomCode.studentRandomCode())
+                .code(RandomCode.UUIDRandomCode())
                 .build();
     }
 
