@@ -1,6 +1,7 @@
 package b1nd.dodam.restapi.bus.presentation;
 
 import b1nd.dodam.domain.rds.bus.entity.Bus;
+import b1nd.dodam.domain.rds.bus.enumeration.BusStatus;
 import b1nd.dodam.restapi.bus.application.BusApplicationUseCase;
 import b1nd.dodam.restapi.bus.application.BusQrcodeUseCase;
 import b1nd.dodam.restapi.bus.application.BusUseCase;
@@ -31,9 +32,44 @@ public class BusController {
         return busUseCase.register(req);
     }
 
+    @PostMapping("/apply/{id}")
+    public Response apply(@PathVariable int id) {
+        return busApplicationUseCase.apply(id);
+    }
+
+    @PostMapping("/qr-code/scan")
+    public Response scanQRCode(
+            HttpServletRequest httpServletReq,
+            @RequestParam String memberId,
+            @RequestParam String nonce
+    ){
+        return busQrcodeUseCase.scanBusQrcode(nonce, memberId, httpServletReq.getHeader("bus-api-key"));
+    }
+
     @PatchMapping("/{id}")
     public Response modify(@PathVariable int id, @RequestBody BusReq req) {
         return busUseCase.modify(id, req);
+    }
+
+    @PatchMapping("/apply/{id}")
+    public Response modifyApplication(@PathVariable int id) {
+        return busApplicationUseCase.modify(id);
+    }
+
+    @PatchMapping("/apply/status/{id}/{seatNumber}")
+    public Response modifyStatus(
+            @PathVariable int id,
+            @PathVariable(required = false) int seatNumber
+    ) {
+        return busApplicationUseCase.modifyStatus(id, seatNumber);
+    }
+
+    @PatchMapping("/status/{id}/{status}")
+    public Response modifyStatus(
+            @PathVariable int id,
+            @PathVariable BusStatus status
+    ){
+        return busUseCase.modifyStatus(id, status);
     }
 
     @DeleteMapping("/{id}")
@@ -60,14 +96,6 @@ public class BusController {
         return busUseCase.getByDate(year, month, day);
     }
 
-    @PatchMapping("/apply/status/{id}/{seatNumber}")
-    public Response modifyStatus(
-            @PathVariable int id,
-            @PathVariable(required = false) int seatNumber
-    ) {
-        return busApplicationUseCase.modifyStatus(id, seatNumber);
-    }
-
     @GetMapping("/apply")
     public ResponseData<Bus> getMy() {
         return busUseCase.getMy();
@@ -78,33 +106,14 @@ public class BusController {
         return busApplicationUseCase.getSeatNumbers(id);
     }
 
-    @PostMapping("/apply/{id}")
-    public Response apply(@PathVariable int id) {
-        return busApplicationUseCase.apply(id);
-    }
-
-    @PatchMapping("/apply/{id}")
-    public Response modifyApplication(@PathVariable int id) {
-        return busApplicationUseCase.modify(id);
-    }
-
-    @DeleteMapping("/apply/{id}")
-    public Response cancelApplication(@PathVariable int id) {
-        return busApplicationUseCase.cancel();
-    }
-
     @GetMapping("/qr-code/nonce")
     public ResponseData<BusQrcodeNonceRes> getNonce() {
         return busQrcodeUseCase.issueNonce();
     }
 
-    @PostMapping("/qr-code/scan")
-    public Response scanQRCode(
-            HttpServletRequest httpServletReq,
-            @RequestParam String memberId,
-            @RequestParam String nonce
-    ){
-        return busQrcodeUseCase.scanBusQrcode(nonce, memberId, httpServletReq.getHeader("bus-api-key"));
+    @DeleteMapping("/apply/{id}")
+    public Response cancelApplication(@PathVariable int id) {
+        return busApplicationUseCase.cancel();
     }
 
 }
