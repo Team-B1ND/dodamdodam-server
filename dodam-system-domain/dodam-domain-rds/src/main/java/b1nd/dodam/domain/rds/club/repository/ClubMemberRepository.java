@@ -10,6 +10,7 @@ import b1nd.dodam.domain.rds.member.entity.Student;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 import java.util.Optional;
@@ -37,6 +38,22 @@ public interface ClubMemberRepository extends JpaRepository<ClubMember, Long> {
 
     @EntityGraph(attributePaths = {"student", "student.member"})
     List<ClubMember> findAllByClubAndClubStatus(Club club, ClubStatus clubStatus);
+
+    @Query("""
+    SELECT c FROM club c
+    LEFT JOIN club_member cm ON c.id = cm.club.id
+        AND cm.student = :student
+        AND cm.clubStatus != :status
+    WHERE c.id = :clubId
+    AND c.state = :state
+    AND cm.id IS NULL
+""")
+    Club findClubIfNotMember(
+            @Param("clubId") Long clubId,
+            @Param("state") ClubStatus state,
+            @Param("student") Student student,
+            @Param("status") ClubStatus status
+    );
 
     @Query("""
     SELECT s, m FROM student s

@@ -52,6 +52,14 @@ public class ClubMemberService {
         return clubMemberRepository.findByStudentAndClubStatus(studentRepository.getByMember(member), ClubStatus.ALLOWED);
     }
 
+    public Club findClubIfNotClubMember(Long clubId, ClubStatus state, Student student, ClubStatus status) {
+        Club club = clubMemberRepository.findClubIfNotMember(clubId, state, student, status);
+        if (club == null) {
+            throw new AlreadyUserJoinCreativeClubException();
+        }
+        return club;
+    }
+
     public List<Club> getStudentClubStatus(Student student) {
         return clubMemberRepository.findByStudentAndPermission(student, ClubPermission.CLUB_LEADER)
                 .stream()
@@ -94,6 +102,12 @@ public class ClubMemberService {
     public void validateByClubAndStudent(Club clubId, Student student) {
         if (!clubMemberRepository.findByClubAndStudent(clubId, student).isEmpty()) {
             throw new ClubJoinedException();
+        }
+    }
+
+    public void validateAlreadyCreativeClubJoined(Student student) {
+        if (!clubMemberRepository.findByStudentAndClubStatus(student, ClubStatus.ALLOWED).isEmpty()) {
+            throw new AlreadyUserJoinCreativeClubException();
         }
     }
 
