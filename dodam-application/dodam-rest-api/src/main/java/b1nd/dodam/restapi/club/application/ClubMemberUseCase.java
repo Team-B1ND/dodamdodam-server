@@ -27,10 +27,13 @@ public class ClubMemberUseCase {
     private final MemberAuthenticationHolder authenticationHolder;
     private final StudentRepository studentRepository;
 
-    public Response joinClubs(List<JoinClubMemberReq> joinClubMemberReqs) {
+    public Response joinClubs(List<JoinClubMemberReq> reqs) {
         Student student = studentRepository.getByMember(authenticationHolder.current());
-        clubMemberService.validateAlreadyCreativeClubJoined(student);
-        clubMemberService.saveClubMembers(joinClubMemberReqs.parallelStream()
+        boolean clubJoined = clubMemberService.isCreativeClubJoined(student);
+        if (clubJoined) {
+            filterCreativeClub(reqs);
+        }
+        clubMemberService.saveClubMembers(reqs.parallelStream()
             .map(req -> req.toEntity(student, clubMemberService.findClubIfNotClubMember(req.clubId(), ClubStatus.ALLOWED, student, ClubStatus.DELETED)))
             .toList()
         );
@@ -76,4 +79,9 @@ public class ClubMemberUseCase {
     public ResponseData<List<ClubDetailRes>> getStudentClubStatus() {
         return ResponseData.ok("동아리 불러오기 성공", clubMemberService.getStudentClubStatus(studentRepository.getByMember(authenticationHolder.current())).stream().map(ClubDetailRes::of).toList());
     }
+
+    private void filterCreativeClub(List<JoinClubMemberReq> reqs) {
+        reqs.removeIf(req -> req.clubPriority() != null);
+    }
+
 }

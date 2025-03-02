@@ -105,10 +105,8 @@ public class ClubMemberService {
         }
     }
 
-    public void validateAlreadyCreativeClubJoined(Student student) {
-        if (!clubMemberRepository.findByStudentAndClubStatus(student, ClubStatus.ALLOWED).isEmpty()) {
-            throw new AlreadyUserJoinCreativeClubException();
-        }
+    public boolean isCreativeClubJoined(Student student) {
+        return !clubMemberRepository.findByStudentAndClubStatus(student, ClubStatus.ALLOWED).isEmpty();
     }
 
     private void rejectActivityClubMember(Student student) {
