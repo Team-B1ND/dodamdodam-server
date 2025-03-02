@@ -36,13 +36,18 @@ public class ClubController {
     }
 
     @PostMapping("/{id}/waiting")
-    public Response setWaiting (
+    public Response setWaiting(
         @PathVariable Long id
     ) {
         return clubUseCase.setWaiting(id);
     }
 
-//    @PostMapping("/{id}/teacher")
+    @PostMapping("/{id}/teacher")
+    public Response setTeacher(
+        @PathVariable Long id
+    ) {
+        return clubUseCase.setTeacher(id);
+    }
 
 
     @PostMapping("/join-requests/{id}")
