@@ -1,6 +1,7 @@
 package b1nd.dodam.restapi.bus.presentation;
 
 import b1nd.dodam.domain.rds.bus.entity.Bus;
+import b1nd.dodam.domain.rds.bus.enumeration.BusApplicationStatus;
 import b1nd.dodam.domain.rds.bus.enumeration.BusStatus;
 import b1nd.dodam.restapi.bus.application.BusApplicationUseCase;
 import b1nd.dodam.restapi.bus.application.BusQrcodeUseCase;
@@ -112,9 +113,11 @@ public class BusController {
         return busQrcodeUseCase.issueNonce();
     }
 
-    @GetMapping("/{id}/student")
-    public ResponseData<List<BusMemberRes>> getApplicant(@PathVariable int id){
-        return busUseCase.getApplicant(id);
+    @GetMapping("/{id}/student/{status}")
+    public ResponseData<List<BusMemberRes>> getApplicant(@PathVariable int id,
+                                                         @PathVariable BusApplicationStatus status
+    ){
+        return busApplicationUseCase.getBusStudent(id, status);
     }
 
     @DeleteMapping("/apply/{id}")

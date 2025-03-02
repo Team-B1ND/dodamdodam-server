@@ -23,7 +23,7 @@ public class BusApplication {
     private BusApplicationStatus status;
 
     @NotNull
-    private Integer seatNumber;
+    private int seatNumber;
 
     @OneToOne
     @JoinColumn(name = "fk_student_id", nullable = false)

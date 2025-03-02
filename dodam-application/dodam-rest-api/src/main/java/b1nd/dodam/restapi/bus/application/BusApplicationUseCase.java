@@ -10,6 +10,7 @@ import b1nd.dodam.domain.rds.bus.repository.BusRepository;
 import b1nd.dodam.domain.rds.member.entity.Student;
 import b1nd.dodam.domain.rds.member.repository.StudentRepository;
 import b1nd.dodam.restapi.auth.infrastructure.security.support.MemberAuthenticationHolder;
+import b1nd.dodam.restapi.bus.application.data.res.BusMemberRes;
 import b1nd.dodam.restapi.bus.application.data.res.BusSeatRes;
 import b1nd.dodam.restapi.support.data.Response;
 import b1nd.dodam.restapi.support.data.ResponseData;
@@ -114,6 +115,15 @@ public class BusApplicationUseCase {
         decreaseApplicationCount(application.getBus().getId());
         busApplicationRepository.delete(application);
         return Response.noContent("버스 신청 취소 성공");
+    }
+
+    public ResponseData<List<BusMemberRes>> getBusStudent(int id, BusApplicationStatus status){
+        return ResponseData.ok("버스 이용 현황 조회 성공",
+                busApplicationRepository.findByBus_IdAndStatus(id, status)
+                        .stream()
+                        .map(BusMemberRes::createFromBusMember)
+                        .toList()
+        );
     }
 
     private BusApplication getMy() {
