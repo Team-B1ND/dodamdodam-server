@@ -23,7 +23,7 @@ public class BusApplication {
     private BusApplicationStatus status;
 
     @NotNull
-    private Integer seatNumber;
+    private int seatNumber;
 
     @OneToOne
     @JoinColumn(name = "fk_student_id", nullable = false)
@@ -34,8 +34,7 @@ public class BusApplication {
     private Bus bus;
 
     @Builder
-    public BusApplication(int id, BusApplicationStatus status, int seatNumber, Student student, Bus bus) {
-        this.id = id;
+    public BusApplication(BusApplicationStatus status, int seatNumber, Student student, Bus bus) {
         this.status = status;
         this.seatNumber = seatNumber;
         this.student = student;

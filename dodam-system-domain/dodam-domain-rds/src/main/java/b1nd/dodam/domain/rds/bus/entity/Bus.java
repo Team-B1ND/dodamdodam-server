@@ -52,8 +52,7 @@ public class Bus {
     private LocalTime timeRequired;
 
     @Builder
-    public Bus(int id, String busName, String description, int peopleLimit, BusStatus status, int applyCount, LocalDateTime leaveTime, LocalTime timeRequired) {
-        this.id = id;
+    public Bus(String busName, String description, int peopleLimit, BusStatus status, int applyCount, LocalDateTime leaveTime, LocalTime timeRequired) {
         this.busName = busName;
         this.description = description;
         this.peopleLimit = peopleLimit;
@@ -65,7 +64,6 @@ public class Bus {
 
     public void updateBus(String busName, String description, LocalDateTime leaveTime, LocalTime timeRequired, int peopleLimit) {
         checkIfTheBusHasDeparted();
-
         updateApplyIfNotEmpty(busName, value -> this.busName = value);
         updateApplyIfNotEmpty(description, value -> this.description = value);
         updateApplyIfNotEmpty(leaveTime, value -> this.leaveTime = value);
@@ -100,6 +98,10 @@ public class Bus {
         if(applyCount == peopleLimit) {
             throw new BusFullOfSeatException();
         }
+    }
+
+    public void setStatus(BusStatus status) {
+        this.status = status;
     }
 
 }
