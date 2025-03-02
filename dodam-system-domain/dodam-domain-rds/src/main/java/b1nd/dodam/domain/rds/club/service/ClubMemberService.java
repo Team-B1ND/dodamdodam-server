@@ -5,8 +5,9 @@ import b1nd.dodam.domain.rds.club.entity.ClubMember;
 import b1nd.dodam.domain.rds.club.enumeration.ClubPermission;
 import b1nd.dodam.domain.rds.club.enumeration.ClubStatus;
 import b1nd.dodam.domain.rds.club.enumeration.ClubType;
-import b1nd.dodam.domain.rds.club.exception.InvalidClubMemberInviteException;
 import b1nd.dodam.domain.rds.club.exception.ClubPermissionDeniedException;
+import b1nd.dodam.domain.rds.club.exception.InsufficientClubMembersException;
+import b1nd.dodam.domain.rds.club.exception.InvalidClubMemberInviteException;
 import b1nd.dodam.domain.rds.club.repository.ClubMemberRepository;
 import b1nd.dodam.domain.rds.club.repository.ClubRepository;
 import b1nd.dodam.domain.rds.member.entity.Member;
@@ -52,6 +53,13 @@ public class ClubMemberService {
 
     public ClubMember getClubLeader(Long clubId) {
         return clubMemberRepository.getByClubAndPermissionAndStatus(clubRepository.getByClubId(clubId), ClubPermission.CLUB_LEADER, ClubStatus.ALLOWED);
+    }
+
+    public void validateActiveClubMemberSize(Club club, Member leader) {
+        validateByClubLeader(club, leader);
+        if (clubMemberRepository.findAllByClubAndClubStatus(club, ClubStatus.ALLOWED).size() < 5) {
+            throw new InsufficientClubMembersException();
+        }
     }
 
     public List<ClubMember> getActiveClubMembers(Long clubId) {

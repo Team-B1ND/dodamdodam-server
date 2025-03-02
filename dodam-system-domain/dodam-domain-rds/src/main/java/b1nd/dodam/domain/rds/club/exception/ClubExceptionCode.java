@@ -9,8 +9,9 @@ public enum ClubExceptionCode implements ExceptionCode {
     CLUB_NOT_FOUND_EXCEPTION(404, "동아리를 찾을 수 없습니다."),
     INVALID_CLUB_MEMBER_INVITATION(400, "초대할 수 없는 학생입니다"),
     CLUB_PERMISSION_DENIED(403, "동아리 권한이 부족합니다."),
+    INSUFFICIENT_CLUB_MEMBERS(401, "동아리 최소 인원을 충족하지 않습니다."),
     ClUB_MEMBER_NOT_FOUND(404, "찾을 수 없는 동아리 부원입니다."),
-    APPLICATION_DURATION_PASSED(403, "동아리 신청 기간이 아님")
+    APPLICATION_DURATION_PASSED(403, "동아리 신청 기간이 아닙니다.")
     ;
 
     private final int status;

@@ -1,6 +1,7 @@
 package b1nd.dodam.restapi.club.application;
 
 import b1nd.dodam.domain.rds.club.entity.Club;
+import b1nd.dodam.domain.rds.club.enumeration.ClubStatus;
 import b1nd.dodam.domain.rds.club.enumeration.ClubTimeType;
 import b1nd.dodam.domain.rds.club.service.ClubMemberService;
 import b1nd.dodam.domain.rds.club.service.ClubService;
@@ -47,6 +48,15 @@ public class ClubUseCase {
         clubService.deleteClub(club);
         return Response.ok("동아리 삭제 성공");
     }
+
+    public Response setWaiting(Long id) {
+        Club club = clubService.findById(id);
+        clubMemberService.validateActiveClubMemberSize(club, authHolder.current());
+        club.updateStatus(ClubStatus.PENDING, null);
+        clubService.update(club);
+        return Response.ok("동아리 대기 성공");
+    }
+
 
     public Response update(Long id, UpdateClubReq req) {
         Club club = clubService.findById(id);

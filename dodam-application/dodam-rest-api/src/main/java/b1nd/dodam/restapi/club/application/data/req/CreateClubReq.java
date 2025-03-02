@@ -26,7 +26,7 @@ public record CreateClubReq(
                 .image(image)
                 .subject(subject)
                 .type(type)
-                .state(ClubStatus.PENDING)
+                .state(ClubStatus.WAITING)
                 .build();
     }
 }

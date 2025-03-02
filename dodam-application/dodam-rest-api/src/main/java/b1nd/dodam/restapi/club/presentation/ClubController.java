@@ -35,6 +35,13 @@ public class ClubController {
         return clubUseCase.save(req);
     }
 
+    @PostMapping("/{id}/waiting")
+    public Response setWaiting (
+        @PathVariable Long id
+    ) {
+        return clubUseCase.setWaiting(id);
+    }
+
     @PostMapping("/{id}/state")
     public Response state(
         @PathVariable Long id,

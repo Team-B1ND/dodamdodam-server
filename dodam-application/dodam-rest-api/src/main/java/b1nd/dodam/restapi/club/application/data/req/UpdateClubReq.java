@@ -11,5 +11,4 @@ public record UpdateClubReq(
     @NotNull ClubStatus status,
     String reason
 ) {
-
 }
