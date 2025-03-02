@@ -32,6 +32,10 @@ public class ClubService {
         clubRepository.save(club);
     }
 
+    public void updateAll(List<Club> clubs) {
+        clubRepository.saveAll(clubs);
+    }
+
     public void saveClubAndMember(Club club, Student leader, List<Student> students) {
         clubRepository.save(club);
         Set<ClubMember> clubMembers = students.stream()
@@ -46,6 +50,10 @@ public class ClubService {
 
     public Club findById(Long id) {
         return clubRepository.getByClubId(id);
+    }
+
+    public List<Club> findByIds(List<Long> ids) {
+        return clubRepository.findByIdIn(ids);
     }
 
     public void deleteClub(Club club) {

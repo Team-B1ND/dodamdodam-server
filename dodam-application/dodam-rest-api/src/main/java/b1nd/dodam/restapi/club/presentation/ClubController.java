@@ -42,13 +42,8 @@ public class ClubController {
         return clubUseCase.setWaiting(id);
     }
 
-    @PostMapping("/{id}/state")
-    public Response state(
-        @PathVariable Long id,
-        @RequestBody @Valid UpdateClubReq req
-    ) {
-        return clubUseCase.update(id, req);
-    }
+//    @PostMapping("/{id}/teacher")
+
 
     @PostMapping("/join-requests/{id}")
     public Response acceptClubJoinRequest(
@@ -84,6 +79,13 @@ public class ClubController {
             @RequestBody @Valid UpdateClubInfoReq req
     ) {
         return clubUseCase.updateInfo(id, req);
+    }
+
+    @PatchMapping("/state")
+    public Response state(
+            @RequestBody @Valid UpdateClubReq req
+    ) {
+        return clubUseCase.update(req);
     }
 
     @GetMapping("/members")

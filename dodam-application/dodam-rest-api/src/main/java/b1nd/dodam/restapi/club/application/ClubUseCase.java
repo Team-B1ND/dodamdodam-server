@@ -58,10 +58,10 @@ public class ClubUseCase {
     }
 
 
-    public Response update(Long id, UpdateClubReq req) {
-        Club club = clubService.findById(id);
-        club.updateStatus(req.status(), req.reason());
-        clubService.update(club);
+    public Response update(UpdateClubReq req) {
+        List<Club> clubs = clubService.findByIds(req.clubIds());
+        clubs.forEach(c -> c.updateStatus(req.status(), req.reason()));
+        clubService.updateAll(clubs);
         return Response.ok("동아리 상태 변경 성공");
     }
 

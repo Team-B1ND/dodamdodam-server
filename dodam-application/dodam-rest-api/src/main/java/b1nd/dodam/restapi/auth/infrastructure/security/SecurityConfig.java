@@ -124,7 +124,7 @@ class SecurityConfig {
                 .requestMatchers(PATCH, "/notice/{id}/create").hasAnyRole(TEACHER, ADMIN)
                 .requestMatchers(GET, "/notice/**").authenticated()
 
-                .requestMatchers(POST, "/clubs/*/state").hasAnyRole(TEACHER, ADMIN)
+                .requestMatchers(POST, "/clubs/state").hasAnyRole(TEACHER, ADMIN)
                 .requestMatchers(POST, "/clubs/time").hasAnyRole(TEACHER, ADMIN)
 
                 .anyRequest().authenticated()

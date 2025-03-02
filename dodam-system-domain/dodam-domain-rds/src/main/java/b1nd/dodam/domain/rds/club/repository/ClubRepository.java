@@ -12,4 +12,6 @@ public interface ClubRepository extends JpaRepository<Club, Long> {
         return findById(id).orElseThrow(ClubNotFoundException::new);
     }
     boolean existsByName(String name);
+
+    List<Club> findByIdIn(List<Long> ids);
 }
