@@ -4,6 +4,7 @@ import b1nd.dodam.domain.rds.club.enumeration.ClubPermission;
 import b1nd.dodam.domain.rds.club.enumeration.ClubPriority;
 import b1nd.dodam.domain.rds.club.enumeration.ClubStatus;
 import b1nd.dodam.domain.rds.member.entity.Student;
+import b1nd.dodam.domain.rds.support.entity.BaseEntity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
@@ -25,7 +26,7 @@ import org.hibernate.annotations.OnDeleteAction;
         )
 })
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class ClubMember {
+public class ClubMember extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -53,13 +54,17 @@ public class ClubMember {
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Club club;
 
+    @Column(columnDefinition = "TEXT")
+    private String introduction;
+
     @Builder
-    public ClubMember(Student student, Club club, ClubPriority priority, ClubStatus clubStatus, ClubPermission permission) {
+    public ClubMember(Student student, Club club, ClubPriority priority, ClubStatus clubStatus, ClubPermission permission, String introduction) {
         this.student = student;
         this.club = club;
         this.priority = priority;
         this.clubStatus = clubStatus;
         this.permission = permission;
+        this.introduction = introduction;
     }
 
     public void modifyStatus(ClubStatus clubStatus) {

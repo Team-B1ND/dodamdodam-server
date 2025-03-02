@@ -5,6 +5,7 @@ import b1nd.dodam.domain.rds.club.entity.ClubMember;
 import b1nd.dodam.domain.rds.club.enumeration.ClubPermission;
 import b1nd.dodam.domain.rds.club.enumeration.ClubStatus;
 import b1nd.dodam.domain.rds.club.enumeration.ClubType;
+import b1nd.dodam.domain.rds.club.exception.ClubJoinedException;
 import b1nd.dodam.domain.rds.club.exception.ClubPermissionDeniedException;
 import b1nd.dodam.domain.rds.club.exception.InsufficientClubMembersException;
 import b1nd.dodam.domain.rds.club.exception.InvalidClubMemberInviteException;
@@ -17,6 +18,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Service
@@ -25,6 +27,11 @@ public class ClubMemberService {
     private final ClubRepository clubRepository;
     private final ClubMemberRepository clubMemberRepository;
     private final StudentRepository studentRepository;
+
+    public void saveClubMembers(List<ClubMember> clubMember) {
+        clubMember.forEach(c -> validateByClubAndStudent(c.getClub(), c.getStudent()));
+        clubMemberRepository.saveAll(clubMember);
+    }
 
     public void setClubMemberStatus(Long clubMemberId, Member member, ClubStatus clubStatus) {
         Student student = studentRepository.getByMember(member);
@@ -44,6 +51,25 @@ public class ClubMemberService {
 
     public List<Student> getAllGradeStudent() {
         return studentRepository.findAll();
+    }
+
+    public List<ClubMember> findUserAllowedClub(Member member) {
+        return clubMemberRepository.findByStudentAndClubStatus(studentRepository.getByMember(member), ClubStatus.ALLOWED);
+    }
+
+    public Club findClubIfNotClubMember(Long clubId, ClubStatus state, Student student, ClubStatus status) {
+        Club club = clubMemberRepository.findClubIfNotMember(clubId, state, student, status);
+        if (club == null) {
+            throw new InvalidClubMemberInviteException();
+        }
+        return club;
+    }
+
+    public List<Club> getStudentClubStatus(Student student) {
+        return clubMemberRepository.findByStudentAndPermission(student, ClubPermission.CLUB_LEADER)
+                .stream()
+                .map(ClubMember::getClub)
+                .collect(Collectors.toList());
     }
 
     public List<ClubMember> getJoinRequests(Member member) {
@@ -83,6 +109,16 @@ public class ClubMemberService {
         if(!clubMemberRepository.existsByClubAndStudentAndPermission(club, leader, ClubPermission.CLUB_LEADER)) {
             throw new ClubPermissionDeniedException();
         }
+    }
+
+    public void validateByClubAndStudent(Club clubId, Student student) {
+        if (!clubMemberRepository.findByClubAndStudent(clubId, student).isEmpty()) {
+            throw new ClubJoinedException();
+        }
+    }
+
+    public boolean isCreativeClubJoined(Student student) {
+        return !clubMemberRepository.findByStudentAndClubStatus(student, ClubStatus.ALLOWED).isEmpty();
     }
 
     private void rejectActivityClubMember(Student student) {

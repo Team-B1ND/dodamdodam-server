@@ -6,10 +6,12 @@ import b1nd.dodam.restapi.club.application.ClubTimeUseCase;
 import b1nd.dodam.restapi.club.application.ClubUseCase;
 import b1nd.dodam.restapi.club.application.data.req.ClubTimeReq;
 import b1nd.dodam.restapi.club.application.data.req.CreateClubReq;
+import b1nd.dodam.restapi.club.application.data.req.JoinClubMemberReq;
 import b1nd.dodam.restapi.club.application.data.req.UpdateClubInfoReq;
 import b1nd.dodam.restapi.club.application.data.req.UpdateClubReq;
 import b1nd.dodam.restapi.club.application.data.res.ClubDetailRes;
 import b1nd.dodam.restapi.club.application.data.res.ClubMemberRes;
+import b1nd.dodam.restapi.club.application.data.res.ClubStatusRes;
 import b1nd.dodam.restapi.club.application.data.res.ClubStudentRes;
 import b1nd.dodam.restapi.member.application.data.res.StudentWithImageRes;
 import b1nd.dodam.restapi.support.data.Response;
@@ -33,6 +35,13 @@ public class ClubController {
             @RequestBody @Valid CreateClubReq req
     ) {
         return clubUseCase.save(req);
+    }
+
+    @PostMapping("/join-requests")
+    public Response joinRequest(
+            @RequestBody @Valid List<JoinClubMemberReq> req
+    ) {
+        return clubMemberUseCase.joinClubs(req);
     }
 
     @PostMapping("/{id}/waiting")
@@ -93,6 +102,11 @@ public class ClubController {
         return clubUseCase.update(req);
     }
 
+    @GetMapping("/joined")
+    public ResponseData<List<ClubStatusRes>> getJoinedClubs() {
+        return clubMemberUseCase.getJoinedClubs();
+    }
+
     @GetMapping("/members")
     public ResponseData<List<StudentWithImageRes>> getSecondGradeMembers() {
         return clubMemberUseCase.getSecondGradeStudents();
@@ -139,5 +153,10 @@ public class ClubController {
             @PathVariable Long id
     ) {
         return clubMemberUseCase.getActiveClubMembers(id);
+    }
+
+    @GetMapping("/my")
+    public ResponseData<List<ClubDetailRes>> getMyClubStatus() {
+        return clubMemberUseCase.getStudentClubStatus();
     }
 }
