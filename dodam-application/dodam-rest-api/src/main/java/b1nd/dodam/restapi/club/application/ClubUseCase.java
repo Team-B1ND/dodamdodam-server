@@ -6,12 +6,9 @@ import b1nd.dodam.domain.rds.club.enumeration.ClubTimeType;
 import b1nd.dodam.domain.rds.club.service.ClubMemberService;
 import b1nd.dodam.domain.rds.club.service.ClubService;
 import b1nd.dodam.domain.rds.club.service.ClubTimeService;
-import b1nd.dodam.domain.rds.member.entity.Member;
 import b1nd.dodam.domain.rds.member.entity.Student;
-import b1nd.dodam.domain.rds.member.repository.MemberRepository;
 import b1nd.dodam.domain.rds.member.repository.StudentRepository;
 import b1nd.dodam.domain.rds.member.repository.TeacherRepository;
-import b1nd.dodam.domain.rds.member.service.MemberService;
 import b1nd.dodam.restapi.auth.infrastructure.security.support.MemberAuthenticationHolder;
 import b1nd.dodam.restapi.club.application.data.req.CreateClubReq;
 import b1nd.dodam.restapi.club.application.data.req.UpdateClubInfoReq;
@@ -30,12 +27,10 @@ import java.util.List;
 @Transactional(rollbackFor = Exception.class)
 public class ClubUseCase {
     private final ClubService clubService;
-    private final MemberService memberService;
     private final ClubTimeService clubTimeService;
     private final ClubMemberService clubMemberService;
     private final StudentRepository studentRepository;
     private final MemberAuthenticationHolder authHolder;
-    private final MemberRepository memberRepository;
     private final TeacherRepository teacherRepository;
 
     public Response save(CreateClubReq req) {
@@ -70,7 +65,6 @@ public class ClubUseCase {
         clubService.update(club);
         return Response.ok("당담 선생님 등록 성공");
     }
-
 
     public Response update(UpdateClubReq req) {
         List<Club> clubs = clubService.findByIds(req.clubIds());
