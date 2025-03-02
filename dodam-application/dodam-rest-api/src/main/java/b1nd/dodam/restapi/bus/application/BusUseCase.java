@@ -3,9 +3,12 @@ package b1nd.dodam.restapi.bus.application;
 import b1nd.dodam.core.util.ZonedDateTimeUtil;
 import b1nd.dodam.domain.rds.bus.entity.Bus;
 import b1nd.dodam.domain.rds.bus.entity.BusApplication;
+import b1nd.dodam.domain.rds.bus.enumeration.BusStatus;
+import b1nd.dodam.domain.rds.bus.exception.BusPermissionException;
 import b1nd.dodam.domain.rds.bus.repository.BusApplicationRepository;
 import b1nd.dodam.domain.rds.bus.repository.BusRepository;
 import b1nd.dodam.domain.rds.member.entity.Member;
+import b1nd.dodam.domain.rds.member.entity.Student;
 import b1nd.dodam.domain.rds.member.repository.StudentRepository;
 import b1nd.dodam.firebase.client.FCMClient;
 import b1nd.dodam.restapi.auth.infrastructure.security.support.MemberAuthenticationHolder;
@@ -58,7 +61,7 @@ public class BusUseCase {
 
     public ResponseData<List<Bus>> getValid() {
         LocalDateTime now = ZonedDateTimeUtil.nowToLocalDateTime();
-        return ResponseData.ok("유효 버스 조회 성공", busRepository.findBusByLeaveTimeBetween(now, now.plusDays(7)));
+        return ResponseData.ok("유효 버스 조회 성공", busRepository.findBusByStatusAndLeaveTimeBetween(BusStatus.ACTIVATE, now, now.plusDays(7)));
     }
 
     public ResponseData<List<BusRes>> getAll(int page, int limit) {
@@ -85,8 +88,17 @@ public class BusUseCase {
     }
 
     public ResponseData<Bus> getMy() {
-        int studentId = studentRepository.getByMember(memberAuthenticationHolder.current()).getId();
-        return ResponseData.ok("신청한 버스 조회 성공", busRepository.findBusByStudent(ZonedDateTimeUtil.nowToLocalDateTime(), studentId));
+        Student student = studentRepository.getByMember(memberAuthenticationHolder.current());
+        if (student.getBusSubscribe() == Boolean.FALSE){
+            throw new BusPermissionException();
+        }
+        return ResponseData.ok("신청한 버스 조회 성공",
+                busApplicationRepository.findBusByStatusAndStudent(
+                        BusStatus.ACTIVATE,
+                        ZonedDateTimeUtil.nowToLocalDateTime(),
+                        student.getId()
+                )
+        );
     }
 
 }
