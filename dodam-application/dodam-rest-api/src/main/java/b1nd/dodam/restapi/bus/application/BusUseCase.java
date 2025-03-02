@@ -3,6 +3,7 @@ package b1nd.dodam.restapi.bus.application;
 import b1nd.dodam.core.util.ZonedDateTimeUtil;
 import b1nd.dodam.domain.rds.bus.entity.Bus;
 import b1nd.dodam.domain.rds.bus.entity.BusApplication;
+import b1nd.dodam.domain.rds.bus.enumeration.BusStatus;
 import b1nd.dodam.domain.rds.bus.repository.BusApplicationRepository;
 import b1nd.dodam.domain.rds.bus.repository.BusRepository;
 import b1nd.dodam.domain.rds.member.entity.Member;
@@ -41,6 +42,13 @@ public class BusUseCase {
                 .map(Member::getPushToken).toList();
         fcmClient.sendMessages(pushTokens, "귀가버스 신청", "귀가 버스 신청이 가능해요! 신청해주세요.");
         return Response.created("버스 등록 성공");
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public Response modifyStatus(int id, BusStatus status){
+        Bus bus = busRepository.getByIdForUpdate(id);
+        bus.setStatus(status);
+        return Response.noContent("버스 상태 변경 성공");
     }
 
     @Transactional(rollbackFor = Exception.class)

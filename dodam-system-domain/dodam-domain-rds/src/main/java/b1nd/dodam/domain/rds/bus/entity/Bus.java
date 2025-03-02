@@ -1,6 +1,7 @@
 package b1nd.dodam.domain.rds.bus.entity;
 
 import b1nd.dodam.core.util.ZonedDateTimeUtil;
+import b1nd.dodam.domain.rds.bus.enumeration.BusStatus;
 import b1nd.dodam.domain.rds.bus.exception.BusFullOfSeatException;
 import b1nd.dodam.domain.rds.bus.exception.BusPeriodExpiredException;
 import com.fasterxml.jackson.annotation.JsonFormat;
@@ -39,6 +40,10 @@ public class Bus {
     private int applyCount;
 
     @NotNull
+    @Enumerated(EnumType.STRING)
+    private BusStatus status;
+
+    @NotNull
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime leaveTime;
 
@@ -47,10 +52,11 @@ public class Bus {
     private LocalTime timeRequired;
 
     @Builder
-    public Bus(String busName, String description, int peopleLimit, LocalDateTime leaveTime, LocalTime timeRequired) {
+    public Bus(String busName, String description, int peopleLimit, BusStatus status, LocalDateTime leaveTime, LocalTime timeRequired) {
         this.busName = busName;
         this.description = description;
         this.peopleLimit = peopleLimit;
+        this.status = status;
         this.leaveTime = leaveTime;
         this.timeRequired = timeRequired;
     }
@@ -92,6 +98,10 @@ public class Bus {
         if(applyCount == peopleLimit) {
             throw new BusFullOfSeatException();
         }
+    }
+
+    public void setStatus(BusStatus status) {
+        this.status = status;
     }
 
 }
