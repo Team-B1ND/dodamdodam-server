@@ -6,6 +6,7 @@ import b1nd.dodam.restapi.bus.application.BusApplicationUseCase;
 import b1nd.dodam.restapi.bus.application.BusQrcodeUseCase;
 import b1nd.dodam.restapi.bus.application.BusUseCase;
 import b1nd.dodam.restapi.bus.application.data.req.BusReq;
+import b1nd.dodam.restapi.bus.application.data.res.BusMemberRes;
 import b1nd.dodam.restapi.bus.application.data.res.BusQrcodeNonceRes;
 import b1nd.dodam.restapi.bus.application.data.res.BusRes;
 import b1nd.dodam.restapi.bus.application.data.res.BusSeatRes;
@@ -109,6 +110,11 @@ public class BusController {
     @GetMapping("/qr-code/nonce")
     public ResponseData<BusQrcodeNonceRes> getNonce() {
         return busQrcodeUseCase.issueNonce();
+    }
+
+    @GetMapping("/{id}/student")
+    public ResponseData<List<BusMemberRes>> getApplicant(@PathVariable int id){
+        return busUseCase.getApplicant(id);
     }
 
     @DeleteMapping("/apply/{id}")

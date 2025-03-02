@@ -44,4 +44,6 @@ public interface BusApplicationRepository extends JpaRepository<BusApplication, 
     Bus findBusByStatusAndStudent(@Param("status") BusStatus status,
                                   @Param("now") LocalDateTime now,
                                   @Param("studentId") int studentId);
+
+    List<BusApplication> findByBus_Id(int busId);
 }

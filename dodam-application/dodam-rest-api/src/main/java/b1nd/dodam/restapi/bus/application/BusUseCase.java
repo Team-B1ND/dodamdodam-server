@@ -60,12 +60,6 @@ public class BusUseCase {
         return Response.noContent("버스 수정 성공");
     }
 
-    @Transactional(rollbackFor = Exception.class)
-    public Response delete(int id) {
-        busRepository.deleteById(id);
-        return Response.noContent("버스 삭제 성공");
-    }
-
     public ResponseData<List<Bus>> getValid() {
         LocalDateTime now = ZonedDateTimeUtil.nowToLocalDateTime();
         return ResponseData.ok("유효 버스 조회 성공", busRepository.findBusByStatusAndLeaveTimeBetween(BusStatus.ACTIVATE, now, now.plusDays(7)));
@@ -106,6 +100,21 @@ public class BusUseCase {
                         student.getId()
                 )
         );
+    }
+
+    public ResponseData<List<BusMemberRes>> getApplicant(int id){
+        return ResponseData.ok("버스 신청자 조회 성공",
+                busApplicationRepository.findByBus_Id(id)
+                        .stream()
+                        .map(BusMemberRes::createFromBusMember)
+                        .toList()
+        );
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public Response delete(int id) {
+        busRepository.deleteById(id);
+        return Response.noContent("버스 삭제 성공");
     }
 
 }
