@@ -12,7 +12,7 @@ public class RandomCode {
     }
 
 
-    public static String studentRandomCode() {
+    public static String UUIDRandomCode() {
         return UUID.randomUUID().toString().replace("-", "").substring(0, 8).toUpperCase();
     }
 
