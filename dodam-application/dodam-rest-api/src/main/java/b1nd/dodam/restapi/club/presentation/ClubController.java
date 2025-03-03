@@ -5,10 +5,7 @@ import b1nd.dodam.restapi.club.application.ClubMemberUseCase;
 import b1nd.dodam.restapi.club.application.ClubTimeUseCase;
 import b1nd.dodam.restapi.club.application.ClubUseCase;
 import b1nd.dodam.restapi.club.application.data.req.*;
-import b1nd.dodam.restapi.club.application.data.res.ClubDetailRes;
-import b1nd.dodam.restapi.club.application.data.res.ClubMemberRes;
-import b1nd.dodam.restapi.club.application.data.res.ClubStatusRes;
-import b1nd.dodam.restapi.club.application.data.res.ClubStudentRes;
+import b1nd.dodam.restapi.club.application.data.res.*;
 import b1nd.dodam.restapi.member.application.data.res.StudentWithImageRes;
 import b1nd.dodam.restapi.support.data.Response;
 import b1nd.dodam.restapi.support.data.ResponseData;
@@ -137,6 +134,11 @@ public class ClubController {
             @PathVariable Long id
     ) {
         return clubMemberUseCase.getClubLeader(id);
+    }
+
+    @GetMapping("/time")
+    public ResponseData<ClubTimeRes> getClubTime() {
+        return clubTimeUseCase
     }
 
     @GetMapping("/join-requests/received")
