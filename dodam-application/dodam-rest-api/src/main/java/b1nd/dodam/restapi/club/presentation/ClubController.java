@@ -33,11 +33,11 @@ public class ClubController {
         return clubUseCase.save(req);
     }
 
-    @PostMapping("/decision")
-    public Response decision(
-            @RequestBody DecisionReq req
+    @PostMapping("/pass")
+    public Response passClub(
+            @RequestBody PassClubReq req
     ) {
-        return clubMemberUseCase.setDecision(req);
+        return clubMemberUseCase.setPassClub(req);
     }
 
     @PostMapping("/join-requests")

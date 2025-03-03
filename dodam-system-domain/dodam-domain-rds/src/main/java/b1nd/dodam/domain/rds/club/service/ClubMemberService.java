@@ -57,15 +57,19 @@ public class ClubMemberService {
         return clubMemberRepository.findByStudentAndClubStatus(studentRepository.getByMember(member), ClubStatus.ALLOWED);
     }
 
-    public void setStudentClub(Long clubMemberId, ClubStatus clubStatus) {
-        ClubMember clubMember = clubMemberRepository.getByClubMemberId(clubMemberId);
-        Club club = clubRepository.getByClubIdWithLock(clubMember.getClub().getId());
-        club.subtract();
-        Student student = clubMember.getStudent();
-        rejectActivityClubMember(student);
-        clubMember.modifyStatus(clubStatus);
-        clubMemberRepository.save(clubMember);
-        clubRepository.save(club);
+    public void setAllowedStudentClub(List<Long> clubMemberIds) {
+//        List<ClubMember> clubMembers = clubMemberRepository.findByIdIn(clubMemberIds);
+//        Club club = clubRepository.getByClubIdWithLock(clubMembers.get(0).getClub().getId());
+//
+//        clubMembers.forEach(clubMember -> {
+//            club.subtract();
+//            rejectActivityClubMember(clubMember.getStudent());
+//            clubMember.modifyStatus(ClubStatus.ALLOWED);
+//        });
+//
+//        clubMemberRepository.saveAll(clubMembers);
+//        clubRepository.save(club);
+        
     }
 
     public Club findClubIfNotClubMember(Long clubId, ClubStatus state, Student student, ClubStatus status) {
