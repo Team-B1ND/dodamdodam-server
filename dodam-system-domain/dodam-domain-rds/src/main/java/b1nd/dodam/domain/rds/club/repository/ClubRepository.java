@@ -4,6 +4,8 @@ import b1nd.dodam.domain.rds.club.entity.Club;
 import b1nd.dodam.domain.rds.club.enumeration.ClubStatus;
 import b1nd.dodam.domain.rds.club.exception.ClubNotFoundException;
 import org.springframework.data.jpa.repository.JpaRepository;
+
+import java.util.List;
 import java.util.Optional;
 
 public interface ClubRepository extends JpaRepository<Club, Long> {
@@ -14,6 +16,8 @@ public interface ClubRepository extends JpaRepository<Club, Long> {
     default Club getByClubIdAndState(long clubId, ClubStatus clubStatus) {
         return findByIdAndState(clubId, clubStatus).orElseThrow(ClubNotFoundException::new);
     }
+
+    List<Club> findAllByStateNot(ClubStatus state);
 
     boolean existsByName(String name);
 
