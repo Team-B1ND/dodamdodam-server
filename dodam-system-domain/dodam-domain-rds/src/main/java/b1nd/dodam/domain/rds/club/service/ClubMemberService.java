@@ -57,6 +57,16 @@ public class ClubMemberService {
         return clubMemberRepository.findByStudentAndClubStatus(studentRepository.getByMember(member), ClubStatus.ALLOWED);
     }
 
+    public void setStudentClub(Long clubMemberId, ClubStatus clubStatus) {
+        ClubMember clubMember = clubMemberRepository.getByClubMemberId(clubMemberId);
+        Student student = clubMember.getStudent();
+        rejectActivityClubMember(student);
+
+        clubMember.modifyStatus(clubStatus);
+
+        clubMemberRepository.save(clubMember);
+    }
+
     public Club findClubIfNotClubMember(Long clubId, ClubStatus state, Student student, ClubStatus status) {
         Club club = clubMemberRepository.findClubIfNotMember(clubId, state, student, status);
         if (club == null) {

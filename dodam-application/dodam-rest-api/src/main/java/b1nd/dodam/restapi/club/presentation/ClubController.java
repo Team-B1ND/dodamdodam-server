@@ -4,11 +4,7 @@ import b1nd.dodam.domain.rds.club.enumeration.ClubStatus;
 import b1nd.dodam.restapi.club.application.ClubMemberUseCase;
 import b1nd.dodam.restapi.club.application.ClubTimeUseCase;
 import b1nd.dodam.restapi.club.application.ClubUseCase;
-import b1nd.dodam.restapi.club.application.data.req.ClubTimeReq;
-import b1nd.dodam.restapi.club.application.data.req.CreateClubReq;
-import b1nd.dodam.restapi.club.application.data.req.JoinClubMemberReq;
-import b1nd.dodam.restapi.club.application.data.req.UpdateClubInfoReq;
-import b1nd.dodam.restapi.club.application.data.req.UpdateClubReq;
+import b1nd.dodam.restapi.club.application.data.req.*;
 import b1nd.dodam.restapi.club.application.data.res.ClubDetailRes;
 import b1nd.dodam.restapi.club.application.data.res.ClubMemberRes;
 import b1nd.dodam.restapi.club.application.data.res.ClubStatusRes;
@@ -35,6 +31,13 @@ public class ClubController {
             @RequestBody @Valid CreateClubReq req
     ) {
         return clubUseCase.save(req);
+    }
+
+    @PostMapping("/decision")
+    public Response decision(
+            @RequestBody DecisionReq req
+    ) {
+        return clubMemberUseCase.setDecision(req);
     }
 
     @PostMapping("/join-requests")

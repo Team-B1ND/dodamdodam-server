@@ -1,10 +1,13 @@
 package b1nd.dodam.restapi.club.application;
 
 import b1nd.dodam.domain.rds.club.enumeration.ClubStatus;
+import b1nd.dodam.domain.rds.club.enumeration.ClubTimeType;
 import b1nd.dodam.domain.rds.club.service.ClubMemberService;
+import b1nd.dodam.domain.rds.club.service.ClubTimeService;
 import b1nd.dodam.domain.rds.member.entity.Student;
 import b1nd.dodam.domain.rds.member.repository.StudentRepository;
 import b1nd.dodam.restapi.auth.infrastructure.security.support.MemberAuthenticationHolder;
+import b1nd.dodam.restapi.club.application.data.req.DecisionReq;
 import b1nd.dodam.restapi.club.application.data.req.JoinClubMemberReq;
 import b1nd.dodam.restapi.club.application.data.res.ClubDetailRes;
 import b1nd.dodam.restapi.club.application.data.res.ClubMemberRes;
@@ -24,10 +27,12 @@ import java.util.List;
 @Transactional(rollbackFor = Exception.class)
 public class ClubMemberUseCase {
     private final ClubMemberService clubMemberService;
+    private final ClubTimeService clubTimeService;
     private final MemberAuthenticationHolder authenticationHolder;
     private final StudentRepository studentRepository;
 
     public Response joinClubs(List<JoinClubMemberReq> reqs) {
+        clubTimeService.validateApplicationDuration(ClubTimeType.CLUB_APPLICANT);
         Student student = studentRepository.getByMember(authenticationHolder.current());
         boolean clubJoined = clubMemberService.isCreativeClubJoined(student);
         if (clubJoined) {
@@ -38,6 +43,11 @@ public class ClubMemberUseCase {
             .toList()
         );
         return Response.ok("동아리 입부 신청 성공");
+    }
+
+    public Response setDecision(DecisionReq req) {
+        clubMemberService.setStudentClub(req.id(), req.status());
+        return Response.ok("동아리 가입 수락 or 거절 성공");
     }
 
     public Response updateClubJoinRequestReceived(Long id, ClubStatus clubStatus) {
