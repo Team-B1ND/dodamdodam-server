@@ -138,7 +138,7 @@ public class ClubController {
 
     @GetMapping("/time")
     public ResponseData<ClubTimeRes> getClubTime() {
-        return clubTimeUseCase
+        return clubTimeUseCase.find();
     }
 
     @GetMapping("/join-requests/received")
