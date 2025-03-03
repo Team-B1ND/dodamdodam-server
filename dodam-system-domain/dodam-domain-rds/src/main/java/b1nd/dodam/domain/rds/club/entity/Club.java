@@ -64,6 +64,10 @@ public class Club extends BaseEntity {
         this.requiredMember = requiredMember;
     }
 
+    public void subtract() {
+        this.requiredMember -= 1;
+    }
+
     public void updateStatus(ClubStatus clubStatus, String reason) {
         this.state = clubStatus;
         this.reason = reason;

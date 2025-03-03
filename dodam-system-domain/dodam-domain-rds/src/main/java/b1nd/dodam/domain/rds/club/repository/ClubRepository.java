@@ -15,12 +15,12 @@ public interface ClubRepository extends JpaRepository<Club, Long> {
         return findById(id).orElseThrow(ClubNotFoundException::new);
     }
 
-    default Club getByClubIdAndState(long clubId, ClubStatus clubStatus) {
-        return findByIdAndState(clubId, clubStatus).orElseThrow(ClubNotFoundException::new);
+    default Club getByClubIdWithLock(long clubId) {
+        return findAllById(clubId).orElseThrow(ClubNotFoundException::new);
     }
 
     @Lock(LockModeType.PESSIMISTIC_WRITE)
-    Club findAllById(Long id);
+    Optional<Club> findAllById(Long id);
 
     boolean existsByName(String name);
 
