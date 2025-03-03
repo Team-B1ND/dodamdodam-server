@@ -49,7 +49,7 @@ public class ClubMemberService {
     }
 
     public List<ClubMember> findUserAllowedClub(Member member) {
-        return clubMemberRepository.findByStudentAndClubStatus(studentRepository.getByMember(member), ClubStatus.ALLOWED);
+        return clubMemberRepository.findByStudentAndClubStatusAndClub_State(studentRepository.getByMember(member), ClubStatus.ALLOWED, ClubStatus.ALLOWED);
     }
 
     public Club findClubIfNotClubMember(Long clubId, ClubStatus state, Student student, ClubStatus status) {
