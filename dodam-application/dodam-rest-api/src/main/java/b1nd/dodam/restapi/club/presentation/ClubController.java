@@ -30,11 +30,11 @@ public class ClubController {
         return clubUseCase.save(req);
     }
 
-    @PostMapping("/pass/{clubMemberId}")
+    @PostMapping("/pass")
     public Response passClub(
-            @PathVariable Long clubMemberId
+            @RequestBody @Valid ClubPassReq req
     ) {
-        return clubMemberUseCase.setPassClub(clubMemberId);
+        return clubMemberUseCase.setPassClub(req);
     }
 
     @PostMapping("/join-requests")
@@ -145,6 +145,13 @@ public class ClubController {
     public ResponseData<List<ClubMemberRes>> getJoinRequests() {
         return clubMemberUseCase.getClubJoinRequestsReceived();
     }
+
+//    @GetMapping("/join-requests/{memberId}")
+//    public ResponseData<?> getStudentsJoinRequests(
+//            @PathVariable String memberId
+//    ) {
+//        return clubMemberUseCase.getMembersInfo(memberId);
+//    }
 
     @GetMapping("/{id}/all-members")
     public ResponseData<List<ClubStudentRes>> getAllClubMembers(

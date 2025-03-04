@@ -53,11 +53,14 @@ public class ClubMemberService {
         return clubMemberRepository.findByStudentAndClubStatusAndClub_State(studentRepository.getByMember(member), ClubStatus.ALLOWED, ClubStatus.ALLOWED);
     }
 
-    public void setAllowedStudentClub(Long clubMemberId) {
+    public void setAllowedStudentClub(Long clubMemberId, Long clubId) {
+        Club club = clubRepository.getByClubIdWithLock(clubId);
+        validateRequiredMember(club);
         ClubMember clubMember = clubMemberRepository.getByClubMemberId(clubMemberId);
         rejectActivityClubMember(clubMember.getStudent());
         clubMember.modifyStatus(ClubStatus.ALLOWED);
         clubMemberRepository.save(clubMember);
+        clubRepository.save(club);
     }
 
     public Club findClubIfNotClubMember(Long clubId, ClubStatus state, Student student, ClubStatus status) {
@@ -130,10 +133,11 @@ public class ClubMemberService {
         clubMemberRepository.saveAll(clubMembers);
     }
 
-    private void validateRequiredMember(int size, List<Long> clubIds) {
-        if (clubIds.size() > size || clubIds.isEmpty()) {
+    private void validateRequiredMember(Club club) {
+        if (club.getRequiredMember() <= 0) {
             throw new OverflowMemberSizeException();
         }
+        club.subtractRequiredMember();
     }
 
     private void validateLeaderInList(Student leader, List<Student> students) {
