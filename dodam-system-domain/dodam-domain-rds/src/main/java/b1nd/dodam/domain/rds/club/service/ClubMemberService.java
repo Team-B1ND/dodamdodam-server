@@ -64,20 +64,14 @@ public class ClubMemberService {
     }
 
     public Club findClubIfNotClubMember(Long clubId, ClubStatus state, Student student, ClubStatus status) {
-        Club club = clubMemberRepository.findClubIfNotMember(clubId, state, student, status);
-        if (club == null) {
-            throw new InvalidClubMemberInviteException();
-        }
-        return club;
+        return clubMemberRepository.findClubIfNotMember(clubId, state, student, status);
     }
 
     public List<ClubMember> findAllCreativeClubByStudent(Student student) {
         List<ClubMember> clubMembers = clubMemberRepository.findByStudentAndClubStatusAndClub_TypeAndClub_State(student, ClubStatus.PENDING, ClubType.CREATIVE_ACTIVITY_CLUB, ClubStatus.ALLOWED);
-
         if(clubMembers.isEmpty()) {
             throw new ClubNotFoundException();
         }
-
         return clubMembers;
     }
 
