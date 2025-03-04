@@ -24,7 +24,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 
 @Service
@@ -66,8 +66,7 @@ public class BusUseCase {
     }
 
     public ResponseData<List<Bus>> getValid() {
-        LocalDateTime now = ZonedDateTimeUtil.nowToLocalDateTime();
-        return ResponseData.ok("유효 버스 조회 성공", busRepository.findBusByStatusAndLeaveTimeBetween(BusStatus.ACTIVATE, now, now.plusDays(7)));
+        return ResponseData.ok("유효 버스 조회 성공", busRepository.findBusByStatus(BusStatus.ACTIVATE));
     }
 
     public ResponseData<List<BusRes>> getAll(int page, int limit) {
@@ -95,9 +94,6 @@ public class BusUseCase {
 
     public ResponseData<Bus> getMy() {
         Student student = studentRepository.getByMember(memberAuthenticationHolder.current());
-        if (student.getBusSubscribe() == Boolean.FALSE){
-            throw new BusPermissionException();
-        }
         return ResponseData.ok("신청한 버스 조회 성공",
                 busApplicationRepository.findBusByStatusAndStudent(
                         BusStatus.ACTIVATE,

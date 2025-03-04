@@ -34,6 +34,7 @@ public class BusController {
         return busUseCase.register(req);
     }
 
+    // TODO 삭제하기
     @PostMapping("/apply/{id}")
     public Response apply(@PathVariable int id) {
         return busApplicationUseCase.apply(id);
@@ -53,6 +54,7 @@ public class BusController {
         return busUseCase.modify(id, req);
     }
 
+    // TODO 삭제하기
     @PatchMapping("/apply/{id}")
     public Response modifyApplication(@PathVariable int id) {
         return busApplicationUseCase.modify(id);
@@ -74,11 +76,6 @@ public class BusController {
         return busUseCase.modifyStatus(id, status);
     }
 
-    @DeleteMapping("/{id}")
-    public Response delete(@PathVariable int id) {
-        return busUseCase.delete(id);
-    }
-
     @GetMapping
     public ResponseData<List<Bus>> getValid() {
         return busUseCase.getValid();
@@ -89,6 +86,7 @@ public class BusController {
         return busUseCase.getAll(page, limit);
     }
 
+    // TODO 삭제하기
     @GetMapping("/date")
     public ResponseData<List<BusRes>> getByDate(
             @RequestParam int year,
@@ -108,6 +106,11 @@ public class BusController {
         return busApplicationUseCase.getSeatNumbers(id);
     }
 
+    @GetMapping("/{id}/seats/invalid")
+    public ResponseData<BusSeatRes> getSeatsInvalid(@PathVariable int id) {
+        return busApplicationUseCase.getSeatNumbersInvalid(id);
+    }
+
     @GetMapping("/qr-code/nonce")
     public ResponseData<BusQrcodeNonceRes> getNonce() {
         return busQrcodeUseCase.issueNonce();
@@ -120,6 +123,12 @@ public class BusController {
         return busApplicationUseCase.getBusStudent(id, status);
     }
 
+    @DeleteMapping("/{id}")
+    public Response delete(@PathVariable int id) {
+        return busUseCase.delete(id);
+    }
+
+    // TODO 삭제하기
     @DeleteMapping("/apply/{id}")
     public Response cancelApplication(@PathVariable int id) {
         return busApplicationUseCase.cancel();

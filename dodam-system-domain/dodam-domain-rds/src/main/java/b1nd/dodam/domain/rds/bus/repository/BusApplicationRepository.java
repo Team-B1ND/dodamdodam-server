@@ -37,6 +37,8 @@ public interface BusApplicationRepository extends JpaRepository<BusApplication, 
 
     List<BusApplication> findByBusAndStatusNot(Bus bus, BusApplicationStatus status);
 
+    List<BusApplication> findByBusAndStatus(Bus bus, BusApplicationStatus status);
+
     BusApplication findByStatusAndStudent_Member(BusApplicationStatus status, Member member);
 
     @Query("""

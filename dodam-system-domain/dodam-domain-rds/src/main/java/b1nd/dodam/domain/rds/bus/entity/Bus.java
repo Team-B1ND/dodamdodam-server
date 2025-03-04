@@ -48,7 +48,7 @@ public class Bus {
     private LocalDateTime leaveTime;
 
     @NotNull
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern="HH:mm:ss")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm:ss")
     private LocalTime timeRequired;
 
     @Builder

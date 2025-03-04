@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 
 public record BusReq(@NotEmpty String busName, @NotEmpty String description, BusStatus status,
-                           @NotNull LocalDateTime leaveTime, @NotNull LocalTime timeRequired, @NotNull int peopleLimit) {
+                     @NotNull LocalDateTime leaveTime, @NotNull LocalTime timeRequired, @NotNull int peopleLimit) {
     public Bus mapToBus() {
         return Bus.builder()
                 .busName(busName)
