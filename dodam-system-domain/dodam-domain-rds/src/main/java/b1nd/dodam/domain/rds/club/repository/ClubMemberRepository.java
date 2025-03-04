@@ -9,6 +9,7 @@ import b1nd.dodam.domain.rds.club.exception.ClubMemberNotFoundException;
 import b1nd.dodam.domain.rds.member.entity.Student;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -53,7 +54,7 @@ public interface ClubMemberRepository extends JpaRepository<ClubMember, Long> {
     WHERE c.id = :clubId
     AND c.state = :state
     AND cm.id IS NULL
-""")
+    """)
     Club findClubIfNotMember(
             @Param("clubId") Long clubId,
             @Param("state") ClubStatus state,
@@ -69,6 +70,26 @@ public interface ClubMemberRepository extends JpaRepository<ClubMember, Long> {
     AND s.grade = 2
     """)
     List<Student> findSecondGradeStudentsNotInClubMember();
+
+    @Query("""
+    SELECT cm FROM club_member cm
+    JOIN FETCH cm.student s
+    JOIN FETCH cm.club c
+    WHERE s.id = :studentId AND c.id = :clubId AND cm.clubStatus = 'PENDING'
+    """)
+    ClubMember findPendingClubMemberWithRelations(
+            @Param("studentId") int studentId,
+            @Param("clubId") Long clubId
+    );
+
+    @Modifying
+    @Query("""
+    UPDATE club_member cm SET cm.clubStatus = 'REJECTED'
+    WHERE cm.student.id = :studentId
+    AND cm.permission = 'CLUB_MEMBER'
+    AND cm.club.type = 'CREATIVE_ACTIVITY_CLUB'
+    """)
+    void rejectOtherActivityClubMembers(@Param("studentId") int studentId);
 
     Optional<ClubMember> findByClubAndPermissionAndClubStatus(Club club, ClubPermission permission, ClubStatus clubStatus);
 
