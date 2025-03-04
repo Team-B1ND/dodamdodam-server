@@ -3,6 +3,7 @@ package b1nd.dodam.restapi.bus.application;
 import b1nd.dodam.core.util.ZonedDateTimeUtil;
 import b1nd.dodam.domain.rds.bus.entity.Bus;
 import b1nd.dodam.domain.rds.bus.entity.BusApplication;
+import b1nd.dodam.domain.rds.bus.enumeration.BusApplicationStatus;
 import b1nd.dodam.domain.rds.bus.enumeration.BusStatus;
 import b1nd.dodam.domain.rds.bus.exception.BusPermissionException;
 import b1nd.dodam.domain.rds.bus.repository.BusApplicationRepository;
@@ -47,16 +48,21 @@ public class BusUseCase {
     }
 
     @Transactional(rollbackFor = Exception.class)
+    public Response modifyStatus(int id, BusStatus status){
+        Bus bus = busRepository.getById(id);
+        if (bus.equals(BusStatus.ACTIVATE)) {
+            BusApplication busApplication = busApplicationRepository.getBusApplicationByBus(bus);
+            busApplication.updateStatus(BusApplicationStatus.EXPIRED);
+        }
+        bus.setStatus(status);
+        return Response.noContent("버스 상태 변경 성공");
+    }
+
+    @Transactional(rollbackFor = Exception.class)
     public Response modify(int id, BusReq req) {
         Bus bus = busRepository.getByIdForUpdate(id);
         bus.updateBus(req.busName(), req.description(), req.leaveTime(), req.timeRequired(), req.peopleLimit());
         return Response.noContent("버스 수정 성공");
-    }
-
-    @Transactional(rollbackFor = Exception.class)
-    public Response delete(int id) {
-        busRepository.deleteById(id);
-        return Response.noContent("버스 삭제 성공");
     }
 
     public ResponseData<List<Bus>> getValid() {
@@ -99,6 +105,12 @@ public class BusUseCase {
                         student.getId()
                 )
         );
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public Response delete(int id) {
+        busRepository.deleteById(id);
+        return Response.noContent("버스 삭제 성공");
     }
 
 }
