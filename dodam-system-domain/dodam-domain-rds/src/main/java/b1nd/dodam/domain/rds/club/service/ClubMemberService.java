@@ -108,9 +108,8 @@ public class ClubMemberService {
         return clubMemberRepository.findAllByClubAndClubStatus(clubRepository.getByClubId(clubId), clubStatus);
     }
 
-    public List<ClubMember> getAllClubMembers(Member leader, Long clubId) {
+    public List<ClubMember> getAllClubMembers(Long clubId) {
         Club club = clubRepository.getByClubId(clubId);
-        validateByClubLeader(club, leader);
         return clubMemberRepository.findAllByClubAndPermission(club, ClubPermission.CLUB_MEMBER);
     }
 
@@ -135,6 +134,11 @@ public class ClubMemberService {
 
     public boolean isCreativeClubJoined(Student student) {
         return !clubMemberRepository.findByStudentAndClubStatus(student, ClubStatus.ALLOWED).isEmpty();
+    }
+
+    public boolean isClubLeader(Long clubId,  Member member) {
+        Student leader = studentRepository.getByMember(member);
+        return clubMemberRepository.getByIdAndStudent(clubId, leader).getPermission().equals(ClubPermission.CLUB_LEADER);
     }
 
     private void rejectActivityClubMember(Student student) {

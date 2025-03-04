@@ -160,18 +160,11 @@ public class ClubController {
         return clubMemberUseCase.getMemberJoinRequests(studentId);
     }
 
-    @GetMapping("/{id}/all-members")
+    @GetMapping("/{id}/members")
     public ResponseData<List<ClubStudentRes>> getAllClubMembers(
             @PathVariable Long id
     ) {
         return clubMemberUseCase.getAllClubMembers(id);
-    }
-
-    @GetMapping("/{id}/members")
-    public ResponseData<List<ClubStudentRes>> getClubMembers(
-            @PathVariable Long id
-    ) {
-        return clubMemberUseCase.getActiveClubMembers(id);
     }
 
     @GetMapping("/my")
