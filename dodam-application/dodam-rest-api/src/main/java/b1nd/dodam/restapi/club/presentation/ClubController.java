@@ -150,8 +150,7 @@ public class ClubController {
     public ResponseData<?> getStudentsJoinRequests(
             @PathVariable int studentId
     ) {
-//        return clubMemberUseCase.getMemberJoinRequests(studentId);
-        return null;
+        return clubMemberUseCase.getMemberJoinRequests(studentId);
     }
 
     @GetMapping("/{id}/all-members")

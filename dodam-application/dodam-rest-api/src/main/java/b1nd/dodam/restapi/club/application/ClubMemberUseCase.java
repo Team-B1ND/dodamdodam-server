@@ -82,10 +82,10 @@ public class ClubMemberUseCase {
         return ResponseData.ok("동아리 모든 멤버 불러오기 성공", clubMemberService.getAllClubMembers(authenticationHolder.current(), id).stream().map(ClubStudentRes::of).toList());
     }
 
-//    public ResponseData<?> getMemberJoinRequests(int studentId) {
-//        Student student = studentRepository.getById(studentId);
-//        clubMemberService.findAllCreativeClubByStudent(student);
-//    }
+    public ResponseData<List<ClubMemberRes>> getMemberJoinRequests(int studentId) {
+        Student student = studentRepository.getById(studentId);
+        return ResponseData.ok("동아리 지망 불러오기 성공", clubMemberService.findAllCreativeClubByStudent(student).stream().map(ClubMemberRes::of).toList());
+    }
 
     @Transactional(readOnly = true)
     public ResponseData<List<ClubStudentRes>> getActiveClubMembers(Long id) {

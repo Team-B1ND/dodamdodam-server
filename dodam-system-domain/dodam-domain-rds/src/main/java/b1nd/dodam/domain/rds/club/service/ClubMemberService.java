@@ -72,7 +72,13 @@ public class ClubMemberService {
     }
 
     public List<ClubMember> findAllCreativeClubByStudent(Student student) {
-        return null;
+        List<ClubMember> clubMembers = clubMemberRepository.findByStudentAndClubStatusAndClub_TypeAndClub_State(student, ClubStatus.PENDING, ClubType.CREATIVE_ACTIVITY_CLUB, ClubStatus.ALLOWED);
+
+        if(clubMembers.isEmpty()) {
+            throw new ClubNotFoundException();
+        }
+
+        return clubMembers;
     }
 
     public List<Club> getStudentClubStatus(Student student) {
