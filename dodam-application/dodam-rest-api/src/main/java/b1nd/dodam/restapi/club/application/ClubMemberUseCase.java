@@ -3,9 +3,7 @@ package b1nd.dodam.restapi.club.application;
 import b1nd.dodam.domain.rds.club.enumeration.ClubStatus;
 import b1nd.dodam.domain.rds.club.enumeration.ClubTimeType;
 import b1nd.dodam.domain.rds.club.service.ClubMemberService;
-import b1nd.dodam.domain.rds.club.service.ClubService;
 import b1nd.dodam.domain.rds.club.service.ClubTimeService;
-import b1nd.dodam.domain.rds.member.entity.Member;
 import b1nd.dodam.domain.rds.member.entity.Student;
 import b1nd.dodam.domain.rds.member.repository.MemberRepository;
 import b1nd.dodam.domain.rds.member.repository.StudentRepository;
@@ -33,7 +31,6 @@ public class ClubMemberUseCase {
     private final ClubTimeService clubTimeService;
     private final MemberAuthenticationHolder authenticationHolder;
     private final StudentRepository studentRepository;
-    private final ClubService clubService;
     private final MemberRepository memberRepository;
 
     public Response joinClubs(List<JoinClubMemberReq> reqs) {
@@ -51,7 +48,7 @@ public class ClubMemberUseCase {
     }
 
     public Response setPassClub(ClubPassReq req) {
-        clubMemberService.setAllowedStudentClub(req.clubMemberId(), req.clubId());
+        clubMemberService.setAllowedStudentClub(req.studentId(), req.clubId());
         return Response.ok("동아리 가입 수락 성공");
     }
 
@@ -85,9 +82,9 @@ public class ClubMemberUseCase {
         return ResponseData.ok("동아리 모든 멤버 불러오기 성공", clubMemberService.getAllClubMembers(authenticationHolder.current(), id).stream().map(ClubStudentRes::of).toList());
     }
 
-//    public ResponseData<?> getMembersInfo(String memberId) {
-//        Member member = memberRepository.getById(memberId);
-//        clubMemberService
+//    public ResponseData<?> getMemberJoinRequests(int studentId) {
+//        Student student = studentRepository.getById(studentId);
+//        clubMemberService.findAllCreativeClubByStudent(student);
 //    }
 
     @Transactional(readOnly = true)

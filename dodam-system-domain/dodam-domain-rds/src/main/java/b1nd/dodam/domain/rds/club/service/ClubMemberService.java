@@ -53,10 +53,10 @@ public class ClubMemberService {
         return clubMemberRepository.findByStudentAndClubStatusAndClub_State(studentRepository.getByMember(member), ClubStatus.ALLOWED, ClubStatus.ALLOWED);
     }
 
-    public void setAllowedStudentClub(Long clubMemberId, Long clubId) {
+    public void setAllowedStudentClub(int studentId, Long clubId) {
         Club club = clubRepository.getByClubIdWithLock(clubId);
         validateRequiredMember(club);
-        ClubMember clubMember = clubMemberRepository.getByClubMemberId(clubMemberId);
+        ClubMember clubMember = clubMemberRepository.findByClubAndStudentAndClubStatus(club, studentRepository.getById(studentId), ClubStatus.PENDING);
         rejectActivityClubMember(clubMember.getStudent());
         clubMember.modifyStatus(ClubStatus.ALLOWED);
         clubMemberRepository.save(clubMember);
@@ -69,6 +69,10 @@ public class ClubMemberService {
             throw new InvalidClubMemberInviteException();
         }
         return club;
+    }
+
+    public List<ClubMember> findAllCreativeClubByStudent(Student student) {
+        return null;
     }
 
     public List<Club> getStudentClubStatus(Student student) {
