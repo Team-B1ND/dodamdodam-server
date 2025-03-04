@@ -105,7 +105,7 @@ public class ClubMemberService {
     }
 
     public List<ClubMember> getStatusClubMembers(Long clubId,  ClubStatus clubStatus) {
-        return clubMemberRepository.findAllByClubAndClubStatus(clubRepository.getByClubId(clubId), ClubStatus.ALLOWED);
+        return clubMemberRepository.findAllByClubAndClubStatus(clubRepository.getByClubId(clubId), clubStatus);
     }
 
     public List<ClubMember> getAllClubMembers(Member leader, Long clubId) {
