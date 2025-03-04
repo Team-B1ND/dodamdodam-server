@@ -138,7 +138,8 @@ public class ClubMemberService {
 
     public boolean isClubLeader(Long clubId,  Member member) {
         Student leader = studentRepository.getByMember(member);
-        return clubMemberRepository.getByIdAndStudent(clubId, leader).getPermission().equals(ClubPermission.CLUB_LEADER);
+        ClubMember clubMember = clubMemberRepository.findByIdAndStudent(clubId, leader).orElse(null);
+        return clubMember != null;
     }
 
     private void rejectActivityClubMember(Student student) {
