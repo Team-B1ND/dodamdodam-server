@@ -2,7 +2,6 @@ package b1nd.dodam.restapi.club.presentation;
 
 import b1nd.dodam.domain.rds.club.enumeration.ClubStatus;
 import b1nd.dodam.restapi.club.application.ClubMemberUseCase;
-import b1nd.dodam.restapi.club.application.ClubTimeUseCase;
 import b1nd.dodam.restapi.club.application.ClubUseCase;
 import b1nd.dodam.restapi.club.application.data.req.*;
 import b1nd.dodam.restapi.club.application.data.res.*;
@@ -20,7 +19,6 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ClubController {
     private final ClubUseCase clubUseCase;
-    private final ClubTimeUseCase clubTimeUseCase;
     private final ClubMemberUseCase clubMemberUseCase;
 
     @PostMapping
@@ -69,7 +67,7 @@ public class ClubController {
     public Response setClubTime(
         @RequestBody ClubTimeReq req
     ) {
-        return clubTimeUseCase.save(req);
+        return clubUseCase.save(req);
     }
 
     @DeleteMapping("/{id}")
@@ -142,7 +140,7 @@ public class ClubController {
 
     @GetMapping("/time")
     public ResponseData<ClubTimeRes> getClubTime() {
-        return clubTimeUseCase.find();
+        return clubUseCase.find();
     }
 
     @GetMapping("/join-requests/received")
