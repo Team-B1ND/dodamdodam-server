@@ -16,7 +16,8 @@ public record CreateClubReq(
     @NotBlank String description,
     @NotBlank String image,
     @NotNull ClubType type,
-    @NotNull List<Integer> studentIds
+    @NotNull List<Integer> studentIds,
+    int requiredMember
 ) {
     public Club toEntity() {
         return Club.builder()
@@ -26,7 +27,8 @@ public record CreateClubReq(
                 .image(image)
                 .subject(subject)
                 .type(type)
-                .state(ClubStatus.PENDING)
+                .state(ClubStatus.WAITING)
+                .requiredMember(requiredMember)
                 .build();
     }
 }
