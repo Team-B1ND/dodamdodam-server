@@ -6,6 +6,7 @@ import b1nd.dodam.domain.rds.club.exception.ClubNotFoundException;
 import jakarta.persistence.LockModeType;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Lock;
+import org.springframework.data.jpa.repository.Query;
 
 import java.util.Optional;
 import java.util.List;
@@ -16,11 +17,12 @@ public interface ClubRepository extends JpaRepository<Club, Long> {
     }
 
     default Club getByClubIdWithLock(long clubId) {
-        return findAllById(clubId).orElseThrow(ClubNotFoundException::new);
+        return findByIdWithLock(clubId).orElseThrow(ClubNotFoundException::new);
     }
 
     @Lock(LockModeType.PESSIMISTIC_WRITE)
-    Optional<Club> findAllById(Long id);
+    @Query("SELECT c FROM club c WHERE c.id = :id")
+    Optional<Club> findByIdWithLock(Long id);
 
     List<Club> findAllByStateNot(ClubStatus state);
 
