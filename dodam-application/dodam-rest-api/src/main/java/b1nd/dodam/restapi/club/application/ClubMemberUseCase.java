@@ -5,15 +5,11 @@ import b1nd.dodam.domain.rds.club.enumeration.ClubTimeType;
 import b1nd.dodam.domain.rds.club.service.ClubMemberService;
 import b1nd.dodam.domain.rds.club.service.ClubTimeService;
 import b1nd.dodam.domain.rds.member.entity.Student;
-import b1nd.dodam.domain.rds.member.repository.MemberRepository;
 import b1nd.dodam.domain.rds.member.repository.StudentRepository;
 import b1nd.dodam.restapi.auth.infrastructure.security.support.MemberAuthenticationHolder;
 import b1nd.dodam.restapi.club.application.data.req.ClubPassReq;
 import b1nd.dodam.restapi.club.application.data.req.JoinClubMemberReq;
-import b1nd.dodam.restapi.club.application.data.res.ClubDetailRes;
-import b1nd.dodam.restapi.club.application.data.res.ClubMemberRes;
-import b1nd.dodam.restapi.club.application.data.res.ClubStatusRes;
-import b1nd.dodam.restapi.club.application.data.res.ClubStudentRes;
+import b1nd.dodam.restapi.club.application.data.res.*;
 import b1nd.dodam.restapi.member.application.data.res.StudentWithImageRes;
 import b1nd.dodam.restapi.support.data.Response;
 import b1nd.dodam.restapi.support.data.ResponseData;
@@ -31,7 +27,6 @@ public class ClubMemberUseCase {
     private final ClubTimeService clubTimeService;
     private final MemberAuthenticationHolder authenticationHolder;
     private final StudentRepository studentRepository;
-    private final MemberRepository memberRepository;
 
     public Response joinClubs(List<JoinClubMemberReq> reqs) {
         clubTimeService.validateApplicationDuration(ClubTimeType.CLUB_APPLICANT);
@@ -78,6 +73,11 @@ public class ClubMemberUseCase {
     }
 
     @Transactional(readOnly = true)
+    public ResponseData<List<ClubJoinStudentRes>> getPendingClubMembers(Long id) {
+        return ResponseData.ok("입부 희망 인원 불러오기 성공", clubMemberService.getStatusClubMembers(id, ClubStatus.PENDING).stream().map(ClubJoinStudentRes::of).toList());
+    }
+
+    @Transactional(readOnly = true)
     public ResponseData<List<ClubStudentRes>> getAllClubMembers(Long id) {
         return ResponseData.ok("동아리 모든 멤버 불러오기 성공", clubMemberService.getAllClubMembers(authenticationHolder.current(), id).stream().map(ClubStudentRes::of).toList());
     }
@@ -89,7 +89,7 @@ public class ClubMemberUseCase {
 
     @Transactional(readOnly = true)
     public ResponseData<List<ClubStudentRes>> getActiveClubMembers(Long id) {
-        return ResponseData.ok("동아리 멤버 불러오기 성공", clubMemberService.getActiveClubMembers(id).stream().map(ClubStudentRes::of).toList());
+        return ResponseData.ok("동아리 멤버 불러오기 성공", clubMemberService.getStatusClubMembers(id, ClubStatus.ALLOWED).stream().map(ClubStudentRes::of).toList());
     }
 
     @Transactional(readOnly = true)
