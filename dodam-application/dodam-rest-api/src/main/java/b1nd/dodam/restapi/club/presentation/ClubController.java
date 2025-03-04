@@ -107,13 +107,10 @@ public class ClubController {
     }
 
     @GetMapping("/members")
-    public ResponseData<List<StudentWithImageRes>> getSecondGradeMembers() {
-        return clubMemberUseCase.getSecondGradeStudents();
-    }
-
-    @GetMapping("/members/self")
-    public ResponseData<List<StudentWithImageRes>> getAllMembers() {
-        return clubMemberUseCase.getAllGradeStudents();
+    public ResponseData<List<StudentWithImageRes>> getGradeMembers(
+            @RequestParam(name = "self") boolean isSelf
+    ) {
+        return clubMemberUseCase.getGradeStudents(isSelf);
     }
 
     @GetMapping

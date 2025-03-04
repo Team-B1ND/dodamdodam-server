@@ -54,13 +54,11 @@ public class ClubMemberUseCase {
     }
 
     @Transactional(readOnly = true)
-    public ResponseData<List<StudentWithImageRes>> getSecondGradeStudents() {
-        return ResponseData.ok("2학년 불러오기 성공", clubMemberService.getSecondGradeStudent().stream().map(StudentWithImageRes::of).toList());
-    }
-
-    @Transactional(readOnly = true)
-    public ResponseData<List<StudentWithImageRes>> getAllGradeStudents() {
-        return ResponseData.ok("전학년 불러오기 성공", clubMemberService.getAllGradeStudent().stream().map(StudentWithImageRes::of).toList());
+    public ResponseData<List<StudentWithImageRes>> getGradeStudents(boolean isSelf) {
+        return ResponseData.ok("학년 불러오기 성공", isSelf
+            ? clubMemberService.getAllGradeStudent().stream().map(StudentWithImageRes::of).toList()
+            : clubMemberService.getSecondGradeStudent().stream().map(StudentWithImageRes::of).toList()
+        );
     }
 
     @Transactional(readOnly = true)
