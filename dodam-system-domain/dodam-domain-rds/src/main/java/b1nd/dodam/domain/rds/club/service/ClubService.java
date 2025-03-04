@@ -45,7 +45,7 @@ public class ClubService {
     }
 
     public List<Club> findAll() {
-        return clubRepository.findAll();
+        return clubRepository.findAllByStateNot(ClubStatus.DELETED);
     }
 
     public Club findById(Long id) {

@@ -12,7 +12,7 @@ import java.util.List;
 
 public interface ClubRepository extends JpaRepository<Club, Long> {
     default Club getByClubId(long id) {
-        return findById(id).orElseThrow(ClubNotFoundException::new);
+        return findByIdAndStateNot(id, ClubStatus.DELETED).orElseThrow(ClubNotFoundException::new);
     }
 
     default Club getByClubIdWithLock(long clubId) {
@@ -21,6 +21,10 @@ public interface ClubRepository extends JpaRepository<Club, Long> {
 
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     Optional<Club> findAllById(Long id);
+
+    List<Club> findAllByStateNot(ClubStatus state);
+
+    Optional<Club> findByIdAndStateNot(Long id, ClubStatus state);
 
     boolean existsByName(String name);
 
