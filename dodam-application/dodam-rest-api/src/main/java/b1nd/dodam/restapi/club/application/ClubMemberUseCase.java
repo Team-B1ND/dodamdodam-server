@@ -8,7 +8,6 @@ import b1nd.dodam.domain.rds.club.service.ClubTimeService;
 import b1nd.dodam.domain.rds.member.entity.Student;
 import b1nd.dodam.domain.rds.member.repository.StudentRepository;
 import b1nd.dodam.restapi.auth.infrastructure.security.support.MemberAuthenticationHolder;
-import b1nd.dodam.restapi.club.application.data.req.PassClubReq;
 import b1nd.dodam.restapi.club.application.data.req.JoinClubMemberReq;
 import b1nd.dodam.restapi.club.application.data.res.ClubDetailRes;
 import b1nd.dodam.restapi.club.application.data.res.ClubMemberRes;
@@ -47,8 +46,8 @@ public class ClubMemberUseCase {
         return Response.ok("동아리 입부 신청 성공");
     }
 
-    public Response setPassClub(PassClubReq req) {
-        clubMemberService.setAllowedStudentClub(req.ids(), req.clubId());
+    public Response setPassClub(Long clubMemberId) {
+        clubMemberService.setAllowedStudentClub(clubMemberId);
         return Response.ok("동아리 가입 수락 성공");
     }
 

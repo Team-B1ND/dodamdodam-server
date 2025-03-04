@@ -34,7 +34,6 @@ public class ClubMemberService {
         Student student = studentRepository.getByMember(member);
         ClubMember clubMember = clubMemberRepository.getByIdAndStudent(clubMemberId, student);
         clubMember.modifyStatus(clubStatus);
-
         if (clubStatus == ClubStatus.ALLOWED && clubMember.getClub().getType() == ClubType.CREATIVE_ACTIVITY_CLUB) {
             rejectActivityClubMember(student);
         }
@@ -54,23 +53,11 @@ public class ClubMemberService {
         return clubMemberRepository.findByStudentAndClubStatusAndClub_State(studentRepository.getByMember(member), ClubStatus.ALLOWED, ClubStatus.ALLOWED);
     }
 
-    public void setAllowedStudentClub(List<Long> clubMemberIds, Long clubId) {
-        Club club = clubRepository.getByClubIdWithLock(clubId);
-        validateRequiredMember(club.getRequiredMember(), clubMemberIds);
-        List<ClubMember> clubMembers = clubMemberRepository.findByIdIn(clubMemberIds);
-        List<Student> studentList = clubMembers.stream()
-            .map(ClubMember::getStudent)
-            .distinct()
-            .toList();
-
-        List<ClubMember> clubMemberList = clubMemberRepository.findByStudentInAndClubStatusAndClub_TypeAndClub_StateNot(studentList, ClubStatus.PENDING, ClubType.CREATIVE_ACTIVITY_CLUB, ClubStatus.DELETED);
-        clubMemberList.forEach(cm -> cm.modifyStatus(ClubStatus.REJECTED));
-        clubMembers.forEach(cm -> cm.modifyStatus(ClubStatus.ALLOWED));
-        clubMemberList.addAll(clubMembers);
-        clubMemberRepository.saveAll(clubMemberList);
-
-        club.subtractRequiredMember(clubMembers.size());
-        clubRepository.save(club);
+    public void setAllowedStudentClub(Long clubMemberId) {
+        ClubMember clubMember = clubMemberRepository.getByClubMemberId(clubMemberId);
+        rejectActivityClubMember(clubMember.getStudent());
+        clubMember.modifyStatus(ClubStatus.ALLOWED);
+        clubMemberRepository.save(clubMember);
     }
 
     public Club findClubIfNotClubMember(Long clubId, ClubStatus state, Student student, ClubStatus status) {
