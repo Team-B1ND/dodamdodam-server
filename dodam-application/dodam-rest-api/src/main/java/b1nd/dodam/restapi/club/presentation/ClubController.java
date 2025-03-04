@@ -32,7 +32,7 @@ public class ClubController {
 
     @PostMapping("/pass")
     public Response passClub(
-            @RequestBody PassClubReq req
+            @RequestBody @Valid ClubPassReq req
     ) {
         return clubMemberUseCase.setPassClub(req);
     }
@@ -144,6 +144,13 @@ public class ClubController {
     @GetMapping("/join-requests/received")
     public ResponseData<List<ClubMemberRes>> getJoinRequests() {
         return clubMemberUseCase.getClubJoinRequestsReceived();
+    }
+
+    @GetMapping("/join-requests/{studentId}")
+    public ResponseData<?> getStudentsJoinRequests(
+            @PathVariable int studentId
+    ) {
+        return clubMemberUseCase.getMemberJoinRequests(studentId);
     }
 
     @GetMapping("/{id}/all-members")

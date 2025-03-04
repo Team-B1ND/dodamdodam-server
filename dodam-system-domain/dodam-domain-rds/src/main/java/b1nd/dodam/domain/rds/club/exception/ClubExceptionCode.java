@@ -13,7 +13,8 @@ public enum ClubExceptionCode implements ExceptionCode {
     CLUB_PERMISSION_DENIED(403, "동아리 권한이 부족합니다."),
     INSUFFICIENT_CLUB_MEMBERS(401, "동아리 최소 인원을 충족하지 않습니다."),
     ClUB_MEMBER_NOT_FOUND(404, "찾을 수 없는 동아리 부원입니다."),
-    APPLICATION_DURATION_PASSED(403, "동아리 신청 기간이 아닙니다.")
+    APPLICATION_DURATION_PASSED(403, "동아리 신청 기간이 아닙니다."),
+    OVERFLOW_MEMBER_SIZE(401, "참여 가능 멤버 수를 넘었습니다.")
     ;
 
     private final int status;

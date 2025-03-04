@@ -64,7 +64,7 @@ public class Club extends BaseEntity {
         this.requiredMember = requiredMember;
     }
 
-    public void subtract() {
+    public void subtractRequiredMember() {
         this.requiredMember -= 1;
     }
 
