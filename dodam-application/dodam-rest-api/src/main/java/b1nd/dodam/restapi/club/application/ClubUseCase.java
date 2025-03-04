@@ -34,7 +34,7 @@ public class ClubUseCase {
     private final TeacherRepository teacherRepository;
 
     public Response save(CreateClubReq req) {
-        clubTimeService.validateApplicationDuration(ClubTimeType.CLUB_CREATE);
+        clubTimeService.validateApplicationDuration(ClubTimeType.CLUB_CREATED);
         clubService.checkIsNameDuplicated(req.name());
         Club club = req.toEntity();
         Student leader = studentRepository.getByMember(authHolder.current());

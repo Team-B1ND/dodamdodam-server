@@ -21,7 +21,7 @@ public class ClubTimeUseCase {
     }
 
     public ResponseData<ClubTimeRes> find() {
-        ClubTime createTime = clubTimeService.getClubTime(ClubTimeType.CLUB_CREATE);
+        ClubTime createTime = clubTimeService.getClubTime(ClubTimeType.CLUB_CREATED);
         ClubTime applicantTime = clubTimeService.getClubTime(ClubTimeType.CLUB_APPLICANT);
         return ResponseData.ok("시간 불러오기 성공", ClubTimeRes.of(createTime, applicantTime));
     }
