@@ -58,7 +58,6 @@ public class ClubController {
         return clubUseCase.setTeacher(id);
     }
 
-
     @PostMapping("/join-requests/{id}")
     public Response acceptClubJoinRequest(
             @PathVariable Long id
@@ -127,6 +126,14 @@ public class ClubController {
             @PathVariable Long id
     ) {
         return clubUseCase.getClubDetail(id);
+    }
+
+
+    @GetMapping("/{clubId}/join-requests")
+    public ResponseData<List<ClubJoinStudentRes>> getClubJoinRequests(
+            @PathVariable Long clubId
+    ) {
+        return clubMemberUseCase.getPendingClubMembers(clubId);
     }
 
     @GetMapping("{id}/leader")
