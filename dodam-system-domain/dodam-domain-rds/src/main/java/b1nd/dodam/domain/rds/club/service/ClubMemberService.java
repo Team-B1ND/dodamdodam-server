@@ -5,10 +5,7 @@ import b1nd.dodam.domain.rds.club.entity.ClubMember;
 import b1nd.dodam.domain.rds.club.enumeration.ClubPermission;
 import b1nd.dodam.domain.rds.club.enumeration.ClubStatus;
 import b1nd.dodam.domain.rds.club.enumeration.ClubType;
-import b1nd.dodam.domain.rds.club.exception.ClubJoinedException;
-import b1nd.dodam.domain.rds.club.exception.ClubPermissionDeniedException;
-import b1nd.dodam.domain.rds.club.exception.InsufficientClubMembersException;
-import b1nd.dodam.domain.rds.club.exception.InvalidClubMemberInviteException;
+import b1nd.dodam.domain.rds.club.exception.*;
 import b1nd.dodam.domain.rds.club.repository.ClubMemberRepository;
 import b1nd.dodam.domain.rds.club.repository.ClubRepository;
 import b1nd.dodam.domain.rds.member.entity.Member;
@@ -57,19 +54,23 @@ public class ClubMemberService {
         return clubMemberRepository.findByStudentAndClubStatus(studentRepository.getByMember(member), ClubStatus.ALLOWED);
     }
 
-    public void setAllowedStudentClub(List<Long> clubMemberIds) {
-//        List<ClubMember> clubMembers = clubMemberRepository.findByIdIn(clubMemberIds);
-//        Club club = clubRepository.getByClubIdWithLock(clubMembers.get(0).getClub().getId());
-//
-//        clubMembers.forEach(clubMember -> {
-//            club.subtract();
-//            rejectActivityClubMember(clubMember.getStudent());
-//            clubMember.modifyStatus(ClubStatus.ALLOWED);
-//        });
-//
-//        clubMemberRepository.saveAll(clubMembers);
-//        clubRepository.save(club);
-        
+    public void setAllowedStudentClub(List<Long> clubMemberIds, Long clubId) {
+        Club club = clubRepository.getByClubIdWithLock(clubId);
+        validateRequiredMember(club.getRequiredMember(), clubMemberIds);
+        List<ClubMember> clubMembers = clubMemberRepository.findByIdIn(clubMemberIds);
+        List<Student> studentList = clubMembers.stream()
+            .map(ClubMember::getStudent)
+            .distinct()
+            .toList();
+
+        List<ClubMember> clubMemberList = clubMemberRepository.findByStudentInAndClubStatusAndClub_TypeAndClub_StateNot(studentList, ClubStatus.PENDING, ClubType.CREATIVE_ACTIVITY_CLUB, ClubStatus.DELETED);
+        clubMemberList.forEach(cm -> cm.modifyStatus(ClubStatus.REJECTED));
+        clubMembers.forEach(cm -> cm.modifyStatus(ClubStatus.ALLOWED));
+        clubMemberList.addAll(clubMembers);
+        clubMemberRepository.saveAll(clubMemberList);
+
+        club.subtractRequiredMember(clubMembers.size());
+        clubRepository.save(club);
     }
 
     public Club findClubIfNotClubMember(Long clubId, ClubStatus state, Student student, ClubStatus status) {
@@ -140,6 +141,12 @@ public class ClubMemberService {
         List<ClubMember> clubMembers = clubMemberRepository.findAllByStudentAndPermissionAndClub_Type(student, ClubPermission.CLUB_MEMBER, ClubType.CREATIVE_ACTIVITY_CLUB);
         clubMembers.forEach(m -> m.modifyStatus(ClubStatus.REJECTED));
         clubMemberRepository.saveAll(clubMembers);
+    }
+
+    private void validateRequiredMember(int size, List<Long> clubIds) {
+        if (clubIds.size() > size || clubIds.isEmpty()) {
+            throw new OverflowMemberSizeException();
+        }
     }
 
     private void validateLeaderInList(Student leader, List<Student> students) {

@@ -7,5 +7,5 @@ import java.util.List;
 
 public record PassClubReq(
         @NotNull List<Long> ids,
-        @NotNull ClubStatus status
+        @NotNull Long clubId
 ) { }

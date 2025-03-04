@@ -48,7 +48,7 @@ public class ClubMemberUseCase {
     }
 
     public Response setPassClub(PassClubReq req) {
-        clubMemberService.setAllowedStudentClub(req.ids());
+        clubMemberService.setAllowedStudentClub(req.ids(), req.clubId());
         return Response.ok("동아리 가입 수락 성공");
     }
 
