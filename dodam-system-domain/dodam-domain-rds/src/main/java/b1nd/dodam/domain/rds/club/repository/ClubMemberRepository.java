@@ -28,6 +28,11 @@ public interface ClubMemberRepository extends JpaRepository<ClubMember, Long> {
     default ClubMember getByClubAndPermissionAndStatus(Club club, ClubPermission permission, ClubStatus status) {
         return findByClubAndPermissionAndClubStatus(club, permission, status).orElseThrow(ClubMemberNotFoundException::new);
     }
+
+    default ClubMember getPendingClubMemberWithRelations(int studentId, Long clubId, ClubStatus status) {
+        return findPendingClubMemberWithRelations(studentId, clubId, status).orElseThrow(ClubMemberNotFoundException::new);
+    }
+
     List<ClubMember> findAllByStudentAndPermissionAndClub_Type(Student student, ClubPermission permission, ClubType clubType);
 
     boolean existsByClubAndStudentAndPermission(Club club, Student student, ClubPermission permission);
@@ -75,21 +80,30 @@ public interface ClubMemberRepository extends JpaRepository<ClubMember, Long> {
     SELECT cm FROM club_member cm
     JOIN FETCH cm.student s
     JOIN FETCH cm.club c
-    WHERE s.id = :studentId AND c.id = :clubId AND cm.clubStatus = 'PENDING'
+    WHERE s.id = :studentId AND c.id = :clubId AND cm.clubStatus = :status
     """)
-    ClubMember findPendingClubMemberWithRelations(
+    Optional<ClubMember> findPendingClubMemberWithRelations(
             @Param("studentId") int studentId,
-            @Param("clubId") Long clubId
+            @Param("clubId") Long clubId,
+            @Param("status") ClubStatus status
     );
 
     @Modifying
     @Query("""
-    UPDATE club_member cm SET cm.clubStatus = 'REJECTED'
+    UPDATE club_member cm
+    SET cm.clubStatus = :status
     WHERE cm.student.id = :studentId
-    AND cm.permission = 'CLUB_MEMBER'
-    AND cm.club.type = 'CREATIVE_ACTIVITY_CLUB'
+    AND cm.permission = :permission
+    AND cm.club.id IN (
+        SELECT c.id FROM club c WHERE c.type = :clubType
+    )
     """)
-    void rejectOtherActivityClubMembers(@Param("studentId") int studentId);
+    void rejectOtherActivityClubMembers(
+            @Param("studentId") int studentId,
+            @Param("status") ClubStatus status,
+            @Param("permission") ClubPermission permission,
+            @Param("clubType") ClubType clubType
+    );
 
     Optional<ClubMember> findByClubAndPermissionAndClubStatus(Club club, ClubPermission permission, ClubStatus clubStatus);
 

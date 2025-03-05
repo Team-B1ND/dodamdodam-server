@@ -54,9 +54,9 @@ public class ClubMemberService {
     }
 
     public void setAllowedStudentClub(int studentId, Long clubId) {
-        ClubMember clubMember = clubMemberRepository.findPendingClubMemberWithRelations(studentId, clubId);
-        if (clubMember == null) { throw new ClubNotFoundException(); }
-        clubMemberRepository.rejectOtherActivityClubMembers(clubMember.getStudent().getId());
+        ClubMember clubMember = clubMemberRepository.getPendingClubMemberWithRelations(studentId, clubId, ClubStatus.PENDING);
+
+        clubMemberRepository.rejectOtherActivityClubMembers(clubMember.getStudent().getId(), ClubStatus.REJECTED, ClubPermission.CLUB_MEMBER, ClubType.CREATIVE_ACTIVITY_CLUB);
         clubMember.modifyStatus(ClubStatus.ALLOWED);
         clubMemberRepository.save(clubMember);
     }
