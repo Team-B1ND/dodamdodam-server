@@ -128,6 +128,15 @@ class SecurityConfig {
 
                 .requestMatchers(POST, "/clubs/state").hasAnyRole(TEACHER, ADMIN)
                 .requestMatchers(POST, "/clubs/time").hasAnyRole(TEACHER, ADMIN)
+                .requestMatchers(POST, "/clubs/pass").hasAnyRole(TEACHER, ADMIN)
+                .requestMatchers(POST, "/clubs/{id}/teacher").hasAnyRole(TEACHER, ADMIN)
+                .requestMatchers(POST, "/clubs/time").hasAnyRole(TEACHER, ADMIN)
+                .requestMatchers(PATCH, "/clubs/state").hasAnyRole(TEACHER, ADMIN)
+                .requestMatchers(GET, "/clubs/{clubId}/join-requests").hasAnyRole(TEACHER, ADMIN)
+                .requestMatchers(GET, "/clubs/{id}/waiting").hasAnyRole(TEACHER, ADMIN)
+                .requestMatchers(GET, "/clubs/time").hasAnyRole(TEACHER, ADMIN)
+                .requestMatchers(GET, "/clubs/join-requests/{studentId}").hasAnyRole(TEACHER, ADMIN)
+
 
                 .anyRequest().authenticated()
                 .and()
