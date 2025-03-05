@@ -77,13 +77,17 @@ public class ClubMemberUseCase {
     }
 
     @Transactional(readOnly = true)
-    public ResponseData<List<ClubStudentRes>> getAllClubMembers(Long id) {
+    public ResponseData<ClubStudentListRes> getAllClubMembers(Long id) {
         Member member = authenticationHolder.current();
-        return ResponseData.ok("동아리 멤버 불러오기 성공",
-                clubMemberService.isClubLeader(id, member)
-                        ? clubMemberService.getAllClubMembers(id).stream().map(ClubStudentRes::of).toList()
-                        : clubMemberService.getStatusClubMembers(id, ClubStatus.ALLOWED).stream().map(ClubStudentRes::of).toList()
-        );
+        boolean isLeader = clubMemberService.isClubLeader(id, member);
+        //        return ResponseData.ok("동아리 멤버 불러오기 성공",
+
+        return ResponseData.ok("동아리 멤버 불러오기 성공", ClubStudentListRes.of(
+            isLeader,
+            clubMemberService.isClubLeader(id, member)
+                ? clubMemberService.getAllClubMembers(id).stream().map(ClubStudentRes::of).toList()
+                : clubMemberService.getStatusClubMembers(id, ClubStatus.ALLOWED).stream().map(ClubStudentRes::of).toList()
+        ));
     }
 
     public ResponseData<List<ClubMemberRes>> getMemberJoinRequests(int studentId) {
