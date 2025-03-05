@@ -48,8 +48,12 @@ public class Club extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private ClubStatus state;
 
+    private String reason;
+
+    private int requiredMember;
+
     @Builder
-    public Club(String name, String shortDescription, String description, String image, String subject, ClubType type, ClubStatus state) {
+    public Club(String name, String shortDescription, String description, String image, String subject, ClubType type, ClubStatus state, int requiredMember) {
         this.name = name;
         this.shortDescription = shortDescription;
         this.description = description;
@@ -57,6 +61,16 @@ public class Club extends BaseEntity {
         this.subject = subject;
         this.type = type;
         this.state = state;
+        this.requiredMember = requiredMember;
+    }
+
+    public void subtractRequiredMember() {
+        this.requiredMember -= 1;
+    }
+
+    public void updateStatus(ClubStatus clubStatus, String reason) {
+        this.state = clubStatus;
+        this.reason = reason;
     }
 
     public void updateStatus(String name, ClubStatus clubStatus) {

@@ -9,6 +9,7 @@ import b1nd.dodam.domain.rds.club.exception.ClubMemberNotFoundException;
 import b1nd.dodam.domain.rds.member.entity.Student;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -20,8 +21,16 @@ public interface ClubMemberRepository extends JpaRepository<ClubMember, Long> {
         return findByIdAndStudent(id, student).orElseThrow(ClubMemberNotFoundException::new);
     }
 
+    default ClubMember getByClubMemberId(long id) {
+        return findById(id).orElseThrow(ClubMemberNotFoundException::new);
+    }
+
     default ClubMember getByClubAndPermissionAndStatus(Club club, ClubPermission permission, ClubStatus status) {
         return findByClubAndPermissionAndClubStatus(club, permission, status).orElseThrow(ClubMemberNotFoundException::new);
+    }
+
+    default ClubMember getPendingClubMemberWithRelations(int studentId, Long clubId, ClubStatus status) {
+        return findPendingClubMemberWithRelations(studentId, clubId, status).orElseThrow(ClubMemberNotFoundException::new);
     }
 
     List<ClubMember> findAllByStudentAndPermissionAndClub_Type(Student student, ClubPermission permission, ClubType clubType);
@@ -50,7 +59,7 @@ public interface ClubMemberRepository extends JpaRepository<ClubMember, Long> {
     WHERE c.id = :clubId
     AND c.state = :state
     AND cm.id IS NULL
-""")
+    """)
     Club findClubIfNotMember(
             @Param("clubId") Long clubId,
             @Param("state") ClubStatus state,
@@ -67,11 +76,44 @@ public interface ClubMemberRepository extends JpaRepository<ClubMember, Long> {
     """)
     List<Student> findSecondGradeStudentsNotInClubMember();
 
+    @Query("""
+    SELECT cm FROM club_member cm
+    JOIN FETCH cm.student s
+    JOIN FETCH cm.club c
+    WHERE s.id = :studentId AND c.id = :clubId AND cm.clubStatus = :status
+    """)
+    Optional<ClubMember> findPendingClubMemberWithRelations(
+            @Param("studentId") int studentId,
+            @Param("clubId") Long clubId,
+            @Param("status") ClubStatus status
+    );
+
+    @Modifying
+    @Query("""
+    UPDATE club_member cm
+    SET cm.clubStatus = :status
+    WHERE cm.student.id = :studentId
+    AND cm.permission = :permission
+    AND cm.club.id IN (
+        SELECT c.id FROM club c WHERE c.type = :clubType
+    )
+    """)
+    void rejectOtherActivityClubMembers(
+            @Param("studentId") int studentId,
+            @Param("status") ClubStatus status,
+            @Param("permission") ClubPermission permission,
+            @Param("clubType") ClubType clubType
+    );
+
     Optional<ClubMember> findByClubAndPermissionAndClubStatus(Club club, ClubPermission permission, ClubStatus clubStatus);
 
     Optional<ClubMember> findByIdAndStudent(Long id, Student student);
 
+    List<ClubMember> findByStudentAndClubStatusAndClub_TypeAndClub_State(Student student, ClubStatus clubStatus, ClubType clubType, ClubStatus clubState);
+
     List<ClubMember> findByStudentInAndClubStatusAndClub_TypeAndClub_StateNot(List<Student> students, ClubStatus clubStatus, ClubType clubType, ClubStatus state);
+
+    ClubMember findByClubAndStudentAndClubStatus(Club club, Student student, ClubStatus clubStatus);
 
     List<ClubMember> findByClubAndStudent(Club club, Student student);
 }
