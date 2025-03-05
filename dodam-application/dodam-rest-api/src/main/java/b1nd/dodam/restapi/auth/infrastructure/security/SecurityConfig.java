@@ -133,6 +133,7 @@ class SecurityConfig {
                 .requestMatchers(GET, "/clubs/{clubId}/join-requests").hasAnyRole(TEACHER, ADMIN)
                 .requestMatchers(GET, "/clubs/{id}/waiting").hasAnyRole(TEACHER, ADMIN)
                 .requestMatchers(GET, "/clubs/join-requests/{studentId}").hasAnyRole(TEACHER, ADMIN)
+                .requestMatchers(GET, "clubs/join-requests/received").authenticated()
 
 
                 .anyRequest().authenticated()
