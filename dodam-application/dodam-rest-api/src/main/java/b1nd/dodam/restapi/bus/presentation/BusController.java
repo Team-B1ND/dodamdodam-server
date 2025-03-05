@@ -6,7 +6,9 @@ import b1nd.dodam.domain.rds.bus.enumeration.BusStatus;
 import b1nd.dodam.restapi.bus.application.BusApplicationUseCase;
 import b1nd.dodam.restapi.bus.application.BusQrcodeUseCase;
 import b1nd.dodam.restapi.bus.application.BusUseCase;
+import b1nd.dodam.restapi.bus.application.data.req.BusPresetReq;
 import b1nd.dodam.restapi.bus.application.data.req.BusReq;
+import b1nd.dodam.restapi.bus.application.data.req.BusWithPresetReq;
 import b1nd.dodam.restapi.bus.application.data.res.BusMemberRes;
 import b1nd.dodam.restapi.bus.application.data.res.BusQrcodeNonceRes;
 import b1nd.dodam.restapi.bus.application.data.res.BusRes;
@@ -32,6 +34,16 @@ public class BusController {
     @PostMapping
     public Response register(@RequestBody @Valid BusReq req) {
         return busUseCase.register(req);
+    }
+
+    @PostMapping("/{id}")
+    public Response registerWithPreset(@PathVariable int id, @RequestBody @Valid BusWithPresetReq req) {
+        return busUseCase.register(id, req);
+    }
+
+    @PostMapping("/preset")
+    public Response registerPreset(@RequestBody @Valid BusPresetReq req) {
+        return busUseCase.registerPreset(req);
     }
 
     // TODO 삭제하기
