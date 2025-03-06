@@ -123,7 +123,6 @@ public class ClubController {
         return clubUseCase.getClubDetail(id);
     }
 
-
     @GetMapping("/{clubId}/join-requests")
     public ResponseData<List<ClubJoinStudentRes>> getClubJoinRequests(
             @PathVariable Long clubId
