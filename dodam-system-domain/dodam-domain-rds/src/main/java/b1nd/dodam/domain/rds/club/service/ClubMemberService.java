@@ -119,7 +119,7 @@ public class ClubMemberService {
     }
 
     public void validateByClubAndStudent(Club clubId, Student student) {
-        if (!clubMemberRepository.findAllByClubAndStudent(clubId, student).isEmpty()) {
+        if (!(clubMemberRepository.findByClubAndStudent(clubId, student) == null)) {
             throw new ClubJoinedException();
         }
     }
