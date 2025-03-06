@@ -11,6 +11,7 @@ import b1nd.dodam.domain.rds.member.entity.Student;
 import b1nd.dodam.domain.rds.member.repository.StudentRepository;
 import b1nd.dodam.restapi.auth.infrastructure.security.support.MemberAuthenticationHolder;
 import b1nd.dodam.restapi.bus.application.data.res.BusMemberRes;
+import b1nd.dodam.restapi.bus.application.data.res.BusPresetRes;
 import b1nd.dodam.restapi.bus.application.data.res.BusSeatRes;
 import b1nd.dodam.restapi.support.data.Response;
 import b1nd.dodam.restapi.support.data.ResponseData;
