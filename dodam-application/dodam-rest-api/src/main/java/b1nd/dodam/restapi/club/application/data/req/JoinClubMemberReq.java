@@ -12,7 +12,7 @@ import jakarta.validation.constraints.NotNull;
 public record JoinClubMemberReq(
         @NotNull Long clubId,
         ClubPriority clubPriority,
-        @NotBlank String introduction) {
+        String introduction) {
 
     public ClubMember toEntity(Student student, Club club) {
         return ClubMember.builder()
