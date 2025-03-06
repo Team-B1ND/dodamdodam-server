@@ -101,9 +101,9 @@ public class ClubMemberUseCase {
     private ClubStudentListRes getClubMembersByRole(Long id, boolean isLeader, Member member) {
         return ClubStudentListRes.of(
                 isLeader,
-                clubMemberService.isClubLeader(id, member)
-                        ? clubMemberService.getAllClubMembers(id).stream().map(ClubStudentRes::of).toList()
-                        : clubMemberService.getStatusClubMembers(id, ClubStatus.ALLOWED).stream().map(ClubStudentRes::of).toList()
+                isLeader
+                    ? clubMemberService.getAllClubMembers(id).stream().map(ClubStudentRes::of).toList()
+                    : clubMemberService.getStatusClubMembers(id, ClubStatus.ALLOWED).stream().map(ClubStudentRes::of).toList()
         );
     }
 
