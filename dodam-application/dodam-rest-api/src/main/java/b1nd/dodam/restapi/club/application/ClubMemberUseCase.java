@@ -80,7 +80,6 @@ public class ClubMemberUseCase {
     public ResponseData<ClubStudentListRes> getAllClubMembers(Long id) {
         Member member = authenticationHolder.current();
         boolean isLeader = clubMemberService.isClubLeader(id, member);
-        //        return ResponseData.ok("동아리 멤버 불러오기 성공",
 
         return ResponseData.ok("동아리 멤버 불러오기 성공", ClubStudentListRes.of(
             isLeader,
