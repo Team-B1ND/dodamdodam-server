@@ -129,7 +129,10 @@ public class ClubMemberService {
     }
 
     public boolean isClubLeader(Long clubId,  Member member) {
-        Student leader = studentRepository.getByMember(member);
+        Student leader = studentRepository.findByMember(member).orElse(null);
+        if (leader == null) {
+            return false;
+        }
         ClubMember clubMember = clubMemberRepository.findByIdAndStudent(clubId, leader).orElse(null);
         return clubMember != null;
     }
