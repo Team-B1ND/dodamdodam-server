@@ -143,7 +143,7 @@ public class ClubMemberService {
             return false;
         }
         Club club = clubRepository.getByClubId(clubId);
-        ClubMember clubMember = clubMemberRepository.findByClubAndStudentAndClubStatus(club, leader, ClubStatus.ALLOWED);
+        ClubMember clubMember = clubMemberRepository.findByClubAndStudentAndPermission(club, leader, ClubPermission.CLUB_LEADER);
         return clubMember != null;
     }
 
