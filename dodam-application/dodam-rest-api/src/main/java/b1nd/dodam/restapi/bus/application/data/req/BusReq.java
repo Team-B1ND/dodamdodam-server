@@ -8,13 +8,13 @@ import jakarta.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 
-public record BusReq(@NotEmpty String busName, @NotEmpty String description, BusStatus status,
-                     @NotNull LocalDateTime leaveTime, @NotNull LocalTime timeRequired, @NotNull int peopleLimit) {
+public record BusReq(@NotEmpty String busName, @NotEmpty String description, @NotNull LocalDateTime leaveTime,
+                     @NotNull LocalTime timeRequired, @NotNull int peopleLimit) {
     public Bus mapToBus() {
         return Bus.builder()
                 .busName(busName)
                 .description(description)
-                .status(status)
+                .status(BusStatus.ACTIVATE)
                 .peopleLimit(peopleLimit)
                 .leaveTime(leaveTime)
                 .timeRequired(timeRequired)
