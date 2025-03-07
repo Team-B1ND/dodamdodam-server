@@ -50,7 +50,7 @@ public class ClubMemberService {
     }
 
     public List<ClubMember> getAllowedMembersByClub(Club club) {
-        return clubMemberRepository.findByClubAndState(club, ClubStatus.ALLOWED);
+        return clubMemberRepository.findByClubAndClubStatus(club, ClubStatus.ALLOWED);
     }
 
     public List<ClubMember> findUserAllowedClub(Member member) {
@@ -82,7 +82,7 @@ public class ClubMemberService {
     }
 
     public List<ClubMember> getPendingMembersByClub(Club club) {
-        return clubMemberRepository.findByClubAndState(club, ClubStatus.PENDING);
+        return clubMemberRepository.findByClubAndClubStatus(club, ClubStatus.PENDING);
     }
 
     public void updateStatus(List<ClubMember> members, ClubStatus status) {
