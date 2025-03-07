@@ -167,7 +167,7 @@ public class ClubController {
     }
 
     @GetMapping("/my/join-requests")
-    public ResponseData<List<ClubJoinRes>> getMyJoinRequests() {
+    public ResponseData<List<ClubMemberRes>> getMyJoinRequests() {
         return clubMemberUseCase.getStudentJoinRequest();
     }
 }
