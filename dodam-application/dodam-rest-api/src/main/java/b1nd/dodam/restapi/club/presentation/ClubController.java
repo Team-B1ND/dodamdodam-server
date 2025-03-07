@@ -172,4 +172,9 @@ public class ClubController {
     public ResponseData<List<ClubDetailRes>> getMyClubStatus() {
         return clubMemberUseCase.getStudentClubStatus();
     }
+
+    @GetMapping("/my/join-requests")
+    public ResponseData<List<ClubMemberRes>> getMyJoinRequests() {
+        return clubMemberUseCase.getStudentJoinRequest();
+    }
 }
