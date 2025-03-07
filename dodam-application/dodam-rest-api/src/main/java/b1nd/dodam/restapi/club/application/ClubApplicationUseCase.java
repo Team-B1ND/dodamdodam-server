@@ -8,6 +8,9 @@ import b1nd.dodam.domain.rds.club.exception.ClubNotFoundException;
 import b1nd.dodam.domain.rds.club.service.ClubMemberService;
 import b1nd.dodam.domain.rds.club.service.ClubService;
 import b1nd.dodam.domain.rds.member.entity.Student;
+import b1nd.dodam.restapi.club.application.data.res.ClubAcceptedMembersRes;
+import b1nd.dodam.restapi.club.application.data.res.ClubAllocationResultRes;
+import b1nd.dodam.restapi.member.application.data.res.StudentRes;
 import b1nd.dodam.restapi.support.data.ResponseData;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -22,7 +25,7 @@ public class ClubApplicationUseCase {
     private final ClubMemberService clubMemberService;
     private static final int MAX_MEMBERS_PER_CLUB = 18;
 
-    public ResponseData<?> sortClubMembers() {
+    public ResponseData<ClubAllocationResultRes> sortClubMembers() {
         List<Club> clubs = clubService.getCreativeActivityClubs();
         if (clubs.isEmpty()) {
             throw new ClubNotFoundException();
@@ -38,7 +41,6 @@ public class ClubApplicationUseCase {
         }
 
         List<ClubMember> allPendingMembers = getAllPendingMembers(clubs);
-
         Map<Student, List<ClubMember>> studentApplications = groupByStudent(allPendingMembers);
 
         List<ClubMember> toActivate = new ArrayList<>();
