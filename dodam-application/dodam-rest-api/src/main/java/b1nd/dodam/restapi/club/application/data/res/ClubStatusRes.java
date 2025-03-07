@@ -12,7 +12,7 @@ public record ClubStatusRes(
 ) {
     public static ClubStatusRes of(ClubMember clubMember) {
         return new ClubStatusRes(
-                clubMember.getId(),
+                clubMember.getClub().getId(),
                 clubMember.getClub().getName(),
                 clubMember.getClub().getType(),
                 clubMember.getClubStatus()
