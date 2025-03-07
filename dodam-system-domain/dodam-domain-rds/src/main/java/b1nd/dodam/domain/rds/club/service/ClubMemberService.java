@@ -148,13 +148,6 @@ public class ClubMemberService {
         clubMemberRepository.saveAll(clubMembers);
     }
 
-    private void validateRequiredMember(Club club) {
-        if (club.getRequiredMember() <= 0) {
-            throw new OverflowMemberSizeException();
-        }
-        club.subtractRequiredMember();
-    }
-
     private void validateLeaderInList(Student leader, List<Student> students) {
         if (students.stream().anyMatch(s -> s.getId() == leader.getId())) {
             throw new InvalidClubMemberInviteException();

@@ -16,7 +16,6 @@ public record ClubWithLeaderRes(
     ClubType type,
     TeacherRes teacher,
     ClubStatus state,
-    int requiredMember,
     ClubStudentRes leader
 ) {
     public static ClubWithLeaderRes of(ClubMember clubMember) {
@@ -35,7 +34,6 @@ public record ClubWithLeaderRes(
                 club.getType(),
                 TeacherRes.of(club.getTeacher()),
                 club.getState(),
-                club.getRequiredMember(),
                 ClubStudentRes.of(clubMember)
         );
     }
