@@ -115,11 +115,6 @@ public class BusController {
         return busApplicationUseCase.getSeatNumbers(id);
     }
 
-    @GetMapping("/{id}/seats/invalid")
-    public ResponseData<BusSeatRes> getSeatsInvalid(@PathVariable int id) {
-        return busApplicationUseCase.getSeatNumbersInvalid(id);
-    }
-
     @GetMapping("/qr-code/nonce")
     public ResponseData<BusQrcodeNonceRes> getNonce() {
         return busQrcodeUseCase.issueNonce();

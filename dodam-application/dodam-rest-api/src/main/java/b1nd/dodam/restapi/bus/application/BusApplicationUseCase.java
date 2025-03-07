@@ -97,12 +97,6 @@ public class BusApplicationUseCase {
         return ResponseData.ok("버스 좌석 번호 조회 성공", BusSeatRes.of(busApplications));
     }
 
-    public ResponseData<BusSeatRes> getSeatNumbersInvalid(int busId) {
-        Bus bus = busRepository.getById(busId);
-        List<BusApplication> busApplications = busApplicationRepository.findByBusAndStatus(bus, BusApplicationStatus.EXPIRED);
-        return ResponseData.ok("유효하지 않은 버스 좌석 번호 조회 성공", BusSeatRes.of(busApplications));
-    }
-
     private void checkIfTheApplicationExists(Student student) {
         if(busApplicationRepository.existsByStudentAndBus_LeaveTimeAfter(student, ZonedDateTimeUtil.nowToLocalDateTime())) {
             throw new BusAlreadyAppliedException();
