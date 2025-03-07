@@ -49,6 +49,10 @@ public class ClubMemberService {
         return studentRepository.findAll();
     }
 
+    public List<ClubMember> getAllowedMembersByClub(Club club) {
+        return clubMemberRepository.findByClubAndState(club, ClubStatus.ALLOWED);
+    }
+
     public List<ClubMember> findUserAllowedClub(Member member) {
         return clubMemberRepository.findByStudentAndClubStatusAndClub_State(studentRepository.getByMember(member), ClubStatus.ALLOWED, ClubStatus.ALLOWED);
     }
@@ -151,13 +155,6 @@ public class ClubMemberService {
         List<ClubMember> clubMembers = clubMemberRepository.findAllByStudentAndPermissionAndClub_Type(student, ClubPermission.CLUB_MEMBER, ClubType.CREATIVE_ACTIVITY_CLUB);
         clubMembers.forEach(m -> m.modifyStatus(ClubStatus.REJECTED));
         clubMemberRepository.saveAll(clubMembers);
-    }
-
-    private void validateRequiredMember(Club club) {
-        if (club.getRequiredMember() <= 0) {
-            throw new OverflowMemberSizeException();
-        }
-        club.subtractRequiredMember();
     }
 
     private void validateLeaderInList(Student leader, List<Student> students) {
