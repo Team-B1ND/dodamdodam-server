@@ -73,6 +73,15 @@ public class ClubMemberService {
         return clubMembers;
     }
 
+    public List<ClubMember> getPendingMembersByClub(Club club) {
+        return clubMemberRepository.findByClubAndState(club, ClubStatus.PENDING);
+    }
+
+    public void updateStatus(List<ClubMember> members, ClubStatus status) {
+        members.forEach(member -> member.modifyStatus(status));
+        clubMemberRepository.saveAll(members);
+    }
+
     public List<Club> getStudentClubStatus(Student student) {
         return clubMemberRepository.findByStudentAndPermission(student, ClubPermission.CLUB_LEADER)
                 .stream()

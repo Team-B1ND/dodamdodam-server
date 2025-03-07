@@ -67,6 +67,10 @@ public class ClubMember extends BaseEntity {
         this.introduction = introduction;
     }
 
+    public boolean isFirstChoice() {
+        return priority.equals(ClubPriority.CREATIVE_ACTIVITY_CLUB_1);
+    }
+
     public void modifyStatus(ClubStatus clubStatus) {
         this.clubStatus = clubStatus;
     }
