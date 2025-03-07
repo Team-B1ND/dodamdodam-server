@@ -119,7 +119,7 @@ public class ClubMemberService {
     }
 
     public void validateByClubAndStudent(Club clubId, Student student) {
-        if (!clubMemberRepository.findByClubAndStudent(clubId, student).isEmpty()) {
+        if (!(clubMemberRepository.findByClubAndStudent(clubId, student) == null)) {
             throw new ClubJoinedException();
         }
     }
@@ -129,8 +129,12 @@ public class ClubMemberService {
     }
 
     public boolean isClubLeader(Long clubId,  Member member) {
-        Student leader = studentRepository.getByMember(member);
-        ClubMember clubMember = clubMemberRepository.findByIdAndStudent(clubId, leader).orElse(null);
+        Student leader = studentRepository.findByMember(member).orElse(null);
+        if (leader == null) {
+            return false;
+        }
+        Club club = clubRepository.getByClubId(clubId);
+        ClubMember clubMember = clubMemberRepository.findByClubAndStudentAndPermission(club, leader, ClubPermission.CLUB_LEADER);
         return clubMember != null;
     }
 

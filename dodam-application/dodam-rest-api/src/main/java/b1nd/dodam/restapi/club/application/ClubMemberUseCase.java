@@ -79,13 +79,8 @@ public class ClubMemberUseCase {
     }
 
     @Transactional(readOnly = true)
-    public ResponseData<List<ClubStudentRes>> getAllClubMembers(Long id) {
-        Member member = authenticationHolder.current();
-        return ResponseData.ok("동아리 멤버 불러오기 성공",
-                clubMemberService.isClubLeader(id, member)
-                        ? clubMemberService.getAllClubMembers(id).stream().map(ClubStudentRes::of).toList()
-                        : clubMemberService.getStatusClubMembers(id, ClubStatus.ALLOWED).stream().map(ClubStudentRes::of).toList()
-        );
+    public ResponseData<ClubStudentListRes> getAllClubMembers(Long id) {
+        return ResponseData.ok("동아리 멤버 불러오기 성공", getClubMembersByRole(id, clubMemberService.isClubLeader(id, authenticationHolder.current())));
     }
 
     public ResponseData<List<ClubMemberRes>> getMemberJoinRequests(int studentId) {
@@ -106,6 +101,15 @@ public class ClubMemberUseCase {
     @Transactional(readOnly = true)
     public ResponseData<List<ClubDetailRes>> getStudentClubStatus() {
         return ResponseData.ok("동아리 불러오기 성공", clubMemberService.getStudentClubStatus(studentRepository.getByMember(authenticationHolder.current())).stream().map(ClubDetailRes::of).toList());
+    }
+
+    private ClubStudentListRes getClubMembersByRole(Long id, boolean isLeader) {
+        return ClubStudentListRes.of(
+                isLeader,
+                isLeader
+                    ? clubMemberService.getAllClubMembers(id).stream().map(ClubStudentRes::of).toList()
+                    : clubMemberService.getStatusClubMembers(id, ClubStatus.ALLOWED).stream().map(ClubStudentRes::of).toList()
+        );
     }
 
     private void filterCreativeClub(List<JoinClubMemberReq> reqs) {

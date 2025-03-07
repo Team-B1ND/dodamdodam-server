@@ -155,7 +155,7 @@ public class ClubController {
     }
 
     @GetMapping("/{id}/members")
-    public ResponseData<List<ClubStudentRes>> getAllClubMembers(
+    public ResponseData<ClubStudentListRes> getAllClubMembers(
             @PathVariable Long id
     ) {
         return clubMemberUseCase.getAllClubMembers(id);
