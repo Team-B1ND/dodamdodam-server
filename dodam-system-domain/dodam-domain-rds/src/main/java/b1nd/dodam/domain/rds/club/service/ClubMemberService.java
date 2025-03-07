@@ -61,6 +61,10 @@ public class ClubMemberService {
         clubMemberRepository.save(clubMember);
     }
 
+    public List<ClubMember> getAllLeader() {
+        return clubMemberRepository.findAllByPermission(ClubPermission.CLUB_LEADER);
+    }
+
     public Club findClubIfNotClubMember(Long clubId, ClubStatus state, Student student, ClubStatus status) {
         return clubMemberRepository.findClubIfNotMember(clubId, state, student, status);
     }
