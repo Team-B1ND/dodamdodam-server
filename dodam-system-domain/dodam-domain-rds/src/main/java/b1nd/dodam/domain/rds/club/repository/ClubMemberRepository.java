@@ -61,7 +61,7 @@ public interface ClubMemberRepository extends JpaRepository<ClubMember, Long> {
     AND c.state = :state
     AND cm.id IS NULL
     """)
-    Club findClubIfNotMember(
+    Optional<Club> findClubIfNotMember(
             @Param("clubId") Long clubId,
             @Param("state") ClubStatus state,
             @Param("student") Student student,
