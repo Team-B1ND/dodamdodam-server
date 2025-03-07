@@ -28,7 +28,6 @@ public class ClubMemberUseCase {
     private final ClubMemberService clubMemberService;
     private final MemberAuthenticationHolder authenticationHolder;
     private final StudentRepository studentRepository;
-    private final MemberRepository memberRepository;
 
     public Response joinClubs(List<JoinClubMemberReq> reqs) {
         clubService.validateApplicationDuration(ClubTimeType.CLUB_APPLICANT);
