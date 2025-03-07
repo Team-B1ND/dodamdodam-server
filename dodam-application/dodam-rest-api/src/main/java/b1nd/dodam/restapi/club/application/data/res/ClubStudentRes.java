@@ -15,7 +15,6 @@ public record ClubStudentRes(
     int number,
     String profileImage
     ) {
-
     public static ClubStudentRes of(ClubMember clubMember) {
         return new ClubStudentRes(
             clubMember.getId(),
