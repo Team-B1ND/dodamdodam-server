@@ -28,11 +28,11 @@ public class ClubController {
         return clubUseCase.save(req);
     }
 
-    @PostMapping("/pass")
+    @PostMapping("/status")
     public Response passClub(
             @RequestBody @Valid ClubPassReq req
     ) {
-        return clubMemberUseCase.setPassClub(req);
+        return clubMemberUseCase.setClubMemberStatus(req);
     }
 
     @PostMapping("/join-requests")
