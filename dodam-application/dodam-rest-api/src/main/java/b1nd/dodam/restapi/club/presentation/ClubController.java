@@ -116,6 +116,11 @@ public class ClubController {
         return clubUseCase.getClubs();
     }
 
+    @GetMapping("/leaders")
+    public ResponseData<List<ClubWithLeaderRes>> getClubWithLeaders() {
+        return clubUseCase.getClubsWithLeader();
+    }
+
     @GetMapping("/{id}")
     public ResponseData<ClubDetailRes> getClubDetail(
             @PathVariable Long id
