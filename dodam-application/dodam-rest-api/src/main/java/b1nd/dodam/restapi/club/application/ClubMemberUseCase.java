@@ -65,7 +65,7 @@ public class ClubMemberUseCase {
 
     @Transactional(readOnly = true)
     public ResponseData<List<ClubMemberRes>> getClubJoinRequestsReceived() {
-        return ResponseData.ok("받은 부원 제안 불러오기 성공", clubMemberService.getJoinRequests(authenticationHolder.current()).stream().map(ClubMemberRes::of).toList());
+        return ResponseData.ok("받은 부원 제안 불러오기 성공", clubMemberService.getJoinRequests(authenticationHolder.current(), ClubStatus.WAITING).stream().map(ClubMemberRes::of).toList());
     }
 
     @Transactional(readOnly = true)
@@ -90,7 +90,7 @@ public class ClubMemberUseCase {
 
     @Transactional(readOnly = true)
     public ResponseData<List<ClubJoinRes>> getStudentJoinRequest() {
-        return ResponseData.ok("나의 동아리 입부 신청 불러오기 성공", clubMemberService.getJoinRequests(authenticationHolder.current()).stream().map(ClubJoinRes::of).toList());
+        return ResponseData.ok("나의 동아리 입부 신청 불러오기 성공", clubMemberService.getJoinRequests(authenticationHolder.current(), ClubStatus.PENDING).stream().map(ClubJoinRes::of).toList());
     }
 
     @Transactional(readOnly = true)
