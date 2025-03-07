@@ -113,7 +113,7 @@ public interface ClubMemberRepository extends JpaRepository<ClubMember, Long> {
 
     List<ClubMember> findByStudentInAndClubStatusAndClub_TypeAndClub_StateNot(List<Student> students, ClubStatus clubStatus, ClubType clubType, ClubStatus state);
 
-    ClubMember findByClubAndStudentAndClubStatus(Club club, Student student, ClubStatus clubStatus);
+    ClubMember findByClubAndStudentAndPermission(Club club, Student student, ClubPermission permission);
 
     ClubMember findByClubAndStudent(Club club, Student student);
 }

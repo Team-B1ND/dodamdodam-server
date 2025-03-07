@@ -80,9 +80,9 @@ public class ClubMemberService {
                 .collect(Collectors.toList());
     }
 
-    public List<ClubMember> getJoinRequests(Member member) {
+    public List<ClubMember> getJoinRequests(Member member, ClubStatus status) {
         Student student = studentRepository.getByMember(member);
-        return clubMemberRepository.findByStudentAndClubStatus(student, ClubStatus.WAITING);
+        return clubMemberRepository.findByStudentAndClubStatus(student, status);
     }
 
     public ClubMember getClubLeader(Long clubId) {
@@ -134,7 +134,7 @@ public class ClubMemberService {
             return false;
         }
         Club club = clubRepository.getByClubId(clubId);
-        ClubMember clubMember = clubMemberRepository.findByClubAndStudentAndClubStatus(club, leader, ClubStatus.ALLOWED);
+        ClubMember clubMember = clubMemberRepository.findByClubAndStudentAndPermission(club, leader, ClubPermission.CLUB_LEADER);
         return clubMember != null;
     }
 
