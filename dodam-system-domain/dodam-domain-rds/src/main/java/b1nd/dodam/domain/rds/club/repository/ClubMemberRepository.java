@@ -7,6 +7,7 @@ import b1nd.dodam.domain.rds.club.enumeration.ClubStatus;
 import b1nd.dodam.domain.rds.club.enumeration.ClubType;
 import b1nd.dodam.domain.rds.club.exception.ClubMemberNotFoundException;
 import b1nd.dodam.domain.rds.member.entity.Student;
+import jakarta.validation.constraints.NotNull;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -60,7 +61,7 @@ public interface ClubMemberRepository extends JpaRepository<ClubMember, Long> {
     AND c.state = :state
     AND cm.id IS NULL
     """)
-    Club findClubIfNotMember(
+    Optional<Club> findClubIfNotMember(
             @Param("clubId") Long clubId,
             @Param("state") ClubStatus state,
             @Param("student") Student student,
@@ -116,6 +117,8 @@ public interface ClubMemberRepository extends JpaRepository<ClubMember, Long> {
     ClubMember findByClubAndStudentAndPermission(Club club, Student student, ClubPermission permission);
 
     ClubMember findByClubAndStudent(Club club, Student student);
+
+    List<ClubMember> findAllByPermission(@NotNull ClubPermission permission);
 
     List<ClubMember> findByClubAndState(Club club, ClubStatus clubStatus);
 }

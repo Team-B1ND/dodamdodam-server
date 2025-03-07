@@ -16,6 +16,7 @@ import b1nd.dodam.restapi.club.application.data.req.UpdateClubInfoReq;
 import b1nd.dodam.restapi.club.application.data.req.UpdateClubReq;
 import b1nd.dodam.restapi.club.application.data.res.ClubDetailRes;
 import b1nd.dodam.restapi.club.application.data.res.ClubTimeRes;
+import b1nd.dodam.restapi.club.application.data.res.ClubWithLeaderRes;
 import b1nd.dodam.restapi.support.data.Response;
 import b1nd.dodam.restapi.support.data.ResponseData;
 import lombok.RequiredArgsConstructor;
@@ -96,6 +97,11 @@ public class ClubUseCase {
     @Transactional(readOnly = true)
     public ResponseData<List<ClubDetailRes>> getClubs() {
         return ResponseData.ok("전체 동아리 불러오기 성공", clubService.findAll().stream().map(ClubDetailRes::of).toList());
+    }
+
+    @Transactional(readOnly = true)
+    public ResponseData<List<ClubWithLeaderRes>> getClubsWithLeader() {
+        return ResponseData.ok("동아리, 리더 불러오기 성공", clubMemberService.getAllLeader().stream().map(ClubWithLeaderRes::of).toList());
     }
 
     @Transactional(readOnly = true)

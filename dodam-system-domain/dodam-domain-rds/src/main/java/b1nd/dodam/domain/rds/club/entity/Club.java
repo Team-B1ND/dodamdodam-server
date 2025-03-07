@@ -50,10 +50,8 @@ public class Club extends BaseEntity {
 
     private String reason;
 
-    private int requiredMember;
-
     @Builder
-    public Club(String name, String shortDescription, String description, String image, String subject, ClubType type, ClubStatus state, int requiredMember) {
+    public Club(String name, String shortDescription, String description, String image, String subject, ClubType type, ClubStatus state) {
         this.name = name;
         this.shortDescription = shortDescription;
         this.description = description;
@@ -61,11 +59,6 @@ public class Club extends BaseEntity {
         this.subject = subject;
         this.type = type;
         this.state = state;
-        this.requiredMember = requiredMember;
-    }
-
-    public void subtractRequiredMember() {
-        this.requiredMember -= 1;
     }
 
     public void updateStatus(ClubStatus clubStatus, String reason) {

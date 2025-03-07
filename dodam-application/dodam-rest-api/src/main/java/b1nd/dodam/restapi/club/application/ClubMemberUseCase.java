@@ -28,7 +28,6 @@ public class ClubMemberUseCase {
     private final ClubMemberService clubMemberService;
     private final MemberAuthenticationHolder authenticationHolder;
     private final StudentRepository studentRepository;
-    private final MemberRepository memberRepository;
 
     public Response joinClubs(List<JoinClubMemberReq> reqs) {
         clubService.validateApplicationDuration(ClubTimeType.CLUB_APPLICANT);
@@ -37,7 +36,7 @@ public class ClubMemberUseCase {
         if (clubJoined) {
             filterCreativeClub(reqs);
         }
-        clubMemberService.saveClubMembers(reqs.parallelStream()
+        clubMemberService.saveClubMembers(reqs.stream()
             .map(req -> req.toEntity(student, clubMemberService.findClubIfNotClubMember(req.clubId(), ClubStatus.ALLOWED, student, ClubStatus.DELETED)))
             .toList()
         );
