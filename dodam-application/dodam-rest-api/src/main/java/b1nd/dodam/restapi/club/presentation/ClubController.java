@@ -129,7 +129,7 @@ public class ClubController {
     }
 
     @GetMapping("/{clubId}/join-requests")
-    public ResponseData<List<ClubJoinStudentRes>> getClubJoinRequests(
+    public ResponseData<List<ClubStudentRes>> getClubJoinRequests(
             @PathVariable Long clubId
     ) {
         return clubMemberUseCase.getPendingClubMembers(clubId);

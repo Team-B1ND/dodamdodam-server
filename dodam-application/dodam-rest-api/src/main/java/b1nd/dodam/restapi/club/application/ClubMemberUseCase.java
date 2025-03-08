@@ -72,8 +72,8 @@ public class ClubMemberUseCase {
     }
 
     @Transactional(readOnly = true)
-    public ResponseData<List<ClubJoinStudentRes>> getPendingClubMembers(Long id) {
-        return ResponseData.ok("입부 희망 인원 불러오기 성공", clubMemberService.getStatusClubMembers(id, ClubStatus.PENDING).stream().map(ClubJoinStudentRes::of).toList());
+    public ResponseData<List<ClubStudentRes>> getPendingClubMembers(Long id) {
+        return ResponseData.ok("입부 희망 인원 불러오기 성공", clubMemberService.getStatusClubMembers(id, ClubStatus.PENDING).stream().map(ClubStudentRes::of).toList());
     }
 
     @Transactional(readOnly = true)
