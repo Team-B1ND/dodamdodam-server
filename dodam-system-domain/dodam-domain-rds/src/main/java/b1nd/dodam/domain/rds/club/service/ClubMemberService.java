@@ -106,6 +106,12 @@ public class ClubMemberService {
         return clubMemberRepository.findAllByClubAndPermission(club, ClubPermission.CLUB_MEMBER);
     }
 
+    public void setDeleteClubMembers(Club club) {
+        List<ClubMember> clubMembers = clubMemberRepository.findByClubAndClubStatusNot(club, ClubStatus.ALLOWED);
+        clubMembers.forEach(cm -> cm.modifyStatus(ClubStatus.DELETED));
+        clubMemberRepository.saveAll(clubMembers);
+    }
+
     public void validateAndRejectLeader(Club club, Student leader, List<Student> students) {
         rejectActivityClubMember(leader);
         validateLeaderInList(leader, students);

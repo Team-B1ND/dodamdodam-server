@@ -61,6 +61,7 @@ public class ClubUseCase {
     public Response setWaiting(Long id) {
         Club club = clubService.findById(id);
         clubMemberService.validateActiveClubMemberSize(club, authHolder.current());
+        clubMemberService.setDeleteClubMembers(club);
         club.updateStatus(ClubStatus.PENDING, null);
         clubService.update(club);
         return Response.ok("동아리 대기 성공");
