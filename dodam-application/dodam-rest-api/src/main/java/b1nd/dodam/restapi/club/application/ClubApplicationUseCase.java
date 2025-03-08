@@ -32,12 +32,12 @@ public class ClubApplicationUseCase {
         }
 
         Map<Club, Integer> existingAllowedCounts = new HashMap<>();
-        Map<String, List<String>> clubAcceptedMembers = new HashMap<>();
+        List<ClubAcceptedMembersRes> clubAcceptedMembersList = new ArrayList<>();
 
         for (Club club : clubs) {
             int allowedCount = clubMemberService.getAllowedMembersByClub(club).size();
             existingAllowedCounts.put(club, allowedCount);
-            clubAcceptedMembers.put(club.getName(), new ArrayList<>());
+            clubAcceptedMembersList.add(new ClubAcceptedMembersRes(club.getName(), new ArrayList<>()));
         }
 
         List<ClubMember> allPendingMembers = getAllPendingMembers(clubs);
@@ -52,26 +52,24 @@ public class ClubApplicationUseCase {
                 existingAllowedCounts,
                 assignedStudents,
                 toActivate,
-                clubAcceptedMembers
+                clubAcceptedMembersList
         );
 
-        List<String> rejectedNames = new ArrayList<>();
-        for (ClubMember member : allPendingMembers) {
-            if (!toActivate.contains(member)) {
-                toReject.add(member);
-                rejectedNames.add(member.getStudent().getMember().getName());
-            }
-        }
+        List<StudentRes> rejectedStudents = allPendingMembers.stream()
+                .filter(member -> !toActivate.contains(member))
+                .map(member -> StudentRes.of(member.getStudent()))
+                .toList();
 
         clubMemberService.updateStatus(toActivate, ClubStatus.ALLOWED);
         clubMemberService.updateStatus(toReject, ClubStatus.REJECTED);
 
-        Map<String, Object> responseData = new HashMap<>();
-        responseData.put("배정된 학생 수", toActivate.size());
-        responseData.put("배정되지 못한 학생 목록", rejectedNames);
-        responseData.put("동아리별 합격 멤버", clubAcceptedMembers);
+        ClubAllocationResultRes result = new ClubAllocationResultRes(
+                toActivate.size(),
+                rejectedStudents,
+                clubAcceptedMembersList
+        );
 
-        return ResponseData.ok("동아리 배정이 완료되었습니다.", responseData);
+        return ResponseData.ok("동아리 배정이 완료되었습니다.", result);
     }
 
     private void processAllPriorities(
@@ -79,7 +77,8 @@ public class ClubApplicationUseCase {
             Map<Club, Integer> existingAllowedCounts,
             Set<Student> assignedStudents,
             List<ClubMember> toActivate,
-            Map<String, List<String>> clubAcceptedMembers) {
+            List<ClubAcceptedMembersRes> clubAcceptedMembers
+    ) {
 
         processPriorityApplications(
                 ClubPriority.CREATIVE_ACTIVITY_CLUB_1,
@@ -110,25 +109,21 @@ public class ClubApplicationUseCase {
     }
 
     private void processPriorityApplications(
-            ClubPriority priority,
-            Map<Student, List<ClubMember>> studentApplications,
-            Map<Club, Integer> existingAllowedCounts,
-            Set<Student> assignedStudents,
-            List<ClubMember> toActivate,
-            Map<String, List<String>> clubAcceptedMembers) {
+        ClubPriority priority,
+        Map<Student, List<ClubMember>> studentApplications,
+        Map<Club, Integer> existingAllowedCounts,
+        Set<Student> assignedStudents,
+        List<ClubMember> toActivate,
+        List<ClubAcceptedMembersRes> clubAcceptedMembersList
+    ) {
 
-        List<ClubMember> priorityApplications = new ArrayList<>();
-
-        for (Map.Entry<Student, List<ClubMember>> entry : studentApplications.entrySet()) {
-            if (!assignedStudents.contains(entry.getKey())) {
-                for (ClubMember member : entry.getValue()) {
-                    if (member.getPriority() == priority) {
-                        priorityApplications.add(member);
-                        break;
-                    }
-                }
-            }
-        }
+        List<ClubMember> priorityApplications = studentApplications.entrySet().stream()
+                .filter(entry -> !assignedStudents.contains(entry.getKey()))
+                .map(entry -> entry.getValue().stream()
+                        .filter(member -> member.getPriority() == priority)
+                        .findFirst().orElse(null))
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
 
         Collections.shuffle(priorityApplications);
 
@@ -139,12 +134,14 @@ public class ClubApplicationUseCase {
             if (currentAllowedCount < MAX_MEMBERS_PER_CLUB) {
                 toActivate.add(member);
                 assignedStudents.add(member.getStudent());
-
                 existingAllowedCounts.put(club, currentAllowedCount + 1);
 
-                String clubName = club.getName();
-                String studentName = member.getStudent().getMember().getName();
-                clubAcceptedMembers.get(clubName).add(studentName);
+                StudentRes studentRes = StudentRes.of(member.getStudent());
+
+                clubAcceptedMembersList.stream()
+                        .filter(c -> c.clubName().equals(club.getName()))
+                        .findFirst()
+                        .ifPresent(c -> c.acceptedStudents().add(studentRes));
             }
         }
     }
