@@ -54,18 +54,12 @@ public class ClubApplicationUseCase {
                 toActivate,
                 clubAcceptedMembersList
         );
-
-        List<StudentRes> rejectedStudents = allPendingMembers.stream()
-                .filter(member -> !toActivate.contains(member))
-                .map(member -> StudentRes.of(member.getStudent()))
-                .toList();
-
         clubMemberService.updateStatus(toActivate, ClubStatus.ALLOWED);
         clubMemberService.updateStatus(toReject, ClubStatus.REJECTED);
 
         ClubAllocationResultRes result = new ClubAllocationResultRes(
                 toActivate.size(),
-                rejectedStudents,
+                clubMemberService.getStudentsNotInClub().stream().map(StudentRes::of).toList(),
                 clubAcceptedMembersList
         );
 

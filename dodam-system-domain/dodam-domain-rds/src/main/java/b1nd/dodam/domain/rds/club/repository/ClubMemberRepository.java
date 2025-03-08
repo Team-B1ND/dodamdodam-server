@@ -106,6 +106,17 @@ public interface ClubMemberRepository extends JpaRepository<ClubMember, Long> {
             @Param("clubType") ClubType clubType
     );
 
+    @Query("""
+    SELECT s FROM student s
+    WHERE NOT EXISTS (
+        SELECT cm FROM club_member cm
+        WHERE cm.student = s
+        AND cm.clubStatus = :allowedStatus
+        AND cm.club.type = :clubType
+    )
+    """)
+    List<Student> findByClubMemberNotIn(@Param("allowedStatus") ClubStatus allowedStatus,  @Param("clubType") ClubType clubType);
+
     Optional<ClubMember> findByClubAndPermissionAndClubStatus(Club club, ClubPermission permission, ClubStatus clubStatus);
 
     Optional<ClubMember> findByIdAndStudent(Long id, Student student);
