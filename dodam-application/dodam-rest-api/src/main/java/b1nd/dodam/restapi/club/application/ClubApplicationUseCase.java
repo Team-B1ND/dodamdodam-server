@@ -69,7 +69,7 @@ public class ClubApplicationUseCase {
                 clubAcceptedMembersList
         );
 
-        return ResponseData.ok("동아리 배정이 완료되었습니다.", result);
+        return ResponseData.ok("동아리 배정 성공", result);
     }
 
     private void processAllPriorities(
