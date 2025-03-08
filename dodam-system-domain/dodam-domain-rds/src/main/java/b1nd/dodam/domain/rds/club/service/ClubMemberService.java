@@ -75,7 +75,7 @@ public class ClubMemberService {
     }
 
     public List<Club> getStudentClubStatus(Student student) {
-        return clubMemberRepository.findByStudentAndPermissionAndClubStatusNot(student, ClubPermission.CLUB_LEADER, ClubStatus.DELETED)
+        return clubMemberRepository.findByStudentAndPermissionAndClub_StateNot(student, ClubPermission.CLUB_LEADER, ClubStatus.DELETED)
                 .stream()
                 .map(ClubMember::getClub)
                 .collect(Collectors.toList());
@@ -104,6 +104,12 @@ public class ClubMemberService {
     public List<ClubMember> getAllClubMembers(Long clubId) {
         Club club = clubRepository.getByClubId(clubId);
         return clubMemberRepository.findAllByClubAndPermission(club, ClubPermission.CLUB_MEMBER);
+    }
+
+    public void setDeleteClubMembers(Club club) {
+        List<ClubMember> clubMembers = clubMemberRepository.findByClubAndClubStatusNot(club, ClubStatus.ALLOWED);
+        clubMembers.forEach(cm -> cm.modifyStatus(ClubStatus.DELETED));
+        clubMemberRepository.saveAll(clubMembers);
     }
 
     public void validateAndRejectLeader(Club club, Student leader, List<Student> students) {
