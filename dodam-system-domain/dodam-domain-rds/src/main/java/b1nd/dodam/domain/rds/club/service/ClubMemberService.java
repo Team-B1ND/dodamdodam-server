@@ -75,7 +75,7 @@ public class ClubMemberService {
     }
 
     public List<Club> getStudentClubStatus(Student student) {
-        return clubMemberRepository.findByStudentAndPermissionAndClubStatusNot(student, ClubPermission.CLUB_LEADER, ClubStatus.DELETED)
+        return clubMemberRepository.findByStudentAndPermissionAndClub_StateNot(student, ClubPermission.CLUB_LEADER, ClubStatus.DELETED)
                 .stream()
                 .map(ClubMember::getClub)
                 .collect(Collectors.toList());
