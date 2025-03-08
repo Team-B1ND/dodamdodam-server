@@ -86,7 +86,6 @@ public class ClubApplicationUseCase {
         List<ClubMember> toActivate,
         List<ClubAcceptedMembersRes> clubAcceptedMembersList
     ) {
-
         List<ClubMember> priorityApplications = studentApplications.entrySet().stream()
                 .filter(entry -> !assignedStudents.contains(entry.getKey()))
                 .map(entry -> entry.getValue().stream()
