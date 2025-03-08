@@ -42,9 +42,10 @@ public class ClubMemberUseCase {
         return Response.ok("동아리 입부 신청 성공");
     }
 
-    public Response setPassClub(ClubPassReq req) {
-        clubMemberService.setAllowedStudentClub(req.studentId(), req.clubId());
-        return Response.ok("동아리 가입 수락 성공");
+    public Response setClubMemberStatus(ClubPassReq req) {
+        clubMemberService.validateByClubLeader(clubService.findById(req.clubId()), authenticationHolder.current());
+        clubMemberService.setStatusStudentClub(req.studentId(), req.clubId(), req.status());
+        return Response.ok("동아리 가입 상태 변경 성공");
     }
 
     public Response updateClubJoinRequestReceived(Long id, ClubStatus clubStatus) {

@@ -57,11 +57,9 @@ public class ClubMemberService {
         return clubMemberRepository.findByStudentAndClubStatusAndClub_State(studentRepository.getByMember(member), ClubStatus.ALLOWED, ClubStatus.ALLOWED);
     }
 
-    public void setAllowedStudentClub(int studentId, Long clubId) {
+    public void setStatusStudentClub(int studentId, Long clubId, ClubStatus clubStatus) {
         ClubMember clubMember = clubMemberRepository.getPendingClubMemberWithRelations(studentId, clubId, ClubStatus.PENDING);
-
-        clubMemberRepository.rejectOtherActivityClubMembers(clubMember.getStudent().getId(), ClubStatus.REJECTED, ClubPermission.CLUB_MEMBER, ClubType.CREATIVE_ACTIVITY_CLUB);
-        clubMember.modifyStatus(ClubStatus.ALLOWED);
+        clubMember.modifyStatus(clubStatus);
         clubMemberRepository.save(clubMember);
     }
 
