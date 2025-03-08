@@ -7,7 +7,6 @@ import b1nd.dodam.domain.rds.club.enumeration.ClubStatus;
 import b1nd.dodam.domain.rds.club.enumeration.ClubType;
 import b1nd.dodam.domain.rds.club.exception.ClubMemberNotFoundException;
 import b1nd.dodam.domain.rds.member.entity.Student;
-import jakarta.validation.constraints.NotNull;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -44,7 +43,7 @@ public interface ClubMemberRepository extends JpaRepository<ClubMember, Long> {
     @EntityGraph(attributePaths = {"club", "club.teacher"})
     List<ClubMember> findByStudentAndClubStatusAndClub_State(Student student, ClubStatus clubStatus, ClubStatus state);
 
-    List<ClubMember> findByStudentAndPermission(Student student, ClubPermission permission);
+    List<ClubMember> findByStudentAndPermissionAndClub_StateNot(Student student, ClubPermission permission, ClubStatus clubStatus);
 
     @EntityGraph(attributePaths = {"student", "student.member"})
     List<ClubMember> findAllByClubAndPermission(Club club, ClubPermission permission);
@@ -129,7 +128,7 @@ public interface ClubMemberRepository extends JpaRepository<ClubMember, Long> {
 
     ClubMember findByClubAndStudent(Club club, Student student);
 
-    List<ClubMember> findAllByPermission(@NotNull ClubPermission permission);
+    List<ClubMember> findAllByPermission(ClubPermission permission);
 
-    List<ClubMember> findByClubAndClubStatus(Club club, ClubStatus clubStatus);
+    List<ClubMember> findByClubAndClubStatusNot(Club club, ClubStatus clubStatus);
 }

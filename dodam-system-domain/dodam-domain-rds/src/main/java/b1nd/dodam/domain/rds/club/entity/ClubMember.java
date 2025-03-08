@@ -16,15 +16,6 @@ import org.hibernate.annotations.OnDeleteAction;
 
 @Getter
 @Entity(name = "club_member")
-@Table(uniqueConstraints = {
-        @UniqueConstraint(
-                name = "unique_member_club_index",
-                columnNames = {
-                        "fk_student_id",
-                        "fk_club_id"
-                }
-        )
-})
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class ClubMember extends BaseEntity {
     @Id

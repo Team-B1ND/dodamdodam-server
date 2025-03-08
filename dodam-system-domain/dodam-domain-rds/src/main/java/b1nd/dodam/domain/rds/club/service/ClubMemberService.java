@@ -33,11 +33,10 @@ public class ClubMemberService {
     public void setClubMemberStatus(Long clubMemberId, Member member, ClubStatus clubStatus) {
         Student student = studentRepository.getByMember(member);
         ClubMember clubMember = clubMemberRepository.getByIdAndStudent(clubMemberId, student);
-        clubMember.modifyStatus(clubStatus);
         if (clubStatus == ClubStatus.ALLOWED && clubMember.getClub().getType() == ClubType.CREATIVE_ACTIVITY_CLUB) {
             rejectActivityClubMember(student);
         }
-
+        clubMember.modifyStatus(clubStatus);
         clubMemberRepository.save(clubMember);
     }
 
@@ -93,7 +92,7 @@ public class ClubMemberService {
     }
 
     public List<Club> getStudentClubStatus(Student student) {
-        return clubMemberRepository.findByStudentAndPermission(student, ClubPermission.CLUB_LEADER)
+        return clubMemberRepository.findByStudentAndPermissionAndClub_StateNot(student, ClubPermission.CLUB_LEADER, ClubStatus.DELETED)
                 .stream()
                 .map(ClubMember::getClub)
                 .collect(Collectors.toList());
@@ -122,6 +121,12 @@ public class ClubMemberService {
     public List<ClubMember> getAllClubMembers(Long clubId) {
         Club club = clubRepository.getByClubId(clubId);
         return clubMemberRepository.findAllByClubAndPermission(club, ClubPermission.CLUB_MEMBER);
+    }
+
+    public void setDeleteClubMembers(Club club) {
+        List<ClubMember> clubMembers = clubMemberRepository.findByClubAndClubStatusNot(club, ClubStatus.ALLOWED);
+        clubMembers.forEach(cm -> cm.modifyStatus(ClubStatus.DELETED));
+        clubMemberRepository.saveAll(clubMembers);
     }
 
     public void validateAndRejectLeader(Club club, Student leader, List<Student> students) {
