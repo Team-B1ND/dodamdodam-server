@@ -73,39 +73,15 @@ public class ClubApplicationUseCase {
     }
 
     private void processAllPriorities(
-            Map<Student, List<ClubMember>> studentApplications,
-            Map<Club, Integer> existingAllowedCounts,
-            Set<Student> assignedStudents,
-            List<ClubMember> toActivate,
-            List<ClubAcceptedMembersRes> clubAcceptedMembers
+        Map<Student, List<ClubMember>> studentApplications,
+        Map<Club, Integer> existingAllowedCounts,
+        Set<Student> assignedStudents,
+        List<ClubMember> toActivate,
+        List<ClubAcceptedMembersRes> clubAcceptedMembers
     ) {
-
-        processPriorityApplications(
-                ClubPriority.CREATIVE_ACTIVITY_CLUB_1,
-                studentApplications,
-                existingAllowedCounts,
-                assignedStudents,
-                toActivate,
-                clubAcceptedMembers
-        );
-
-        processPriorityApplications(
-                ClubPriority.CREATIVE_ACTIVITY_CLUB_2,
-                studentApplications,
-                existingAllowedCounts,
-                assignedStudents,
-                toActivate,
-                clubAcceptedMembers
-        );
-
-        processPriorityApplications(
-                ClubPriority.CREATIVE_ACTIVITY_CLUB_3,
-                studentApplications,
-                existingAllowedCounts,
-                assignedStudents,
-                toActivate,
-                clubAcceptedMembers
-        );
+        processPriorityApplications(ClubPriority.CREATIVE_ACTIVITY_CLUB_1, studentApplications, existingAllowedCounts, assignedStudents, toActivate, clubAcceptedMembers);
+        processPriorityApplications(ClubPriority.CREATIVE_ACTIVITY_CLUB_2, studentApplications, existingAllowedCounts, assignedStudents, toActivate, clubAcceptedMembers);
+        processPriorityApplications(ClubPriority.CREATIVE_ACTIVITY_CLUB_3, studentApplications, existingAllowedCounts, assignedStudents, toActivate, clubAcceptedMembers);
     }
 
     private void processPriorityApplications(
