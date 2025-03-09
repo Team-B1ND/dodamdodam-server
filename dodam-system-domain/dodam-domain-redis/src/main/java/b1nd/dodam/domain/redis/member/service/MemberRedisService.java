@@ -69,8 +69,7 @@ public class MemberRedisService {
             throw new AuthInvalidException();
         }
 
-        if (!redisTemplate.opsForHash().hasKey(key, AuthType.EMAIL.name()) ||
-                !redisTemplate.opsForHash().hasKey(key, AuthType.PHONE.name())) {
+        if (!redisTemplate.opsForHash().hasKey(key, AuthType.PHONE.name())) {
             throw new AuthInvalidException();
         }
     }
