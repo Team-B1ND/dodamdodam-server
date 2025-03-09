@@ -5,7 +5,6 @@ import b1nd.dodam.domain.rds.club.enumeration.ClubTimeType;
 import b1nd.dodam.domain.rds.club.service.ClubMemberService;
 import b1nd.dodam.domain.rds.club.service.ClubService;
 import b1nd.dodam.domain.rds.member.entity.Student;
-import b1nd.dodam.domain.rds.member.repository.MemberRepository;
 import b1nd.dodam.domain.rds.member.repository.StudentRepository;
 import b1nd.dodam.restapi.auth.infrastructure.security.support.MemberAuthenticationHolder;
 import b1nd.dodam.restapi.club.application.data.req.ClubPassReq;
@@ -36,16 +35,17 @@ public class ClubMemberUseCase {
         if (clubJoined) {
             filterCreativeClub(reqs);
         }
-        clubMemberService.saveClubMembers(reqs.parallelStream()
+        clubMemberService.saveClubMembers(reqs.stream()
             .map(req -> req.toEntity(student, clubMemberService.findClubIfNotClubMember(req.clubId(), ClubStatus.ALLOWED, student, ClubStatus.DELETED)))
             .toList()
         );
         return Response.ok("동아리 입부 신청 성공");
     }
 
-    public Response setPassClub(ClubPassReq req) {
-        clubMemberService.setAllowedStudentClub(req.studentId(), req.clubId());
-        return Response.ok("동아리 가입 수락 성공");
+    public Response setClubMemberStatus(ClubPassReq req) {
+        clubMemberService.validateByClubLeader(clubService.findById(req.clubId()), authenticationHolder.current());
+        clubMemberService.setStatusStudentClub(req.studentId(), req.clubId(), req.status());
+        return Response.ok("동아리 가입 상태 변경 성공");
     }
 
     public Response updateClubJoinRequestReceived(Long id, ClubStatus clubStatus) {

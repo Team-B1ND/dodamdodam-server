@@ -5,13 +5,13 @@ import b1nd.dodam.domain.rds.club.enumeration.ClubPriority;
 import b1nd.dodam.restapi.member.application.data.res.StudentRes;
 
 public record ClubJoinStudentRes(
-        StudentRes student,
-        ClubPriority priority
+        ClubStudentRes student,
+        String introduce
 ) {
     public static ClubJoinStudentRes of(ClubMember clubMember) {
         return new ClubJoinStudentRes(
-            StudentRes.of(clubMember.getStudent()),
-            clubMember.getPriority()
+            ClubStudentRes.of(clubMember),
+            clubMember.getIntroduction()
         );
     }
 }
