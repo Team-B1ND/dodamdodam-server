@@ -10,6 +10,7 @@ import b1nd.dodam.domain.rds.club.repository.ClubMemberRepository;
 import b1nd.dodam.domain.rds.club.repository.ClubRepository;
 import b1nd.dodam.domain.rds.member.entity.Member;
 import b1nd.dodam.domain.rds.member.entity.Student;
+import b1nd.dodam.domain.rds.member.enumeration.ActiveStatus;
 import b1nd.dodam.domain.rds.member.repository.StudentRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -41,11 +42,11 @@ public class ClubMemberService {
     }
 
     public List<Student> getSecondGradeStudent() {
-        return clubMemberRepository.findSecondGradeStudentsNotInClubMember();
+        return clubMemberRepository.findSecondGradeStudentsNotInClubMember(ActiveStatus.ACTIVE);
     }
 
     public List<Student> getAllGradeStudent() {
-        return studentRepository.findAll();
+        return studentRepository.findAllByMember_Status(ActiveStatus.ACTIVE);
     }
 
     public List<ClubMember> findUserAllowedClub(Member member) {

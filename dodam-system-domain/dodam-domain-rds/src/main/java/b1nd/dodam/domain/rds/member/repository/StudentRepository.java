@@ -45,7 +45,7 @@ public interface StudentRepository extends JpaRepository<Student, Integer> {
     @Query("SELECT m FROM student s JOIN s.member m")
     List<Member> findAllMembers();
 
-    List<Member> findAllByMember(Member member);
+    List<Student> findAllByMember_Status(ActiveStatus memberStatus);
 
     Long countByMemberStatus(ActiveStatus memberStatus);
 
