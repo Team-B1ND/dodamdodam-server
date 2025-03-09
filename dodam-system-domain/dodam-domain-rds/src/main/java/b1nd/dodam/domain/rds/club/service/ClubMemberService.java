@@ -114,7 +114,9 @@ public class ClubMemberService {
     }
 
     public void validateAndRejectLeader(Club club, Student leader, List<Student> students) {
-        rejectActivityClubMember(leader);
+        if (club.getType() == ClubType.CREATIVE_ACTIVITY_CLUB) {
+            rejectActivityClubMember(leader);
+        }
         validateLeaderInList(leader, students);
         validateByLeaderAndClubMemberDuplicated(leader, students, club);
     }
