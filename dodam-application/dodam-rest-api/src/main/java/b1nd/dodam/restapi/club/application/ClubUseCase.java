@@ -55,6 +55,7 @@ public class ClubUseCase {
         Club club = clubService.findById(id);
         clubMemberService.validateByClubLeader(club, authHolder.current());
         clubService.deleteClub(club);
+        clubMemberService.setDeleteAllClubMembers(club);
         return Response.ok("동아리 삭제 성공");
     }
 
