@@ -128,7 +128,7 @@ public class BusUseCase {
     public ResponseData<List<BusPresetRes>> getAllBusPreset(){
         List<BusPresetRes> busPresetResList = busPresetRepository.findAll()
                 .stream()
-                .map(busPreset -> BusPresetRes.of(busPresetRepository.getById(busPreset.getId())))
+                .map(BusPresetRes::of)
                 .toList();
         return ResponseData.ok("프리셋 전체 조회 성공", busPresetResList);
     }
