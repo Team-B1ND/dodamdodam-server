@@ -72,12 +72,16 @@ public class BusUseCase {
     @Transactional(rollbackFor = Exception.class)
     public Response modifyStatus(int id, BusStatus status){
         Bus bus = busRepository.getById(id);
+        checkStatusForUpdate(bus);
+        bus.setStatus(status);
+        return Response.noContent("버스 상태 변경 성공");
+    }
+
+    private void checkStatusForUpdate(Bus bus){
         if (bus.equals(BusStatus.ACTIVATE)) {
             BusApplication busApplication = busApplicationRepository.getBusApplicationByBus(bus);
             busApplication.updateStatus(BusApplicationStatus.EXPIRED);
         }
-        bus.setStatus(status);
-        return Response.noContent("버스 상태 변경 성공");
     }
 
     @Transactional(rollbackFor = Exception.class)
