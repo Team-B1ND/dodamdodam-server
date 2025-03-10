@@ -4,6 +4,7 @@ import b1nd.dodam.domain.rds.club.enumeration.ClubStatus;
 import b1nd.dodam.domain.rds.club.enumeration.ClubTimeType;
 import b1nd.dodam.domain.rds.club.service.ClubMemberService;
 import b1nd.dodam.domain.rds.club.service.ClubService;
+import b1nd.dodam.domain.rds.member.entity.Member;
 import b1nd.dodam.domain.rds.member.entity.Student;
 import b1nd.dodam.domain.rds.member.repository.StudentRepository;
 import b1nd.dodam.restapi.auth.infrastructure.security.support.MemberAuthenticationHolder;
@@ -55,9 +56,10 @@ public class ClubMemberUseCase {
 
     @Transactional(readOnly = true)
     public ResponseData<List<StudentWithImageRes>> getGradeStudents(boolean isSelf) {
+        Member member = authenticationHolder.current();
         return ResponseData.ok("학년 불러오기 성공", isSelf
-            ? clubMemberService.getAllGradeStudent().stream().map(StudentWithImageRes::of).toList()
-            : clubMemberService.getSecondGradeStudent().stream().map(StudentWithImageRes::of).toList()
+            ? clubMemberService.getAllGradeStudent(member).stream().map(StudentWithImageRes::of).toList()
+            : clubMemberService.getSecondGradeStudent(member).stream().map(StudentWithImageRes::of).toList()
         );
     }
 
