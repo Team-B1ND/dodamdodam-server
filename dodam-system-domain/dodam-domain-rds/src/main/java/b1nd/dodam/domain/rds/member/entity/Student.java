@@ -32,7 +32,7 @@ public class Student {
     @Column(unique = true)
     private String code;
 
-    @Column(nullable = false, columnDefinition = "BOOLEAN DEFAULT FALSE")
+    @Column(columnDefinition = "BOOLEAN DEFAULT FALSE")
     private Boolean busSubscribe;
 
     @Builder
