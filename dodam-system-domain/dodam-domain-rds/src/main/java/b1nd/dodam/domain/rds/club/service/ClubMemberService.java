@@ -10,6 +10,7 @@ import b1nd.dodam.domain.rds.club.repository.ClubMemberRepository;
 import b1nd.dodam.domain.rds.club.repository.ClubRepository;
 import b1nd.dodam.domain.rds.member.entity.Member;
 import b1nd.dodam.domain.rds.member.entity.Student;
+import b1nd.dodam.domain.rds.member.enumeration.ActiveStatus;
 import b1nd.dodam.domain.rds.member.repository.StudentRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -45,11 +46,11 @@ public class ClubMemberService {
     }
 
     public List<Student> getSecondGradeStudent() {
-        return clubMemberRepository.findSecondGradeStudentsNotInClubMember();
+        return clubMemberRepository.findSecondGradeStudentsNotInClubMember(ActiveStatus.ACTIVE);
     }
 
     public List<Student> getAllGradeStudent() {
-        return studentRepository.findAll();
+        return studentRepository.findAllByMember_Status(ActiveStatus.ACTIVE);
     }
 
     public List<ClubMember> getAllowedMembersByClub(Club club) {
@@ -123,6 +124,12 @@ public class ClubMemberService {
         return clubMemberRepository.findAllByClubAndPermission(club, ClubPermission.CLUB_MEMBER);
     }
 
+    public void setDeleteAllClubMembers(Club club) {
+        List<ClubMember> clubMembers = clubMemberRepository.findByClub(club);
+        clubMembers.forEach(cm -> cm.modifyStatus(ClubStatus.DELETED));
+        clubMemberRepository.saveAll(clubMembers);
+    }
+
     public void setDeleteClubMembers(Club club) {
         List<ClubMember> clubMembers = clubMemberRepository.findByClubAndClubStatusNot(club, ClubStatus.ALLOWED);
         clubMembers.forEach(cm -> cm.modifyStatus(ClubStatus.DELETED));
@@ -130,7 +137,9 @@ public class ClubMemberService {
     }
 
     public void validateAndRejectLeader(Club club, Student leader, List<Student> students) {
-        rejectActivityClubMember(leader);
+        if (club.getType() == ClubType.CREATIVE_ACTIVITY_CLUB) {
+            rejectActivityClubMember(leader);
+        }
         validateLeaderInList(leader, students);
         validateByLeaderAndClubMemberDuplicated(leader, students, club);
     }

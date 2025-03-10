@@ -74,6 +74,7 @@ class SecurityConfig {
                 .requestMatchers(GET, "/conference").permitAll()
 
                 .requestMatchers(GET, "/meal/**").permitAll()
+                .requestMatchers(POST, "/meal").hasAnyRole(ADMIN, TEACHER)
 
                 .requestMatchers("/wakeup-song/**").permitAll()
 
