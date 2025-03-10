@@ -11,7 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class MealUseCase {
 
-    @Cacheable(value = "meal-day", key = "#meal.date.toString()")
+    @Cacheable(value = "meal-day", key = "#meal.date.format(T(java.time.format.DateTimeFormatter).ofPattern('yyyy-M-d'))")
     public Meal saveMeal(Meal meal) {
         return meal;
     }
