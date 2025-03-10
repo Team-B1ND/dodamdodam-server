@@ -53,8 +53,8 @@ public class ClubMemberService {
         return studentRepository.findAllByMember_Status(ActiveStatus.ACTIVE);
     }
 
-    public List<ClubMember> getAllowedMembersByClub(Club club) {
-        return clubMemberRepository.findByClubAndClubStatus(club, ClubStatus.ALLOWED);
+    public ClubMember getClubMemberByStudentAndClub(Club club, Student student) {
+        return clubMemberRepository.findByClubAndStudentAndClubStatusNot(club, student, ClubStatus.DELETED);
     }
 
     public List<ClubMember> findUserAllowedClub(Member member) {
@@ -152,7 +152,7 @@ public class ClubMemberService {
     }
 
     public void validateByClubAndStudent(Club clubId, Student student) {
-        if (!(clubMemberRepository.findByClubAndStudent(clubId, student) == null)) {
+        if (!(clubMemberRepository.findByClubAndStudentAndClubStatusNot(clubId, student, ClubStatus.DELETED) == null)) {
             throw new ClubJoinedException();
         }
     }
