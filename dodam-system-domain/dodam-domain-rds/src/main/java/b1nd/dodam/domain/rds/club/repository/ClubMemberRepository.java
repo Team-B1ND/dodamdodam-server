@@ -22,10 +22,6 @@ public interface ClubMemberRepository extends JpaRepository<ClubMember, Long> {
         return findByIdAndStudent(id, student).orElseThrow(ClubMemberNotFoundException::new);
     }
 
-    default ClubMember getByClubMemberId(long id) {
-        return findById(id).orElseThrow(ClubMemberNotFoundException::new);
-    }
-
     default ClubMember getByClubAndPermissionAndStatus(Club club, ClubPermission permission, ClubStatus status) {
         return findByClubAndPermissionAndClubStatus(club, permission, status).orElseThrow(ClubMemberNotFoundException::new);
     }
@@ -107,6 +103,17 @@ public interface ClubMemberRepository extends JpaRepository<ClubMember, Long> {
             @Param("clubType") ClubType clubType
     );
 
+    @Query("""
+    SELECT s FROM student s
+    WHERE NOT EXISTS (
+        SELECT cm FROM club_member cm
+        WHERE cm.student = s
+        AND cm.clubStatus = :allowedStatus
+        AND cm.club.type = :clubType
+    )
+    """)
+    List<Student> findByClubMemberNotIn(@Param("allowedStatus") ClubStatus allowedStatus,  @Param("clubType") ClubType clubType);
+
     Optional<ClubMember> findByClubAndPermissionAndClubStatus(Club club, ClubPermission permission, ClubStatus clubStatus);
 
     Optional<ClubMember> findByIdAndStudent(Long id, Student student);
@@ -117,11 +124,14 @@ public interface ClubMemberRepository extends JpaRepository<ClubMember, Long> {
 
     ClubMember findByClubAndStudentAndPermission(Club club, Student student, ClubPermission permission);
 
-    ClubMember findByClubAndStudent(Club club, Student student);
+    ClubMember findByClubAndStudentAndClubStatusNot(Club club, Student student, ClubStatus clubStatus);
 
     List<ClubMember> findAllByPermission(ClubPermission permission);
 
     List<ClubMember> findByClubAndClubStatusNot(Club club, ClubStatus clubStatus);
 
     List<ClubMember> findByClub(Club club);
+
+    List<ClubMember> findByClubAndClubStatus(Club club, ClubStatus clubStatus);
+
 }
