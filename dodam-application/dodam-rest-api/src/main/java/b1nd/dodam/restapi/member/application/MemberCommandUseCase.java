@@ -63,7 +63,7 @@ public class MemberCommandUseCase {
 
     public Response join(String userAgent, JoinTeacherReq req) {
         checkIfIdIsDuplicate(req.id());
-        memberRedisService.validateUserAuth(userAgent, true);
+        memberRedisService.validateUserAuth(userAgent, false);
         Member member = memberRepository.save(req.mapToMember(encodePw(req.pw())));
         teacherRepository.save(req.mapToTeacher(member));
         return Response.created("선생님 회원가입 성공");
