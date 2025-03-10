@@ -13,6 +13,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.time.Duration;
 import java.util.Base64;
+import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -62,14 +63,15 @@ public class MemberRedisService {
         redisTemplate.expire(key, Duration.ofMinutes(AUTH_ACCESS_EXPIRATION));
     }
 
-    public void validateUserAgent(String userAgent) {
+    public void validateUserAuth(String userAgent, boolean requireEmail) {
         String key = memberRedisProperties.getAccess().key() + ":" + hashUserAgent(userAgent);
+        Map<Object, Object> authData = redisTemplate.opsForHash().entries(key);
 
-        if (!Boolean.TRUE.equals(redisTemplate.hasKey(key))) {
+        if (authData.isEmpty() || !authData.containsKey(AuthType.PHONE.name())) {
             throw new AuthInvalidException();
         }
 
-        if (!redisTemplate.opsForHash().hasKey(key, AuthType.PHONE.name())) {
+        if (requireEmail && !authData.containsKey(AuthType.EMAIL.name())) {
             throw new AuthInvalidException();
         }
     }

@@ -50,7 +50,7 @@ public class MemberCommandUseCase {
 
     public Response join(String userAgent, JoinStudentReq req) {
         checkIfIdIsDuplicate(req.id());
-        memberRedisService.validateUserAgent(userAgent);
+        memberRedisService.validateUserAuth(userAgent, true);
         Member member = memberRepository.save(req.mapToMember(encodePw(req.pw())));
         Student student = studentRepository.save(req.mapToStudent(member));
         publishStudentRegisteredEvent(student);
@@ -63,7 +63,7 @@ public class MemberCommandUseCase {
 
     public Response join(String userAgent, JoinTeacherReq req) {
         checkIfIdIsDuplicate(req.id());
-        memberRedisService.validateUserAgent(userAgent);
+        memberRedisService.validateUserAuth(userAgent, true);
         Member member = memberRepository.save(req.mapToMember(encodePw(req.pw())));
         teacherRepository.save(req.mapToTeacher(member));
         return Response.created("선생님 회원가입 성공");
@@ -71,7 +71,7 @@ public class MemberCommandUseCase {
 
     public Response join(String userAgent, JoinParentReq req) {
         checkIfIdIsDuplicate(req.id());
-        memberRedisService.validateUserAgent(userAgent);
+        memberRedisService.validateUserAuth(userAgent, false);
         Member member = memberRepository.save(req.mapToMember(encodePw(req.pw())));
         Parent parent = parentRepository.save(req.mapToParent(member));
         req.relationInfo()
