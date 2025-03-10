@@ -36,7 +36,7 @@ public class ClubService {
     }
 
     public List<Club> getCreativeActivityClubs() {
-        return clubRepository.findByType(ClubType.CREATIVE_ACTIVITY_CLUB);
+        return clubRepository.findByTypeAndState(ClubType.CREATIVE_ACTIVITY_CLUB, ClubStatus.ALLOWED);
     }
 
     public void update(Club club) {

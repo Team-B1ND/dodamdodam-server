@@ -31,7 +31,7 @@ public class ClubController {
     }
 
     @PostMapping("/sort")
-    public ResponseData<?> sort() {
+    public ResponseData<ClubAllocationResultRes> sort() {
         return clubApplicationUseCase.sortClubMembers();
     }
 

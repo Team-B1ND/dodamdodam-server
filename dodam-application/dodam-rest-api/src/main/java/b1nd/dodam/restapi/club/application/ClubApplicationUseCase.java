@@ -2,7 +2,6 @@ package b1nd.dodam.restapi.club.application;
 
 import b1nd.dodam.domain.rds.club.entity.Club;
 import b1nd.dodam.domain.rds.club.entity.ClubMember;
-import b1nd.dodam.domain.rds.club.enumeration.ClubPriority;
 import b1nd.dodam.domain.rds.club.enumeration.ClubStatus;
 import b1nd.dodam.domain.rds.club.exception.ClubNotFoundException;
 import b1nd.dodam.domain.rds.club.service.ClubMemberService;
@@ -16,12 +15,14 @@ import b1nd.dodam.restapi.support.assignment.ClubAllocator;
 import b1nd.dodam.restapi.support.data.ResponseData;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
 @Component
 @RequiredArgsConstructor
+@Transactional
 public class ClubApplicationUseCase {
     private final ClubService clubService;
     private final ClubAllocator clubAllocator;

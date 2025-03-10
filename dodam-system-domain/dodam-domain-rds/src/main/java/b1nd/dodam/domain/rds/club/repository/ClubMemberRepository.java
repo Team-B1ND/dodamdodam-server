@@ -105,7 +105,9 @@ public interface ClubMemberRepository extends JpaRepository<ClubMember, Long> {
 
     @Query("""
     SELECT s FROM student s
-    WHERE NOT EXISTS (
+    WHERE s.grade IN (1, 2)
+    AND s.member.status = 'ACTIVE'
+    AND NOT EXISTS (
         SELECT cm FROM club_member cm
         WHERE cm.student = s
         AND cm.clubStatus = :allowedStatus

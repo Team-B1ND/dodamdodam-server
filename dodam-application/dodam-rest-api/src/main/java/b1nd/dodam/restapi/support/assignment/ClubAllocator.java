@@ -3,6 +3,7 @@ package b1nd.dodam.restapi.support.assignment;
 import b1nd.dodam.domain.rds.club.entity.Club;
 import b1nd.dodam.domain.rds.club.entity.ClubMember;
 import b1nd.dodam.domain.rds.club.enumeration.ClubPriority;
+import b1nd.dodam.domain.rds.club.service.ClubMemberService;
 import b1nd.dodam.domain.rds.member.entity.Student;
 import b1nd.dodam.restapi.club.application.data.res.ClubAcceptedMembersRes;
 import b1nd.dodam.restapi.club.application.data.res.ClubAllocationResultRes;
@@ -17,6 +18,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class ClubAllocator {
     private static final int MAX_MEMBERS_PER_CLUB = 18;
+    private final ClubMemberService clubMemberService;
 
     public ClubAllocationResultRes allocate(
             List<Club> clubs,
@@ -37,7 +39,7 @@ public class ClubAllocator {
 
         return new ClubAllocationResultRes(
                 toActivate.size(),
-                new ArrayList<>(),
+                clubMemberService.getStudentsNotInClub().stream().map(StudentRes::of).toList(),
                 clubAcceptedMembersList
         );
     }
