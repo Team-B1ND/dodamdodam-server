@@ -3,7 +3,6 @@ package b1nd.dodam.restapi.member.application.data.res;
 import b1nd.dodam.domain.rds.member.entity.Student;
 
 import java.io.Serializable;
-import java.util.List;
 
 public record StudentRes(
         int id,
