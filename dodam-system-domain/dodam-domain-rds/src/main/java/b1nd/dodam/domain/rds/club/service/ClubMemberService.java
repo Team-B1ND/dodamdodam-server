@@ -41,6 +41,10 @@ public class ClubMemberService {
         clubMemberRepository.save(clubMember);
     }
 
+    public List<Student> getStudentsNotInClub() {
+        return clubMemberRepository.findByClubMemberNotIn(ClubStatus.ALLOWED, ClubType.CREATIVE_ACTIVITY_CLUB);
+    }
+
     public List<Student> getSecondGradeStudent(Member member) {
         return clubMemberRepository.findSecondGradeStudentsNotInClubMember(ActiveStatus.ACTIVE, member);
     }
