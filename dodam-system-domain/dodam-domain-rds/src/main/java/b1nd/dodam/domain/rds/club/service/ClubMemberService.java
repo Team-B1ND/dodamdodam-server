@@ -41,12 +41,12 @@ public class ClubMemberService {
         clubMemberRepository.save(clubMember);
     }
 
-    public List<Student> getSecondGradeStudent() {
-        return clubMemberRepository.findSecondGradeStudentsNotInClubMember(ActiveStatus.ACTIVE);
+    public List<Student> getSecondGradeStudent(Member member) {
+        return clubMemberRepository.findSecondGradeStudentsNotInClubMember(ActiveStatus.ACTIVE, member);
     }
 
-    public List<Student> getAllGradeStudent() {
-        return studentRepository.findAllByMember_Status(ActiveStatus.ACTIVE);
+    public List<Student> getAllGradeStudent(Member member) {
+        return studentRepository.findAllByMember_StatusAndMemberNot(ActiveStatus.ACTIVE, member);
     }
 
     public List<ClubMember> findUserAllowedClub(Member member) {
