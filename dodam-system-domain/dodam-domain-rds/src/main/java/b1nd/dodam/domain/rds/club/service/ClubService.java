@@ -68,7 +68,8 @@ public class ClubService {
     }
 
     public void deleteClub(Club club) {
-        club.updateStatus(club.getName() + DELETED_PREFIX, ClubStatus.DELETED);
+        String uniqueDeletedName = DELETED_PREFIX + "_" + System.currentTimeMillis();
+        club.updateStatus(club.getName() + uniqueDeletedName, ClubStatus.DELETED);
         clubRepository.save(club);
     }
 

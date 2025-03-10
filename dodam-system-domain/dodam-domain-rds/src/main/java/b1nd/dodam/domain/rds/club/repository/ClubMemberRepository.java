@@ -6,6 +6,7 @@ import b1nd.dodam.domain.rds.club.enumeration.ClubPermission;
 import b1nd.dodam.domain.rds.club.enumeration.ClubStatus;
 import b1nd.dodam.domain.rds.club.enumeration.ClubType;
 import b1nd.dodam.domain.rds.club.exception.ClubMemberNotFoundException;
+import b1nd.dodam.domain.rds.member.entity.Member;
 import b1nd.dodam.domain.rds.member.entity.Student;
 import b1nd.dodam.domain.rds.member.enumeration.ActiveStatus;
 import org.springframework.data.jpa.repository.EntityGraph;
@@ -71,8 +72,9 @@ public interface ClubMemberRepository extends JpaRepository<ClubMember, Long> {
     WHERE cm.student.id IS NULL
     AND s.member.status = :activeStatus
     AND s.grade = 2
+    AND s.member != :member
     """)
-    List<Student> findSecondGradeStudentsNotInClubMember(@Param("activeStatus") ActiveStatus activeStatus);
+    List<Student> findSecondGradeStudentsNotInClubMember(@Param("activeStatus") ActiveStatus activeStatus, @Param("member") Member member);
 
     @Query("""
     SELECT cm FROM club_member cm
