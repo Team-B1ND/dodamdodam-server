@@ -2,6 +2,7 @@ package b1nd.dodam.domain.rds.club.repository;
 
 import b1nd.dodam.domain.rds.club.entity.Club;
 import b1nd.dodam.domain.rds.club.enumeration.ClubStatus;
+import b1nd.dodam.domain.rds.club.enumeration.ClubType;
 import b1nd.dodam.domain.rds.club.exception.ClubNotFoundException;
 import jakarta.persistence.LockModeType;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -33,4 +34,6 @@ public interface ClubRepository extends JpaRepository<Club, Long> {
     Optional<Club> findByIdAndState(Long id, ClubStatus state);
 
     List<Club> findByIdIn(List<Long> ids);
+
+    List<Club> findByTypeAndState(ClubType clubType,  ClubStatus clubStatus);
 }

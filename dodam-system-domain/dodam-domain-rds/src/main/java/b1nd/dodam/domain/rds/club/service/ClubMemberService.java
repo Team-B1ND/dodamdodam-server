@@ -41,12 +41,20 @@ public class ClubMemberService {
         clubMemberRepository.save(clubMember);
     }
 
+    public List<Student> getStudentsNotInClub() {
+        return clubMemberRepository.findByClubMemberNotIn(ClubStatus.ALLOWED, ClubType.CREATIVE_ACTIVITY_CLUB);
+    }
+
     public List<Student> getSecondGradeStudent(Member member) {
         return clubMemberRepository.findSecondGradeStudentsNotInClubMember(ActiveStatus.ACTIVE, member);
     }
 
     public List<Student> getAllGradeStudent(Member member) {
         return studentRepository.findAllByMember_StatusAndMemberNot(ActiveStatus.ACTIVE, member);
+    }
+
+    public ClubMember getClubMemberByStudentAndClub(Club club, Student student) {
+        return clubMemberRepository.findByClubAndStudentAndClubStatusNot(club, student, ClubStatus.DELETED);
     }
 
     public List<ClubMember> findUserAllowedClub(Member member) {
@@ -73,6 +81,15 @@ public class ClubMemberService {
             throw new ClubNotFoundException();
         }
         return clubMembers;
+    }
+
+    public List<ClubMember> getPendingMembersByClub(Club club) {
+        return clubMemberRepository.findByClubAndClubStatus(club, ClubStatus.PENDING);
+    }
+
+    public void updateStatus(List<ClubMember> members, ClubStatus status) {
+        members.forEach(member -> member.modifyStatus(status));
+        clubMemberRepository.saveAll(members);
     }
 
     public List<Club> getStudentClubStatus(Student student) {
@@ -135,7 +152,7 @@ public class ClubMemberService {
     }
 
     public void validateByClubAndStudent(Club clubId, Student student) {
-        if (!(clubMemberRepository.findByClubAndStudent(clubId, student) == null)) {
+        if (!(clubMemberRepository.findByClubAndStudentAndClubStatusNot(clubId, student, ClubStatus.DELETED) == null)) {
             throw new ClubJoinedException();
         }
     }
