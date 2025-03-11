@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -30,7 +31,16 @@ public class ClubApplicationUseCase {
         Map<Club, List<ClubMember>> clubMemberMap = createClubMemberMap(clubMembers);
         for(ClubPriority priority : ClubPriority.getClubPriorities()) {
             List<ClubMember> clubMemberList = clubMemberMap.entrySet().stream()
-                .flatMap(entry -> entry.getValue().stream()).toList()
+                .flatMap(entry -> {
+                    List<ClubMember> members = entry.getValue();
+                    int allowedCount = (int) members.stream().filter(m -> m.getClubStatus() == ClubStatus.ALLOWED).count();
+                    List<ClubMember> shuffledList = members.stream().filter(member -> member.getPriority() == priority).collect(Collectors.toList());
+                    Collections.shuffle(shuffledList);
+
+                    return shuffledList.stream()
+                            .filter(member -> member.getClubStatus() == ClubStatus.PENDING)
+                            .limit(Math.max(0, MAX_STUDENT_COUNT - allowedCount));
+                }).toList()
                 .stream()
                 .filter(member -> member.getPriority() == priority)
                 .collect(Collectors.collectingAndThen(Collectors.toList(), list -> {
