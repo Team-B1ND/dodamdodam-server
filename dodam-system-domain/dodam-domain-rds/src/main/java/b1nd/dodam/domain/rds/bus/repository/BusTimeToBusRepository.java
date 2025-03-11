@@ -11,4 +11,6 @@ import java.util.List;
 public interface BusTimeToBusRepository extends JpaRepository<BusTimeToBus, Integer> {
     @EntityGraph(attributePaths = {"busTime", "bus"})
     List<BusTimeToBus> findAllByBusTime(@Param("busTime") BusTime busTime);
+
+    BusTimeToBus findByBus_Id(int id);
 }
