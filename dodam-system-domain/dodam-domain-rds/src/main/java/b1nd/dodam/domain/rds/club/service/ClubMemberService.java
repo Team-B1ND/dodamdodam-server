@@ -76,7 +76,7 @@ public class ClubMemberService {
     }
 
     public List<ClubMember> findAllCreativeClubByStudent(Student student) {
-        List<ClubMember> clubMembers = clubMemberRepository.findByStudentAndClubStatusAndClub_TypeAndClub_State(student, ClubStatus.PENDING, ClubType.CREATIVE_ACTIVITY_CLUB, ClubStatus.ALLOWED);
+        List<ClubMember> clubMembers = clubMemberRepository.findByStudentAndClubStatusInAndClub_TypeAndClub_State(student, List.of(ClubStatus.PENDING), ClubType.CREATIVE_ACTIVITY_CLUB, ClubStatus.ALLOWED);
         if(clubMembers.isEmpty()) {
             throw new ClubNotFoundException();
         }
@@ -158,7 +158,7 @@ public class ClubMemberService {
     }
 
     public boolean isCreativeClubJoined(Student student) {
-        return !clubMemberRepository.findByStudentAndClubStatus(student, ClubStatus.ALLOWED).isEmpty();
+        return !clubMemberRepository.findByStudentAndClubStatusInAndClub_TypeAndClub_State(student, List.of(ClubStatus.ALLOWED, ClubStatus.PENDING), ClubType.CREATIVE_ACTIVITY_CLUB, ClubStatus.ALLOWED).isEmpty();
     }
 
     public boolean isClubLeader(Long clubId,  Member member) {
