@@ -2,61 +2,54 @@ package b1nd.dodam.restapi.club.application;
 
 import b1nd.dodam.domain.rds.club.entity.Club;
 import b1nd.dodam.domain.rds.club.entity.ClubMember;
+import b1nd.dodam.domain.rds.club.enumeration.ClubPriority;
 import b1nd.dodam.domain.rds.club.enumeration.ClubStatus;
-import b1nd.dodam.domain.rds.club.exception.ClubNotFoundException;
 import b1nd.dodam.domain.rds.club.service.ClubMemberService;
 import b1nd.dodam.domain.rds.club.service.ClubService;
-import b1nd.dodam.domain.rds.member.entity.Student;
-import b1nd.dodam.domain.rds.member.repository.StudentRepository;
-import b1nd.dodam.restapi.club.application.data.res.ClubAcceptedMembersRes;
-import b1nd.dodam.restapi.club.application.data.res.ClubAllocationResultRes;
-import b1nd.dodam.restapi.member.application.data.res.StudentRes;
-import b1nd.dodam.restapi.support.assignment.ClubAllocator;
-import b1nd.dodam.restapi.support.data.ResponseData;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Component
 @RequiredArgsConstructor
-@Transactional
+@Transactional(rollbackFor = Exception.class)
 public class ClubApplicationUseCase {
     private final ClubService clubService;
-    private final ClubAllocator clubAllocator;
     private final ClubMemberService clubMemberService;
-    private final StudentRepository studentRepository;
+    private static final int MAX_STUDENT_COUNT = 22;
 
-    public ResponseData<ClubAllocationResultRes> sortClubMembers() {
+    //TODO 기존 부원 고려하는 식으로 변경 -> 성능 개선 -> 테스트 -> 성능 개선
+    public void assignmentClubMembers() {
         List<Club> clubs = clubService.getCreativeActivityClubs();
-        if (clubs.isEmpty()) {
-            throw new ClubNotFoundException();
+        List<ClubMember> clubMembers = clubMemberService.getPendingAndAllowedMembersByClubs(clubs);
+        Map<Club, List<ClubMember>> clubMemberMap = createClubMemberMap(clubMembers);
+        for(ClubPriority priority : ClubPriority.getClubPriorities()) {
+            List<ClubMember> clubMemberList = clubMemberMap.entrySet().stream()
+                .flatMap(entry -> entry.getValue().stream()).toList()
+                .stream()
+                .filter(member -> member.getPriority() == priority)
+                .collect(Collectors.collectingAndThen(Collectors.toList(), list -> {
+                    Collections.shuffle(list);
+                    return list.subList(0, Math.min(MAX_STUDENT_COUNT-(getAllowedMemberSize(list)), list.size()));
+                }))
+                .stream().filter(member -> member.getClubStatus() == ClubStatus.PENDING)
+                .toList();
+            clubMemberService.updateStatus(clubMemberList, ClubStatus.ALLOWED);
         }
-        Map<Student, List<ClubMember>> studentApplications = getAllPendingMembers(clubs);
-        ClubAllocationResultRes allocationResult = clubAllocator.allocate(clubs, studentApplications);
-
-        List<ClubMember> toActivate = new ArrayList<>();
-        for (ClubAcceptedMembersRes clubRes : allocationResult.clubAcceptedMembers()) {
-            for (StudentRes studentRes : clubRes.acceptedStudents()) {
-                toActivate.add(clubMemberService.getClubMemberByStudentAndClub(clubService.findById(clubRes.clubId()), studentRepository.getById(studentRes.id())));
-            }
-        }
-        clubMemberService.updateStatus(toActivate, ClubStatus.ALLOWED);
-        return ResponseData.ok("동아리 배정 성공", allocationResult);
+        clubMemberService.saveClubMembers(clubMembers);
     }
 
-    private Map<Student, List<ClubMember>> getAllPendingMembers(List<Club> clubs) {
-        return groupByStudent(
-            clubs.stream()
-                .flatMap(club -> clubMemberService.getPendingMembersByClub(club).stream())
-                .toList()
-        );
+    private int getAllowedMemberSize(List<ClubMember> clubMembers) {
+        return clubMembers.stream().filter(member -> member.getClubStatus() == ClubStatus.ALLOWED).toList().size();
     }
 
-    private Map<Student, List<ClubMember>> groupByStudent(List<ClubMember> members) {
-        return members.stream()
-            .collect(Collectors.groupingBy(ClubMember::getStudent));
+    private Map<Club, List<ClubMember>> createClubMemberMap(List<ClubMember> clubMembers) {
+        return clubMembers.stream()
+            .collect(Collectors.groupingBy(ClubMember::getClub));
     }
 }

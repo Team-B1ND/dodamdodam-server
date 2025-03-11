@@ -10,4 +10,9 @@ public record ClubAcceptedMembersRes(
         String clubName,
         List<StudentRes> acceptedStudents
 ) {
+    static ClubAcceptedMembersRes createEmptyAcceptedStudents(){
+        return new ClubAcceptedMembersRes(
+
+        );
+    }
 }

@@ -32,7 +32,7 @@ public class ClubController {
 
     @PostMapping("/sort")
     public ResponseData<ClubAllocationResultRes> sort() {
-        return clubApplicationUseCase.sortClubMembers();
+        return clubApplicationUseCase.assignmentClubMembers();
     }
 
     @PostMapping("/status")

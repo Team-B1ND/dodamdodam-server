@@ -87,9 +87,15 @@ public class ClubMemberService {
         return clubMemberRepository.findByClubAndClubStatus(club, ClubStatus.PENDING);
     }
 
+    public List<ClubMember> getPendingAndAllowedMembersByClubs(List<Club> clubs) {
+        return clubMemberRepository.findByClubInAndClubStatusNotIn(clubs, ClubStatus.getNotAllowedStatuses());
+    }
+
     public void updateStatus(List<ClubMember> members, ClubStatus status) {
         members.forEach(member -> member.modifyStatus(status));
-        clubMemberRepository.saveAll(members);
+        List<Student> students = members.stream().map(ClubMember::getStudent).toList();
+        List<ClubMember> selectedClubMembers = clubMemberRepository.findByStudentInAndClubStatusNot(students, status);
+        selectedClubMembers.forEach(clubMember -> clubMember.modifyStatus(ClubStatus.REJECTED));
     }
 
     public List<Club> getStudentClubStatus(Student student) {

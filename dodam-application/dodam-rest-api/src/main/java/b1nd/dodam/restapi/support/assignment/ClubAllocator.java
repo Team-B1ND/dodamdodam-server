@@ -51,9 +51,16 @@ public class ClubAllocator {
             List<ClubMember> toActivate,
             List<ClubAcceptedMembersRes> clubAcceptedMembersList
     ) {
-        processPriorityApplications(ClubPriority.CREATIVE_ACTIVITY_CLUB_1, studentApplications, existingAllowedCounts, assignedStudents, toActivate, clubAcceptedMembersList);
-        processPriorityApplications(ClubPriority.CREATIVE_ACTIVITY_CLUB_2, studentApplications, existingAllowedCounts, assignedStudents, toActivate, clubAcceptedMembersList);
-        processPriorityApplications(ClubPriority.CREATIVE_ACTIVITY_CLUB_3, studentApplications, existingAllowedCounts, assignedStudents, toActivate, clubAcceptedMembersList);
+        ClubPriority.getClubPriorities().forEach(clubPriority -> {
+            processPriorityApplications(
+                    clubPriority,
+                    studentApplications,
+                    existingAllowedCounts,
+                    assignedStudents,
+                    toActivate,
+                    clubAcceptedMembersList
+            );
+        });
     }
 
     private void processPriorityApplications(
@@ -72,24 +79,24 @@ public class ClubAllocator {
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
 
+
         Collections.shuffle(priorityApplications);
 
         for (ClubMember member : priorityApplications) {
             Club club = member.getClub();
             int currentAllowedCount = existingAllowedCounts.getOrDefault(club, 0);
-
-            if (currentAllowedCount < MAX_MEMBERS_PER_CLUB) {
-                toActivate.add(member);
-                assignedStudents.add(member.getStudent());
-                existingAllowedCounts.put(club, currentAllowedCount + 1);
-
-                StudentRes studentRes = StudentRes.of(member.getStudent());
-
-                clubAcceptedMembersList.stream()
-                        .filter(c -> c.clubName().equals(club.getName()))
-                        .findFirst()
-                        .ifPresent(c -> c.acceptedStudents().add(studentRes));
+            if (currentAllowedCount > MAX_MEMBERS_PER_CLUB) {
+                continue;
             }
+            toActivate.add(member);
+            assignedStudents.add(member.getStudent());
+            existingAllowedCounts.put(club, currentAllowedCount + 1);
+
+            StudentRes studentRes = StudentRes.of(member.getStudent());
+            clubAcceptedMembersList.stream()
+                    .filter(c -> c.clubName().equals(club.getName()))
+                    .findFirst()
+                    .ifPresent(c -> c.acceptedStudents().add(studentRes));
         }
     }
 }

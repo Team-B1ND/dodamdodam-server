@@ -138,4 +138,8 @@ public interface ClubMemberRepository extends JpaRepository<ClubMember, Long> {
 
     List<ClubMember> findByClubAndClubStatus(Club club, ClubStatus clubStatus);
 
+    @EntityGraph(attributePaths = {"club", "student"})
+    List<ClubMember> findByClubInAndClubStatusNotIn(List<Club> club, List<ClubStatus>  clubStatuses);
+
+    List<ClubMember> findByStudentInAndClubStatusNot(List<Student> student, ClubStatus clubStatus);
 }
