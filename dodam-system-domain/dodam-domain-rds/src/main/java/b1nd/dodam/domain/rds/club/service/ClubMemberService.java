@@ -141,7 +141,7 @@ public class ClubMemberService {
     }
 
     public boolean isCreativeClubJoined(Student student) {
-        return !clubMemberRepository.findByStudentAndClubStatus(student, ClubStatus.ALLOWED).isEmpty();
+        return !clubMemberRepository.findByStudentAndClubStatusAndClub_TypeAndClub_State(student, ClubStatus.ALLOWED, ClubType.CREATIVE_ACTIVITY_CLUB, ClubStatus.ALLOWED).isEmpty();
     }
 
     public boolean isClubLeader(Long clubId,  Member member) {
