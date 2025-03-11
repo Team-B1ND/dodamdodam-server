@@ -21,7 +21,7 @@ public interface BusRepository extends JpaRepository<Bus, Integer> {
     @Query("select b from bus b where b.id = :id")
     Optional<Bus> findByIdWithPessimisticLock(@Param("id") int id);
 
-    List<Bus> findBusByStatusAndLeaveTimeBetween(BusStatus status, LocalDateTime startAt, LocalDateTime endAt);
+    List<Bus> findBusByStatus(BusStatus status);
 
     List<Bus> findAllByOrderByIdDesc(Pageable pageable);
 

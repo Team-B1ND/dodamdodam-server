@@ -74,6 +74,7 @@ class SecurityConfig {
                 .requestMatchers(GET, "/conference").permitAll()
 
                 .requestMatchers(GET, "/meal/**").permitAll()
+                .requestMatchers(POST, "/meal").hasAnyRole(ADMIN, TEACHER)
 
                 .requestMatchers("/wakeup-song/**").permitAll()
 
@@ -125,6 +126,13 @@ class SecurityConfig {
                 .requestMatchers(POST, "/notice").hasAnyRole(TEACHER, ADMIN)
                 .requestMatchers(PATCH, "/notice/{id}/create").hasAnyRole(TEACHER, ADMIN)
                 .requestMatchers(GET, "/notice/**").authenticated()
+
+                .requestMatchers(POST, "/clubs/state").hasAnyRole(TEACHER, ADMIN)
+                .requestMatchers(POST, "/clubs/time").hasAnyRole(TEACHER, ADMIN)
+                .requestMatchers(POST, "/clubs/{id}/teacher").hasAnyRole(TEACHER, ADMIN)
+                .requestMatchers(GET, "/clubs/{id}/waiting").hasAnyRole(TEACHER, ADMIN)
+                .requestMatchers(GET, "/clubs/join-requests/received").authenticated()
+                .requestMatchers(GET, "/clubs/join-requests/{studentId}").hasAnyRole(TEACHER, ADMIN)
 
                 .anyRequest().authenticated()
                 .and()

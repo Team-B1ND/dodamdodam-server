@@ -45,6 +45,8 @@ public interface StudentRepository extends JpaRepository<Student, Integer> {
     @Query("SELECT m FROM student s JOIN s.member m")
     List<Member> findAllMembers();
 
+    List<Student> findAllByMember_StatusAndMemberNot(ActiveStatus memberStatus, Member member);
+
     Long countByMemberStatus(ActiveStatus memberStatus);
 
     @Query("SELECT m FROM student s JOIN s.member m WHERE s.grade = :grade")

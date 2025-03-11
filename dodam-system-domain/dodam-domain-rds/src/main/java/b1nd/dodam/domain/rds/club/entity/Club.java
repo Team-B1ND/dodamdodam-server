@@ -30,6 +30,7 @@ public class Club extends BaseEntity {
     private String description;
 
     @NotNull
+    @Column(columnDefinition = "TEXT")
     private String image;
 
     @NotNull
@@ -47,6 +48,8 @@ public class Club extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private ClubStatus state;
 
+    private String reason;
+
     @Builder
     public Club(String name, String shortDescription, String description, String image, String subject, ClubType type, ClubStatus state) {
         this.name = name;
@@ -56,6 +59,11 @@ public class Club extends BaseEntity {
         this.subject = subject;
         this.type = type;
         this.state = state;
+    }
+
+    public void updateStatus(ClubStatus clubStatus, String reason) {
+        this.state = clubStatus;
+        this.reason = reason;
     }
 
     public void updateStatus(String name, ClubStatus clubStatus) {

@@ -4,7 +4,6 @@ import b1nd.dodam.client.core.exception.WebClientException;
 import b1nd.dodam.core.exception.CustomException;
 import b1nd.dodam.core.exception.global.GlobalExceptionCode;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Component;
@@ -16,7 +15,6 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 
 @Component
-@Slf4j
 @RequiredArgsConstructor
 public class WebClientSupport {
 
