@@ -30,8 +30,8 @@ public class ClubController {
         return clubUseCase.save(req);
     }
 
-    @PostMapping("/sort")
-    public ResponseData<ClubAllocationResultRes> sort() {
+    @PostMapping("/assignment")
+    public Response sort() {
         return clubApplicationUseCase.assignmentClubMembers();
     }
 
