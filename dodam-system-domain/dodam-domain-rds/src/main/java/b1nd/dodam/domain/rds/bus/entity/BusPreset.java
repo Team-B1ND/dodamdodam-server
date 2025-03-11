@@ -41,6 +41,4 @@ public class BusPreset {
         this.timeRequired = timeRequired;
     }
 
-
-
 }

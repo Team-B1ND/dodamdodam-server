@@ -3,12 +3,11 @@ package b1nd.dodam.restapi.bus.application;
 import b1nd.dodam.core.util.ZonedDateTimeUtil;
 import b1nd.dodam.domain.rds.bus.entity.Bus;
 import b1nd.dodam.domain.rds.bus.entity.BusApplication;
-import b1nd.dodam.domain.rds.bus.entity.BusPreset;
+import b1nd.dodam.domain.rds.bus.entity.BusTime;
+import b1nd.dodam.domain.rds.bus.entity.BusTimeToBus;
 import b1nd.dodam.domain.rds.bus.enumeration.BusApplicationStatus;
 import b1nd.dodam.domain.rds.bus.enumeration.BusStatus;
-import b1nd.dodam.domain.rds.bus.repository.BusApplicationRepository;
-import b1nd.dodam.domain.rds.bus.repository.BusPresetRepository;
-import b1nd.dodam.domain.rds.bus.repository.BusRepository;
+import b1nd.dodam.domain.rds.bus.repository.*;
 import b1nd.dodam.domain.rds.member.entity.Member;
 import b1nd.dodam.domain.rds.member.entity.Student;
 import b1nd.dodam.domain.rds.member.repository.StudentRepository;
@@ -16,7 +15,7 @@ import b1nd.dodam.firebase.client.FCMClient;
 import b1nd.dodam.restapi.auth.infrastructure.security.support.MemberAuthenticationHolder;
 import b1nd.dodam.restapi.bus.application.data.req.BusPresetReq;
 import b1nd.dodam.restapi.bus.application.data.req.BusReq;
-import b1nd.dodam.restapi.bus.application.data.req.BusWithPresetReq;
+import b1nd.dodam.restapi.bus.application.data.req.BusTimeReq;
 import b1nd.dodam.restapi.bus.application.data.res.BusMemberRes;
 import b1nd.dodam.restapi.bus.application.data.res.BusPresetRes;
 import b1nd.dodam.restapi.bus.application.data.res.BusRes;
@@ -40,19 +39,13 @@ public class BusUseCase {
     private final StudentRepository studentRepository;
     private final BusPresetRepository busPresetRepository;
     private final MemberAuthenticationHolder memberAuthenticationHolder;
+    private final BusTimeRepository busTimeRepository;
+    private final BusTimeToBusRepository busTimeToBusRepository;
     private final FCMClient fcmClient;
 
     @Transactional(rollbackFor = Exception.class)
     public Response register(BusReq req) {
         busRepository.save(req.mapToBus());
-        registerBus();
-        return Response.created("버스 등록 성공");
-    }
-
-    @Transactional(rollbackFor = Exception.class)
-    public Response register(int presetId, BusWithPresetReq req) {
-        BusPreset busPreset = busPresetRepository.getById(presetId);
-        busRepository.save(req.mapToBus(busPreset, req.leaveTime()));
         registerBus();
         return Response.created("버스 등록 성공");
     }
@@ -67,6 +60,16 @@ public class BusUseCase {
     public Response registerPreset(BusPresetReq req){
         busPresetRepository.save(req.mapToBusPreset());
         return Response.created("버스 프리셋 생성 성공");
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public Response registerTime(BusTimeReq req) {
+        BusTime busTime = busTimeRepository.save(req.mapToBusTime());
+        List<Bus> buses = req.busId().stream()
+                .map(busRepository::getById)
+                .toList();
+        busTimeToBusRepository.saveAll(req.mapBusTimeToBus(busTime, buses));
+        return Response.created("버스 신청 기간 생성 성공");
     }
 
     @Transactional(rollbackFor = Exception.class)
@@ -87,7 +90,7 @@ public class BusUseCase {
     @Transactional(rollbackFor = Exception.class)
     public Response modify(int id, BusReq req) {
         Bus bus = busRepository.getByIdForUpdate(id);
-        bus.updateBus(req.busName(), req.description(), req.peopleLimit(), req.leaveTime(), req.timeRequired());
+        bus.updateBus(req.busName(), req.description(), req.peopleLimit(), req.leaveAt(), req.leaveTime(), req.timeRequired());
         return Response.noContent("버스 수정 성공");
     }
 
@@ -140,6 +143,17 @@ public class BusUseCase {
     public ResponseData<BusPresetRes> getBusPresetInfo(int id){
         BusPresetRes busPresetRes = BusPresetRes.of(busPresetRepository.getById(id));
         return ResponseData.ok("프리셋 정보 조회 성공", busPresetRes);
+    }
+
+    public ResponseData<List<BusRes>> getBusByBusTime(int id){
+        BusTime busTime = busTimeRepository.getById(id);
+        List<Bus> buses = busTimeToBusRepository.findAllByBusTime(busTime).stream().map(BusTimeToBus::getBus).toList();
+        List<BusRes> busRes = buses.stream()
+                .map(bus -> BusRes.createFromBus(bus, getApplications(bus).stream()
+                        .map(BusMemberRes::createFromBusMember)
+                        .toList())
+                ).toList();
+        return ResponseData.ok("버스 불러오기 성공", busRes);
     }
 
     @Transactional(rollbackFor = Exception.class)
