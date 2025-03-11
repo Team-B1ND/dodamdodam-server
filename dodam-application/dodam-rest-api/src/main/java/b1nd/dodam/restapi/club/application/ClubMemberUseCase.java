@@ -36,7 +36,7 @@ public class ClubMemberUseCase {
         if (clubJoined) {
             filterCreativeClub(reqs);
         }
-        clubMemberService.saveClubMembers(reqs.stream()
+        clubMemberService.saveAndValidateClubMembers(reqs.stream()
             .map(req -> req.toEntity(student, clubMemberService.findClubIfNotClubMember(req.clubId(), ClubStatus.ALLOWED, student, ClubStatus.DELETED)))
             .toList()
         );

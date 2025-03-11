@@ -11,7 +11,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -25,7 +24,6 @@ public class ClubApplicationUseCase {
     private final ClubMemberService clubMemberService;
     private static final int MAX_STUDENT_COUNT = 22;
 
-    //TODO 기존 부원 고려하는 식으로 변경 -> 성능 개선 -> 테스트 -> 성능 개선
     public Response assignmentClubMembers() {
         List<Club> clubs = clubService.getCreativeActivityClubs();
         List<ClubMember> clubMembers = clubMemberService.getPendingAndAllowedMembersByClubs(clubs);

@@ -26,7 +26,11 @@ public class ClubMemberService {
     private final ClubMemberRepository clubMemberRepository;
     private final StudentRepository studentRepository;
 
-    public void saveClubMembers(List<ClubMember> clubMember) {
+    public void saveClubMembers(List<ClubMember> clubMembers) {
+        clubMemberRepository.saveAll(clubMembers);
+    }
+
+    public void saveAndValidateClubMembers(List<ClubMember> clubMember) {
         clubMember.forEach(c -> validateByClubAndStudent(c.getClub(), c.getStudent()));
         clubMemberRepository.saveAll(clubMember);
     }
