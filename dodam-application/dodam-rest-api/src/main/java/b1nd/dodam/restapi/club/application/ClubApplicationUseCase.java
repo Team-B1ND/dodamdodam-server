@@ -32,16 +32,14 @@ public class ClubApplicationUseCase {
         for(ClubPriority priority : ClubPriority.getClubPriorities()) {
             List<ClubMember> clubMemberList = clubMemberMap.entrySet().stream()
                     .flatMap(entry -> {
-                        Club club = entry.getKey();
                         List<ClubMember> members = entry.getValue();
-                        int remainingSlots = MAX_STUDENT_COUNT - getAllowedMemberSize(club, members);
+                        int remainingSlots = MAX_STUDENT_COUNT - getAllowedMemberSize(entry.getKey(), members);
                         if (remainingSlots <= 0) return Stream.empty();
                         List<ClubMember> priorityMembers = members.stream()
                                 .filter(member -> member.getPriority() == priority && member.getClubStatus() == ClubStatus.PENDING)
                                 .collect(Collectors.toList());
                         Collections.shuffle(priorityMembers);
-                        List<ClubMember> selectedMembers = priorityMembers.subList(0, Math.min(remainingSlots, priorityMembers.size()));
-                        return selectedMembers.stream();
+                        return priorityMembers.subList(0, Math.min(remainingSlots, priorityMembers.size())).stream();
                     })
                     .toList();
             clubMemberService.updateStatus(clubMemberList, ClubStatus.ALLOWED);
