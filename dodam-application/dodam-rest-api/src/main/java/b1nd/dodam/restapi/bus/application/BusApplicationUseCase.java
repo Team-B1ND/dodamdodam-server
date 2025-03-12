@@ -26,7 +26,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Component
-@Transactional(rollbackFor = Exception.class)
+@Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class BusApplicationUseCase {
 
