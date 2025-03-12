@@ -98,7 +98,7 @@ public class ClubMemberService {
     public void updateStatus(List<ClubMember> members, ClubStatus status) {
         members.forEach(member -> member.modifyStatus(status));
         List<Student> students = members.stream().map(ClubMember::getStudent).toList();
-        List<ClubMember> selectedClubMembers = clubMemberRepository.findByStudentInAndClubStatusNot(students, status);
+        List<ClubMember> selectedClubMembers = clubMemberRepository.findByStudentInAndClubStatusNotAndClub_Type(students, status, ClubType.CREATIVE_ACTIVITY_CLUB);
         selectedClubMembers.forEach(clubMember -> clubMember.modifyStatus(ClubStatus.REJECTED));
     }
 
