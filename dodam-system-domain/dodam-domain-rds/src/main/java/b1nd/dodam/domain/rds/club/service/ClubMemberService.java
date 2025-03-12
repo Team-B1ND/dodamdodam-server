@@ -3,6 +3,7 @@ package b1nd.dodam.domain.rds.club.service;
 import b1nd.dodam.domain.rds.club.entity.Club;
 import b1nd.dodam.domain.rds.club.entity.ClubMember;
 import b1nd.dodam.domain.rds.club.enumeration.ClubPermission;
+import b1nd.dodam.domain.rds.club.enumeration.ClubPriority;
 import b1nd.dodam.domain.rds.club.enumeration.ClubStatus;
 import b1nd.dodam.domain.rds.club.enumeration.ClubType;
 import b1nd.dodam.domain.rds.club.exception.*;
@@ -15,7 +16,9 @@ import b1nd.dodam.domain.rds.member.repository.StudentRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -45,10 +48,6 @@ public class ClubMemberService {
         clubMemberRepository.save(clubMember);
     }
 
-    public List<Student> getStudentsNotInClub() {
-        return clubMemberRepository.findByClubMemberNotIn(ClubStatus.ALLOWED, ClubType.CREATIVE_ACTIVITY_CLUB);
-    }
-
     public List<Student> getSecondGradeStudent(Member member) {
         return clubMemberRepository.findSecondGradeStudentsNotInClubMember(ActiveStatus.ACTIVE, member);
     }
@@ -57,9 +56,6 @@ public class ClubMemberService {
         return studentRepository.findAllByMember_StatusAndMemberNot(ActiveStatus.ACTIVE, member);
     }
 
-    public ClubMember getClubMemberByStudentAndClub(Club club, Student student) {
-        return clubMemberRepository.findByClubAndStudentAndClubStatusNot(club, student, ClubStatus.DELETED);
-    }
 
     public List<ClubMember> findUserAllowedClub(Member member) {
         return clubMemberRepository.findByStudentAndClubStatusAndClub_State(studentRepository.getByMember(member), ClubStatus.ALLOWED, ClubStatus.ALLOWED);
@@ -85,10 +81,6 @@ public class ClubMemberService {
             throw new ClubNotFoundException();
         }
         return clubMembers;
-    }
-
-    public List<ClubMember> getPendingMembersByClub(Club club) {
-        return clubMemberRepository.findByClubAndClubStatus(club, ClubStatus.PENDING);
     }
 
     public List<ClubMember> getPendingAndAllowedMembersByClubs(List<Club> clubs) {
@@ -181,6 +173,21 @@ public class ClubMemberService {
         return clubMember != null;
     }
 
+    public List<ClubMember> shuffleClubMemberMap(Integer maxStudentCount, Map<Club, List<ClubMember>> clubMemberMap, ClubPriority priority) {
+        return clubMemberMap.entrySet().stream()
+            .flatMap(entry -> {
+                List<ClubMember> members = entry.getValue();
+                int remainingSlots = maxStudentCount - getAllowedMemberSize(entry.getKey(), members);
+                if (remainingSlots <= 0) return Stream.empty();
+                List<ClubMember> priorityMembers = members.stream()
+                    .filter(member -> member.getPriority() == priority && member.getClubStatus() == ClubStatus.PENDING)
+                    .collect(Collectors.toList());
+                Collections.shuffle(priorityMembers);
+                return priorityMembers.subList(0, Math.min(remainingSlots, priorityMembers.size())).stream();
+            })
+            .toList();
+    }
+
     private void rejectActivityClubMember(Student student) {
         List<ClubMember> clubMembers = clubMemberRepository.findAllByStudentAndPermissionAndClub_Type(student, ClubPermission.CLUB_MEMBER, ClubType.CREATIVE_ACTIVITY_CLUB);
         clubMembers.forEach(m -> m.modifyStatus(ClubStatus.REJECTED));
@@ -191,6 +198,14 @@ public class ClubMemberService {
         if (students.stream().anyMatch(s -> s.getId() == leader.getId())) {
             throw new InvalidClubMemberInviteException();
         }
+    }
+
+    private int getAllowedMemberSize(Club club, List<ClubMember> clubMembers) {
+        return clubMembers.stream().filter(
+            member ->
+                member.getClubStatus() == ClubStatus.ALLOWED
+                && member.getClub().getId().equals(club.getId())
+        ).toList().size();
     }
 
     private void validateByLeaderAndClubMemberDuplicated(Student leader, List<Student> students, Club club) {

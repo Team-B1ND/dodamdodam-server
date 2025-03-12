@@ -28,32 +28,15 @@ public class ClubApplicationUseCase {
     public Response assignmentClubMembers() {
         List<Club> clubs = clubService.getCreativeActivityClubs();
         List<ClubMember> clubMembers = clubMemberService.getPendingAndAllowedMembersByClubs(clubs);
-        Map<Club, List<ClubMember>> clubMemberMap = createClubMemberMap(clubMembers);
-        for(ClubPriority priority : ClubPriority.getClubPriorities()) {
-            List<ClubMember> clubMemberList = clubMemberMap.entrySet().stream()
-                    .flatMap(entry -> {
-                        List<ClubMember> members = entry.getValue();
-                        int remainingSlots = MAX_STUDENT_COUNT - getAllowedMemberSize(entry.getKey(), members);
-                        if (remainingSlots <= 0) return Stream.empty();
-                        List<ClubMember> priorityMembers = members.stream()
-                                .filter(member -> member.getPriority() == priority && member.getClubStatus() == ClubStatus.PENDING)
-                                .collect(Collectors.toList());
-                        Collections.shuffle(priorityMembers);
-                        return priorityMembers.subList(0, Math.min(remainingSlots, priorityMembers.size())).stream();
-                    })
-                    .toList();
-            clubMemberService.updateStatus(clubMemberList, ClubStatus.ALLOWED);
-        }
+        applyPriorityBasedClubUpdates(createClubMemberMap(clubMembers));
         clubMemberService.saveClubMembers(clubMembers);
         return Response.ok("동아리 랜덤 배정 성공");
     }
 
-    private int getAllowedMemberSize(Club club, List<ClubMember> clubMembers) {
-        return clubMembers.stream().filter(
-            member ->
-                member.getClubStatus() == ClubStatus.ALLOWED
-                && member.getClub().getId().equals(club.getId())
-        ).toList().size();
+    private void applyPriorityBasedClubUpdates(Map<Club, List<ClubMember>> clubMemberMap) {
+        for(ClubPriority priority : ClubPriority.getClubPriorities()) {
+            clubMemberService.updateStatus(clubMemberService.shuffleClubMemberMap(MAX_STUDENT_COUNT, clubMemberMap, priority), ClubStatus.ALLOWED);
+        }
     }
 
     private Map<Club, List<ClubMember>> createClubMemberMap(List<ClubMember> clubMembers) {
