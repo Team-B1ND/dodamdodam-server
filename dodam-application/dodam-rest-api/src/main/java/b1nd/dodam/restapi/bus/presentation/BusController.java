@@ -137,6 +137,11 @@ public class BusController {
         return busUseCase.getBusPresetInfo(id);
     }
 
+    @GetMapping("/time")
+    public ResponseData<List<BusTimeRes>> getAllBusTime(){
+        return busUseCase.getAllBusTime();
+    }
+
     @GetMapping("/time/{id}")
     public ResponseData<List<BusRes>> getBusesByTime(@PathVariable int id){
         return busUseCase.getBusByBusTime(id);
