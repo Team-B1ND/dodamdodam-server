@@ -49,7 +49,7 @@ public class BusQrcodeUseCase {
     }
 
     private void validateBusApiKey(String apiKey) {
-        if(Objects.equals(properties.getApiKey(), apiKey)) {
+        if (!Objects.equals(properties.getApiKey(), apiKey)) {
             throw new BusApiKeyInvalidException();
         }
     }
