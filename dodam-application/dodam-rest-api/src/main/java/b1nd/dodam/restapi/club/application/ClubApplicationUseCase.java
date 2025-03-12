@@ -35,9 +35,7 @@ public class ClubApplicationUseCase {
                         Club club = entry.getKey();
                         List<ClubMember> members = entry.getValue();
                         int remainingSlots = MAX_STUDENT_COUNT - getAllowedMemberSize(club, members);
-                        if (remainingSlots <= 0) {
-                            return Stream.empty();
-                        }
+                        if (remainingSlots <= 0) return Stream.empty();
                         List<ClubMember> priorityMembers = members.stream()
                                 .filter(member -> member.getPriority() == priority && member.getClubStatus() == ClubStatus.PENDING)
                                 .collect(Collectors.toList());
