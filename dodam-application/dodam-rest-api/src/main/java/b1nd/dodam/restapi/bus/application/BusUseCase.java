@@ -65,9 +65,7 @@ public class BusUseCase {
     @Transactional(rollbackFor = Exception.class)
     public Response registerTime(BusTimeReq req) {
         BusTime busTime = busTimeRepository.save(req.mapToBusTime());
-        List<Bus> buses = req.busId().stream()
-                .map(busRepository::getById)
-                .toList();
+        List<Bus> buses = busRepository.findAllById(req.busId());
         busTimeToBusRepository.saveAll(req.mapBusTimeToBus(busTime, buses));
         return Response.created("버스 신청 기간 생성 성공");
     }
