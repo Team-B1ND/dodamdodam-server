@@ -3,10 +3,14 @@ package b1nd.dodam.restapi.bus.application;
 import b1nd.dodam.core.util.ZonedDateTimeUtil;
 import b1nd.dodam.domain.rds.bus.entity.Bus;
 import b1nd.dodam.domain.rds.bus.entity.BusApplication;
+import b1nd.dodam.domain.rds.bus.entity.BusTime;
+import b1nd.dodam.domain.rds.bus.entity.BusTimeToBus;
 import b1nd.dodam.domain.rds.bus.enumeration.BusApplicationStatus;
 import b1nd.dodam.domain.rds.bus.exception.BusAlreadyAppliedException;
 import b1nd.dodam.domain.rds.bus.repository.BusApplicationRepository;
 import b1nd.dodam.domain.rds.bus.repository.BusRepository;
+import b1nd.dodam.domain.rds.bus.repository.BusTimeRepository;
+import b1nd.dodam.domain.rds.bus.repository.BusTimeToBusRepository;
 import b1nd.dodam.domain.rds.member.entity.Student;
 import b1nd.dodam.domain.rds.member.repository.StudentRepository;
 import b1nd.dodam.restapi.auth.infrastructure.security.support.MemberAuthenticationHolder;
@@ -22,15 +26,17 @@ import java.util.List;
 import java.util.Optional;
 
 @Component
-@Transactional(rollbackFor = Exception.class)
+@Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class BusApplicationUseCase {
 
     private final BusRepository busRepository;
     private final BusApplicationRepository busApplicationRepository;
+    private final BusTimeToBusRepository busTimeToBusRepository;
     private final StudentRepository studentRepository;
     private final MemberAuthenticationHolder memberAuthenticationHolder;
 
+    @Transactional(rollbackFor = Exception.class)
     public Response modifyStatus(int busId, int seatNumber) {
         Student student = studentRepository.getByMember(memberAuthenticationHolder.current());
         Optional<BusApplication> busApplication = busApplicationRepository.findByStudentAndBus_LeaveTimeAfter(student, ZonedDateTimeUtil.nowToLocalDateTime());
@@ -47,6 +53,7 @@ public class BusApplicationUseCase {
     }
 
     private Response applyForNewBus(int busId, Student student, int seatNumber) {
+        isBusTimeAble(busId);
         Bus bus = adjustApplicationCount(busId, true);
         busApplicationRepository.save(
                 BusApplication.builder()
@@ -57,6 +64,12 @@ public class BusApplicationUseCase {
                         .build()
         );
         return Response.created("버스 신청 성공");
+    }
+
+    private void isBusTimeAble(int id){
+        BusTimeToBus busTimeToBus = busTimeToBusRepository.findByBus_Id(id);
+        BusTime busTime = busTimeToBus.getBusTime();
+        busTime.checkIfTheBusHasDeparted();
     }
 
     private Response updateToNewBus(int busId, BusApplication currentApplication, int seatNumber) {
@@ -79,6 +92,7 @@ public class BusApplicationUseCase {
         return bus;
     }
 
+    @Transactional(rollbackFor = Exception.class)
     public Response apply(int busId) {
         Student student = studentRepository.getByMember(memberAuthenticationHolder.current());
         checkIfTheApplicationExists(student);
@@ -103,6 +117,7 @@ public class BusApplicationUseCase {
         }
     }
 
+    @Transactional(rollbackFor = Exception.class)
     public Response modify(int newBusId) {
         BusApplication application = getMy();
         decreaseApplicationCount(application.getBus().getId());
@@ -110,6 +125,7 @@ public class BusApplicationUseCase {
         return Response.noContent("버스 신청 수정 성공");
     }
 
+    @Transactional(rollbackFor = Exception.class)
     public Response cancel() {
         BusApplication application = getMy();
         decreaseApplicationCount(application.getBus().getId());

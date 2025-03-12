@@ -13,7 +13,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.function.Consumer;
 
@@ -44,8 +44,12 @@ public class Bus {
     private int applyCount;
 
     @NotNull
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
-    private LocalDateTime leaveTime;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+    private LocalDate leaveAt;
+
+    @NotNull
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm:ss")
+    private LocalTime leaveTime;
 
     @NotNull
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm:ss")
@@ -53,22 +57,24 @@ public class Bus {
 
     @Builder
     public Bus(String busName, String description, int peopleLimit, BusStatus status,
-               int applyCount, LocalDateTime leaveTime, LocalTime timeRequired) {
+               int applyCount, LocalDate leaveAt, LocalTime leaveTime, LocalTime timeRequired) {
         this.busName = busName;
         this.description = description;
         this.peopleLimit = peopleLimit;
         this.status = status;
         this.applyCount = applyCount;
+        this.leaveAt = leaveAt;
         this.leaveTime = leaveTime;
         this.timeRequired = timeRequired;
     }
 
-    public void updateBus(String busName, String description, int peopleLimit, LocalDateTime leaveTime, LocalTime timeRequired) {
+    public void updateBus(String busName, String description, int peopleLimit, LocalDate leaveAt, LocalTime leaveTime, LocalTime timeRequired) {
         checkIfTheBusHasDeparted();
         updateApplyIfNotEmpty(busName, value -> this.busName = value);
         updateApplyIfNotEmpty(description, value -> this.description = value);
         updateApplyIfNotEmpty(timeRequired, value -> this.timeRequired = value);
         updateApplyIfNotEmpty(leaveTime, value -> this.leaveTime = value);
+        updateApplyIfNotEmpty(leaveAt, value -> this.leaveAt = value);
         this.peopleLimit = peopleLimit;
     }
 
@@ -90,7 +96,7 @@ public class Bus {
     }
 
     private void checkIfTheBusHasDeparted() {
-        if(leaveTime.isBefore(ZonedDateTimeUtil.nowToLocalDateTime())) {
+        if (leaveAt.atTime(leaveTime).isBefore(ZonedDateTimeUtil.nowToLocalDate().atStartOfDay())) {
             throw new BusPeriodExpiredException();
         }
     }
