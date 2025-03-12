@@ -9,7 +9,6 @@ import b1nd.dodam.domain.rds.bus.enumeration.BusApplicationStatus;
 import b1nd.dodam.domain.rds.bus.exception.BusAlreadyAppliedException;
 import b1nd.dodam.domain.rds.bus.repository.BusApplicationRepository;
 import b1nd.dodam.domain.rds.bus.repository.BusRepository;
-import b1nd.dodam.domain.rds.bus.repository.BusTimeRepository;
 import b1nd.dodam.domain.rds.bus.repository.BusTimeToBusRepository;
 import b1nd.dodam.domain.rds.member.entity.Student;
 import b1nd.dodam.domain.rds.member.repository.StudentRepository;
