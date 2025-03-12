@@ -19,6 +19,7 @@ import b1nd.dodam.restapi.bus.application.data.req.BusTimeReq;
 import b1nd.dodam.restapi.bus.application.data.res.BusMemberRes;
 import b1nd.dodam.restapi.bus.application.data.res.BusPresetRes;
 import b1nd.dodam.restapi.bus.application.data.res.BusRes;
+import b1nd.dodam.restapi.bus.application.data.res.BusTimeRes;
 import b1nd.dodam.restapi.support.data.Response;
 import b1nd.dodam.restapi.support.data.ResponseData;
 import lombok.RequiredArgsConstructor;
@@ -141,6 +142,13 @@ public class BusUseCase {
     public ResponseData<BusPresetRes> getBusPresetInfo(int id){
         BusPresetRes busPresetRes = BusPresetRes.of(busPresetRepository.getById(id));
         return ResponseData.ok("프리셋 정보 조회 성공", busPresetRes);
+    }
+
+    public ResponseData<List<BusTimeRes>> getAllBusTime(){
+        List<BusTimeRes> busTimeRes = busTimeRepository.findAll().stream()
+                .map(BusTimeRes::of)
+                .toList();
+        return ResponseData.ok("버스 기간 불러오기 성공", busTimeRes);
     }
 
     public ResponseData<List<BusRes>> getBusByBusTime(int id) {
