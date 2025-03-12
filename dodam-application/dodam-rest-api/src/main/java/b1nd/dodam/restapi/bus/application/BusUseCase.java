@@ -143,15 +143,26 @@ public class BusUseCase {
         return ResponseData.ok("프리셋 정보 조회 성공", busPresetRes);
     }
 
-    public ResponseData<List<BusRes>> getBusByBusTime(int id){
+    public ResponseData<List<BusRes>> getBusByBusTime(int id) {
         BusTime busTime = busTimeRepository.getById(id);
-        List<Bus> buses = busTimeToBusRepository.findAllByBusTime(busTime).stream().map(BusTimeToBus::getBus).toList();
-        List<BusRes> busRes = buses.stream()
+        List<Bus> buses = getBusesByBusTime(busTime);
+        List<BusRes> busRes = convertToBusRes(buses);
+        return ResponseData.ok("버스 불러오기 성공", busRes);
+    }
+
+    private List<Bus> getBusesByBusTime(BusTime busTime) {
+        return busTimeToBusRepository.findAllByBusTime(busTime)
+                .stream()
+                .map(BusTimeToBus::getBus)
+                .toList();
+    }
+
+    private List<BusRes> convertToBusRes(List<Bus> buses) {
+        return buses.stream()
                 .map(bus -> BusRes.createFromBus(bus, getApplications(bus).stream()
                         .map(BusMemberRes::createFromBusMember)
-                        .toList())
-                ).toList();
-        return ResponseData.ok("버스 불러오기 성공", busRes);
+                                .toList()))
+                .toList();
     }
 
     @Transactional(rollbackFor = Exception.class)
