@@ -13,7 +13,9 @@ public enum BusExceptionCode implements ExceptionCode {
     BUS_NOT_FOUND(404, "없는 버스"),
     BUS_ACCESS_DENIED(403, "버스 권한 부족"),
     BUS_API_KEY_INVALID(403, "버스 API 키가 유효하지 않음"),
-    BUS_PRESET_NOT_FOUND(404, "없는 버스 프리셋")
+    BUS_PRESET_NOT_FOUND(404, "없는 버스 프리셋"),
+    BUS_TIME_NOT_FOUND(404, "없는 버스신청 기간"),
+    BUS_TIME_UNABLE(400, "버스 신청이 불가능한 기간");
     ;
 
     private final int status;

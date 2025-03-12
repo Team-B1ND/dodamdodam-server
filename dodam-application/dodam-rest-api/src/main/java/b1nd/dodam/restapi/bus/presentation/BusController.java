@@ -8,7 +8,7 @@ import b1nd.dodam.restapi.bus.application.BusQrcodeUseCase;
 import b1nd.dodam.restapi.bus.application.BusUseCase;
 import b1nd.dodam.restapi.bus.application.data.req.BusPresetReq;
 import b1nd.dodam.restapi.bus.application.data.req.BusReq;
-import b1nd.dodam.restapi.bus.application.data.req.BusWithPresetReq;
+import b1nd.dodam.restapi.bus.application.data.req.BusTimeReq;
 import b1nd.dodam.restapi.bus.application.data.res.*;
 import b1nd.dodam.restapi.support.data.Response;
 import b1nd.dodam.restapi.support.data.ResponseData;
@@ -33,11 +33,6 @@ public class BusController {
         return busUseCase.register(req);
     }
 
-    @PostMapping("/{id}")
-    public Response registerWithPreset(@PathVariable int id, @RequestBody @Valid BusWithPresetReq req) {
-        return busUseCase.register(id, req);
-    }
-
     @PostMapping("/preset")
     public Response registerPreset(@RequestBody @Valid BusPresetReq req) {
         return busUseCase.registerPreset(req);
@@ -56,6 +51,11 @@ public class BusController {
             @RequestParam String nonce
     ){
         return busQrcodeUseCase.scanBusQrcode(nonce, memberId, httpServletReq.getHeader("bus-api-key"));
+    }
+
+    @PostMapping("/time")
+    public Response registerBusTime(@RequestBody @Valid BusTimeReq req){
+        return busUseCase.registerTime(req);
     }
 
     @PatchMapping("/{id}")
@@ -135,6 +135,16 @@ public class BusController {
     @GetMapping("/preset/{id}")
     public ResponseData<BusPresetRes> getPresetInfo(@PathVariable int id){
         return busUseCase.getBusPresetInfo(id);
+    }
+
+    @GetMapping("/time")
+    public ResponseData<List<BusTimeRes>> getAllBusTime(){
+        return busUseCase.getAllBusTime();
+    }
+
+    @GetMapping("/time/{id}")
+    public ResponseData<List<BusRes>> getBusesByTime(@PathVariable int id){
+        return busUseCase.getBusByBusTime(id);
     }
 
     @DeleteMapping("/{id}")

@@ -58,6 +58,7 @@ jobs:
           app.codenary.url: ${{ secrets.CODENARY_URL }}
           app.melon.url: ${{ secrets.MELON_URL }}
           app.discord.url: ${{ secrets.DISCORD_URL }}
+          app.qr-code.apiKey: ${{ secrets.QR_CODE_API_KEY }}
           cloud.aws.credentials.access-key: ${{ secrets.S3_ACCESS_KEY }}
           cloud.aws.credentials.secret-key: ${{ secrets.S3_SECRET_KEY }}
           cloud.aws.region.static: ${{ secrets.S3_REGION }}
