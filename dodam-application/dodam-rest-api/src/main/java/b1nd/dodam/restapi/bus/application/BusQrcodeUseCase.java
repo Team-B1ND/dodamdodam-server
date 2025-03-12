@@ -42,7 +42,7 @@ public class BusQrcodeUseCase {
         validateBusApiKey(apiKey);
         redisService.validateBusQRNonce(memberId, nonce);
         Member member = memberRepository.getById(memberId);
-        BusApplication busApplication = busApplicationRepository.findByStatusAndStudent_Member(BusApplicationStatus.NOT_BOARDING, member);
+        BusApplication busApplication = busApplicationRepository.getByStatusAndMember(BusApplicationStatus.NOT_BOARDING, member);
         busApplication.updateStatus(BusApplicationStatus.BOARDING);
         redisService.evictBusQRNonce(memberId);
         return Response.ok("버스 QR 인증 성공");
