@@ -1,6 +1,7 @@
 package b1nd.dodam.restapi.club.presentation;
 
 import b1nd.dodam.domain.rds.club.enumeration.ClubStatus;
+import b1nd.dodam.restapi.club.application.ClubApplicationUseCase;
 import b1nd.dodam.restapi.club.application.ClubMemberUseCase;
 import b1nd.dodam.restapi.club.application.ClubUseCase;
 import b1nd.dodam.restapi.club.application.data.req.*;
@@ -20,12 +21,18 @@ import java.util.List;
 public class ClubController {
     private final ClubUseCase clubUseCase;
     private final ClubMemberUseCase clubMemberUseCase;
+    private final ClubApplicationUseCase clubApplicationUseCase;
 
     @PostMapping
     public Response create(
             @RequestBody @Valid CreateClubReq req
     ) {
         return clubUseCase.save(req);
+    }
+
+    @PostMapping("/assignment")
+    public Response sort() {
+        return clubApplicationUseCase.assignmentClubMembers();
     }
 
     @PostMapping("/status")

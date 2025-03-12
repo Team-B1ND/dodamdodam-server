@@ -128,6 +128,7 @@ class SecurityConfig {
                 .requestMatchers(GET, "/notice/**").authenticated()
 
                 .requestMatchers(POST, "/clubs/state").hasAnyRole(TEACHER, ADMIN)
+                .requestMatchers(POST, "/clubs/assignment").hasAnyRole(ADMIN)
                 .requestMatchers(POST, "/clubs/time").hasAnyRole(TEACHER, ADMIN)
                 .requestMatchers(POST, "/clubs/{id}/teacher").hasAnyRole(TEACHER, ADMIN)
                 .requestMatchers(GET, "/clubs/{id}/waiting").hasAnyRole(TEACHER, ADMIN)
