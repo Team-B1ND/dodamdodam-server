@@ -25,11 +25,11 @@ public class BusApplication {
     @NotNull
     private int seatNumber;
 
-    @OneToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "fk_student_id", nullable = false)
     private Student student;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "fk_bus_id", nullable = false)
     private Bus bus;
 
