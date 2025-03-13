@@ -125,7 +125,8 @@ public class BusUseCase {
         return ResponseData.ok("신청한 버스 조회 성공",
                 busApplicationRepository.findBusByStatusAndStudent(
                         BusStatus.ACTIVATE,
-                        ZonedDateTimeUtil.nowToLocalDateTime(),
+                        ZonedDateTimeUtil.nowToLocalDate(),
+                        ZonedDateTimeUtil.nowToLocalTime(),
                         student.getId()
                 )
         );
