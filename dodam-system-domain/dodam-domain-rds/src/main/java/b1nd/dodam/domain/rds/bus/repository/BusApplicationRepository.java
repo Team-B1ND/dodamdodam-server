@@ -12,7 +12,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -45,13 +47,15 @@ public interface BusApplicationRepository extends JpaRepository<BusApplication, 
     }
 
     @Query("""
-        SELECT bm.bus FROM bus_member bm
-        WHERE bm.bus.leaveTime >= :now
-        AND bm.bus.status = :status
-        AND bm.student.id = :studentId
+        select bm.bus from bus_member bm
+        where bm.bus.leaveAt >= :now
+        and bm.bus.leaveTime >= :time
+        and bm.bus.status = :status
+        and bm.student.id = :studentId
     """)
     Bus findBusByStatusAndStudent(@Param("status") BusStatus status,
-                                  @Param("now") LocalDateTime now,
+                                  @Param("now") LocalDate now,
+                                  @Param("time")LocalTime time,
                                   @Param("studentId") int studentId);
 
     List<BusApplication> findByBus_IdAndStatus(int busId, BusApplicationStatus status);

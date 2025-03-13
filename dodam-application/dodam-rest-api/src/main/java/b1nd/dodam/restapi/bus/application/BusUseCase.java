@@ -47,7 +47,6 @@ public class BusUseCase {
     @Transactional(rollbackFor = Exception.class)
     public Response register(BusReq req) {
         busRepository.save(req.mapToBus());
-        registerBus();
         return Response.created("버스 등록 성공");
     }
 
@@ -68,6 +67,7 @@ public class BusUseCase {
         BusTime busTime = busTimeRepository.save(req.mapToBusTime());
         List<Bus> buses = busRepository.findAllById(req.busId());
         busTimeToBusRepository.saveAll(req.mapBusTimeToBus(busTime, buses));
+        registerBus();
         return Response.created("버스 신청 기간 생성 성공");
     }
 
@@ -125,7 +125,8 @@ public class BusUseCase {
         return ResponseData.ok("신청한 버스 조회 성공",
                 busApplicationRepository.findBusByStatusAndStudent(
                         BusStatus.ACTIVATE,
-                        ZonedDateTimeUtil.nowToLocalDateTime(),
+                        ZonedDateTimeUtil.nowToLocalDate(),
+                        ZonedDateTimeUtil.nowToLocalTime(),
                         student.getId()
                 )
         );
