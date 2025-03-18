@@ -24,12 +24,12 @@ public interface BusApplicationRepository extends JpaRepository<BusApplication, 
     List<BusApplication> findByBusOrderByStudentAsc(Bus bus);
 
     @EntityGraph(attributePaths = {"bus"})
-    Optional<BusApplication> findByStudentAndBus_LeaveTimeAfter(Student student, LocalDateTime now);
+    Optional<BusApplication> findByStudentAndBus_LeaveAtAfterAndBus_LeaveTimeAfter(Student student, LocalDate nowAt, LocalTime nowTime);
 
-    boolean existsByStudentAndBus_LeaveTimeAfter(Student student, LocalDateTime now);
+    boolean existsByStudentAndLeaveAtAfterAndBus_LeaveTimeAfter(Student student,  LocalDate nowAt, LocalTime nowTime);
 
-    default BusApplication getByStudentAndBus_LeaveTimeAfter(Student student, LocalDateTime now) {
-        return findByStudentAndBus_LeaveTimeAfter(student, now)
+    default BusApplication getByStudentAndBus_LeaveTimeAfter(Student student, LocalDate nowAt, LocalTime nowTime) {
+        return findByStudentAndBus_LeaveAtAfterAndBus_LeaveTimeAfter(student, nowAt, nowTime)
                 .orElseThrow(BusApplicationNotFoundException::new);
     }
 
