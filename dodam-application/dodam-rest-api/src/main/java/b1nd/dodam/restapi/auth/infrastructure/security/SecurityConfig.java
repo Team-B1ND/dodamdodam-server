@@ -82,6 +82,7 @@ class SecurityConfig {
                 .requestMatchers("/bus/apply/**").hasAnyRole(STUDENT, ADMIN)
                 .requestMatchers(GET, "/bus/qr-code").hasAnyRole(STUDENT, ADMIN)
                 .requestMatchers(POST, "/bus/qr-code/scan").permitAll()
+                .requestMatchers(GET, "/bus/{id}/seats").authenticated()
                 .requestMatchers("/bus/**").hasRole(TEACHER)
 
                 .requestMatchers(POST, "/night-study").hasRole(STUDENT)
