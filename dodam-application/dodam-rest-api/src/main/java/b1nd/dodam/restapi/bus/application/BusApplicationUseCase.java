@@ -38,7 +38,8 @@ public class BusApplicationUseCase {
     @Transactional(rollbackFor = Exception.class)
     public Response modifyStatus(int busId, int seatNumber) {
         Student student = studentRepository.getByMember(memberAuthenticationHolder.current());
-        Optional<BusApplication> busApplication = busApplicationRepository.findByStudentAndBus_LeaveTimeAfter(student, ZonedDateTimeUtil.nowToLocalDateTime());
+        Optional<BusApplication> busApplication = busApplicationRepository.findByStudentAndBus_LeaveAtAfterAndBus_LeaveTimeAfter(
+                student, ZonedDateTimeUtil.nowToLocalDate(), ZonedDateTimeUtil.nowToLocalTime());
 
         return busApplication
                 .map(application -> handleExistingApplication(busId, application, seatNumber))
@@ -111,7 +112,7 @@ public class BusApplicationUseCase {
     }
 
     private void checkIfTheApplicationExists(Student student) {
-        if(busApplicationRepository.existsByStudentAndBus_LeaveTimeAfter(student, ZonedDateTimeUtil.nowToLocalDateTime())) {
+        if(busApplicationRepository.existsByStudentAndLeaveAtAfterAndBus_LeaveTimeAfter(student, ZonedDateTimeUtil.nowToLocalDate(), ZonedDateTimeUtil.nowToLocalTime())) {
             throw new BusAlreadyAppliedException();
         }
     }
@@ -143,7 +144,7 @@ public class BusApplicationUseCase {
 
     private BusApplication getMy() {
         Student student = studentRepository.getByMember(memberAuthenticationHolder.current());
-        return busApplicationRepository.getByStudentAndBus_LeaveTimeAfter(student, ZonedDateTimeUtil.nowToLocalDateTime());
+        return busApplicationRepository.getByStudentAndBus_LeaveTimeAfter(student, ZonedDateTimeUtil.nowToLocalDate(), ZonedDateTimeUtil.nowToLocalTime());
     }
 
     private Bus increaseApplicationCount(int id) {
