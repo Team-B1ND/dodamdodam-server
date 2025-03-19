@@ -26,7 +26,7 @@ public interface BusApplicationRepository extends JpaRepository<BusApplication, 
     @EntityGraph(attributePaths = {"bus"})
     Optional<BusApplication> findByStudentAndBus_LeaveAtAfterAndBus_LeaveTimeAfter(Student student, LocalDate nowAt, LocalTime nowTime);
 
-    boolean existsByStudentAndLeaveAtAfterAndBus_LeaveTimeAfter(Student student,  LocalDate nowAt, LocalTime nowTime);
+    boolean existsByStudentAndBus_LeaveAtAfterAndBus_LeaveTimeAfter(Student student,  LocalDate nowAt, LocalTime nowTime);
 
     default BusApplication getByStudentAndBus_LeaveTimeAfter(Student student, LocalDate nowAt, LocalTime nowTime) {
         return findByStudentAndBus_LeaveAtAfterAndBus_LeaveTimeAfter(student, nowAt, nowTime)
