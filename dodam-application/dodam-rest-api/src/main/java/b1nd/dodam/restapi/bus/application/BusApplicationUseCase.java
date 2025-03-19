@@ -112,7 +112,7 @@ public class BusApplicationUseCase {
     }
 
     private void checkIfTheApplicationExists(Student student) {
-        if(busApplicationRepository.existsByStudentAndLeaveAtAfterAndBus_LeaveTimeAfter(student, ZonedDateTimeUtil.nowToLocalDate(), ZonedDateTimeUtil.nowToLocalTime())) {
+        if(busApplicationRepository.existsByStudentAndBus_LeaveAtAfterAndBus_LeaveTimeAfter(student, ZonedDateTimeUtil.nowToLocalDate(), ZonedDateTimeUtil.nowToLocalTime())) {
             throw new BusAlreadyAppliedException();
         }
     }
