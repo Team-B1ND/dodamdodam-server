@@ -27,8 +27,6 @@ public interface BusRepository extends JpaRepository<Bus, Integer> {
     @Query("select b from bus b where b.leaveTime LIKE concat(:localDate, '%')")
     List<Bus> findAllByLeaveTime(LocalDate localDate);
 
-    List<Bus> findByStatus(BusStatus status);
-
     default Bus getByIdForUpdate(int id) {
         return findByIdWithPessimisticLock(id)
                 .orElseThrow(BusNotFoundException::new);

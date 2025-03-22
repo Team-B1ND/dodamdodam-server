@@ -23,13 +23,22 @@ public interface BusApplicationRepository extends JpaRepository<BusApplication, 
     @EntityGraph(attributePaths = {"student", "student.member"})
     List<BusApplication> findByBusOrderByStudentAsc(Bus bus);
 
-    @EntityGraph(attributePaths = {"bus"})
-    Optional<BusApplication> findByStudentAndBus_LeaveAtAfterAndBus_LeaveTimeAfter(Student student, LocalDate nowAt, LocalTime nowTime);
+    @Query("""
+    select ba from bus_member ba
+    where ba.student = :student
+    and (ba.bus.leaveAt > :leaveAt
+        or (ba.bus.leaveAt = :leaveAt and ba.bus.leaveTime > :leaveTime))
+""")
+    Optional<BusApplication> findValidBusApplication(
+            @Param("student") Student student,
+            @Param("leaveAt") LocalDate leaveAt,
+            @Param("leaveTime") LocalTime leaveTime
+    );
 
     boolean existsByStudentAndBus_LeaveAtAfterAndBus_LeaveTimeAfter(Student student,  LocalDate nowAt, LocalTime nowTime);
 
-    default BusApplication getByStudentAndBus_LeaveTimeAfter(Student student, LocalDate nowAt, LocalTime nowTime) {
-        return findByStudentAndBus_LeaveAtAfterAndBus_LeaveTimeAfter(student, nowAt, nowTime)
+    default BusApplication getValidBusApplication(Student student, LocalDate leaveAt, LocalTime leaveTime) {
+        return findValidBusApplication(student, leaveAt, leaveTime)
                 .orElseThrow(BusApplicationNotFoundException::new);
     }
 
