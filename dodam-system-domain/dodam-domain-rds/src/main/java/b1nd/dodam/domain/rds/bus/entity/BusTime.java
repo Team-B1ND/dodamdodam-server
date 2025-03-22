@@ -3,10 +3,7 @@ package b1nd.dodam.domain.rds.bus.entity;
 import b1nd.dodam.core.util.ZonedDateTimeUtil;
 import b1nd.dodam.domain.rds.bus.exception.BusTimeUnableException;
 import com.fasterxml.jackson.annotation.JsonFormat;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
@@ -36,9 +33,10 @@ public class BusTime {
         this.endAt = endAt;
     }
 
-    public void checkIfTheBusHasDeparted() {
+    public void checkIfTheBusIsAvailable() {
         LocalDate today = ZonedDateTimeUtil.nowToLocalDate();
-        if (startAt.isBefore(today) || endAt.isBefore(today)) {
+
+        if (today.isBefore(startAt) || today.isAfter(endAt)) {
             throw new BusTimeUnableException();
         }
     }
