@@ -36,23 +36,10 @@ public class BusApplicationUseCase {
     private final MemberAuthenticationHolder memberAuthenticationHolder;
 
     @Transactional(rollbackFor = Exception.class)
-    public Response modifyStatus(int busId, int seatNumber) {
-        Student student = studentRepository.getByMember(memberAuthenticationHolder.current());
-        Optional<BusApplication> busApplication = busApplicationRepository.findByStudentAndBus_LeaveTimeAfter(student, ZonedDateTimeUtil.nowToLocalDateTime());
-
-        return busApplication
-                .map(application -> handleExistingApplication(busId, application, seatNumber))
-                .orElseGet(() -> applyForNewBus(busId, student, seatNumber));
-    }
-
-    private Response handleExistingApplication(int busId, BusApplication currentApplication, int seatNumber) {
-        return currentApplication.getBus().getId() == busId
-                ? cancelCurrentApplication(currentApplication)
-                : updateToNewBus(busId, currentApplication, seatNumber);
-    }
-
-    private Response applyForNewBus(int busId, Student student, int seatNumber) {
+    public Response apply(int busId, int seatNumber) {
         isBusTimeAble(busId);
+        Student student = studentRepository.getByMember(memberAuthenticationHolder.current());
+        checkIfTheApplicationExists(student);
         Bus bus = adjustApplicationCount(busId, true);
         busApplicationRepository.save(
                 BusApplication.builder()
@@ -66,22 +53,8 @@ public class BusApplicationUseCase {
     }
 
     private void isBusTimeAble(int id){
-        BusTimeToBus busTimeToBus = busTimeToBusRepository.findByBus_Id(id);
-        BusTime busTime = busTimeToBus.getBusTime();
-        busTime.checkIfTheBusHasDeparted();
-    }
-
-    private Response updateToNewBus(int busId, BusApplication currentApplication, int seatNumber) {
-        Bus newBus = adjustApplicationCount(busId, true);
-        adjustApplicationCount(currentApplication.getBus().getId(), false);
-        currentApplication.updateBus(newBus, seatNumber);
-        return Response.noContent("버스 신청 수정 성공");
-    }
-
-    private Response cancelCurrentApplication(BusApplication currentApplication) {
-        adjustApplicationCount(currentApplication.getBus().getId(), false);
-        busApplicationRepository.delete(currentApplication);
-        return Response.noContent("버스 신청 취소 성공");
+        BusTime busTime = busTimeToBusRepository.getByBusId(id).getBusTime();
+        busTime.checkIfTheBusIsAvailable();
     }
 
     private Bus adjustApplicationCount(int busId, boolean increment) {
@@ -91,19 +64,6 @@ public class BusApplicationUseCase {
         return bus;
     }
 
-    @Transactional(rollbackFor = Exception.class)
-    public Response apply(int busId) {
-        Student student = studentRepository.getByMember(memberAuthenticationHolder.current());
-        checkIfTheApplicationExists(student);
-        busApplicationRepository.save(BusApplication.builder()
-                .bus(increaseApplicationCount(busId))
-                .student(student)
-                .status(BusApplicationStatus.NOT_BOARDING)
-                .build()
-        );
-        return Response.created("버스 신청 성공");
-    }
-
     public ResponseData<BusSeatRes> getSeatNumbers(int busId) {
         Bus bus = busRepository.getById(busId);
         List<BusApplication> busApplications = busApplicationRepository.findByBusAndStatusNot(bus, BusApplicationStatus.EXPIRED);
@@ -111,23 +71,24 @@ public class BusApplicationUseCase {
     }
 
     private void checkIfTheApplicationExists(Student student) {
-        if(busApplicationRepository.existsByStudentAndBus_LeaveTimeAfter(student, ZonedDateTimeUtil.nowToLocalDateTime())) {
+        if(busApplicationRepository.existsByStudentAndBus_LeaveAtAfterAndBus_LeaveTimeAfter(student, ZonedDateTimeUtil.nowToLocalDate(), ZonedDateTimeUtil.nowToLocalTime())) {
             throw new BusAlreadyAppliedException();
         }
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public Response modify(int newBusId) {
+    public Response modify(int newBusId, int seat) {
+        isBusTimeAble(newBusId);
         BusApplication application = getMy();
-        decreaseApplicationCount(application.getBus().getId());
-        application.updateBus(increaseApplicationCount(newBusId), null);
+        adjustApplicationCount(application.getBus().getId(), false);
+        application.updateBus(adjustApplicationCount(newBusId, true), seat);
         return Response.noContent("버스 신청 수정 성공");
     }
 
     @Transactional(rollbackFor = Exception.class)
     public Response cancel() {
         BusApplication application = getMy();
-        decreaseApplicationCount(application.getBus().getId());
+        adjustApplicationCount(application.getBus().getId(), false);
         busApplicationRepository.delete(application);
         return Response.noContent("버스 신청 취소 성공");
     }
@@ -143,18 +104,7 @@ public class BusApplicationUseCase {
 
     private BusApplication getMy() {
         Student student = studentRepository.getByMember(memberAuthenticationHolder.current());
-        return busApplicationRepository.getByStudentAndBus_LeaveTimeAfter(student, ZonedDateTimeUtil.nowToLocalDateTime());
-    }
-
-    private Bus increaseApplicationCount(int id) {
-        Bus bus = busRepository.getByIdForUpdate(id);
-        bus.increaseApplyCount();
-        return bus;
-    }
-
-    private void decreaseApplicationCount(int id) {
-        Bus bus = busRepository.getByIdForUpdate(id);
-        bus.decreaseApplyCount();
+        return busApplicationRepository.getValidBusApplication(student, ZonedDateTimeUtil.nowToLocalDate(), ZonedDateTimeUtil.nowToLocalTime());
     }
 
 }

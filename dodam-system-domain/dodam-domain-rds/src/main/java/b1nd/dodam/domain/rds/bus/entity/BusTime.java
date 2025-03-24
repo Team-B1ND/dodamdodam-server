@@ -36,9 +36,10 @@ public class BusTime {
         this.endAt = endAt;
     }
 
-    public void checkIfTheBusHasDeparted() {
+    public void checkIfTheBusIsAvailable() {
         LocalDate today = ZonedDateTimeUtil.nowToLocalDate();
-        if (startAt.isBefore(today) || endAt.isBefore(today)) {
+
+        if (today.isBefore(startAt) || today.isAfter(endAt)) {
             throw new BusTimeUnableException();
         }
     }

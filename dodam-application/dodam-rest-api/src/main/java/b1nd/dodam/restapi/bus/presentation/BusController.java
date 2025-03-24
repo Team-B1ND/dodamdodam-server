@@ -37,11 +37,12 @@ public class BusController {
     public Response registerPreset(@RequestBody @Valid BusPresetReq req) {
         return busUseCase.registerPreset(req);
     }
-
-    // TODO 삭제하기
-    @PostMapping("/apply/{id}")
-    public Response apply(@PathVariable int id) {
-        return busApplicationUseCase.apply(id);
+    @PostMapping("/apply/{id}/{seat}")
+    public Response apply(
+            @PathVariable int id,
+            @PathVariable(required = false) int seat
+    ) {
+        return busApplicationUseCase.apply(id, seat);
     }
 
     @PostMapping("/qr-code/scan")
@@ -63,18 +64,12 @@ public class BusController {
         return busUseCase.modify(id, req);
     }
 
-    // TODO 삭제하기
-    @PatchMapping("/apply/{id}")
-    public Response modifyApplication(@PathVariable int id) {
-        return busApplicationUseCase.modify(id);
-    }
-
-    @PatchMapping("/apply/status/{id}/{seatNumber}")
-    public Response modifyStatus(
+    @PatchMapping("/apply/{id}/{seat}")
+    public Response modifyApplication(
             @PathVariable int id,
-            @PathVariable(required = false) int seatNumber
+            @PathVariable(required = false) int seat
     ) {
-        return busApplicationUseCase.modifyStatus(id, seatNumber);
+        return busApplicationUseCase.modify(id, seat);
     }
 
     @PatchMapping("/status/{id}/{status}")
@@ -152,9 +147,8 @@ public class BusController {
         return busUseCase.delete(id);
     }
 
-    // TODO 삭제하기
-    @DeleteMapping("/apply/{id}")
-    public Response cancelApplication(@PathVariable int id) {
+    @DeleteMapping("/apply")
+    public Response cancelApplication() {
         return busApplicationUseCase.cancel();
     }
 

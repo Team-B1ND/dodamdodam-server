@@ -13,7 +13,6 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
@@ -23,13 +22,22 @@ public interface BusApplicationRepository extends JpaRepository<BusApplication, 
     @EntityGraph(attributePaths = {"student", "student.member"})
     List<BusApplication> findByBusOrderByStudentAsc(Bus bus);
 
-    @EntityGraph(attributePaths = {"bus"})
-    Optional<BusApplication> findByStudentAndBus_LeaveTimeAfter(Student student, LocalDateTime now);
+    @Query("""
+    select ba from bus_member ba
+    where ba.student = :student
+    and (ba.bus.leaveAt > :leaveAt
+        or (ba.bus.leaveAt = :leaveAt and ba.bus.leaveTime > :leaveTime))
+""")
+    Optional<BusApplication> findValidBusApplication(
+            @Param("student") Student student,
+            @Param("leaveAt") LocalDate leaveAt,
+            @Param("leaveTime") LocalTime leaveTime
+    );
 
-    boolean existsByStudentAndBus_LeaveTimeAfter(Student student, LocalDateTime now);
+    boolean existsByStudentAndBus_LeaveAtAfterAndBus_LeaveTimeAfter(Student student,  LocalDate nowAt, LocalTime nowTime);
 
-    default BusApplication getByStudentAndBus_LeaveTimeAfter(Student student, LocalDateTime now) {
-        return findByStudentAndBus_LeaveTimeAfter(student, now)
+    default BusApplication getValidBusApplication(Student student, LocalDate leaveAt, LocalTime leaveTime) {
+        return findValidBusApplication(student, leaveAt, leaveTime)
                 .orElseThrow(BusApplicationNotFoundException::new);
     }
 
