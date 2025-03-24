@@ -72,14 +72,6 @@ public class BusController {
         return busApplicationUseCase.modify(id, seat);
     }
 
-//    @PatchMapping("/apply/status/{id}/{seatNumber}")
-//    public Response modifyStatus(
-//            @PathVariable int id,
-//            @PathVariable(required = false) int seatNumber
-//    ) {
-//        return busApplicationUseCase.modifyStatus(id, seatNumber);
-//    }
-
     @PatchMapping("/status/{id}/{status}")
     public Response modifyStatus(
             @PathVariable int id,
