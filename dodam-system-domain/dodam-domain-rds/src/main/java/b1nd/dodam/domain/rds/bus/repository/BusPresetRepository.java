@@ -12,4 +12,6 @@ public interface BusPresetRepository extends JpaRepository<BusPreset, Integer> {
                 .orElseThrow(BusPresetNotFoundException::new);
     }
     Optional<BusPreset> findById(int id);
+
+    boolean existsByName(String name);
 }
