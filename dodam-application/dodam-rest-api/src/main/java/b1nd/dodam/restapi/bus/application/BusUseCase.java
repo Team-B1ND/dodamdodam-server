@@ -176,6 +176,7 @@ public class BusUseCase {
 
     @Transactional(rollbackFor = Exception.class)
     public Response delete(int id) {
+        busTimeToBusRepository.deleteBusTimeToBusByBus_Id(id);
         busRepository.deleteById(id);
         return Response.noContent("버스 삭제 성공");
     }

@@ -19,4 +19,7 @@ public interface BusTimeToBusRepository extends JpaRepository<BusTimeToBus, Inte
     }
 
     Optional<BusTimeToBus> findBusTimeToBusByBus_Id(int id);
+
+    void deleteBusTimeToBusByBus_Id(int id);
+
 }
