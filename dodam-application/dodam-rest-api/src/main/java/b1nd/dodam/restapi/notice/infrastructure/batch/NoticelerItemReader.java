@@ -15,11 +15,13 @@ import org.jsoup.select.Elements;
 import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.item.ItemReader;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Component
@@ -32,6 +34,7 @@ public class NoticelerItemReader implements ItemReader<Notice> {
     private int nextIndex = 0;
     private final String url = "https://dgsw.dge.hs.kr";
     private final String additionalUrl = "/dgswh/na/ntt/selectNttList.do?mi=10091723&bbsId=10091723";
+    private final String detailAdditionalUrl = "/dgswh/na/ntt/selectNttInfo.do?mi=10091723&bbsId=10091723";
     private Member testeacher;
 
 //    @PostConstruct
@@ -57,46 +60,53 @@ public class NoticelerItemReader implements ItemReader<Notice> {
 
     public List<Notice> fetchNoticesArticles() throws IOException {
         List<Notice> notices = new ArrayList<>();
+
         Connection.Response response = Jsoup
-                .connect(url)
+                .connect(url + additionalUrl)
                 .method(Connection.Method.GET)
                 .execute();
 
         Map<String, String> cookies = response.cookies();
+
         Document document = Jsoup.connect(url + additionalUrl)
                 .cookies(cookies)
                 .get();
-
         log.info("cookies : {}", cookies);
 
-        Elements posts = document.select("td.bbs_tit > a");
-
+        Elements posts = document.select("tr");
         log.info("posts : {}", posts);
-        for (Element post : posts) {
-            String nttSn = post.attr("data-id");
-            String bbsId = "10091704";
-            String mi = "10091704";
 
-            // 공지사항의 상세 URL 생성
-            String detailUrl = url + additionalUrl + "&nttSn=" + nttSn;
+        for (Element post : posts) {
+            log.info("---------시작------------");
+            log.info("post:{}", post);
+            String nttSn = post.select("tr").select("td").select("a").attr("data-id");
+//            String nttSn = post.attr("data-id").trim();
+            log.info("href: {}", nttSn);
+            if (nttSn.isEmpty()) continue;
+
+            String detailUrl = url + detailAdditionalUrl + "&nttSn=" + nttSn;
             log.info("detailUrl: {}", detailUrl);
 
-            // 공지사항 상세 페이지 크롤링
             Document detailDocument = Jsoup.connect(detailUrl)
                     .cookies(cookies)
                     .get();
-            log.info("detailDocument: {}", detailDocument);
 
-            // 제목, 내용, 파일 등 필요한 데이터 추출
-            String title = detailDocument.select(".bbs_ViewA").text(); // 제목
-            String content = detailDocument.select(".bbsV_cont").text(); // 내용
-            String file = detailDocument.select(".fname").text(); // 첨부파일 정보
+            Elements detail = detailDocument.select(".bbs_ViewA");
+//            log.info("detail : {}", detail);
 
-            // Notice 객체 생성 후 리스트에 추가
+            Elements titleElement = detail.select("h3");
+            String title = (titleElement != null) ? titleElement.text().trim() : "제목 없음";
+            String content = detail.select(".bbsV_cont").text().trim();
+            String file = detail.select(".fname").text().trim();
+
             notices.add(new Notice(title, content, NoticeStatus.CREATED, testeacher));
-            log.info("Title: " + title);
-            log.info("Content: " + content);
+
+            log.info("Title: {}", title);
+            log.info("Content: {}", content);
+            log.info("file: {}", file);
         }
+
         return notices;
     }
+
 }
