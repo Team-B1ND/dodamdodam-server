@@ -1,6 +1,7 @@
 package b1nd.dodam.restapi.member.application.data.res;
 
 import b1nd.dodam.domain.rds.member.entity.Student;
+import b1nd.dodam.domain.redis.member.model.MemberInfoRedisModel;
 
 import java.io.Serializable;
 
@@ -23,5 +24,17 @@ public record StudentRes(
                 student.getNumber(),
                 student.getCode()
         );
+    }
+
+    public static StudentRes of(MemberInfoRedisModel model) {
+        return (model.studentId() != null) ?
+                new StudentRes(
+                        model.studentId(),
+                        model.name(),
+                        model.studentGrade(),
+                        model.studentRoom(),
+                        model.studentNumber(),
+                        model.studentCode()
+                ) : null;
     }
 }

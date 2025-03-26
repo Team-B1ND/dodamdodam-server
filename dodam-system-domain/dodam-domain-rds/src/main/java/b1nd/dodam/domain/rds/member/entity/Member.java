@@ -2,6 +2,7 @@ package b1nd.dodam.domain.rds.member.entity;
 
 import b1nd.dodam.domain.rds.member.enumeration.ActiveStatus;
 import b1nd.dodam.domain.rds.member.enumeration.MemberRole;
+import b1nd.dodam.domain.rds.support.event.listener.EntitySyncListener;
 import b1nd.dodam.domain.rds.member.exception.ActiveMemberException;
 import b1nd.dodam.domain.rds.member.exception.MemberNotActiveException;
 import b1nd.dodam.domain.rds.member.exception.WrongPasswordException;
@@ -18,6 +19,7 @@ import org.apache.commons.lang3.StringUtils;
 @Getter
 @Entity(name = "member")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@EntityListeners(EntitySyncListener.class)
 public class Member extends BaseEntity {
 
     @Id

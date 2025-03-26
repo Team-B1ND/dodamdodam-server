@@ -1,4 +1,4 @@
-package b1nd.dodam.restapi.member.application.data.res;
+package b1nd.dodam.sync.rdsredis.model;
 
 import b1nd.dodam.domain.rds.member.entity.Member;
 import b1nd.dodam.domain.rds.member.entity.Student;
@@ -11,11 +11,9 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 
-import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.util.List;
 
-public record MemberInfoRes(
+public record MemberInfoSyncModel(
         String id,
         String name,
         String email,
@@ -23,17 +21,18 @@ public record MemberInfoRes(
         ActiveStatus status,
         String profileImage,
         String phone,
-        StudentRes student,
-        TeacherRes teacher,
+        StudentInfoSyncModel student,
+        TeacherInfoSyncModel teacher,
         @JsonSerialize(using = LocalDateTimeSerializer.class)
         @JsonDeserialize(using = LocalDateTimeDeserializer.class)
         LocalDateTime createdAt,
         @JsonSerialize(using = LocalDateTimeSerializer.class)
         @JsonDeserialize(using = LocalDateTimeDeserializer.class)
         LocalDateTime modifiedAt
-) implements Serializable {
-    public static MemberInfoRes of(Member member, Student student, Teacher teacher) {
-        return new MemberInfoRes(
+) {
+
+    public static MemberInfoSyncModel of(Member member, Student student, Teacher teacher) {
+        return new MemberInfoSyncModel(
                 member.getId(),
                 member.getName(),
                 member.getEmail(),
@@ -41,18 +40,14 @@ public record MemberInfoRes(
                 member.getStatus(),
                 member.getProfileImage(),
                 member.getPhone(),
-                StudentRes.of(student),
-                TeacherRes.of(teacher),
+                StudentInfoSyncModel.of(student),
+                TeacherInfoSyncModel.of(teacher),
                 member.getCreatedAt(),
                 member.getModifiedAt()
         );
     }
 
-    public static List<MemberInfoRedisModel> toRedisModel(List<MemberInfoRes> members) {
-        return members.parallelStream().map(MemberInfoRes::toRedisModel).toList();
-    }
-
-    private static MemberInfoRedisModel toRedisModel(MemberInfoRes member) {
+    public static MemberInfoRedisModel toRedisModel(MemberInfoSyncModel member) {
         return new MemberInfoRedisModel(
                 member.id(),
                 member.name(),
@@ -95,23 +90,8 @@ public record MemberInfoRes(
                 member.getModifiedAt()
         );
     }
-    public static List<MemberInfoRes> fromRedisModel(List<MemberInfoRedisModel> models) {
-        return models.parallelStream()
-                .map(model -> new MemberInfoRes(
-                            model.id(),
-                            model.name(),
-                            model.email(),
-                            model.role() != null ? MemberRole.valueOf(model.role()) : null,
-                            model.status() != null ? ActiveStatus.valueOf(model.status()) : null,
-                            model.profileImage(),
-                            model.phone(),
-                            StudentRes.of(model),
-                            TeacherRes.of(model),
-                            model.createdAt(),
-                            model.modifiedAt()
-                    )
-                )
-                .toList();
-    }
+
+
+
 
 }
