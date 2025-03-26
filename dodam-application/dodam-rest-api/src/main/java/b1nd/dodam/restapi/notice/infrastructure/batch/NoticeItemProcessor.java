@@ -11,4 +11,5 @@ public class NoticeItemProcessor implements ItemProcessor<Notice, Notice> {
     public Notice process(Notice item) throws Exception {
         return item;
     }
+
 }

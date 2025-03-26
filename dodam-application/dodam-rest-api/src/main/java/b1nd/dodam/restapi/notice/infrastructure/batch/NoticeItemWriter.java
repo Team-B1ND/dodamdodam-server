@@ -17,4 +17,5 @@ public class NoticeItemWriter implements ItemWriter<Notice> {
     public void write(Chunk<? extends Notice> chunk) throws Exception {
         noticeRepository.saveAll(chunk);
     }
+
 }

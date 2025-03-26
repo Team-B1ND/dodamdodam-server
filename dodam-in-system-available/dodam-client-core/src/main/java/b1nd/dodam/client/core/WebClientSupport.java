@@ -11,8 +11,10 @@ import org.springframework.web.reactive.function.client.ClientResponse;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
+import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Component
 @RequiredArgsConstructor
@@ -27,6 +29,16 @@ public class WebClientSupport {
                 .retrieve()
                 .onStatus(HttpStatusCode::isError, onError())
                 .bodyToMono(responseDtoClass);
+    }
+
+    public <T> Mono<String> batchGet(String url, Map<String, String> cookies) {
+        return webClient.get()
+                .uri(url)
+                .header(HttpHeaders.COOKIE, cookies.entrySet().stream()
+                        .map(entry -> entry.getKey() + "=" + entry.getValue())
+                        .collect(Collectors.joining("; ")))
+                .retrieve()
+                .bodyToMono(String.class);
     }
 
     public <V> void post(String url, V body, String... headers) {

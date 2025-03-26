@@ -13,8 +13,6 @@ import b1nd.dodam.restapi.auth.infrastructure.security.support.MemberAuthenticat
 import b1nd.dodam.restapi.notice.application.data.req.GenerateNoticeReq;
 import b1nd.dodam.restapi.notice.application.data.req.ModifyNoticeReq;
 import b1nd.dodam.restapi.notice.application.data.res.NoticeRes;
-import b1nd.dodam.restapi.notice.infrastructure.batch.BatchJobRunner;
-import b1nd.dodam.restapi.notice.infrastructure.batch.NoticelerItemReader;
 import b1nd.dodam.restapi.support.data.Response;
 import b1nd.dodam.restapi.support.data.ResponseData;
 import lombok.RequiredArgsConstructor;
@@ -28,21 +26,13 @@ import java.util.stream.Collectors;
 
 @Component
 @RequiredArgsConstructor
-//@Transactional(rollbackFor = Exception.class)
+@Transactional(rollbackFor = Exception.class)
 public class NoticeUseCase {
 
     private final NoticeService noticeService;
     private final DivisionService divisionService;
     private final DivisionMemberService divisionMemberService;
     private final MemberAuthenticationHolder memberAuthenticationHolder;
-    private final BatchJobRunner batchJobRunner;
-    private final NoticelerItemReader noticelerItemReader;
-
-    public Response get() throws Exception {
-//        batchJobRunner.run();
-        noticelerItemReader.fetchNoticesArticles();
-        return Response.ok("성공");
-    }
 
     public ResponseData<Long> register(GenerateNoticeReq generateNoticeReq) {
         Member member = memberAuthenticationHolder.current();
