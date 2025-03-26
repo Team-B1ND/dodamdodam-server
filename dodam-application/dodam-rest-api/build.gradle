@@ -18,6 +18,8 @@ dependencies {
     implementation project(':dodam-in-system-available:dodam-google-smtp-client')
     implementation project(':dodam-in-system-available:dodam-qrcode-client')
 
+    implementation project(':dodam-system-sync:dodam-sync-rds-redis')
+
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-security'
     implementation 'org.springframework.boot:spring-boot-starter-actuator'

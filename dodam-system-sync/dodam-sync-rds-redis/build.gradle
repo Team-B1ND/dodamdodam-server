@@ -1,0 +1,10 @@
+dependencies {
+    implementation 'org.springframework:spring-context:6.0.6'
+    implementation 'org.springframework:spring-web:6.0.6'
+    implementation 'org.springframework:spring-tx:6.0.6'
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.15.0'
+    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.15.0")
+
+    implementation project(':dodam-system-domain:dodam-domain-rds')
+    implementation project(':dodam-system-domain:dodam-domain-redis')
+}

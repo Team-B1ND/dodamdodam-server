@@ -15,7 +15,7 @@ import b1nd.dodam.domain.rds.member.repository.*;
 import b1nd.dodam.domain.rds.member.service.MemberService;
 import b1nd.dodam.domain.rds.member.service.support.MemberMessageUtil;
 import b1nd.dodam.domain.redis.member.enumeration.AuthType;
-import b1nd.dodam.domain.redis.member.service.MemberRedisService;
+import b1nd.dodam.domain.redis.member.service.MemberAuthRedisService;
 import b1nd.dodam.google.smtp.client.SMTPClient;
 import b1nd.dodam.restapi.auth.infrastructure.security.support.MemberAuthenticationHolder;
 import b1nd.dodam.restapi.member.application.data.req.*;
@@ -37,7 +37,7 @@ import java.util.List;
 public class MemberCommandUseCase {
 
     private final MemberService memberService;
-    private final MemberRedisService memberRedisService;
+    private final MemberAuthRedisService memberAuthRedisService;
     private final MemberRepository memberRepository;
     private final StudentRepository studentRepository;
     private final TeacherRepository teacherRepository;
@@ -50,7 +50,7 @@ public class MemberCommandUseCase {
 
     public Response join(String userAgent, JoinStudentReq req) {
         checkIfIdIsDuplicate(req.id());
-        memberRedisService.validateUserAuth(userAgent, true);
+        memberAuthRedisService.validateUserAuth(userAgent, true);
         Member member = memberRepository.save(req.mapToMember(encodePw(req.pw())));
         Student student = studentRepository.save(req.mapToStudent(member));
         publishStudentRegisteredEvent(student);
@@ -63,7 +63,7 @@ public class MemberCommandUseCase {
 
     public Response join(String userAgent, JoinTeacherReq req) {
         checkIfIdIsDuplicate(req.id());
-        memberRedisService.validateUserAuth(userAgent, false);
+        memberAuthRedisService.validateUserAuth(userAgent, false);
         Member member = memberRepository.save(req.mapToMember(encodePw(req.pw())));
         teacherRepository.save(req.mapToTeacher(member));
         return Response.created("선생님 회원가입 성공");
@@ -71,7 +71,7 @@ public class MemberCommandUseCase {
 
     public Response join(String userAgent, JoinParentReq req) {
         checkIfIdIsDuplicate(req.id());
-        memberRedisService.validateUserAuth(userAgent, false);
+        memberAuthRedisService.validateUserAuth(userAgent, false);
         Member member = memberRepository.save(req.mapToMember(encodePw(req.pw())));
         Parent parent = parentRepository.save(req.mapToParent(member));
         req.relationInfo()
@@ -83,7 +83,7 @@ public class MemberCommandUseCase {
     public Response sendAuthCode(AuthType authType, AuthCodeReq authCodeReq) {
         int authCode = RandomCode.randomCode();
         String identifier = authCodeReq.identifier();
-        memberRedisService.updateAuthCode(authType, identifier, authCode);
+//        memberRedisService.updateAuthCode(authType, identifier, authCode);
         checkType(authType, identifier, authCode);
         return ResponseData.ok("인증코드 발급 성공");
     }
@@ -97,8 +97,8 @@ public class MemberCommandUseCase {
     }
 
     public Response verifyAuthCode(String userAgent, AuthType authType, VerifyAuthCodeReq req) {
-        memberRedisService.validateAuthCode(authType, req.identifier(), req.authCode());
-        memberRedisService.updateUserAgentValidation(userAgent, authType, req.phone());
+        memberAuthRedisService.validateAuthCode(authType, req.identifier(), req.authCode());
+        memberAuthRedisService.updateUserAgentValidation(userAgent, authType, req.phone());
         return Response.ok("인증 성공");
     }
 

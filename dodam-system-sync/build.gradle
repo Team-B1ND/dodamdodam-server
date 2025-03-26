@@ -1,0 +1,11 @@
+subprojects {
+    dependencies {
+        implementation project(':dodam-system-core')
+    }
+
+    bootJar { enabled = false }
+    jar { enabled = true }
+}
+
+bootJar { enabled = false }
+jar { enabled = true }

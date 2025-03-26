@@ -1,7 +1,12 @@
 package b1nd.dodam.domain.redis.support.config;
 
+import com.redis.lettucemod.RedisModulesClient;
+import com.redis.lettucemod.api.StatefulRedisModulesConnection;
+import com.redis.lettucemod.api.sync.RedisModulesCommands;
 import io.lettuce.core.ReadFrom;
+import io.lettuce.core.RedisURI;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -20,6 +25,7 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
 
 import java.time.Duration;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Configuration
@@ -92,4 +98,42 @@ public class RedisConfig {
         return redisTemplate;
     }
 
+    @Bean
+    @Qualifier("masterRedisearchCommands")
+    public RedisModulesCommands<String, String> masterRedisearchCommands() {
+        RedisURI masterUri = RedisURI.create("redis://" + properties.getMaster().host() + ":" + properties.getMaster().port());
+        RedisModulesClient masterClient = RedisModulesClient.create(masterUri);
+        StatefulRedisModulesConnection<String, String> masterConnection = masterClient.connect();
+        return masterConnection.sync();  // 마스터에서 명령 실행
+    }
+
+    // 슬레이브 연결 및 명령 객체 생성
+    @Bean
+    @Qualifier("slaveRedisearchCommands1")
+    public RedisModulesCommands<String, String> slaveRedisearchCommands1() {
+        RedisURI slaveUri1 = RedisURI.create("redis://" + properties.getSlaves().get(0).host() + ":" + properties.getSlaves().get(0).port());
+        RedisModulesClient slaveClient1 = RedisModulesClient.create(slaveUri1);
+        StatefulRedisModulesConnection<String, String> slaveConnection1 = slaveClient1.connect();
+        return slaveConnection1.sync();  // 첫 번째 슬레이브에서 명령 실행
+    }
+
+    // 두 번째 슬레이브 연결 및 명령 객체 생성
+    @Bean
+    @Qualifier("slaveRedisearchCommands2")
+    public RedisModulesCommands<String, String> slaveRedisearchCommands2() {
+        RedisURI slaveUri2 = RedisURI.create("redis://" + properties.getSlaves().get(1).host() + ":" + properties.getSlaves().get(1).port());
+        RedisModulesClient slaveClient2 = RedisModulesClient.create(slaveUri2);
+        StatefulRedisModulesConnection<String, String> slaveConnection2 = slaveClient2.connect();
+        return slaveConnection2.sync();  // 두 번째 슬레이브에서 명령 실행
+    }
+
+    // 슬레이브 목록을 List로 반환
+    @Bean
+    @Qualifier("slaveRedisearchCommandsList")
+    public List<RedisModulesCommands<String, String>> slaveRedisearchCommandsList(
+            @Qualifier("slaveRedisearchCommands1") RedisModulesCommands<String, String> slave1,
+            @Qualifier("slaveRedisearchCommands2") RedisModulesCommands<String, String> slave2
+    ) {
+        return List.of(slave1, slave2);
+    }
 }

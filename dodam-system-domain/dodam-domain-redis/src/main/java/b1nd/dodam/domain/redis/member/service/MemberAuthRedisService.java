@@ -18,7 +18,7 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-public class MemberRedisService {
+public class MemberAuthRedisService {
 
     private final MemberRedisProperties memberRedisProperties;
     private final StringRedisTemplate redisTemplate;
