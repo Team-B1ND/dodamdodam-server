@@ -7,6 +7,7 @@ import b1nd.dodam.domain.rds.bus.entity.BusTime;
 import b1nd.dodam.domain.rds.bus.entity.BusTimeToBus;
 import b1nd.dodam.domain.rds.bus.enumeration.BusApplicationStatus;
 import b1nd.dodam.domain.rds.bus.enumeration.BusStatus;
+import b1nd.dodam.domain.rds.bus.exception.BusPresetNameDuplicated;
 import b1nd.dodam.domain.rds.bus.repository.*;
 import b1nd.dodam.domain.rds.member.entity.Member;
 import b1nd.dodam.domain.rds.member.entity.Student;
@@ -58,7 +59,9 @@ public class BusUseCase {
 
     @Transactional(rollbackFor = Exception.class)
     public Response registerPreset(BusPresetReq req){
-        busPresetRepository.save(req.mapToBusPreset());
+        if (busPresetRepository.existsByName(req.busName()))
+            throw new BusPresetNameDuplicated();
+        else busPresetRepository.save(req.mapToBusPreset());
         return Response.created("버스 프리셋 생성 성공");
     }
 
@@ -176,6 +179,7 @@ public class BusUseCase {
 
     @Transactional(rollbackFor = Exception.class)
     public Response delete(int id) {
+        busTimeToBusRepository.deleteBusTimeToBusByBus_Id(id);
         busRepository.deleteById(id);
         return Response.noContent("버스 삭제 성공");
     }
