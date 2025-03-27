@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 public class NoticeItemProcessor implements ItemProcessor<Notice, Notice> {
 
     @Override
-    public Notice process(Notice item) throws Exception {
+    public Notice process(Notice item) {
         return item;
     }
 

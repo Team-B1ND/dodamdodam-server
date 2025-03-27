@@ -38,12 +38,6 @@ public class NoticeController {
         return noticeUseCase.getNotices(keyword, lastId, limit);
     }
 
-//    @GetMapping("/craw")
-//    public Response getCraw(
-//    ) throws Exception {
-//        return noticeUseCase.get();
-//    }
-
     @GetMapping("/division")
     public ResponseData<List<NoticeRes>> getById(
             @RequestParam(required = false) Long id,
