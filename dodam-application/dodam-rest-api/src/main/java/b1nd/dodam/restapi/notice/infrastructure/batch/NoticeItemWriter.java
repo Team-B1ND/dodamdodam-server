@@ -14,7 +14,7 @@ public class NoticeItemWriter implements ItemWriter<Notice> {
     private final NoticeRepository noticeRepository;
 
     @Override
-    public void write(Chunk<? extends Notice> chunk) throws Exception {
+    public void write(Chunk<? extends Notice> chunk) {
         noticeRepository.saveAll(chunk);
     }
 

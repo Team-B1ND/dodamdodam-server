@@ -14,6 +14,7 @@ import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
+import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.item.ItemReader;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Flux;
@@ -23,10 +24,11 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 
 @Slf4j
 @Component
-//@StepScope
+@StepScope
 @RequiredArgsConstructor
 public class NoticelerItemReader implements ItemReader<Notice> {
 
@@ -41,17 +43,23 @@ public class NoticelerItemReader implements ItemReader<Notice> {
     private int nextIndex = 0;
     private Member teacher;
     private Map<String, String> cookies;
+    private CompletableFuture<List<Notice>> fetchNoticesFuture;
 
     @PostConstruct
-    public void init() throws IOException {
+    public void init() {
         this.teacher = memberRepository.getById("re");
-        fetchNoticesArticlesAsync().thenAccept(notices -> this.notices = notices);
+        fetchNoticesFuture = fetchNoticesArticlesAsync();
     }
 
     @Override
     public Notice read() {
-        if (nextIndex < notices.size()) {
-            return notices.get(nextIndex++);
+        try {
+            if (fetchNoticesFuture != null && fetchNoticesFuture.isDone()) {
+                if (notices == null) notices = fetchNoticesFuture.get();
+                if (nextIndex < notices.size()) return notices.get(nextIndex++);
+            }
+        } catch (InterruptedException | ExecutionException e) {
+            log.error("Error while fetching notices", e);
         }
         return null;
     }
@@ -88,13 +96,21 @@ public class NoticelerItemReader implements ItemReader<Notice> {
 
         return fetchDocument(URL + DETAIL_ADDITIONAL_URL + "&nttSn=" + nttSn, cookies)
                 .map(doc -> {
-                    String title = doc.select("h3").text().trim();
-                    String content = doc.select(".bbsV_cont").text().trim();
-                    String file = doc.select(".fname").text().trim();
+                    Element detailElement = doc.select(".bbs_ViewA").first();
 
-                    log.info("title : {}", title);
-                    log.info("content : {}", content);
-                    log.info("file : {}", file);
+                    if (detailElement == null) {
+                        log.error("No detail found for notice: {}", nttSn);
+                        return null;
+                    }
+
+                    String title = detailElement.select("h3").text().trim();
+                    String content = detailElement.select(".bbsV_cont").text().trim();
+                    String file = detailElement.select(".fname").text().trim();
+
+                    log.info("Notice Title: {}", title);
+                    log.info("Notice Content: {}", content);
+                    log.info("Notice File: {}", file);
+
                     return new Notice(title, content, NoticeStatus.CREATED, teacher);
                 });
     }
@@ -104,4 +120,5 @@ public class NoticelerItemReader implements ItemReader<Notice> {
                 .map(Jsoup::parse)
                 .onErrorReturn(new Document(""));
     }
+
 }
