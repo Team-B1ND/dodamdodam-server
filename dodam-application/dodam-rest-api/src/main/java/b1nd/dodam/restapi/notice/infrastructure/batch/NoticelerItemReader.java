@@ -9,7 +9,6 @@ import b1nd.dodam.domain.redis.notice.service.NoticeRedisService;
 import b1nd.dodam.restapi.support.async.AsyncConfig;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -26,7 +25,6 @@ import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
-@Slf4j
 @Component
 @StepScope
 @RequiredArgsConstructor
@@ -59,7 +57,6 @@ public class NoticelerItemReader implements ItemReader<Notice> {
                 if (nextIndex < notices.size()) return notices.get(nextIndex++);
             }
         } catch (InterruptedException | ExecutionException e) {
-            log.error("Error while fetching notices", e);
         }
         return null;
     }
@@ -90,27 +87,16 @@ public class NoticelerItemReader implements ItemReader<Notice> {
 
         String cacheKey = "notice:" + nttSn;
         if (noticeRedisService.validateNotice(cacheKey)) {
-            log.info("Skipping cached notice: {}", nttSn);
             return Mono.empty();
         }
 
         return fetchDocument(URL + DETAIL_ADDITIONAL_URL + "&nttSn=" + nttSn, cookies)
                 .map(doc -> {
                     Element detailElement = doc.select(".bbs_ViewA").first();
-
-                    if (detailElement == null) {
-                        log.error("No detail found for notice: {}", nttSn);
-                        return null;
-                    }
-
                     String title = detailElement.select("h3").text().trim();
                     String content = detailElement.select(".bbsV_cont").text().trim();
-                    String file = detailElement.select(".fname").text().trim();
-
-                    log.info("Notice Title: {}", title);
-                    log.info("Notice Content: {}", content);
-                    log.info("Notice File: {}", file);
-
+//                    String file = detailElement.select(".fname").text().trim();
+                    noticeRedisService.setNotice(title, nttSn);
                     return new Notice(title, content, NoticeStatus.CREATED, teacher);
                 });
     }

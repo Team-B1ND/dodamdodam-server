@@ -15,7 +15,7 @@ public class BatchJobRunner {
     private final JobLauncher jobLauncher;
     private final Job job;
 
-    @Scheduled(cron = "0 0/5 * * * ?")
+    @Scheduled(cron = "0 0 12 * * ?")
     private void executeBatchJob() {
         try {
             JobParameters jobParameter = new JobParametersBuilder()
