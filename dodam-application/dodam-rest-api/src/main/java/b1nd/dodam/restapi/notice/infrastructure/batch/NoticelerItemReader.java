@@ -90,12 +90,12 @@ public class NoticelerItemReader implements ItemReader<Notice> {
             return Mono.empty();
         }
 
+        //TODO 홈페이지에서 파일도 크롤링 하기
         return fetchDocument(URL + DETAIL_ADDITIONAL_URL + "&nttSn=" + nttSn, cookies)
                 .map(doc -> {
                     Element detailElement = doc.select(".bbs_ViewA").first();
                     String title = detailElement.select("h3").text().trim();
                     String content = detailElement.select(".bbsV_cont").text().trim();
-//                    String file = detailElement.select(".fname").text().trim();
                     noticeRedisService.setNotice(title, nttSn);
                     return new Notice(title, content, NoticeStatus.CREATED, teacher);
                 });
