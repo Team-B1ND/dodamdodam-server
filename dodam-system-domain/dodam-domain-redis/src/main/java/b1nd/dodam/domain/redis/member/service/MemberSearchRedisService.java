@@ -26,9 +26,10 @@ public class MemberSearchRedisService {
                 keyword, gradeFilter, roleFilter, statusFilter
         );
 
-        System.out.println(query);
         Optional<SearchOptions<String, String>> options = Optional.of(SearchOptions.<String, String>builder()
-
+                .sortBy(SearchOptions.SortBy.asc("studentGrade"))
+                .sortBy(SearchOptions.SortBy.asc("studentRoom"))
+                .sortBy(SearchOptions.SortBy.asc("studentNumber"))
                 .limit((page - 1) * pageSize, pageSize)
                 .build());
 
