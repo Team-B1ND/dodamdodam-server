@@ -83,7 +83,7 @@ public class MemberCommandUseCase {
     public Response sendAuthCode(AuthType authType, AuthCodeReq authCodeReq) {
         int authCode = RandomCode.randomCode();
         String identifier = authCodeReq.identifier();
-//        memberRedisService.updateAuthCode(authType, identifier, authCode);
+        memberAuthRedisService.updateAuthCode(authType, identifier, authCode);
         checkType(authType, identifier, authCode);
         return ResponseData.ok("인증코드 발급 성공");
     }
