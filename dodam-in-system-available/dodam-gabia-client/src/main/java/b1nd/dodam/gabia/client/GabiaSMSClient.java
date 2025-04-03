@@ -11,7 +11,6 @@ import org.springframework.util.MultiValueMap;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
-import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 @Component
@@ -25,17 +24,21 @@ public class GabiaSMSClient {
     private final GabiaProperties gabiaProperties;
 
     public void send(SendSmsReq req) {
-        final String url;
-        final MultiValueMap<String, String> formData;
-        if(isLMS(req.content().getBytes())) {
-            url = gabiaProperties.getLmsUrl();
-            formData = createFormData(req);
-        } else {
-            url = gabiaProperties.getSmsUrl();
-            formData = createFormDataWithSubject(req);
+        try {
+            final String url;
+            final MultiValueMap<String, String> formData;
+            if (isLMS(req.content().getBytes())) {
+                url = gabiaProperties.getLmsUrl();
+                formData = createFormData(req);
+            } else {
+                url = gabiaProperties.getSmsUrl();
+                formData = createFormDataWithSubject(req);
+            }
+            System.out.println(url);
+            getAuthValue().thenAccept(value -> webClientSupport.post(url, formData, HttpHeaders.AUTHORIZATION, value));
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
-
-        getAuthValue().thenAccept(value -> webClientSupport.post(url, formData, HttpHeaders.AUTHORIZATION, value));
     }
 
     private boolean isLMS(byte[] bytes) {
@@ -59,7 +62,7 @@ public class GabiaSMSClient {
         return formData;
     }
 
-    private CompletableFuture<String> getAuthValue() {
+    public CompletableFuture<String> getAuthValue() {
         return gabiaOAuthClient.getAccessToken()
                 .thenApply(token -> "Basic " + Base64.getEncoder().encodeToString(
                                 String.format("%s:%s", gabiaProperties.getId(), token

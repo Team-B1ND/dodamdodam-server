@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 import java.util.Arrays;
+import java.util.Objects;
 
 @Getter
 @RequiredArgsConstructor
@@ -20,6 +21,13 @@ public enum MemberRole {
     public static MemberRole of(int number) {
         return Arrays.stream(values())
                 .filter(value -> value.number == number)
+                .findAny()
+                .orElse(null);
+    }
+
+    public static MemberRole of(String role) {
+        return Arrays.stream(values())
+                .filter(value -> Objects.equals(value.role, role))
                 .findAny()
                 .orElse(null);
     }
