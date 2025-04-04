@@ -27,9 +27,9 @@ public class AuthController {
         return useCase.login(req);
     }
 
-    @PostMapping("/reissue")
-    public CompletableFuture<ResponseData<ReissueTokenRes>> reissue(@RequestBody @Valid ReissueTokenReq req) {
-        return useCase.reissue(req);
-    }
+//    @PostMapping("/reissue")
+//    public CompletableFuture<ResponseData<ReissueTokenRes>> reissue(@RequestBody @Valid ReissueTokenReq req) {
+//        return useCase.reissue(req);
+//    }
 
 }

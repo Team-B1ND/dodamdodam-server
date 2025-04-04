@@ -43,11 +43,11 @@ public class AuthUseCase {
                 .thenApply(res -> ResponseData.ok("로그인 성공", res));
     }
 
-    @Async
-    public CompletableFuture<ResponseData<ReissueTokenRes>> reissue(ReissueTokenReq req) {
-        return tokenClient.reissueToken(req.refreshToken())
-                .thenApply(ReissueTokenRes::new)
-                .thenApply(res -> ResponseData.ok("토큰 재발급 성공", res));
-    }
+//    @Async
+//    public CompletableFuture<ResponseData<ReissueTokenRes>> reissue(ReissueTokenReq req) {
+//        return tokenClient.reissueToken(req.refreshToken())
+//                .thenApply(ReissueTokenRes::new)
+//                .thenApply(res -> ResponseData.ok("토큰 재발급 성공", res));
+//    }
 
 }

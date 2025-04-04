@@ -22,16 +22,17 @@ public final class DodamTokenClient {
     private final DodamTokenProperties tokenProperties;
 
     public CompletableFuture<Tokens> issueTokens(String id, int role) {
-        CompletableFuture<String> accessToken = issueToken(id, role, tokenProperties.getGenerate());
-        CompletableFuture<String> refreshToken = issueToken(id, role, tokenProperties.getRefresh());
+        CompletableFuture<String> accessToken = issueToken(id, role, tokenProperties.getGenerateAccess());
+        CompletableFuture<String> refreshToken = issueToken(id, role, tokenProperties.getGenerateRefresh());
 
         return accessToken.thenCombine(refreshToken, Tokens::new);
     }
 
-    public CompletableFuture<String> reissueToken(String refreshToken) {
-        return CompletableFuture.supplyAsync(() -> verifyToken(refreshToken).data())
-                .thenCompose(data -> issueToken(data.memberId(), data.accessLevel(), tokenProperties.getGenerate()));
-    }
+// TODO reissue
+//    public CompletableFuture<String> reissueToken(String refreshToken) {
+//        return CompletableFuture.supplyAsync(() -> verifyToken(refreshToken).data())
+//                .thenCompose(data -> issueToken(data.memberId(), data.accessLevel(), tokenProperties.getGenerate()));
+//    }
 
     public String getMemberIdByToken(String token) {
         return verifyToken(token).data().memberId();
@@ -48,7 +49,7 @@ public final class DodamTokenClient {
     private CompletableFuture<String> issueToken(String userId, int role, String url) {
         return webClient.post(
                 jwtProperties.getTokenServer() + url,
-                new TokenReq(userId, role, 0),
+                new TokenReq(userId, role),
                 TokenRes.class
         ).toFuture().thenApply(res -> res.data().token());
     }

@@ -12,8 +12,8 @@ import org.springframework.context.annotation.Configuration;
 public
 class DodamTokenProperties {
 
-    private String generate;
+    private String generateAccess;
+    private String generateRefresh;
     private String verify;
-    private String refresh;
 
 }
