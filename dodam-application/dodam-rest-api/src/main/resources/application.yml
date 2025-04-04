@@ -61,9 +61,10 @@ logging.level:
 
 app:
   token:
-    generateAccess: ${TOKEN_GENERATE_URL}
+    reissueAccess: ${TOKEN_REISSUE_ACCESS_URL}
+    generateAccess: ${TOKEN_GENERATE_ACCESS_URL}
+    generateRefresh: ${TOKEN_GENERATE_REFRESH_URL}
     verify: ${TOKEN_VERIFY_URL}
-    generateRefresh: ${TOKEN_REFRESH_URL}
   jwt:
     issuer: ${JWT_ISSUER}
     tokenServer: ${TOKEN_SERVER_URL}
