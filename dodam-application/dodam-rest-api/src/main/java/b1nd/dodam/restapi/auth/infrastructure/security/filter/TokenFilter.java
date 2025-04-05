@@ -47,8 +47,7 @@ public class TokenFilter extends OncePerRequestFilter {
     }
 
     private MemberDetails getMemberDetails(String token) {
-        String id = tokenClient.getMemberIdByToken(token);
-        return new MemberDetails(memberRepository.getById(id));
+        return new MemberDetails(memberRepository.getById(tokenClient.getMemberIdByToken(token)));
     }
 
 }
