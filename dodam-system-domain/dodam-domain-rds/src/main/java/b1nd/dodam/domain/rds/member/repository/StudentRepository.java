@@ -71,4 +71,6 @@ public interface StudentRepository extends JpaRepository<Student, Integer> {
 
     boolean existsByCode(String code);
 
+    @EntityGraph(attributePaths = {"member"})
+    List<Student> findByMemberIdIn(List<String> memberIds);
 }

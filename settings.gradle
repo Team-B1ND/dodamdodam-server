@@ -26,3 +26,7 @@ include 'dodam-in-system-available:dodam-qrcode-client'
 //dodam-application
 include 'dodam-application'
 include 'dodam-application:dodam-rest-api'
+
+//dodam-system-sync
+include 'dodam-system-sync'
+include 'dodam-system-sync:dodam-sync-rds-redis'

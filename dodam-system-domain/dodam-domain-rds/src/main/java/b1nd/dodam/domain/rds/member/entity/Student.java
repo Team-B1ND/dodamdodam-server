@@ -1,5 +1,6 @@
 package b1nd.dodam.domain.rds.member.entity;
 
+import b1nd.dodam.domain.rds.support.event.listener.EntitySyncListener;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
@@ -10,6 +11,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @Entity(name = "student")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@EntityListeners(EntitySyncListener.class)
 public class Student {
 
     @Id

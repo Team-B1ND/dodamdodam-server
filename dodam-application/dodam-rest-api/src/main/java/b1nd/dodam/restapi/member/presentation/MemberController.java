@@ -1,6 +1,7 @@
 package b1nd.dodam.restapi.member.presentation;
 
 import b1nd.dodam.domain.rds.member.enumeration.ActiveStatus;
+import b1nd.dodam.domain.rds.member.enumeration.MemberRole;
 import b1nd.dodam.domain.redis.member.enumeration.AuthType;
 import b1nd.dodam.restapi.auth.infrastructure.security.support.MemberAuthenticationHolder;
 import b1nd.dodam.restapi.member.application.MemberCommandUseCase;
@@ -117,8 +118,27 @@ public class MemberController {
     }
 
     @GetMapping("/search")
-    public ResponseData<List<MemberInfoRes>> searchByName(@RequestParam String name) {
-        return queryUseCase.searchByName(name);
+    public ResponseData<List<MemberInfoRes>> searchMember(
+            @RequestParam String name,
+            @RequestParam(required = false) Integer grade,
+            @RequestParam MemberRole role,
+            @RequestParam ActiveStatus status,
+            @RequestParam long page,
+            @RequestParam long pageSize
+    ) {
+        return queryUseCase.searchByMemberInfo(name, grade, role, status, page, pageSize);
+    }
+
+    @GetMapping("/search/info")
+    public ResponseData<List<MemberInfoRes>> searchByInfo(
+            @RequestParam String name,
+            @RequestParam(required = false) Integer grade,
+            @RequestParam MemberRole role,
+            @RequestParam ActiveStatus status,
+            @RequestParam long page,
+            @RequestParam long pageSize
+    ) {
+        return queryUseCase.searchByMemberInfo(name, grade, role, status, page, pageSize);
     }
 
     @GetMapping("/status")
