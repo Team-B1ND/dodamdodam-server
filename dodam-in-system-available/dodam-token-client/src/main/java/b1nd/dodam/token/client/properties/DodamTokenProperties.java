@@ -2,8 +2,8 @@ package b1nd.dodam.token.client.properties;
 
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 
 @Getter
 @Setter
@@ -12,8 +12,9 @@ import org.springframework.context.annotation.Configuration;
 public
 class DodamTokenProperties {
 
-    private String generate;
+    private String generateAccess;
+    private String reissueAccess;
+    private String generateRefresh;
     private String verify;
-    private String refresh;
 
 }
