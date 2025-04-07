@@ -37,9 +37,10 @@ jobs:
           redis.slaves.1.port: ${{ secrets.REDIS_SLAVE_2_PORT }}
           auth.code.key: ${{ secrets.AUTH_CODE_KEY }}
           auth.access.key: ${{ secrets.AUTH_ACCESS_KEY }}
-          app.token.generate: ${{ secrets.TOKEN_GENERATE_URL }}
+          app.token.reissueAccess: ${{ secrets.TOKEN_REISSUE_ACCESS_URL }}
+          app.token.generateAccess: ${{ secrets.TOKEN_GENERATE_ACCESS_URL }}
+          app.token.generateRefresh: ${{ secrets.TOKEN_GENERATE_REFRESH_URL }}
           app.token.verify: ${{ secrets.TOKEN_VERIFY_URL }}
-          app.token.refresh: ${{ secrets.TOKEN_REFRESH_URL }}
           app.jwt.issuer: ${{ secrets.JWT_ISSUER }}
           app.jwt.tokenServer: ${{ secrets.TOKEN_SERVER_URL }}
           app.youtube.key.apiKey: ${{ secrets.YOUTUBE_KEY }}
