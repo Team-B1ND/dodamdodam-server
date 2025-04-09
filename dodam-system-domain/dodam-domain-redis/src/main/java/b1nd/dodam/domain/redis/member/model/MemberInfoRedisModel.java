@@ -15,6 +15,7 @@ public record MemberInfoRedisModel(
         String status,
         String profileImage,
         String phone,
+        String sortKey,
 
         Integer studentId,
         Integer studentGrade,
@@ -39,6 +40,7 @@ public record MemberInfoRedisModel(
                 doc.get("status"),
                 doc.get("profileImage"),
                 doc.get("phone"),
+                doc.get("sortKey"),
 
                 NullSafeParserUtil.parseInt(doc.get("studentId")),
                 NullSafeParserUtil.parseInt(doc.get("studentGrade")),

@@ -25,7 +25,6 @@ public class RedisearchCommandsSupport {
     ) {
         this.masterCommands = masterCommands;
         this.slaveCommandsList = slaveCommandsList;
-        System.out.println("commands 객체가 주입되었는지 확인: " + (masterCommands != null));
     }
 
     public SearchResults<String, String> search(

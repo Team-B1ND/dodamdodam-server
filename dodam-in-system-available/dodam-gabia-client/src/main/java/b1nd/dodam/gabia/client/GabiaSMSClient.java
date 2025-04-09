@@ -34,7 +34,6 @@ public class GabiaSMSClient {
                 url = gabiaProperties.getSmsUrl();
                 formData = createFormDataWithSubject(req);
             }
-            System.out.println(url);
             getAuthValue().thenAccept(value -> webClientSupport.post(url, formData, HttpHeaders.AUTHORIZATION, value));
         } catch (Exception e) {
             throw new RuntimeException(e);

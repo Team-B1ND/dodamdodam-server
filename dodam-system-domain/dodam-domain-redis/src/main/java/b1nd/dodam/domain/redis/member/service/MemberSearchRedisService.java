@@ -18,21 +18,29 @@ public class MemberSearchRedisService {
 
     public List<MemberInfoRedisModel> searchMembers(String keyword, Integer grade, String role, String status, long page, long pageSize) {
         String gradeFilter = (grade != null) ? String.format("@studentGrade:[%d %d]", grade, grade) : "";
-        String roleFilter = (role != null) ? String.format("@role:'%s'", role) : "";  // 따옴표 추가
-        String statusFilter = (status != null) ? String.format("@status:'%s'", status) : "";  // 따옴표 추가
+        String roleFilter = (role != null && !role.isBlank()) ? String.format("@role:%s", escape(role)) : "";
+        String statusFilter = (status != null && !status.isBlank()) ? String.format("@status:%s", escape(status)) : "";
+        String nameFilter = (keyword != null && !keyword.isBlank()) ? String.format("@name:*%s*", escape(keyword)) : "";
 
         String query = String.format(
-                "@name:*%s*' %s %s %s",
-                keyword, gradeFilter, roleFilter, statusFilter
+                "%s %s %s %s",
+                nameFilter, gradeFilter, roleFilter, statusFilter
         );
-
+        if (query.isBlank()) query = "*";
         Optional<SearchOptions<String, String>> options = Optional.of(SearchOptions.<String, String>builder()
-                .sortBy(SearchOptions.SortBy.asc("studentGrade, studentRoom, studentNumber"))
+                .sortBy(
+                        SearchOptions.SortBy.asc("sortKey")
+                )
+
                 .limit((page - 1) * pageSize, pageSize)
                 .build());
 
         SearchResults<String, String> results = redisCommandsSupport.search(MEMBER_INFO_INDEX, Optional.of(query), options);
         return MemberInfoRedisModel.convertToMemberInfoRedisModel(results);
+    }
+
+    private String escape(String input) {
+        return input.replaceAll("([@:\\-\\[\\]\\{\\}\"~*<>\'])", "\\\\$1");
     }
 
     public List<MemberInfoRedisModel> getAllMember() {
@@ -52,6 +60,7 @@ public class MemberSearchRedisService {
         memberMap.put("status", model.status());
         memberMap.put("profileImage", model.profileImage());
         memberMap.put("phone", model.phone());
+        memberMap.put("sortKey", model.sortKey());
         memberMap.put("studentId", String.valueOf(model.studentId()));
         memberMap.put("studentGrade", String.valueOf(model.studentGrade()));
         memberMap.put("studentRoom", String.valueOf(model.studentRoom()));

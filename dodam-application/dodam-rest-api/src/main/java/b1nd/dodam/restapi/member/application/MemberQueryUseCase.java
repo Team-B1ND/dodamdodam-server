@@ -22,6 +22,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Objects;
 
 @Component
 @Transactional(readOnly = true)
@@ -45,7 +46,9 @@ public class MemberQueryUseCase {
     }
 
     public ResponseData<List<MemberInfoRes>> searchByMemberInfo(String name, Integer grade, MemberRole role, ActiveStatus status, long page, long pageSize) {
-        List<MemberInfoRedisModel> memberInfoList = memberSearchRedisService.searchMembers(name, grade, String.valueOf(role), String.valueOf(status), page, pageSize);
+        List<MemberInfoRedisModel> memberInfoList = memberSearchRedisService.searchMembers(
+                name, grade, Objects.toString(role, null), Objects.toString(status,null), page, pageSize
+        );
         return ResponseData.ok("멤버 정보로 검색 성공", MemberInfoRes.fromRedisModel(memberInfoList));
     }
 

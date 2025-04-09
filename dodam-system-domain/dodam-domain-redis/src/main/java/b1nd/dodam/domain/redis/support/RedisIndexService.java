@@ -29,23 +29,19 @@ public class RedisIndexService implements ApplicationRunner {
     public void run(ApplicationArguments args) {
         if (!isIndexExists()) {
             createMemberInfoIndex();
-        } else {
-            System.out.println("🔹 Redisearch 인덱스가 이미 존재합니다: " + INDEX_NAME);
         }
     }
 
     private boolean isIndexExists() {
         try {
             commands.ftInfo(INDEX_NAME);
-            return true; // 인덱스가 존재함
+            return true;
         } catch (RedisCommandExecutionException e) {
-            return false; // 인덱스가 없으면 예외 발생
+            return false;
         }
     }
 
     private void createMemberInfoIndex() {
-        System.out.println("🛠 Redisearch 인덱스를 생성합니다: " + INDEX_NAME);
-
         Field<String> idField = Field.text("id").build();
         Field<String> nameField = Field.text("name").build();
         Field<String> emailField = Field.text("email").build();
@@ -53,6 +49,7 @@ public class RedisIndexService implements ApplicationRunner {
         Field<String> statusField = Field.text("status").build();
         Field<String> profileImageField = Field.text("profileImage").build();
         Field<String> phoneField = Field.text("phone").build();
+        Field<String> sortKeyField = Field.text("sortKey").build();
 
         Field<String> studentIdField = Field.numeric("studentId").build();
         Field<String> studentNameField = Field.text("studentName").build();
@@ -73,12 +70,10 @@ public class RedisIndexService implements ApplicationRunner {
                 .build();
 
         commands.ftCreate(INDEX_NAME, options,
-                idField, nameField, emailField, roleField, statusField, profileImageField, phoneField,
+                idField, nameField, emailField, roleField, statusField, profileImageField, phoneField, sortKeyField,
                 studentIdField, studentNameField, studentGradeField, studentRoomField, studentNumberField, studentCodeField,
                 teacherNameField, teacherTelField, teacherPositionField,
                 createdAtField, modifiedAtField
         );
-
-        System.out.println("✅ Redisearch 인덱스 생성 완료: " + INDEX_NAME);
     }
 }
