@@ -53,6 +53,7 @@ public record MemberInfoRes(
     }
 
     private static MemberInfoRedisModel toRedisModel(MemberInfoRes member) {
+        StudentRes student = member.student;
         return new MemberInfoRedisModel(
                 member.id(),
                 member.name(),
@@ -61,11 +62,12 @@ public record MemberInfoRes(
                 String.valueOf(member.status),
                 member.profileImage,
                 member.phone,
-                member.student != null ? member.student.id() : null,
-                member.student != null ? member.student.grade() : null,
-                member.student != null ? member.student.room() : null,
-                member.student != null ? member.student.number() : null,
-                member.student != null ? member.student.code() : null,
+                student == null ? "99-99-99" : String.format("%02d-%02d-%02d", student.grade(), student.room(), student.number()),
+                student != null ? student.id() : null,
+                student != null ? student.grade() : null,
+                student != null ? student.room() : null,
+                student != null ? student.number() : null,
+                student != null ? student.code() : null,
                 member.teacher != null ? member.teacher.id() : null,
                 member.teacher != null ? member.teacher.tel() : null,
                 member.teacher != null ? member.teacher.position() : null,
@@ -74,27 +76,6 @@ public record MemberInfoRes(
         );
     }
 
-    public static MemberInfoRedisModel toRedisModel(Member member, Student student, Teacher teacher) {
-        return new MemberInfoRedisModel(
-                member.getId(),
-                member.getName(),
-                member.getEmail(),
-                String.valueOf(member.getRole()),
-                String.valueOf(member.getStatus()),
-                member.getProfileImage(),
-                member.getPhone(),
-                student != null ? student.getId() : null,
-                student != null ? student.getGrade() : null,
-                student != null ? student.getRoom() : null,
-                student != null ? student.getNumber() : null,
-                student != null ? student.getCode() : null,
-                teacher != null ? teacher.getId() : null,
-                teacher != null ? teacher.getTel() : null,
-                teacher != null ? teacher.getPosition() : null,
-                member.getCreatedAt(),
-                member.getModifiedAt()
-        );
-    }
     public static List<MemberInfoRes> fromRedisModel(List<MemberInfoRedisModel> models) {
         return models.parallelStream()
                 .map(model -> new MemberInfoRes(

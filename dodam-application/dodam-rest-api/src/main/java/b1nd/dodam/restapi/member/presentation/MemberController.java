@@ -119,10 +119,10 @@ public class MemberController {
 
     @GetMapping("/search")
     public ResponseData<List<MemberInfoRes>> searchMember(
-            @RequestParam String name,
+            @RequestParam(required = false) String name,
             @RequestParam(required = false) Integer grade,
-            @RequestParam MemberRole role,
-            @RequestParam ActiveStatus status,
+            @RequestParam(required = false) MemberRole role,
+            @RequestParam(required = false) ActiveStatus status,
             @RequestParam long page,
             @RequestParam long pageSize
     ) {
