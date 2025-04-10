@@ -1,4 +1,4 @@
-package b1nd.dodam.restapi.point.application;
+package b1nd.dodam.process.listener.point;
 
 import b1nd.dodam.domain.rds.member.event.StudentRegisteredEvent;
 import b1nd.dodam.domain.rds.point.entity.PointScore;

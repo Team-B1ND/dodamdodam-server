@@ -1,4 +1,4 @@
-package b1nd.dodam.restapi.member.application;
+package b1nd.dodam.process.listener.member;
 
 import b1nd.dodam.domain.rds.member.event.MemberSMSEvent;
 import b1nd.dodam.gabia.client.GabiaSMSClient;

@@ -1,0 +1,9 @@
+dependencies {
+    implementation 'org.springframework:spring-tx:6.0.6'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+
+    implementation project(':dodam-in-system-available:dodam-gabia-client')
+    implementation project(':dodam-in-system-available:dodam-firebase-client')
+    implementation project(':dodam-system-domain:dodam-domain-rds')
+    implementation project(':dodam-system-domain:dodam-domain-redis')
+}

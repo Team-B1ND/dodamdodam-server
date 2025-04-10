@@ -13,6 +13,7 @@ import b1nd.dodam.domain.rds.member.entity.Member;
 import b1nd.dodam.domain.rds.member.entity.Student;
 import b1nd.dodam.domain.rds.member.repository.StudentRepository;
 import b1nd.dodam.firebase.client.FCMClient;
+import b1nd.dodam.process.listener.pushalarm.FcmEvent;
 import b1nd.dodam.restapi.auth.infrastructure.security.support.MemberAuthenticationHolder;
 import b1nd.dodam.restapi.bus.application.data.req.BusPresetReq;
 import b1nd.dodam.restapi.bus.application.data.req.BusReq;
@@ -24,6 +25,7 @@ import b1nd.dodam.restapi.bus.application.data.res.BusTimeRes;
 import b1nd.dodam.restapi.support.data.Response;
 import b1nd.dodam.restapi.support.data.ResponseData;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -43,7 +45,7 @@ public class BusUseCase {
     private final MemberAuthenticationHolder memberAuthenticationHolder;
     private final BusTimeRepository busTimeRepository;
     private final BusTimeToBusRepository busTimeToBusRepository;
-    private final FCMClient fcmClient;
+    private final ApplicationEventPublisher eventPublisher;
 
     @Transactional(rollbackFor = Exception.class)
     public Response register(BusReq req) {
@@ -54,7 +56,10 @@ public class BusUseCase {
     private void registerBus(){
         List<String> pushTokens = studentRepository.findAllMembers().stream()
                 .map(Member::getPushToken).toList();
-        fcmClient.sendMessages(pushTokens, "귀가버스 신청", "귀가 버스 신청이 가능해요! 신청해주세요.");
+        pushTokens.parallelStream().forEach(token ->
+            eventPublisher.publishEvent(new FcmEvent(token, "귀가버스 신청", "귀가 버스 신청이 가능해요! 신청해주세요."))
+        );
+
     }
 
     @Transactional(rollbackFor = Exception.class)
