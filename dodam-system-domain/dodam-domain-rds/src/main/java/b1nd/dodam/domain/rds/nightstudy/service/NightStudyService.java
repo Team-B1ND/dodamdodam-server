@@ -7,9 +7,9 @@ import org.springframework.stereotype.Service;
 
 import b1nd.dodam.domain.rds.member.entity.Student;
 import b1nd.dodam.domain.rds.nightstudy.entity.NightStudy;
-import b1nd.dodam.domain.rds.nightstudy.exception.NightStudyNotFoundException;
-import b1nd.dodam.domain.rds.nightstudy.repository.NightStudyRepository;
 import b1nd.dodam.domain.rds.support.enumeration.ApprovalStatus;
+import b1nd.dodam.domain.rds.nightstudy.repository.NightStudyRepository;
+import b1nd.dodam.domain.rds.nightstudy.exception.NightStudyNotFoundException;
 
 @Service
 @RequiredArgsConstructor

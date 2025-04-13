@@ -37,4 +37,10 @@ public class NightStudyBan {
         this.started = started;
         this.ended = ended;
     }
+
+    public void updateInfo(String reason, LocalDate started, LocalDate ended) {
+        this.reason = reason;
+        this.started = started;
+        this.ended = ended;
+    }
 }

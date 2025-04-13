@@ -10,9 +10,7 @@ import java.time.LocalDate;
 
 public record BanNightStudyReq(
     @NotNull
-    Long id,
-    @NotNull
-    Student student,
+    int student,
     @NotBlank
     String reason,
     @NotNull

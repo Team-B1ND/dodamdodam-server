@@ -24,6 +24,10 @@ public class NightStudyBanService {
         repository.delete(nightStudyBan);
     }
 
+    public NightStudyBan findByStudent(Student student) {
+        return repository.findByStudent(student);
+    }
+
     public List<NightStudyBan> getAllActiveBans() {
         return repository.findActiveBans(LocalDate.now());
     }
@@ -34,5 +38,9 @@ public class NightStudyBanService {
         if (ban == null) return;
         if (today.isBefore(ban.getStarted()) || today.isAfter(ban.getEnded())) return;
         throw new NightStudyBannedStudentException();
+    }
+
+    public boolean checkBanDuplication(Student student) {
+        return repository.findByStudent(student) != null;
     }
 }

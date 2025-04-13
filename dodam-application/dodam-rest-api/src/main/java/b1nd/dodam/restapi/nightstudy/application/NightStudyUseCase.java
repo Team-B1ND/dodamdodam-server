@@ -7,6 +7,7 @@ import b1nd.dodam.domain.rds.member.entity.Teacher;
 import b1nd.dodam.domain.rds.member.repository.StudentRepository;
 import b1nd.dodam.domain.rds.member.repository.TeacherRepository;
 import b1nd.dodam.domain.rds.nightstudy.entity.NightStudy;
+import b1nd.dodam.domain.rds.nightstudy.entity.NightStudyBan;
 import b1nd.dodam.domain.rds.nightstudy.exception.NightStudyDuplicateException;
 import b1nd.dodam.domain.rds.nightstudy.exception.NotNightStudyApplicantException;
 import b1nd.dodam.domain.rds.nightstudy.service.NightStudyBanService;
@@ -94,8 +95,15 @@ public class NightStudyUseCase {
     }
 
     public Response applyBan(BanNightStudyReq req) {
-        Student target = studentRepository.getById(req.student().getId());
-        nightStudyBanService.save(req.toEntity(target));
+        Student student = studentRepository.getById(req.student());
+        NightStudyBan ban = nightStudyBanService.findByStudent(student);
+        if (ban != null) {
+            ban.updateInfo(req.reason(), req.started(), req.ended());
+        }
+        if (ban == null) {
+            ban = req.toEntity(student);
+        }
+        nightStudyBanService.save(ban);
         return Response.ok("심야자습 정지 등록 성공");
     }
 

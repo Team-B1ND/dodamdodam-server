@@ -89,6 +89,9 @@ class SecurityConfig {
                 .requestMatchers(DELETE, "/night-study/**").hasRole(STUDENT)
                 .requestMatchers(GET, "/night-study/my").hasRole(STUDENT)
                 .requestMatchers("/night-study/**").hasAnyRole(TEACHER, ADMIN)
+                .requestMatchers("/night-study/ban").hasAnyRole(TEACHER, ADMIN)
+                .requestMatchers("/night-study/bans").hasAnyRole(TEACHER, ADMIN)
+
 
                 .requestMatchers(POST, "/out-going").hasRole(STUDENT)
                 .requestMatchers(DELETE, "/out-going/**").hasRole(STUDENT)
