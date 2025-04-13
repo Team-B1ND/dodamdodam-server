@@ -9,11 +9,14 @@ import b1nd.dodam.domain.rds.member.repository.TeacherRepository;
 import b1nd.dodam.domain.rds.nightstudy.entity.NightStudy;
 import b1nd.dodam.domain.rds.nightstudy.exception.NightStudyDuplicateException;
 import b1nd.dodam.domain.rds.nightstudy.exception.NotNightStudyApplicantException;
+import b1nd.dodam.domain.rds.nightstudy.service.NightStudyBanService;
 import b1nd.dodam.domain.rds.nightstudy.service.NightStudyService;
 import b1nd.dodam.domain.rds.support.enumeration.ApprovalStatus;
 import b1nd.dodam.restapi.auth.infrastructure.security.support.MemberAuthenticationHolder;
 import b1nd.dodam.restapi.nightstudy.application.data.req.ApplyNightStudyReq;
+import b1nd.dodam.restapi.nightstudy.application.data.req.BanNightStudyReq;
 import b1nd.dodam.restapi.nightstudy.application.data.req.RejectNightStudyReq;
+import b1nd.dodam.restapi.nightstudy.application.data.res.NightStudyBanRes;
 import b1nd.dodam.restapi.nightstudy.application.data.res.NightStudyRes;
 import b1nd.dodam.restapi.support.data.Response;
 import b1nd.dodam.restapi.support.data.ResponseData;
@@ -32,12 +35,14 @@ import java.util.Optional;
 public class NightStudyUseCase {
 
     private final NightStudyService nightStudyService;
+    private final NightStudyBanService nightStudyBanService;
     private final StudentRepository studentRepository;
     private final TeacherRepository teacherRepository;
     private final MemberAuthenticationHolder memberAuthenticationHolder;
 
     public Response apply(ApplyNightStudyReq req) {
         Student student = studentRepository.getByMember(memberAuthenticationHolder.current());
+        nightStudyBanService.existUserBan(student);
         throwExceptionWhenDurationIsDuplicate(student, req.startAt(), req.endAt());
         nightStudyService.save(req.toEntity(student));
         return Response.created("심야자습 신청 성공");
@@ -86,6 +91,25 @@ public class NightStudyUseCase {
         Teacher teacher = teacherRepository.getByMember(member);
         NightStudy nightStudy = nightStudyService.getBy(id);
         nightStudy.modifyStatus(teacher, status, rejectReason);
+    }
+
+    public Response applyBan(BanNightStudyReq req) {
+        Student target = studentRepository.getById(req.student().getId());
+        nightStudyBanService.save(req.toEntity(target));
+        return Response.ok("심야자습 정지 등록 성공");
+    }
+
+    @Transactional(readOnly = true)
+    public Response getMyBan() {
+        Student student = studentRepository.getByMember(memberAuthenticationHolder.current());
+        nightStudyBanService.existUserBan(student);
+        return Response.ok("내 심야자습 정지 여부 조회 성공");
+    }
+
+    @Transactional(readOnly = true)
+    public ResponseData<List<NightStudyBanRes>> getAllActiveBans() {
+        List<NightStudyBanRes> result = NightStudyBanRes.of(nightStudyBanService.getAllActiveBans());
+        return ResponseData.ok("현재 모든 심야자습 정지 학생 조회 성공", result);
     }
 
     @Transactional(readOnly = true)
