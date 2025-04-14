@@ -2,7 +2,6 @@ package b1nd.dodam.domain.rds.nightstudy.service;
 
 import b1nd.dodam.domain.rds.member.entity.Student;
 import b1nd.dodam.domain.rds.nightstudy.entity.NightStudyBan;
-import b1nd.dodam.domain.rds.nightstudy.exception.NightStudyBannedStudentException;
 import b1nd.dodam.domain.rds.nightstudy.repository.NightStudyBanRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -32,12 +31,8 @@ public class NightStudyBanService {
         return repository.findActiveBans(LocalDate.now());
     }
 
-    public void existUserBan(Student student) {
-        LocalDate today = LocalDate.now();
-        NightStudyBan ban = repository.findByStudent(student);
-        if (ban == null) return;
-        if (today.isBefore(ban.getStarted()) || today.isAfter(ban.getEnded())) return;
-        throw new NightStudyBannedStudentException();
+    public NightStudyBan findUserBan(Student student) {
+        return repository.findByStudent(student);
     }
 
     public boolean checkBanDuplication(Student student) {

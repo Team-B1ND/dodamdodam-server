@@ -43,7 +43,7 @@ public class NightStudyUseCase {
 
     public Response apply(ApplyNightStudyReq req) {
         Student student = studentRepository.getByMember(memberAuthenticationHolder.current());
-        nightStudyBanService.existUserBan(student);
+        nightStudyBanService.findUserBan(student);
         throwExceptionWhenDurationIsDuplicate(student, req.startAt(), req.endAt());
         nightStudyService.save(req.toEntity(student));
         return Response.created("심야자습 신청 성공");
@@ -97,12 +97,9 @@ public class NightStudyUseCase {
     public Response applyBan(BanNightStudyReq req) {
         Student student = studentRepository.getById(req.student());
         NightStudyBan ban = nightStudyBanService.findByStudent(student);
-        if (ban != null) {
-            ban.updateInfo(req.reason(), req.started(), req.ended());
-        }
-        if (ban == null) {
-            ban = req.toEntity(student);
-        }
+        nightStudyService.rejectAllByStudent(student);
+        if (ban != null) ban.updateInfo(req.reason(), req.started(), req.ended());
+        else ban = req.toEntity(student);
         nightStudyBanService.save(ban);
         return Response.ok("심야자습 정지 등록 성공");
     }
@@ -117,8 +114,8 @@ public class NightStudyUseCase {
     @Transactional(readOnly = true)
     public Response getMyBan() {
         Student student = studentRepository.getByMember(memberAuthenticationHolder.current());
-        nightStudyBanService.existUserBan(student);
-        return Response.ok("내 심야자습 정지 여부 조회 성공");
+        NightStudyBan result = nightStudyBanService.findUserBan(student);
+        return ResponseData.ok("내 심야자습 정지 여부 조회 성공", result);
     }
 
     @Transactional(readOnly = true)

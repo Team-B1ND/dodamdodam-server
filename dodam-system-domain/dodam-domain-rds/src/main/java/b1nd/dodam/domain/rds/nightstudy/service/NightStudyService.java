@@ -49,4 +49,9 @@ public class NightStudyService {
     public List<NightStudy> getByEndDate(LocalDate endAt){
         return repository.findByEndAt(endAt);
     }
+
+    public void rejectAllByStudent(Student student) {
+        repository.findByStudentAndEndAtGreaterThanEqual(student, LocalDate.now())
+                .forEach(NightStudy::reject);
+    }
 }
