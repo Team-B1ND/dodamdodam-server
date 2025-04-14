@@ -37,6 +37,11 @@ public class NightStudyController {
         return useCase.cancel(id);
     }
 
+    @DeleteMapping("/ban")
+    public Response cancelBan(@RequestBody @Valid BanNightStudyReq req) {
+        return useCase.cancelBan(req);
+    }
+
     @PatchMapping("/{id}/allow")
     public Response allow(@PathVariable Long id) {
         return useCase.allow(id);

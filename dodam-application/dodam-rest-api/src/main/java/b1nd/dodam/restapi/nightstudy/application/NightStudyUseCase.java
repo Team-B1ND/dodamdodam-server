@@ -107,6 +107,13 @@ public class NightStudyUseCase {
         return Response.ok("심야자습 정지 등록 성공");
     }
 
+    public Response cancelBan(BanNightStudyReq req) {
+        Student student = studentRepository.getById(req.student());
+        NightStudyBan ban = nightStudyBanService.findByStudent(student);
+        nightStudyBanService.delete(ban);
+        return Response.ok("심야자습 정지 취소 성공");
+    }
+
     @Transactional(readOnly = true)
     public Response getMyBan() {
         Student student = studentRepository.getByMember(memberAuthenticationHolder.current());
