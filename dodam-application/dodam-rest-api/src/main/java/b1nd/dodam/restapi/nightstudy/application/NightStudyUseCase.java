@@ -115,7 +115,7 @@ public class NightStudyUseCase {
     public Response getMyBan() {
         Student student = studentRepository.getByMember(memberAuthenticationHolder.current());
         NightStudyBan result = nightStudyBanService.findUserBan(student);
-        return ResponseData.ok("내 심야자습 정지 여부 조회 성공", result);
+        return ResponseData.ok("내 심야자습 정지 여부 조회 성공", NightStudyBanRes.of(result));
     }
 
     @Transactional(readOnly = true)
