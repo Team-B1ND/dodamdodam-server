@@ -1,14 +1,14 @@
 package b1nd.dodam.restapi.nightstudy.application.data.res;
 
-import b1nd.dodam.domain.rds.member.entity.Student;
 import b1nd.dodam.domain.rds.nightstudy.entity.NightStudyBan;
+import b1nd.dodam.restapi.member.application.data.res.StudentWithImageRes;
 
 import java.time.LocalDate;
 import java.util.List;
 
 public record NightStudyBanRes(
         Long id,
-        Student student,
+        StudentWithImageRes student,
         String banReason,
         LocalDate started,
         LocalDate ended) {
@@ -22,7 +22,7 @@ public record NightStudyBanRes(
     public static NightStudyBanRes of(NightStudyBan nightStudyBan) {
         return new NightStudyBanRes(
                 nightStudyBan.getId(),
-                nightStudyBan.getStudent(),
+                StudentWithImageRes.of(nightStudyBan.getStudent()),
                 nightStudyBan.getReason(),
                 nightStudyBan.getStarted(),
                 nightStudyBan.getEnded()

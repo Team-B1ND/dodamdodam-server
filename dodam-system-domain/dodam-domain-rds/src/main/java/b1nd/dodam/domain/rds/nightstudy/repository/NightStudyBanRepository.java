@@ -16,6 +16,8 @@ public interface NightStudyBanRepository extends JpaRepository<NightStudyBan, Lo
     @Query("""
         SELECT n
         FROM NightStudyBan n
+        JOIN FETCH n.student s
+        JOIN FETCH s.member m
         WHERE :today BETWEEN n.started AND n.ended
     """)
     List<NightStudyBan> findActiveBans(@Param("today") LocalDate today);

@@ -100,5 +100,4 @@ public class NightStudy extends BaseEntity {
             throw new ReasonForPhoneMissingException();
         }
     }
-
 }
