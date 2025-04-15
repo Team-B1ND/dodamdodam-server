@@ -48,7 +48,7 @@ public class PushAlarmAspect {
     }
 
     private String getRejectReasonFromArgs(Object[] args, ApprovalStatus status) {
-        if (status == ApprovalStatus.REJECTED && args[1] instanceof Optional<?> optionalArg)
+        if ((status == ApprovalStatus.REJECTED || status == ApprovalStatus.BANNED) && args[1] instanceof Optional<?> optionalArg)
             return (String) optionalArg.orElse(null);
         return null;
     }

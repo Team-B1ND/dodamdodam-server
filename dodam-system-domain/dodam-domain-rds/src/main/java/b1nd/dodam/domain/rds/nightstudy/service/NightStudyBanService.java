@@ -1,19 +1,40 @@
 package b1nd.dodam.domain.rds.nightstudy.service;
 
+import java.util.List;
+import java.time.LocalDate;
+import java.util.Optional;
+
 import b1nd.dodam.domain.rds.member.entity.Student;
 import b1nd.dodam.domain.rds.nightstudy.entity.NightStudyBan;
+import b1nd.dodam.domain.rds.nightstudy.exception.NightStudyBanNotFoundException;
+import b1nd.dodam.domain.rds.nightstudy.exception.NightStudyBannedStudentException;
 import b1nd.dodam.domain.rds.nightstudy.repository.NightStudyBanRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-
-import java.time.LocalDate;
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
 public class NightStudyBanService {
 
     private final NightStudyBanRepository repository;
+
+    public void updateBan(Student student, String reason, LocalDate today, LocalDate ended) {
+        NightStudyBan ban = repository.findByStudent(student)
+            .orElse(createBan(student));
+        ban.updateInfo(reason, today, ended);
+        repository.save(ban);
+    }
+
+    private NightStudyBan createBan(Student student) {
+        return NightStudyBan.builder()
+            .student(student)
+            .build();
+    }
+
+    public void validateBan(Student student) {
+        NightStudyBan ban = repository.findByStudentAndEndedGreaterThanEqual(student, LocalDate.now()).orElse(null);
+        if (ban != null) throw new NightStudyBannedStudentException();
+    }
 
     public void save(NightStudyBan nightStudyBan) {
         repository.save(nightStudyBan);
@@ -24,7 +45,8 @@ public class NightStudyBanService {
     }
 
     public NightStudyBan findByStudent(Student student) {
-        return repository.findByStudent(student);
+        return repository.findByStudentAndEndedGreaterThanEqual(student, LocalDate.now())
+            .orElse(null);
     }
 
     public List<NightStudyBan> getAllActiveBans() {
@@ -32,10 +54,7 @@ public class NightStudyBanService {
     }
 
     public NightStudyBan findUserBan(Student student) {
-        return repository.findByStudent(student);
-    }
-
-    public boolean checkBanDuplication(Student student) {
-        return repository.findByStudent(student) != null;
+        return repository.findByStudentAndEndedGreaterThanEqual(student, LocalDate.now())
+            .orElseThrow(NightStudyBanNotFoundException::new);
     }
 }

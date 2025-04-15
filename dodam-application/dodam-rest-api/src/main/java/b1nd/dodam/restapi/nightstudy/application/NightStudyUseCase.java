@@ -23,6 +23,7 @@ import b1nd.dodam.restapi.support.data.Response;
 import b1nd.dodam.restapi.support.data.ResponseData;
 import b1nd.dodam.restapi.support.pushalarm.PushAlarmEvent;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,6 +31,7 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
+@Slf4j
 @Component
 @Transactional(rollbackFor = Exception.class)
 @RequiredArgsConstructor
@@ -43,7 +45,7 @@ public class NightStudyUseCase {
 
     public Response apply(ApplyNightStudyReq req) {
         Student student = studentRepository.getByMember(memberAuthenticationHolder.current());
-        nightStudyBanService.findUserBan(student);
+        nightStudyBanService.validateBan(student);
         throwExceptionWhenDurationIsDuplicate(student, req.startAt(), req.endAt());
         nightStudyService.save(req.toEntity(student));
         return Response.created("심야자습 신청 성공");
@@ -95,18 +97,12 @@ public class NightStudyUseCase {
     }
 
     @PushAlarmEvent(target = "심야자습", status = ApprovalStatus.BANNED)
+    @Transactional(rollbackFor = Exception.class)
     public Response applyBan(BanNightStudyReq req) {
         Student student = studentRepository.getById(req.student());
-        NightStudyBan ban = nightStudyBanService.findByStudent(student);
         nightStudyService.rejectAllByStudent(student);
-        ban = (ban != null) ? updateInfo(ban, req): req.toEntity(student);
-        nightStudyBanService.save(ban);
+        nightStudyBanService.updateBan(student, req.reason(), LocalDate.now(), req.ended());
         return Response.ok("심야자습 정지 등록 성공");
-    }
-
-    private NightStudyBan updateInfo(NightStudyBan ban, BanNightStudyReq req) {
-        ban.updateInfo(req.reason(), req.started(), req.ended());
-        return ban;
     }
 
     public Response cancelBan(BanNightStudyReq req) {
@@ -126,7 +122,7 @@ public class NightStudyUseCase {
     @Transactional(readOnly = true)
     public ResponseData<List<NightStudyBanRes>> getAllActiveBans() {
         List<NightStudyBanRes> result = NightStudyBanRes.of(nightStudyBanService.getAllActiveBans());
-        return ResponseData.ok("현재 모든 심야자습 정지 학생 조회 성공", result);
+        return ResponseData.ok("기간 내 모든 심야자습 정지 학생 조회 성공", result);
     }
 
     @Transactional(readOnly = true)

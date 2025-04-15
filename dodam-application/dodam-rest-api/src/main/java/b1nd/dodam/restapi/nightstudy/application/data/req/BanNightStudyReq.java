@@ -15,16 +15,13 @@ public record BanNightStudyReq(
     String reason,
     @NotNull
     @DateTimeFormat(pattern = "yyyy-MM-dd")
-    LocalDate started,
-    @NotNull
-    @DateTimeFormat(pattern = "yyyy-MM-dd")
     LocalDate ended
 ) {
     public NightStudyBan toEntity(Student target) {
         return NightStudyBan.builder()
                 .student(target)
                 .reason(reason)
-                .started(started)
+                .started(LocalDate.now())
                 .ended(ended)
                 .build();
     }
