@@ -1,15 +1,15 @@
 package b1nd.dodam.domain.rds.nightstudy.service;
 
-import b1nd.dodam.domain.rds.member.entity.Student;
-import b1nd.dodam.domain.rds.nightstudy.entity.NightStudy;
-import b1nd.dodam.domain.rds.nightstudy.exception.NightStudyNotFoundException;
-import b1nd.dodam.domain.rds.nightstudy.repository.NightStudyRepository;
-import b1nd.dodam.domain.rds.support.enumeration.ApprovalStatus;
+import java.time.LocalDate;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
-import java.util.List;
+import b1nd.dodam.domain.rds.member.entity.Student;
+import b1nd.dodam.domain.rds.nightstudy.entity.NightStudy;
+import b1nd.dodam.domain.rds.support.enumeration.ApprovalStatus;
+import b1nd.dodam.domain.rds.nightstudy.repository.NightStudyRepository;
+import b1nd.dodam.domain.rds.nightstudy.exception.NightStudyNotFoundException;
 
 @Service
 @RequiredArgsConstructor
@@ -48,5 +48,10 @@ public class NightStudyService {
 
     public List<NightStudy> getByEndDate(LocalDate endAt){
         return repository.findByEndAt(endAt);
+    }
+
+    public void rejectAllByStudent(Student student) {
+        repository.findByStudentAndEndAtGreaterThanEqual(student, LocalDate.now())
+                .forEach(NightStudy::reject);
     }
 }

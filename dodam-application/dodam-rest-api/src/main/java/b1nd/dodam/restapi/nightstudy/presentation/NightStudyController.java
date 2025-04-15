@@ -2,7 +2,9 @@ package b1nd.dodam.restapi.nightstudy.presentation;
 
 import b1nd.dodam.restapi.nightstudy.application.NightStudyUseCase;
 import b1nd.dodam.restapi.nightstudy.application.data.req.ApplyNightStudyReq;
+import b1nd.dodam.restapi.nightstudy.application.data.req.BanNightStudyReq;
 import b1nd.dodam.restapi.nightstudy.application.data.req.RejectNightStudyReq;
+import b1nd.dodam.restapi.nightstudy.application.data.res.NightStudyBanRes;
 import b1nd.dodam.restapi.nightstudy.application.data.res.NightStudyRes;
 import b1nd.dodam.restapi.support.data.Response;
 import b1nd.dodam.restapi.support.data.ResponseData;
@@ -25,9 +27,19 @@ public class NightStudyController {
         return useCase.apply(req);
     }
 
+    @PostMapping("/ban")
+    public Response applyBan(@RequestBody @Valid BanNightStudyReq req) {
+        return useCase.applyBan(req);
+    }
+
     @DeleteMapping("/{id}")
     public Response cancel(@PathVariable Long id) {
         return useCase.cancel(id);
+    }
+
+    @DeleteMapping("/ban")
+    public Response cancelBan(@RequestBody @Valid BanNightStudyReq req) {
+        return useCase.cancelBan(req);
     }
 
     @PatchMapping("/{id}/allow")
@@ -60,4 +72,13 @@ public class NightStudyController {
         return useCase.getPending();
     }
 
+    @GetMapping("/ban/my")
+    public Response getMyBan() {
+        return useCase.getMyBan();
+    }
+
+    @GetMapping("/bans")
+    public ResponseData<List<NightStudyBanRes>> getAllBans() {
+        return useCase.getAllActiveBans();
+    }
 }

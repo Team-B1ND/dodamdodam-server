@@ -73,6 +73,10 @@ public class NightStudy extends BaseEntity {
         this.endAt = endAt;
     }
 
+    public void reject() {
+        this.status = ApprovalStatus.REJECTED;
+    }
+
     public void modifyStatus(Teacher teacher, ApprovalStatus status, String rejectReason) {
         this.status = status;
         this.teacher = teacher;
@@ -100,5 +104,4 @@ public class NightStudy extends BaseEntity {
             throw new ReasonForPhoneMissingException();
         }
     }
-
 }

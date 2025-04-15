@@ -2,6 +2,6 @@ package b1nd.dodam.domain.rds.support.enumeration;
 
 public enum ApprovalStatus {
 
-    ALLOWED, PENDING, REJECTED
+    ALLOWED, PENDING, REJECTED, BANNED
 
 }

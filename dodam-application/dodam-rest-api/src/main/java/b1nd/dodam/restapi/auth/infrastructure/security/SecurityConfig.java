@@ -86,8 +86,10 @@ class SecurityConfig {
                 .requestMatchers("/bus/**").hasRole(TEACHER)
 
                 .requestMatchers(POST, "/night-study").hasRole(STUDENT)
+                .requestMatchers(DELETE, "/night-study/ban").hasAnyRole(TEACHER, ADMIN)
                 .requestMatchers(DELETE, "/night-study/**").hasRole(STUDENT)
                 .requestMatchers(GET, "/night-study/my").hasRole(STUDENT)
+                .requestMatchers(GET, "/night-study/ban/my").hasRole(STUDENT)
                 .requestMatchers("/night-study/**").hasAnyRole(TEACHER, ADMIN)
 
                 .requestMatchers(POST, "/out-going").hasRole(STUDENT)

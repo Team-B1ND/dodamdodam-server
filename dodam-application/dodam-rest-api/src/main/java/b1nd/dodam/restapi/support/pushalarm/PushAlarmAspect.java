@@ -9,9 +9,7 @@ import b1nd.dodam.domain.rds.support.enumeration.ApprovalStatus;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;
-import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.AfterReturning;
-import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
@@ -50,7 +48,7 @@ public class PushAlarmAspect {
     }
 
     private String getRejectReasonFromArgs(Object[] args, ApprovalStatus status) {
-        if (status == ApprovalStatus.REJECTED && args[1] instanceof Optional<?> optionalArg)
+        if ((status == ApprovalStatus.REJECTED || status == ApprovalStatus.BANNED) && args[1] instanceof Optional<?> optionalArg)
             return (String) optionalArg.orElse(null);
         return null;
     }
