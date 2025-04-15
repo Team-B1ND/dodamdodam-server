@@ -17,4 +17,6 @@ public interface NightStudyBanRepository extends JpaRepository<NightStudyBan, Lo
 
     @EntityGraph(attributePaths = {"student", "student.member"})
     List<NightStudyBan> findByEndedGreaterThanEqual(LocalDate today);
+
+    boolean existsByStudent(Student student);
 }

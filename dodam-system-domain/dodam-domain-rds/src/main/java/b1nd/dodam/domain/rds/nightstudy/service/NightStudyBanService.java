@@ -43,11 +43,6 @@ public class NightStudyBanService {
         repository.delete(nightStudyBan);
     }
 
-    public NightStudyBan findByStudent(Student student) {
-        return repository.findByStudentAndEndedGreaterThanEqual(student, LocalDate.now())
-            .orElse(null);
-    }
-
     public List<NightStudyBan> getAllActiveBans() {
         return repository.findByEndedGreaterThanEqual(LocalDate.now());
     }

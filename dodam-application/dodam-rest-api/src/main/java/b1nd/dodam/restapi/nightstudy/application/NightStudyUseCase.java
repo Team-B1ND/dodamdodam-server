@@ -107,7 +107,7 @@ public class NightStudyUseCase {
 
     public Response cancelBan(int id) {
         Student student = studentRepository.getById(id);
-        NightStudyBan ban = nightStudyBanService.findByStudent(student);
+        NightStudyBan ban = nightStudyBanService.findUserBan(student);
         nightStudyBanService.delete(ban);
         return Response.ok("심야자습 정지 취소 성공");
     }

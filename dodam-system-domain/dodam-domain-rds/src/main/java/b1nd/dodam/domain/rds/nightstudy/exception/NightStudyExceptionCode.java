@@ -14,6 +14,7 @@ public enum NightStudyExceptionCode implements ExceptionCode {
     STUDY_DUPLICATE(409, "해당 날짜에 심야자습 중복"),
     BANNED_STUDENT(403, "정지된 심야자습 신청 권한");
 
+
     private final int status;
     private final String message;
 
