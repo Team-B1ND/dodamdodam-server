@@ -2,7 +2,6 @@ package b1nd.dodam.domain.rds.nightstudy.service;
 
 import java.util.List;
 import java.time.LocalDate;
-import java.util.Optional;
 
 import b1nd.dodam.domain.rds.member.entity.Student;
 import b1nd.dodam.domain.rds.nightstudy.entity.NightStudyBan;
