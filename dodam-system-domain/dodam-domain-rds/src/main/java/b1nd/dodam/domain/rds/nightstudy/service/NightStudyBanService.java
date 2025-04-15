@@ -28,7 +28,7 @@ public class NightStudyBanService {
     }
 
     public List<NightStudyBan> getAllActiveBans() {
-        return repository.findActiveBans(LocalDate.now());
+        return repository.findByEndedGreaterThanEqual(LocalDate.now());
     }
 
     public NightStudyBan findUserBan(Student student) {

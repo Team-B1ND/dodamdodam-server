@@ -13,12 +13,12 @@ public final class ApprovalAlarmUtil {
         );
     }
 
-    private static String createBody(String target, String rejectReason, ApprovalStatus status){
+    private static String createBody(String target, String reason, ApprovalStatus status) {
         return switch (status) {
-
-            case ALLOWED -> target+"이 승인됐어요!";
-            case REJECTED -> target+"이 거절됐어요\n"+ (rejectReason != null ? "사유: " + rejectReason : "");
-            case PENDING -> target+"이 승인 취소됐어요";
+            case ALLOWED -> target + "이 승인되었어요!";
+            case REJECTED -> target + "이 거절되었어요\n" + (reason != null ? "사유: " + reason : "");
+            case PENDING -> target + "이 승인 취소되었어요";
+            case BANNED -> target + "이 정지 되었어요😢\n" + (reason != null ? "사유: " + reason : "");
         };
     }
 }

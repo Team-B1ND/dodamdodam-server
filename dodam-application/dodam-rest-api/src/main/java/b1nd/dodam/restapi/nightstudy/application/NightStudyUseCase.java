@@ -94,14 +94,19 @@ public class NightStudyUseCase {
         nightStudy.modifyStatus(teacher, status, rejectReason);
     }
 
+    @PushAlarmEvent(target = "심야자습", status = ApprovalStatus.BANNED)
     public Response applyBan(BanNightStudyReq req) {
         Student student = studentRepository.getById(req.student());
         NightStudyBan ban = nightStudyBanService.findByStudent(student);
         nightStudyService.rejectAllByStudent(student);
-        if (ban != null) ban.updateInfo(req.reason(), req.started(), req.ended());
-        else ban = req.toEntity(student);
+        ban = (ban != null) ? updateInfo(ban, req): req.toEntity(student);
         nightStudyBanService.save(ban);
         return Response.ok("심야자습 정지 등록 성공");
+    }
+
+    private NightStudyBan updateInfo(NightStudyBan ban, BanNightStudyReq req) {
+        ban.updateInfo(req.reason(), req.started(), req.ended());
+        return ban;
     }
 
     public Response cancelBan(BanNightStudyReq req) {
