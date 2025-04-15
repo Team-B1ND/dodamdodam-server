@@ -96,7 +96,7 @@ public class NightStudyUseCase {
         nightStudy.modifyStatus(teacher, status, rejectReason);
     }
 
-    @PushAlarmEvent(target = "심야자습", status = ApprovalStatus.BANNED)
+//    @PushAlarmEvent(target = "심야자습", status = ApprovalStatus.BANNED)
     @Transactional(rollbackFor = Exception.class)
     public Response applyBan(BanNightStudyReq req) {
         Student student = studentRepository.getById(req.student());
