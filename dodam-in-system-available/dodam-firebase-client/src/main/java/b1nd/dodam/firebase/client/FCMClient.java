@@ -14,10 +14,10 @@ import java.util.List;
 @Component
 @RequiredArgsConstructor
 public class FCMClient {
-    public void sendMessage(String pushToken, String title, String body) {
-        try {
-            if (StringUtils.isEmpty(pushToken)) return;
+    public boolean sendMessage(String pushToken, String title, String body) {
+        if (StringUtils.isEmpty(pushToken)) return false;
 
+        try {
             FirebaseMessaging.getInstance().send(Message.builder()
                     .setNotification(Notification.builder()
                             .setTitle(title)
@@ -25,10 +25,12 @@ public class FCMClient {
                             .build())
                     .setToken(pushToken)
                     .build());
+            return true;
         } catch (FirebaseMessagingException e){
-            throw new InternalServerException();
+            return false;
         }
     }
+
 
     public void sendMessages(List<String> pushTokens, String title, String body) {
         Notification notification = Notification.builder()
