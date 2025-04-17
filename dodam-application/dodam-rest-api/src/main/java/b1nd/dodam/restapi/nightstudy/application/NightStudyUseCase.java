@@ -12,9 +12,11 @@ import b1nd.dodam.domain.rds.nightstudy.entity.NightStudyBan;
 import b1nd.dodam.domain.rds.nightstudy.exception.NightStudyDuplicateException;
 import b1nd.dodam.domain.rds.nightstudy.exception.NotNightStudyApplicantException;
 import b1nd.dodam.domain.rds.nightstudy.service.NightStudyBanService;
+import b1nd.dodam.domain.rds.nightstudy.service.NightStudyProjectService;
 import b1nd.dodam.domain.rds.nightstudy.service.NightStudyService;
 import b1nd.dodam.domain.rds.support.enumeration.ApprovalStatus;
 import b1nd.dodam.restapi.auth.infrastructure.security.support.MemberAuthenticationHolder;
+import b1nd.dodam.restapi.nightstudy.application.data.req.ApplyNightStudyProjectReq;
 import b1nd.dodam.restapi.nightstudy.application.data.req.ApplyNightStudyReq;
 import b1nd.dodam.restapi.nightstudy.application.data.req.BanNightStudyReq;
 import b1nd.dodam.restapi.nightstudy.application.data.req.RejectNightStudyReq;
@@ -25,7 +27,6 @@ import b1nd.dodam.restapi.support.data.Response;
 import b1nd.dodam.restapi.support.data.ResponseData;
 import b1nd.dodam.restapi.support.pushalarm.PushAlarmEvent;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -33,7 +34,6 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
-@Slf4j
 @Component
 @Transactional(rollbackFor = Exception.class)
 @RequiredArgsConstructor
@@ -44,6 +44,7 @@ public class NightStudyUseCase {
     private final StudentRepository studentRepository;
     private final TeacherRepository teacherRepository;
     private final MemberAuthenticationHolder memberAuthenticationHolder;
+    private final NightStudyProjectService nightStudyProjectService;
 
     public Response apply(ApplyNightStudyReq req) {
         Student student = studentRepository.getByMember(memberAuthenticationHolder.current());
@@ -51,6 +52,14 @@ public class NightStudyUseCase {
         throwExceptionWhenDurationIsDuplicate(student, req.startAt(), req.endAt());
         nightStudyService.save(req.toEntity(student));
         return Response.created("심야자습 신청 성공");
+    }
+
+    public Response applyProject(ApplyNightStudyProjectReq req) {
+        Student student = studentRepository.getByMember(memberAuthenticationHolder.current());
+        for (Integer s : req.students()) nightStudyBanService.validateBan(s);
+
+        nightStudyProjectService.save();
+        return Response.created("프로젝트 심야자습 신청 성공");
     }
 
     private void throwExceptionWhenDurationIsDuplicate(Student student, LocalDate startAt, LocalDate endAt) {
