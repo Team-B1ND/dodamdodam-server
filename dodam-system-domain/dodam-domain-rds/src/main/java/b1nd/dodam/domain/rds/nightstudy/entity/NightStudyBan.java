@@ -10,7 +10,7 @@ import jakarta.validation.constraints.NotNull;
 
 import b1nd.dodam.domain.rds.member.entity.Student;
 
-@Entity
+@Entity(name = "night_study_ban")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class NightStudyBan {
@@ -42,5 +42,9 @@ public class NightStudyBan {
         this.reason = reason;
         this.started = started;
         this.ended = ended;
+    }
+
+    public Integer getStudentId() {
+        return student.getId();
     }
 }
