@@ -62,7 +62,8 @@ public class NightStudyBanService {
     public List<Integer> findAllStudentIdByDate(LocalDate date) {
         return nightStudyBanRepository.findByEndedGreaterThanEqual(date)
                 .stream()
-                .map(NightStudyBan::getStudentId)
+                .map(NightStudyBan::getStudent)
+                .map(Student::getId)
                 .toList();
     }
 }
