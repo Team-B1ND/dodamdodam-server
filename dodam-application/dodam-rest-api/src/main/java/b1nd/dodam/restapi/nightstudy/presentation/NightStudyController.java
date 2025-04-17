@@ -68,7 +68,7 @@ public class NightStudyController {
         return useCase.getMy();
     }
 
-    @GetMapping("/members")
+    @GetMapping("/ban/students")
     public ResponseData<List<StudentWithNightStudyBanRes>> getMembers() {
         return useCase.getMembers();
     }
