@@ -4,6 +4,7 @@ import b1nd.dodam.core.util.ZonedDateTimeUtil;
 import b1nd.dodam.domain.rds.member.entity.Member;
 import b1nd.dodam.domain.rds.member.entity.Student;
 import b1nd.dodam.domain.rds.member.entity.Teacher;
+import b1nd.dodam.domain.rds.member.enumeration.ActiveStatus;
 import b1nd.dodam.domain.rds.member.repository.StudentRepository;
 import b1nd.dodam.domain.rds.member.repository.TeacherRepository;
 import b1nd.dodam.domain.rds.nightstudy.entity.NightStudy;
@@ -19,6 +20,7 @@ import b1nd.dodam.restapi.nightstudy.application.data.req.BanNightStudyReq;
 import b1nd.dodam.restapi.nightstudy.application.data.req.RejectNightStudyReq;
 import b1nd.dodam.restapi.nightstudy.application.data.res.NightStudyBanRes;
 import b1nd.dodam.restapi.nightstudy.application.data.res.NightStudyRes;
+import b1nd.dodam.restapi.nightstudy.application.data.res.StudentWithNightStudyBanRes;
 import b1nd.dodam.restapi.support.data.Response;
 import b1nd.dodam.restapi.support.data.ResponseData;
 import b1nd.dodam.restapi.support.pushalarm.PushAlarmEvent;
@@ -144,6 +146,14 @@ public class NightStudyUseCase {
         LocalDate now = ZonedDateTimeUtil.nowToLocalDate();
         List<NightStudyRes> result = NightStudyRes.of(nightStudyService.getValid(now));
         return ResponseData.ok("승인된 심야자습 조회 성공", result);
+    }
+
+    @Transactional(readOnly = true)
+    public ResponseData<List<StudentWithNightStudyBanRes>> getMembers() {
+        LocalDate now = ZonedDateTimeUtil.nowToLocalDate();
+        List<Student> students = studentRepository.findAllByMember_Status(ActiveStatus.ACTIVE);
+        List<Integer> bannedStudentIds = nightStudyBanService.findAllStudentIdByDate(now);
+        return ResponseData.ok("학생 및 정지 여부 조회 성공", StudentWithNightStudyBanRes.of(students, bannedStudentIds));
     }
 
 }

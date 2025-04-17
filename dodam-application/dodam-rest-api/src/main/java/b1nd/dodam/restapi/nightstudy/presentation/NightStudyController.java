@@ -6,6 +6,7 @@ import b1nd.dodam.restapi.nightstudy.application.data.req.BanNightStudyReq;
 import b1nd.dodam.restapi.nightstudy.application.data.req.RejectNightStudyReq;
 import b1nd.dodam.restapi.nightstudy.application.data.res.NightStudyBanRes;
 import b1nd.dodam.restapi.nightstudy.application.data.res.NightStudyRes;
+import b1nd.dodam.restapi.nightstudy.application.data.res.StudentWithNightStudyBanRes;
 import b1nd.dodam.restapi.support.data.Response;
 import b1nd.dodam.restapi.support.data.ResponseData;
 import jakarta.validation.Valid;
@@ -66,6 +67,11 @@ public class NightStudyController {
     @GetMapping("/my")
     public ResponseData<List<NightStudyRes>> getMy() {
         return useCase.getMy();
+    }
+
+    @GetMapping("/ban/students")
+    public ResponseData<List<StudentWithNightStudyBanRes>> getMembers() {
+        return useCase.getMembers();
     }
 
     @GetMapping("/pending")
