@@ -41,7 +41,7 @@ public class NightStudyController {
     }
 
     @DeleteMapping("/ban")
-    public Response cancelBan(@RequestParam(name = "student") @NotNull int studentId) {
+    public Response cancelBan(@RequestParam(name = "student") int studentId) {
     return useCase.cancelBan(studentId);
     }
 
