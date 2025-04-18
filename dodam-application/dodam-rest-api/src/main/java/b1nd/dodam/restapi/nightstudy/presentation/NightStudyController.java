@@ -10,7 +10,9 @@ import b1nd.dodam.restapi.nightstudy.application.data.res.StudentWithNightStudyB
 import b1nd.dodam.restapi.support.data.Response;
 import b1nd.dodam.restapi.support.data.ResponseData;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -39,8 +41,8 @@ public class NightStudyController {
     }
 
     @DeleteMapping("/ban")
-    public Response cancelBan(@RequestBody @Valid BanNightStudyReq req) {
-        return useCase.cancelBan(req);
+    public Response cancelBan(@RequestParam(name = "student") int studentId) {
+    return useCase.cancelBan(studentId);
     }
 
     @PatchMapping("/{id}/allow")
