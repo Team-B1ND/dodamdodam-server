@@ -15,8 +15,8 @@ public class NightStudyProjectService {
 
     private final NightStudyProjectRepository repository;
 
-    public void save(NightStudyProject nightStudyProject) {
-        repository.save(nightStudyProject);
+    public NightStudyProject save(NightStudyProject nightStudyProject) {
+        return repository.save(nightStudyProject);
     }
 
     public void delete(NightStudyProject nightStudyProject) {
@@ -28,7 +28,7 @@ public class NightStudyProjectService {
                 .orElseThrow(NightStudyNotFoundException::new);
     }
 
-    public boolean checkDurationDuplication(List<Integer>, LocalDate startAt, LocalDate endAt) {
-        return repository.existsValidByStudentAndDate
+    public List<NightStudyProject> findAllByDateRange(LocalDate start, LocalDate end) {
+        return repository.findAllByDateRange(start, end);
     }
 }

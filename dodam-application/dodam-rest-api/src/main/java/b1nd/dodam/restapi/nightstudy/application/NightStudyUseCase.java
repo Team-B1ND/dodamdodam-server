@@ -9,6 +9,8 @@ import b1nd.dodam.domain.rds.member.repository.StudentRepository;
 import b1nd.dodam.domain.rds.member.repository.TeacherRepository;
 import b1nd.dodam.domain.rds.nightstudy.entity.NightStudy;
 import b1nd.dodam.domain.rds.nightstudy.entity.NightStudyBan;
+import b1nd.dodam.domain.rds.nightstudy.entity.NightStudyProject;
+import b1nd.dodam.domain.rds.nightstudy.enumeration.NightStudyType;
 import b1nd.dodam.domain.rds.nightstudy.exception.NightStudyDuplicateException;
 import b1nd.dodam.domain.rds.nightstudy.exception.NotNightStudyApplicantException;
 import b1nd.dodam.domain.rds.nightstudy.service.NightStudyBanService;
@@ -21,6 +23,7 @@ import b1nd.dodam.restapi.nightstudy.application.data.req.ApplyNightStudyReq;
 import b1nd.dodam.restapi.nightstudy.application.data.req.BanNightStudyReq;
 import b1nd.dodam.restapi.nightstudy.application.data.req.RejectNightStudyReq;
 import b1nd.dodam.restapi.nightstudy.application.data.res.NightStudyBanRes;
+import b1nd.dodam.restapi.nightstudy.application.data.res.NightStudyProjectRes;
 import b1nd.dodam.restapi.nightstudy.application.data.res.NightStudyRes;
 import b1nd.dodam.restapi.nightstudy.application.data.res.StudentWithNightStudyBanRes;
 import b1nd.dodam.restapi.support.data.Response;
@@ -49,21 +52,27 @@ public class NightStudyUseCase {
     public Response apply(ApplyNightStudyReq req) {
         Student student = studentRepository.getByMember(memberAuthenticationHolder.current());
         nightStudyBanService.validateBan(student);
-        throwExceptionWhenDurationIsDuplicate(student, req.startAt(), req.endAt());
+        throwExceptionWhenDurationIsDuplicate(student, req.startAt(), req.endAt(), req.type());
         nightStudyService.save(req.toEntity(student));
         return Response.created("심야자습 신청 성공");
     }
 
     public Response applyProject(ApplyNightStudyProjectReq req) {
-        Student student = studentRepository.getByMember(memberAuthenticationHolder.current());
-        for (Integer s : req.students()) nightStudyBanService.validateBan(s);
+        Student leader = studentRepository.getByMember(memberAuthenticationHolder.current());
+        nightStudyBanService.validateBan(leader);
+        for (Integer studentId : req.students()) nightStudyBanService.validateBan(studentId);
+        NightStudyProject project = nightStudyProjectService.save(req.toEntity());
+        for (Integer studentId : req.students()) {
+            Student student = studentRepository.getById(studentId);
+            NightStudy nightStudy = req.toEntity(student, project);
+            nightStudyService.save(nightStudy);
+        }
 
-        nightStudyProjectService.save();
         return Response.created("프로젝트 심야자습 신청 성공");
     }
 
-    private void throwExceptionWhenDurationIsDuplicate(Student student, LocalDate startAt, LocalDate endAt) {
-        if(nightStudyService.checkDurationDuplication(student, startAt, endAt)) {
+    private void throwExceptionWhenDurationIsDuplicate(Student student, LocalDate startAt, LocalDate endAt, NightStudyType type) {
+        if(nightStudyService.checkDurationDuplication(student, startAt, endAt, type)) {
             throw new NightStudyDuplicateException();
         }
     }
@@ -163,6 +172,11 @@ public class NightStudyUseCase {
         List<Student> students = studentRepository.findAllByMember_Status(ActiveStatus.ACTIVE);
         List<Integer> bannedStudentIds = nightStudyBanService.findAllStudentIdByDate(now);
         return ResponseData.ok("학생 및 정지 여부 조회 성공", StudentWithNightStudyBanRes.of(students, bannedStudentIds));
+    }
+
+    public ResponseData<List<NightStudyProjectRes>> getRoomsInUse(LocalDate start, LocalDate end) {
+        List<NightStudyProject> projects = nightStudyProjectService.findAllByDateRange(start, end);
+        return ResponseData.ok("기간 중 사용중인 방 조회 성공", NightStudyProjectRes.fromEntityList(projects));
     }
 
 }

@@ -13,22 +13,37 @@ public record NightStudyProjectRes(Long id,
                                     String name,
                                     String description,
                                     LocalDate startAt,
-                                    LocalDate endAt) {
+                                    LocalDate endAt,
+                                   String leaderName) {
     public static List<NightStudyProjectRes> of(List<NightStudyProject> nightStudyProjects) {
         return nightStudyProjects.parallelStream()
                 .map(NightStudyProjectRes::of)
                 .toList();
     }
 
-    public static NightStudyProjectRes of(NightStudyProject nightStudyProject) {
+    public static NightStudyProjectRes of(NightStudyProject project) {
         return new NightStudyProjectRes(
-                nightStudyProject.getId(),
-                nightStudyProject.getType(),
-                nightStudyProject.getRoom(),
-                nightStudyProject.getName(),
-                nightStudyProject.getDescription(),
-                nightStudyProject.getStartAt(),
-                nightStudyProject.getEndAt()
+                project.getId(),
+                project.getType(),
+                project.getRoom(),
+                project.getName(),
+                project.getDescription(),
+                project.getStartAt(),
+                project.getEndAt(),
+                project.getStatus(),
+                project.getLeader()
         );
+    }
+
+    public static List<NightStudyProjectRes> fromEntityList(List<NightStudyProject> projects) {
+        return projects.stream()
+                .map(project -> new NightStudyProjectRes(
+                        project.getId(),
+                        project.getName(),
+                        project.getStartAt(),
+                        project.getEndAt(),
+                        project.getRoom(),
+                        project.getType()
+                )).toList();
     }
 }

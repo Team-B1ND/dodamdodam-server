@@ -1,6 +1,7 @@
 package b1nd.dodam.restapi.nightstudy.presentation;
 
 import b1nd.dodam.restapi.nightstudy.application.NightStudyUseCase;
+import b1nd.dodam.restapi.nightstudy.application.data.req.ApplyNightStudyProjectReq;
 import b1nd.dodam.restapi.nightstudy.application.data.req.ApplyNightStudyReq;
 import b1nd.dodam.restapi.nightstudy.application.data.req.BanNightStudyReq;
 import b1nd.dodam.restapi.nightstudy.application.data.req.RejectNightStudyReq;
@@ -32,6 +33,11 @@ public class NightStudyController {
     @PostMapping("/ban")
     public Response applyBan(@RequestBody @Valid BanNightStudyReq req) {
         return useCase.applyBan(req);
+    }
+
+    @PostMapping("/project")
+    public Response applyProject(@RequestBody @Valid ApplyNightStudyProjectReq req) {
+        return useCase.applyProject(req);
     }
 
     @DeleteMapping("/{id}")

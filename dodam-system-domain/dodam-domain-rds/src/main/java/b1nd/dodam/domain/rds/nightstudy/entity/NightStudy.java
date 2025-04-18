@@ -67,8 +67,8 @@ public class NightStudy extends BaseEntity {
     private LocalDate endAt;
 
     @Builder
-    public NightStudy(NightStudyType type, String content, boolean doNeedPhone,
-                      String reasonForPhone, Student student, NightStudyProject project, LocalDate startAt, LocalDate endAt) {
+    public NightStudy(NightStudyType type, String content, boolean doNeedPhone, String reasonForPhone,
+                      Student student, NightStudyProject project, LocalDate startAt, LocalDate endAt) {
         isApplicationDuration();
         isInvalidStudyPeriod(startAt, endAt);
         doesHaveReasonForPhone(doNeedPhone, reasonForPhone);

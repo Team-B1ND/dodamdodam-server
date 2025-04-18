@@ -2,6 +2,8 @@ package b1nd.dodam.domain.rds.nightstudy.service;
 
 import java.time.LocalDate;
 import java.util.List;
+
+import b1nd.dodam.domain.rds.nightstudy.enumeration.NightStudyType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -30,8 +32,8 @@ public class NightStudyService {
                 .orElseThrow(NightStudyNotFoundException::new);
     }
 
-    public boolean checkDurationDuplication(Student student, LocalDate startAt, LocalDate endAt) {
-        return repository.existsValidByStudentAndDate(student, startAt, endAt);
+    public boolean checkDurationDuplication(Student student, LocalDate startAt, LocalDate endAt, NightStudyType type) {
+        return repository.existsValidByStudentAndDate(student, startAt, endAt, type);
     }
 
     public List<NightStudy> getMy(Student student, LocalDate now) {

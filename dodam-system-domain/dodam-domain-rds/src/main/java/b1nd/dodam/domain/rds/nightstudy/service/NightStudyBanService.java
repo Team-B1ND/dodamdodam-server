@@ -37,7 +37,8 @@ public class NightStudyBanService {
         if (ban != null) throw new NightStudyBannedStudentException();
     }
 
-    public void validateBan(Integer student) {
+    public void validateBan(Integer studentId) {
+        Student student = studentRepository.getById(studentId);
         NightStudyBan ban = nightStudyBanRepository.findByStudentAndEndedGreaterThanEqual(student, ZonedDateTimeUtil.nowToLocalDate()).orElse(null);
         if (ban != null) throw new NightStudyBannedStudentException();
     }
