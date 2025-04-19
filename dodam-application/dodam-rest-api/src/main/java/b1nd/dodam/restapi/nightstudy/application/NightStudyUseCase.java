@@ -130,7 +130,7 @@ public class NightStudyUseCase {
     @Transactional(readOnly = true)
     public ResponseData<List<NightStudyBanRes>> getAllActiveBans() {
         List<NightStudyBanRes> result = NightStudyBanRes.of(nightStudyBanService.getAllActiveBans());
-        return ResponseData.ok("기간 내 모든 심야자습 정지 학생 조회 성공", result);
+        return ResponseData.ok("유효한 심야자습 정지 학생 조회 성공", result);
     }
 
     @Transactional(readOnly = true)
