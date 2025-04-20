@@ -58,4 +58,8 @@ public class NightStudyProject {
         this.status = ApprovalStatus.PENDING;
         this.leader = leader;
     }
+
+    public boolean isLeader(Student student) {
+        return this.leader.equals(student);
+    }
 }

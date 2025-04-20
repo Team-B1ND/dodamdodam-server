@@ -59,16 +59,15 @@ public class NightStudyUseCase {
 
     public Response applyProject(ApplyNightStudyProjectReq req) {
         Student leader = studentRepository.getByMember(memberAuthenticationHolder.current());
-        nightStudyBanService.validateBan(leader);
-        for (Integer studentId : req.students()) nightStudyBanService.validateBan(studentId);
+        checkLeaderAndStudentsBanned(leader, req);
         NightStudyProject project = nightStudyProjectService.save(req.toEntity());
-        for (Integer studentId : req.students()) {
-            Student student = studentRepository.getById(studentId);
-            NightStudy nightStudy = req.toEntity(student, project);
-            nightStudyService.save(nightStudy);
-        }
-
+        for (Integer studentId : req.students()) nightStudyService.save(req.toEntity(studentRepository.getById(studentId), project));
         return Response.created("프로젝트 심야자습 신청 성공");
+    }
+
+    private void checkLeaderAndStudentsBanned(Student leader, ApplyNightStudyProjectReq req) {
+        nightStudyBanService.validateBan(leader);
+        for (int studentId : req.students()) nightStudyBanService.validateBan(studentId);
     }
 
     private void throwExceptionWhenDurationIsDuplicate(Student student, LocalDate startAt, LocalDate endAt, NightStudyType type) {
@@ -83,6 +82,14 @@ public class NightStudyUseCase {
         throwExceptionWhenStudentIsNotApplicant(nightStudy, student);
         nightStudyService.delete(nightStudy);
         return Response.noContent("심야자습 취소 성공");
+    }
+
+    public Response cancelProject(Long id) {
+        Student student = studentRepository.getByMember(memberAuthenticationHolder.current());
+        NightStudyProject project = nightStudyProjectService.getBy(id);
+        if (!project.isLeader(student)) throw new NotNightStudyApplicantException();
+        nightStudyService.deleteAllByProject(project);
+        return Response.ok("프로젝트 심야자습 취소 성공");
     }
 
     private void throwExceptionWhenStudentIsNotApplicant(NightStudy nightStudy, Student student) {

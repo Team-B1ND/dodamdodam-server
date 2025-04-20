@@ -3,6 +3,7 @@ package b1nd.dodam.domain.rds.nightstudy.service;
 import java.time.LocalDate;
 import java.util.List;
 
+import b1nd.dodam.domain.rds.nightstudy.entity.NightStudyProject;
 import b1nd.dodam.domain.rds.nightstudy.enumeration.NightStudyType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -55,5 +56,9 @@ public class NightStudyService {
     public void rejectAllByStudent(Student student) {
         repository.findByStudentAndEndAtGreaterThanEqual(student, LocalDate.now())
                 .forEach(NightStudy::reject);
+    }
+
+    public void deleteAllByProject(NightStudyProject project) {
+        repository.deleteAllByProject(project);
     }
 }
