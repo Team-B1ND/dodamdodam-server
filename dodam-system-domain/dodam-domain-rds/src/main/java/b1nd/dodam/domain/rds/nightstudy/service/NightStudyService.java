@@ -1,18 +1,17 @@
 package b1nd.dodam.domain.rds.nightstudy.service;
 
-import java.time.LocalDate;
-import java.util.List;
-
+import b1nd.dodam.domain.rds.member.entity.Student;
+import b1nd.dodam.domain.rds.nightstudy.entity.NightStudy;
 import b1nd.dodam.domain.rds.nightstudy.entity.NightStudyProject;
 import b1nd.dodam.domain.rds.nightstudy.enumeration.NightStudyType;
+import b1nd.dodam.domain.rds.nightstudy.exception.NightStudyNotFoundException;
+import b1nd.dodam.domain.rds.nightstudy.repository.NightStudyRepository;
+import b1nd.dodam.domain.rds.support.enumeration.ApprovalStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import b1nd.dodam.domain.rds.member.entity.Student;
-import b1nd.dodam.domain.rds.nightstudy.entity.NightStudy;
-import b1nd.dodam.domain.rds.support.enumeration.ApprovalStatus;
-import b1nd.dodam.domain.rds.nightstudy.repository.NightStudyRepository;
-import b1nd.dodam.domain.rds.nightstudy.exception.NightStudyNotFoundException;
+import java.time.LocalDate;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -58,7 +57,7 @@ public class NightStudyService {
                 .forEach(NightStudy::reject);
     }
 
-    public void deleteAllByProject(NightStudyProject project) {
-        repository.deleteAllByProject(project);
+    public List<NightStudy> getAllByProject(Long projectId) {
+        return repository.findByProject_Id(projectId);
     }
 }

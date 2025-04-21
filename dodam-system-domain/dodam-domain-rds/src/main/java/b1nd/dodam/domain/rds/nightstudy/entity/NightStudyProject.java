@@ -6,14 +6,12 @@ import b1nd.dodam.domain.rds.nightstudy.enumeration.NightStudyType;
 import b1nd.dodam.domain.rds.support.enumeration.ApprovalStatus;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDate;
 
 @Entity(name = "night_study_project")
+@Table(name = "night_study_project")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class NightStudyProject {
@@ -44,7 +42,7 @@ public class NightStudyProject {
     private ApprovalStatus status;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "fk_student_id")
+    @JoinColumn(name = "fk_leader_id", nullable = false)
     private Student leader;
 
     @Builder

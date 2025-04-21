@@ -13,6 +13,7 @@ import b1nd.dodam.restapi.support.data.ResponseData;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -21,6 +22,7 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/night-study")
 @RequiredArgsConstructor
+@Slf4j
 public class NightStudyController {
 
     private final NightStudyUseCase useCase;
@@ -50,6 +52,11 @@ public class NightStudyController {
         return useCase.cancelBan(studentId);
     }
 
+    @DeleteMapping("/project")
+    public Response cancelProject(@RequestParam(name = "project") @NotNull Long project) {
+        return useCase.cancelProject(project);
+    }
+
     @PatchMapping("/{id}/allow")
     public Response allow(@PathVariable Long id) {
         return useCase.allow(id);
@@ -59,6 +66,8 @@ public class NightStudyController {
     public Response reject(@PathVariable Long id, @RequestBody Optional<RejectNightStudyReq> req) {
         return useCase.reject(id, req);
     }
+
+    //TODO 프로젝트 심자 수락, 거절 기능 (참가자 전원도 상태 바꿔져야 함)
 
     @PatchMapping("/{id}/revert")
     public Response revert(@PathVariable Long id) {
@@ -94,4 +103,9 @@ public class NightStudyController {
     public ResponseData<List<NightStudyBanRes>> getAllBans() {
         return useCase.getAllActiveBans();
     }
+
+//    @GetMapping("/projects")
+//    public ResponseData<List<NightStudyProjectRes>> getAllProjects() {
+//        return useCase.getAllProjects();
+//    }
 }

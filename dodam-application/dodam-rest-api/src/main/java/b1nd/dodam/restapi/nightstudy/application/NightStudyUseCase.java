@@ -60,7 +60,8 @@ public class NightStudyUseCase {
     public Response applyProject(ApplyNightStudyProjectReq req) {
         Student leader = studentRepository.getByMember(memberAuthenticationHolder.current());
         checkLeaderAndStudentsBanned(leader, req);
-        NightStudyProject project = nightStudyProjectService.save(req.toEntity());
+        NightStudyProject project = nightStudyProjectService.save(req.toEntity(leader));
+        nightStudyService.save(req.toEntity(leader, project));
         for (Integer studentId : req.students()) nightStudyService.save(req.toEntity(studentRepository.getById(studentId), project));
         return Response.created("프로젝트 심야자습 신청 성공");
     }
@@ -84,11 +85,13 @@ public class NightStudyUseCase {
         return Response.noContent("심야자습 취소 성공");
     }
 
-    public Response cancelProject(Long id) {
-        Student student = studentRepository.getByMember(memberAuthenticationHolder.current());
-        NightStudyProject project = nightStudyProjectService.getBy(id);
-        if (!project.isLeader(student)) throw new NotNightStudyApplicantException();
-        nightStudyService.deleteAllByProject(project);
+    public Response cancelProject(Long projectId) {
+        Student leader = studentRepository.getByMember(memberAuthenticationHolder.current());
+        NightStudyProject project = nightStudyProjectService.getBy(projectId);
+        if (!project.isLeader(leader)) throw new NotNightStudyApplicantException();
+        List<NightStudy> students = nightStudyService.getAllByProject(projectId);
+        for (NightStudy s : students) nightStudyService.delete(s);
+        nightStudyProjectService.delete(project);
         return Response.ok("프로젝트 심야자습 취소 성공");
     }
 
@@ -181,9 +184,25 @@ public class NightStudyUseCase {
         return ResponseData.ok("학생 및 정지 여부 조회 성공", StudentWithNightStudyBanRes.of(students, bannedStudentIds));
     }
 
+//    @Transactional(readOnly = true)
+//    public ResponseData<List<NightStudyProjectRes>> getUserProjects() {
+//
+//    }
+//
+//    @Transactional(readOnly = true)
+//    public ResponseData<List<NightStudyProjectRes>> getAllProjects() {
+//        LocalDate now = ZonedDateTimeUtil.nowToLocalDate();
+//
+//    }
+//
+//    @Transactional(readOnly = true)
+//    public ResponseData<List<NightStudyProjectRes>> getPendingProjects() {
+//
+//    }
+
     public ResponseData<List<NightStudyProjectRes>> getRoomsInUse(LocalDate start, LocalDate end) {
         List<NightStudyProject> projects = nightStudyProjectService.findAllByDateRange(start, end);
-        return ResponseData.ok("기간 중 사용중인 방 조회 성공", NightStudyProjectRes.fromEntityList(projects));
+        return ResponseData.ok("기간 중 사용중인 방 조회 성공", NightStudyProjectRes.of(projects));
     }
 
 }

@@ -29,6 +29,6 @@ public class NightStudyProjectService {
     }
 
     public List<NightStudyProject> findAllByDateRange(LocalDate start, LocalDate end) {
-        return repository.findAllByDateRange(start, end);
+    return repository.findByStartAtLessThanEqualAndEndAtGreaterThanEqual(start, end);
     }
 }

@@ -11,6 +11,7 @@ public record StudentWithNightStudyBanRes(
     Integer room,
     Integer number,
     String phone,
+    String profileImage,
     boolean isBanned
 ) {
 
@@ -28,6 +29,7 @@ public record StudentWithNightStudyBanRes(
                 student.getRoom(),
                 student.getNumber(),
                 student.getMember().getPhone(),
+                student.getMember().getProfileImage(),
                 isBanned
         );
     }
