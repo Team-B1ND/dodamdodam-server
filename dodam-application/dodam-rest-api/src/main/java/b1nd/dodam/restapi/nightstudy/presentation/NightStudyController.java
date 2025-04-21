@@ -67,11 +67,24 @@ public class NightStudyController {
         return useCase.reject(id, req);
     }
 
-    //TODO 프로젝트 심자 수락, 거절 기능 (참가자 전원도 상태 바꿔져야 함)
-
     @PatchMapping("/{id}/revert")
     public Response revert(@PathVariable Long id) {
         return useCase.revert(id);
+    }
+
+    @PatchMapping("/project/{id}/allow")
+    public Response allowProject(@PathVariable Long id) {
+        return useCase.allowProject(id);
+    }
+
+    @PatchMapping("/project/{id}/reject")
+    public Response rejectProject(@PathVariable Long id, @RequestBody Optional<ApplyNightStudyProjectReq> req) {
+        return useCase.rejectProject(id);
+    }
+
+    @PatchMapping("/project/{id}/revert")
+    public Response revertProject(@PathVariable Long id) {
+        return useCase.revertProject(id);
     }
 
     @GetMapping

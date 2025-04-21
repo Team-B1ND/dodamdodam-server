@@ -68,7 +68,7 @@ public class NightStudy extends BaseEntity {
 
     @Builder
     public NightStudy(NightStudyType type, String content, boolean doNeedPhone, String reasonForPhone,
-                      Student student, NightStudyProject project, Student leader, LocalDate startAt, LocalDate endAt) {
+                      Student student, NightStudyProject project, LocalDate startAt, LocalDate endAt) {
         isApplicationDuration();
         isInvalidStudyPeriod(startAt, endAt);
         doesHaveReasonForPhone(doNeedPhone, reasonForPhone);
@@ -99,7 +99,7 @@ public class NightStudy extends BaseEntity {
     }
 
     private void isApplicationDuration() {
-        if(ZonedDateTimeUtil.nowToLocalTime().isAfter(LocalTime.of(21, 30))) {
+        if(ZonedDateTimeUtil.nowToLocalTime().isAfter(LocalTime.of(16, 30))) {
             throw new NightStudyApplicationDurationPassedException();
         }
     }

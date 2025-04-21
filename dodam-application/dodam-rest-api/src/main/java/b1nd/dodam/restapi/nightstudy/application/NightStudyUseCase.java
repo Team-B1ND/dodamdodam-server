@@ -126,6 +126,29 @@ public class NightStudyUseCase {
         nightStudy.modifyStatus(teacher, status, rejectReason);
     }
 
+    private void modifyProjectStatus(Long projectId, ApprovalStatus status, String rejectReason) {
+        Member leader = memberAuthenticationHolder.current();
+        Teacher teacher = teacherRepository.getByMember(leader);
+        NightStudyProject project = nightStudyProjectService.getBy(projectId);
+        project.modifyStatus(teacher, status, rejectReason);
+        for (NightStudy studentId : nightStudyService.getAllByProject(projectId)) nightStudyService.getBy(studentId.getId()).modifyStatus(teacher, status, rejectReason);
+    }
+
+    public Response allowProject(Long id) {
+        modifyProjectStatus(id, ApprovalStatus.ALLOWED, null);
+        return Response.noContent("프로젝트 심야자습 승인 성공");
+    }
+
+    public Response rejectProject(Long id) {
+        modifyProjectStatus(id, ApprovalStatus.REJECTED, null);
+        return Response.noContent("프로젝트 심야자습 거절 성공");
+    }
+
+    public Response revertProject(Long id) {
+        modifyProjectStatus(id, ApprovalStatus.PENDING, null);
+        return Response.noContent("프로젝트 심야자습 대기 성공");
+    }
+
 //    @PushAlarmEvent(target = "심야자습", status = ApprovalStatus.BANNED)
     @Transactional(rollbackFor = Exception.class)
     public Response applyBan(BanNightStudyReq req) {
