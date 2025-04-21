@@ -88,7 +88,7 @@ public class NightStudy extends BaseEntity {
     }
 
     private void isApplicationDuration() {
-        if(ZonedDateTimeUtil.nowToLocalTime().isAfter(LocalTime.of(16, 30))) {
+        if(ZonedDateTimeUtil.nowToLocalTime().isAfter(LocalTime.of(20, 30))) {
             throw new NightStudyApplicationDurationPassedException();
         }
     }
