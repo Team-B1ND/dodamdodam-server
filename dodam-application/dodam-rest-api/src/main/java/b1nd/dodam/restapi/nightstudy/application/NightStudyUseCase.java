@@ -134,23 +134,25 @@ public class NightStudyUseCase {
         for (NightStudy studentId : nightStudyService.getAllByProject(projectId)) nightStudyService.getBy(studentId.getId()).modifyStatus(teacher, status, rejectReason);
     }
 
+    @PushAlarmEvent(target = "프로젝트 심야자습", status = ApprovalStatus.ALLOWED)
     public Response allowProject(Long id) {
         modifyProjectStatus(id, ApprovalStatus.ALLOWED, null);
         return Response.noContent("프로젝트 심야자습 승인 성공");
     }
 
+    @PushAlarmEvent(target = "프로젝트 심야자습", status = ApprovalStatus.REJECTED)
     public Response rejectProject(Long id) {
         modifyProjectStatus(id, ApprovalStatus.REJECTED, null);
         return Response.noContent("프로젝트 심야자습 거절 성공");
     }
 
+    @PushAlarmEvent(target = "프로젝트 심야자습", status = ApprovalStatus.PENDING)
     public Response revertProject(Long id) {
         modifyProjectStatus(id, ApprovalStatus.PENDING, null);
         return Response.noContent("프로젝트 심야자습 대기 성공");
     }
 
-//    @PushAlarmEvent(target = "심야자습", status = ApprovalStatus.BANNED)
-    @Transactional(rollbackFor = Exception.class)
+    @PushAlarmEvent(target = "심야자습", status = ApprovalStatus.BANNED)
     public Response applyBan(BanNightStudyReq req) {
         Student student = studentRepository.getById(req.student());
         nightStudyService.rejectAllByStudent(student);
@@ -207,21 +209,21 @@ public class NightStudyUseCase {
         return ResponseData.ok("학생 및 정지 여부 조회 성공", StudentWithNightStudyBanRes.of(students, bannedStudentIds));
     }
 
-//    @Transactional(readOnly = true)
-//    public ResponseData<List<NightStudyProjectRes>> getUserProjects() {
-//
-//    }
-//
-//    @Transactional(readOnly = true)
-//    public ResponseData<List<NightStudyProjectRes>> getAllProjects() {
-//        LocalDate now = ZonedDateTimeUtil.nowToLocalDate();
-//
-//    }
-//
-//    @Transactional(readOnly = true)
-//    public ResponseData<List<NightStudyProjectRes>> getPendingProjects() {
-//
-//    }
+    @Transactional(readOnly = true)
+    public ResponseData<List<NightStudyProjectRes>> getUserProjects() {
+
+    }
+
+    @Transactional(readOnly = true)
+    public ResponseData<List<NightStudyProjectRes>> getAllValidProjects() {
+        LocalDate now = ZonedDateTimeUtil.nowToLocalDate();
+
+    }
+
+    @Transactional(readOnly = true)
+    public ResponseData<List<NightStudyProjectRes>> getAllPendingProjects() {
+
+    }
 
     public ResponseData<List<NightStudyProjectRes>> getRoomsInUse(LocalDate start, LocalDate end) {
         List<NightStudyProject> projects = nightStudyProjectService.findAllByDateRange(start, end);

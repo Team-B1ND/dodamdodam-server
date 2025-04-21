@@ -13,7 +13,6 @@ import b1nd.dodam.restapi.support.data.ResponseData;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -22,7 +21,6 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/night-study")
 @RequiredArgsConstructor
-@Slf4j
 public class NightStudyController {
 
     private final NightStudyUseCase useCase;
@@ -118,7 +116,7 @@ public class NightStudyController {
     }
 
 //    @GetMapping("/projects")
-//    public ResponseData<List<NightStudyProjectRes>> getAllProjects() {
+//    public ResponseData<List<NightStudyProjectRes>> getAllValidProjects() {
 //        return useCase.getAllProjects();
 //    }
 }
