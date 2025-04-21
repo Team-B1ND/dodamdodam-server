@@ -42,7 +42,7 @@ public class NightStudyProject {
     @Enumerated(EnumType.STRING)
     private ApprovalStatus status;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "fk_leader_id", nullable = false)
     private Student leader;
 

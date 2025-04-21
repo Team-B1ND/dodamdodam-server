@@ -6,6 +6,7 @@ import b1nd.dodam.restapi.nightstudy.application.data.req.ApplyNightStudyReq;
 import b1nd.dodam.restapi.nightstudy.application.data.req.BanNightStudyReq;
 import b1nd.dodam.restapi.nightstudy.application.data.req.RejectNightStudyReq;
 import b1nd.dodam.restapi.nightstudy.application.data.res.NightStudyBanRes;
+import b1nd.dodam.restapi.nightstudy.application.data.res.NightStudyProjectRes;
 import b1nd.dodam.restapi.nightstudy.application.data.res.NightStudyRes;
 import b1nd.dodam.restapi.nightstudy.application.data.res.StudentWithNightStudyBanRes;
 import b1nd.dodam.restapi.support.data.Response;
@@ -115,8 +116,23 @@ public class NightStudyController {
         return useCase.getAllActiveBans();
     }
 
-//    @GetMapping("/projects")
-//    public ResponseData<List<NightStudyProjectRes>> getAllValidProjects() {
-//        return useCase.getAllProjects();
-//    }
+    @GetMapping("/projects")
+    public ResponseData<List<NightStudyProjectRes>> getAllValidProjects() {
+        return useCase.getValidProjects();
+    }
+
+    @GetMapping("/project/my")
+    public ResponseData<List<NightStudyProjectRes>> getMyProjects() {
+        return useCase.getMyProjects();
+    }
+
+    @GetMapping("/project/pending")
+    public ResponseData<List<NightStudyProjectRes>> getPendingProjects() {
+        return useCase.getPendingProjects();
+    }
+
+    @GetMapping("/project/allowed")
+    public ResponseData<List<NightStudyProjectRes>> getAllowedProjects() {
+        return useCase.getAllowedProjects();
+    }
 }

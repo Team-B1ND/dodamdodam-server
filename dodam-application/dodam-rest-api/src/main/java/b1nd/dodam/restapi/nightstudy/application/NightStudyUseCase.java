@@ -210,23 +210,36 @@ public class NightStudyUseCase {
     }
 
     @Transactional(readOnly = true)
-    public ResponseData<List<NightStudyProjectRes>> getUserProjects() {
-
+    public ResponseData<List<NightStudyProjectRes>> getValidProjects() {
+        LocalDate today = ZonedDateTimeUtil.nowToLocalDate();
+        List<NightStudyProjectRes> result = NightStudyProjectRes.of(nightStudyProjectService.getAllByDateRange(today, today));
+        return ResponseData.ok("유효한 모든 프로젝트 조회 성공", result);
     }
 
     @Transactional(readOnly = true)
-    public ResponseData<List<NightStudyProjectRes>> getAllValidProjects() {
-        LocalDate now = ZonedDateTimeUtil.nowToLocalDate();
-
+    public ResponseData<List<NightStudyProjectRes>> getPendingProjects() {
+        LocalDate today = ZonedDateTimeUtil.nowToLocalDate();
+        List<NightStudyProjectRes> result = NightStudyProjectRes.of(nightStudyProjectService.getPendingProjects(today, today));
+        return ResponseData.ok("대기중인 프로젝트 심야자습 조회 성공", result);
     }
 
     @Transactional(readOnly = true)
-    public ResponseData<List<NightStudyProjectRes>> getAllPendingProjects() {
+    public ResponseData<List<NightStudyProjectRes>> getAllowedProjects() {
+        LocalDate today = ZonedDateTimeUtil.nowToLocalDate();
+        List<NightStudyProjectRes> result = NightStudyProjectRes.of(nightStudyProjectService.getAllowedProjects(today, today));
+        return ResponseData.ok("승인된 프로젝트 심야자습 조회 성공", result);
+    }
 
+    @Transactional(readOnly = true)
+    public ResponseData<List<NightStudyProjectRes>> getMyProjects() {
+        Student student = studentRepository.getByMember(memberAuthenticationHolder.current());
+        LocalDate today = ZonedDateTimeUtil.nowToLocalDate();
+        List<NightStudyProjectRes> result = NightStudyProjectRes.of(nightStudyProjectService.getMyProjects(student, today, today));
+        return ResponseData.ok("내 프로젝트 심야자습 조회 성공", result);
     }
 
     public ResponseData<List<NightStudyProjectRes>> getRoomsInUse(LocalDate start, LocalDate end) {
-        List<NightStudyProject> projects = nightStudyProjectService.findAllByDateRange(start, end);
+        List<NightStudyProject> projects = nightStudyProjectService.getAllByDateRange(start, end);
         return ResponseData.ok("기간 중 사용중인 방 조회 성공", NightStudyProjectRes.of(projects));
     }
 

@@ -2,7 +2,6 @@ package b1nd.dodam.domain.rds.nightstudy.service;
 
 import b1nd.dodam.domain.rds.member.entity.Student;
 import b1nd.dodam.domain.rds.nightstudy.entity.NightStudy;
-import b1nd.dodam.domain.rds.nightstudy.entity.NightStudyProject;
 import b1nd.dodam.domain.rds.nightstudy.enumeration.NightStudyType;
 import b1nd.dodam.domain.rds.nightstudy.exception.NightStudyNotFoundException;
 import b1nd.dodam.domain.rds.nightstudy.repository.NightStudyRepository;
