@@ -2,47 +2,33 @@ package b1nd.dodam.restapi.support.pushalarm;
 
 import b1nd.dodam.core.exception.global.InternalServerException;
 import b1nd.dodam.domain.redis.fcm.FcmRedisMessage;
+import b1nd.dodam.domain.redis.fcm.FCMRedisQueueProducer;
 import b1nd.dodam.process.listener.pushalarm.FcmEvent;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.util.Set;
 
 @Component
+@RequiredArgsConstructor
 public class PushAlarmRetryScheduler {
 
-    private final StringRedisTemplate redisTemplate;
-    private final ObjectMapper objectMapper;
+    private final FCMRedisQueueProducer redisQueueProducer;
     private final ApplicationEventPublisher publisher;
-
-    private static final String KEY = "fcm:retry";
-
-    public PushAlarmRetryScheduler(StringRedisTemplate redisTemplate,
-                             ObjectMapper objectMapper,
-                             ApplicationEventPublisher publisher) {
-        this.redisTemplate = redisTemplate;
-        this.objectMapper = objectMapper;
-        this.publisher = publisher;
-    }
 
     @Scheduled(fixedRate = 3000)
     public void processRetryQueue() {
-        long now = System.currentTimeMillis();
-        Set<String> messages = redisTemplate.opsForZSet().rangeByScore(KEY, 0, now);
-
+        Set<String> messages = redisQueueProducer.getMessagesFromRetryQueue(System.currentTimeMillis());
         if (messages == null || messages.isEmpty()) return;
+        messages.forEach(this::processMessageAsync);
+    }
 
-        for (String msg : messages) {
-            try {
-                FcmRedisMessage redisMessage = objectMapper.readValue(msg, FcmRedisMessage.class);
-                publisher.publishEvent(FcmEvent.from(redisMessage));
-                redisTemplate.opsForZSet().remove(KEY, msg);
-            } catch (Exception e) {
-                throw new InternalServerException();
-            }
-        }
+    @Async
+    public void processMessageAsync(String msg) {
+        FcmRedisMessage fcmRedisMessage = redisQueueProducer.dequeueToRetryQueue(msg);
+        publisher.publishEvent(FcmEvent.from(fcmRedisMessage));
     }
 }

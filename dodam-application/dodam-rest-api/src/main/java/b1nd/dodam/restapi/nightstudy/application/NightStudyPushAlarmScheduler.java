@@ -26,7 +26,7 @@ public class NightStudyPushAlarmScheduler {
                 .map(n -> n.getStudent().getMember().getPushToken())
                 .toList();
         tokens.parallelStream().forEach(token ->
-                eventPublisher.publishEvent(new FcmEvent(token, "귀가버스 신청", "귀가 버스 신청이 가능해요! 신청해주세요."))
+                    eventPublisher.publishEvent(new FcmEvent(token, "심야자습 만료", "심야자습이 만료됐어요."))
         );
     }
 }

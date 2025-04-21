@@ -1,6 +1,7 @@
 package b1nd.dodam.process.listener.pushalarm;
 
-import b1nd.dodam.domain.redis.fcm.RedisQueueProducer;
+import b1nd.dodam.domain.redis.fcm.FCMRedisQueueProducer;
+import b1nd.dodam.domain.redis.fcm.FcmRedisMessage;
 import b1nd.dodam.firebase.client.FCMClient;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -14,17 +15,20 @@ import java.util.List;
 public class FcmProcessor {
 
     private final FCMClient fcmClient;
-    private final RedisQueueProducer redisQueueProducer;
+    private final FCMRedisQueueProducer redisQueueProducer;
 
     private static final List<Long> RETRY_DELAYS = List.of(3_000L, 30_000L, 60_000L);
 
     public void process(FcmEvent event) {
         boolean success = fcmClient.sendMessage(event.token(), event.title(), event.body());
+        FcmRedisMessage message = FcmMessageConverter.toRedisMessage(
+                event.nextRetry(),
+                getDelayForRetry(event.retryCount())
+        );
         if (!success && event.retryCount() < event.maxRetry()) {
-            redisQueueProducer.enqueue(FcmMessageConverter.toRedisMessage(
-                    event.nextRetry(),
-                    getDelayForRetry(event.retryCount()))
-            );
+            redisQueueProducer.enqueueToRetryQueue(message);
+        } else if (event.retryCount() >= event.maxRetry()) {
+            redisQueueProducer.enqueueToFailedQueue(message);
         }
     }
 

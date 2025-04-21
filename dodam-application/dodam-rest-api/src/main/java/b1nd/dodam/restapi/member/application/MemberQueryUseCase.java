@@ -76,9 +76,9 @@ public class MemberQueryUseCase {
     public ResponseData<List<MemberInfoRes>> getAll(){
         return ResponseData.ok("모든 멤버 정보 조회 성공",
                 memberRepository.findByStatusOrderByStudent(ActiveStatus.ACTIVE)
-                .parallelStream()
-                .map(this::getMemberInfo)
-                .toList());
+                        .parallelStream()
+                        .map(this::getMemberInfo)
+                        .toList());
     }
 
     public ResponseData<Boolean> checkBroadcastClubMember() {
@@ -104,7 +104,7 @@ public class MemberQueryUseCase {
         Member member = memberAuthenticationHolder.current();
         List<StudentRelationRes> studentRelationRes =
                 memberService.getStudentRelationByMember(member).stream()
-                .map(StudentRelationRes::of).toList();
+                        .map(StudentRelationRes::of).toList();
         return ResponseData.ok("자녀 조회 성공", studentRelationRes);
     }
 
