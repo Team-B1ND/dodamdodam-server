@@ -10,6 +10,7 @@ import b1nd.dodam.domain.rds.member.repository.TeacherRepository;
 import b1nd.dodam.domain.rds.nightstudy.entity.NightStudy;
 import b1nd.dodam.domain.rds.nightstudy.entity.NightStudyBan;
 import b1nd.dodam.domain.rds.nightstudy.entity.NightStudyProject;
+import b1nd.dodam.domain.rds.nightstudy.enumeration.NightStudyProjectRoom;
 import b1nd.dodam.domain.rds.nightstudy.enumeration.NightStudyType;
 import b1nd.dodam.domain.rds.nightstudy.exception.NightStudyDuplicateException;
 import b1nd.dodam.domain.rds.nightstudy.exception.NotNightStudyApplicantException;
@@ -28,13 +29,14 @@ import b1nd.dodam.restapi.nightstudy.application.data.res.NightStudyRes;
 import b1nd.dodam.restapi.nightstudy.application.data.res.StudentWithNightStudyBanRes;
 import b1nd.dodam.restapi.support.data.Response;
 import b1nd.dodam.restapi.support.data.ResponseData;
-import b1nd.dodam.restapi.support.pushalarm.PushAlarmEvent;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Component
@@ -101,19 +103,19 @@ public class NightStudyUseCase {
         }
     }
 
-    @PushAlarmEvent(target = "심야자습", status = ApprovalStatus.ALLOWED)
+//    @PushAlarmEvent(target = "심야자습", status = ApprovalStatus.ALLOWED)
     public Response allow(Long id) {
         modifyStatus(id, ApprovalStatus.ALLOWED, null);
         return Response.noContent("심야자습 승인 성공");
     }
 
-    @PushAlarmEvent(target = "심야자습", status = ApprovalStatus.REJECTED)
+//    @PushAlarmEvent(target = "심야자습", status = ApprovalStatus.REJECTED)
     public Response reject(Long id, Optional<RejectNightStudyReq> req) {
         modifyStatus(id, ApprovalStatus.REJECTED, req.map(RejectNightStudyReq::rejectReason).orElse(null));
         return Response.noContent("심야자습 거절 성공");
     }
 
-    @PushAlarmEvent(target = "심야자습", status = ApprovalStatus.PENDING)
+//    @PushAlarmEvent(target = "심야자습", status = ApprovalStatus.PENDING)
     public Response revert(Long id) {
         modifyStatus(id, ApprovalStatus.PENDING, null);
         return Response.noContent("심야자습 대기 성공");
@@ -134,25 +136,25 @@ public class NightStudyUseCase {
         for (NightStudy studentId : nightStudyService.getAllByProject(projectId)) nightStudyService.getBy(studentId.getId()).modifyStatus(teacher, status, rejectReason);
     }
 
-    @PushAlarmEvent(target = "프로젝트 심야자습", status = ApprovalStatus.ALLOWED)
+//    @PushAlarmEvent(target = "프로젝트 심야자습", status = ApprovalStatus.ALLOWED)
     public Response allowProject(Long id) {
         modifyProjectStatus(id, ApprovalStatus.ALLOWED, null);
         return Response.noContent("프로젝트 심야자습 승인 성공");
     }
 
-    @PushAlarmEvent(target = "프로젝트 심야자습", status = ApprovalStatus.REJECTED)
+//    @PushAlarmEvent(target = "프로젝트 심야자습", status = ApprovalStatus.REJECTED)
     public Response rejectProject(Long id) {
         modifyProjectStatus(id, ApprovalStatus.REJECTED, null);
         return Response.noContent("프로젝트 심야자습 거절 성공");
     }
 
-    @PushAlarmEvent(target = "프로젝트 심야자습", status = ApprovalStatus.PENDING)
+//    @PushAlarmEvent(target = "프로젝트 심야자습", status = ApprovalStatus.PENDING)
     public Response revertProject(Long id) {
         modifyProjectStatus(id, ApprovalStatus.PENDING, null);
         return Response.noContent("프로젝트 심야자습 대기 성공");
     }
 
-    @PushAlarmEvent(target = "심야자습", status = ApprovalStatus.BANNED)
+//    @PushAlarmEvent(target = "심야자습", status = ApprovalStatus.BANNED)
     public Response applyBan(BanNightStudyReq req) {
         Student student = studentRepository.getById(req.student());
         nightStudyService.rejectAllByStudent(student);
@@ -238,9 +240,15 @@ public class NightStudyUseCase {
         return ResponseData.ok("내 프로젝트 심야자습 조회 성공", result);
     }
 
-    public ResponseData<List<NightStudyProjectRes>> getRoomsInUse(LocalDate start, LocalDate end) {
-        List<NightStudyProject> projects = nightStudyProjectService.getAllByDateRange(start, end);
-        return ResponseData.ok("기간 중 사용중인 방 조회 성공", NightStudyProjectRes.of(projects));
+    @Transactional(readOnly = true)
+    public ResponseData<Map<String, String>> getRoomsInUse() {
+        LocalDate today = ZonedDateTimeUtil.nowToLocalDate();
+        Map<NightStudyProjectRoom, String> roomsWithProjects = nightStudyProjectService.getAllRoomsWithProjects(today, today);
+        Map<String, String> result = new HashMap<>();
+        roomsWithProjects.forEach((room, projectName) -> {
+            result.put(room.name(), projectName);
+        });
+        return ResponseData.ok("교실별 프로젝트 사용 현황 조회 성공", result);
     }
 
 }

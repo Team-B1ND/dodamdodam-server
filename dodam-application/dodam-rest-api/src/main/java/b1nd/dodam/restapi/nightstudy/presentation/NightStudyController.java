@@ -17,6 +17,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @RestController
@@ -134,5 +135,10 @@ public class NightStudyController {
     @GetMapping("/project/allowed")
     public ResponseData<List<NightStudyProjectRes>> getAllowedProjects() {
         return useCase.getAllowedProjects();
+    }
+
+    @GetMapping("/project/rooms")
+    public ResponseData<Map<String, String>> getUsingProjectRooms() {
+        return useCase.getRoomsInUse();
     }
 }
