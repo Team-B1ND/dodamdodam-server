@@ -18,5 +18,4 @@ public interface NightStudyProjectRepository extends JpaRepository<NightStudyPro
 
     List<NightStudyProject> findByStatusAndStartAtLessThanEqualAndEndAtGreaterThanEqualOrderByRoom(ApprovalStatus status, LocalDate today1, LocalDate today2);
 
-//    List<NightStudyProject> findByRoomAndStartAtLessThanEqualAndEndAtGreaterThanEqual(NightStudyProject project, LocalDate today1, LocalDate today2);
 }

@@ -51,8 +51,8 @@ public class NightStudyProjectService {
 
     public Map<NightStudyProjectRoom, String> getAllRoomsWithProjects(LocalDate startAt, LocalDate endAt) {
         Map<NightStudyProjectRoom, String> result = new HashMap<>();
-        for (NightStudyProjectRoom room : NightStudyProjectRoom.values()) result.put(room, null);
         List<NightStudyProject> projects = repository.findByStatusAndStartAtLessThanEqualAndEndAtGreaterThanEqualOrderByRoom(ApprovalStatus.ALLOWED, startAt, endAt);
+        for (NightStudyProjectRoom room : NightStudyProjectRoom.values()) result.put(room, null);
         for (NightStudyProject project : projects) result.put(project.getRoom(), project.getName());
         return result;
     }
