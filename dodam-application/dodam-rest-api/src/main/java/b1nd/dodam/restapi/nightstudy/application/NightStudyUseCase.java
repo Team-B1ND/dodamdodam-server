@@ -12,6 +12,7 @@ import b1nd.dodam.domain.rds.nightstudy.entity.NightStudyBan;
 import b1nd.dodam.domain.rds.nightstudy.entity.NightStudyProject;
 import b1nd.dodam.domain.rds.nightstudy.enumeration.NightStudyProjectRoom;
 import b1nd.dodam.domain.rds.nightstudy.enumeration.NightStudyType;
+import b1nd.dodam.domain.rds.nightstudy.exception.NightStudyBanNotFoundException;
 import b1nd.dodam.domain.rds.nightstudy.exception.NightStudyDuplicateException;
 import b1nd.dodam.domain.rds.nightstudy.exception.NotNightStudyApplicantException;
 import b1nd.dodam.domain.rds.nightstudy.service.NightStudyBanService;
@@ -172,14 +173,18 @@ public class NightStudyUseCase {
     @Transactional(readOnly = true)
     public Response getMyBan() {
         Student student = studentRepository.getByMember(memberAuthenticationHolder.current());
-        NightStudyBan result = nightStudyBanService.findUserBan(student);
+        NightStudyBan result = null;
+        try {
+            result = nightStudyBanService.findByStudent(student);
+        }
+        catch (NightStudyBanNotFoundException e) {}
         return ResponseData.ok("내 심야자습 정지 여부 조회 성공", NightStudyBanRes.of(result));
     }
 
     @Transactional(readOnly = true)
     public ResponseData<List<NightStudyBanRes>> getAllActiveBans() {
         List<NightStudyBanRes> result = NightStudyBanRes.of(nightStudyBanService.getAllActiveBans());
-        return ResponseData.ok("기간 내 모든 심야자습 정지 학생 조회 성공", result);
+        return ResponseData.ok("유효한 심야자습 정지 학생 조회 성공", result);
     }
 
     @Transactional(readOnly = true)

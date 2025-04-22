@@ -20,6 +20,7 @@ public record NightStudyBanRes(
     }
 
     public static NightStudyBanRes of(NightStudyBan nightStudyBan) {
+        if (nightStudyBan == null) return null;
         return new NightStudyBanRes(
                 nightStudyBan.getId(),
                 StudentWithImageRes.of(nightStudyBan.getStudent()),
