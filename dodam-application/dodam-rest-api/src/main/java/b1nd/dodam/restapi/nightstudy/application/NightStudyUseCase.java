@@ -242,13 +242,10 @@ public class NightStudyUseCase {
 
     @Transactional(readOnly = true)
     public ResponseData<Map<String, String>> getRoomsInUse() {
+        Map<String, String> result = new HashMap<>();
         LocalDate today = ZonedDateTimeUtil.nowToLocalDate();
         Map<NightStudyProjectRoom, String> roomsWithProjects = nightStudyProjectService.getAllRoomsWithProjects(today, today);
-        Map<String, String> result = new HashMap<>();
-        roomsWithProjects.forEach((room, projectName) -> {
-            result.put(room.name(), projectName);
-        });
+        roomsWithProjects.forEach((room, projectName) -> result.put(room.name(), projectName));
         return ResponseData.ok("교실별 프로젝트 사용 현황 조회 성공", result);
     }
-
 }
