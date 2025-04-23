@@ -2,7 +2,6 @@ package b1nd.dodam.domain.rds.nightstudy.service;
 
 import b1nd.dodam.core.util.ZonedDateTimeUtil;
 import b1nd.dodam.domain.rds.member.entity.Student;
-import b1nd.dodam.domain.rds.member.repository.StudentRepository;
 import b1nd.dodam.domain.rds.nightstudy.entity.NightStudyBan;
 import b1nd.dodam.domain.rds.nightstudy.exception.NightStudyBanNotFoundException;
 import b1nd.dodam.domain.rds.nightstudy.exception.NightStudyBannedStudentException;
@@ -16,7 +15,6 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class NightStudyBanService {
-    private final StudentRepository studentRepository;
     private final NightStudyBanRepository nightStudyBanRepository;
 
     public void updateBan(Student student, String reason, LocalDate today, LocalDate ended) {
@@ -37,10 +35,9 @@ public class NightStudyBanService {
         if (ban != null) throw new NightStudyBannedStudentException();
     }
 
-    public void validateBan(Integer studentId) {
-        Student student = studentRepository.getById(studentId);
-        NightStudyBan ban = nightStudyBanRepository.findByStudentAndEndedGreaterThanEqual(student, ZonedDateTimeUtil.nowToLocalDate()).orElse(null);
-        if (ban != null) throw new NightStudyBannedStudentException();
+    public void validateMultipleBans(List<Integer> studentIds) {
+        List<NightStudyBan> bans = nightStudyBanRepository.findByStudent_IdIn(studentIds);
+        if (!bans.isEmpty()) throw new NightStudyBannedStudentException();
     }
 
     public void save(NightStudyBan nightStudyBan) {
@@ -53,7 +50,7 @@ public class NightStudyBanService {
 
     public NightStudyBan findByStudent(Student student) {
         return nightStudyBanRepository.findByStudentAndEndedGreaterThanEqual(student, ZonedDateTimeUtil.nowToLocalDate())
-            .orElse(null);
+            .orElseThrow(NightStudyBanNotFoundException::new);
     }
 
     public List<NightStudyBan> getAllActiveBans() {

@@ -9,16 +9,17 @@ import b1nd.dodam.restapi.member.application.data.res.StudentWithImageRes;
 import java.time.LocalDate;
 import java.util.List;
 
-public record NightStudyProjectRes(Long id,
-                                   NightStudyType type,
-                                   ApprovalStatus status,
-                                   NightStudyProjectRoom room,
-                                   String name,
-                                   String description,
-                                   LocalDate startAt,
-                                   LocalDate endAt,
-                                   StudentWithImageRes leader
-                                   ) {
+public record NightStudyProjectRes(
+        Long id,
+        NightStudyType type,
+        ApprovalStatus status,
+        NightStudyProjectRoom room,
+        String name,
+        String description,
+        LocalDate startAt,
+        LocalDate endAt,
+        StudentWithImageRes leader
+) {
     public static List<NightStudyProjectRes> of(List<NightStudyProject> nightStudyProjects) {
         return nightStudyProjects.stream()
                 .map(NightStudyProjectRes::of)

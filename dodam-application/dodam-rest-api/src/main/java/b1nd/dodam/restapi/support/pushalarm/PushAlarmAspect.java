@@ -60,7 +60,6 @@ public class PushAlarmAspect {
             case "외출" -> outGoingService.getById(id).getStudent();
             case "외박" -> outSleepingService.getById(id).getStudent();
             case "심야자습" -> nightStudyService.getBy(id).getStudent();
-            case "프로젝트 심야자습" -> nightStudyProjectService.getBy(id).getLeader();
             default -> throw new InternalServerException();
         };
     }

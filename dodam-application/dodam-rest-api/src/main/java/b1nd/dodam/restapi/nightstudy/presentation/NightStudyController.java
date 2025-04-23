@@ -5,24 +5,22 @@ import b1nd.dodam.restapi.nightstudy.application.data.req.ApplyNightStudyProject
 import b1nd.dodam.restapi.nightstudy.application.data.req.ApplyNightStudyReq;
 import b1nd.dodam.restapi.nightstudy.application.data.req.BanNightStudyReq;
 import b1nd.dodam.restapi.nightstudy.application.data.req.RejectNightStudyReq;
-import b1nd.dodam.restapi.nightstudy.application.data.res.NightStudyBanRes;
-import b1nd.dodam.restapi.nightstudy.application.data.res.NightStudyProjectRes;
-import b1nd.dodam.restapi.nightstudy.application.data.res.NightStudyRes;
-import b1nd.dodam.restapi.nightstudy.application.data.res.StudentWithNightStudyBanRes;
+import b1nd.dodam.restapi.nightstudy.application.data.res.*;
 import b1nd.dodam.restapi.support.data.Response;
 import b1nd.dodam.restapi.support.data.ResponseData;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 @RestController
 @RequestMapping("/night-study")
 @RequiredArgsConstructor
+@Slf4j
 public class NightStudyController {
 
     private final NightStudyUseCase useCase;
@@ -138,7 +136,7 @@ public class NightStudyController {
     }
 
     @GetMapping("/project/rooms")
-    public ResponseData<Map<String, String>> getUsingProjectRooms() {
+    public ResponseData<List<NightStudyProjectRoomRes>> getUsingProjectRooms() {
         return useCase.getRoomsInUse();
     }
 }

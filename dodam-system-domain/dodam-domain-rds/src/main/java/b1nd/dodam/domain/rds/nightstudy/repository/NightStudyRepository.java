@@ -48,5 +48,5 @@ public interface NightStudyRepository extends JpaRepository<NightStudy, Long> {
     @EntityGraph(attributePaths = {"student.member"})
     List<NightStudy> findByEndAt(LocalDate endAt);
 
-    List<NightStudy> findByProject_Id(Long projectId);
+    List<NightStudy> findAllByProject_Id(Long projectId);
 }

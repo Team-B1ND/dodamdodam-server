@@ -11,8 +11,7 @@ import lombok.*;
 
 import java.time.LocalDate;
 
-@Entity(name = "night_study_project")
-@Table(name = "night_study_project")
+@Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class NightStudyProject {
@@ -21,6 +20,7 @@ public class NightStudyProject {
     private Long id;
 
     @NotNull
+    @Enumerated(EnumType.STRING)
     private NightStudyType type;
 
     @NotNull
@@ -36,6 +36,7 @@ public class NightStudyProject {
     private LocalDate endAt;
 
     @NotNull
+    @Enumerated(EnumType.STRING)
     private NightStudyProjectRoom room;
 
     @NotNull

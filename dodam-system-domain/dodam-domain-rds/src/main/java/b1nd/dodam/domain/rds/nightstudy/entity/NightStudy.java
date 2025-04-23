@@ -88,6 +88,10 @@ public class NightStudy extends BaseEntity {
         this.status = ApprovalStatus.REJECTED;
     }
 
+    public void joinProject(NightStudyProject project) {
+        this.project = project;
+    }
+
     public void modifyStatus(Teacher teacher, ApprovalStatus status, String rejectReason) {
         this.status = status;
         this.teacher = teacher;
@@ -99,7 +103,7 @@ public class NightStudy extends BaseEntity {
     }
 
     private void isApplicationDuration() {
-        if(ZonedDateTimeUtil.nowToLocalTime().isAfter(LocalTime.of(20, 30))) {
+        if (ZonedDateTimeUtil.nowToLocalTime().isAfter(LocalTime.of(20, 30))) {
             throw new NightStudyApplicationDurationPassedException();
         }
     }

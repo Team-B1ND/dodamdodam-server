@@ -22,8 +22,16 @@ public class NightStudyService {
         repository.save(nightStudy);
     }
 
+    public void saveAll(List<NightStudy> nightStudies) {
+        repository.saveAll(nightStudies);
+    }
+
     public void delete(NightStudy nightStudy) {
         repository.delete(nightStudy);
+    }
+
+    public void deleteAllByProject(Long projectId) {
+        repository.deleteAll(repository.findAllByProject_Id(projectId));
     }
 
     public NightStudy getBy(Long id) {
@@ -57,6 +65,6 @@ public class NightStudyService {
     }
 
     public List<NightStudy> getAllByProject(Long projectId) {
-        return repository.findByProject_Id(projectId);
+        return repository.findAllByProject_Id(projectId);
     }
 }
