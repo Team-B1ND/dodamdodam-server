@@ -2,6 +2,7 @@ package b1nd.dodam.domain.rds.nightstudy.service;
 
 import b1nd.dodam.domain.rds.member.entity.Student;
 import b1nd.dodam.domain.rds.nightstudy.entity.NightStudy;
+import b1nd.dodam.domain.rds.nightstudy.entity.NightStudyProject;
 import b1nd.dodam.domain.rds.nightstudy.enumeration.NightStudyType;
 import b1nd.dodam.domain.rds.nightstudy.exception.NightStudyNotFoundException;
 import b1nd.dodam.domain.rds.nightstudy.repository.NightStudyRepository;
@@ -30,8 +31,8 @@ public class NightStudyService {
         repository.delete(nightStudy);
     }
 
-    public void deleteAllByProject(Long projectId) {
-        repository.deleteAll(repository.findAllByProject_Id(projectId));
+    public void deleteAllByProject(NightStudyProject project) {
+        repository.deleteAll(repository.findAllByProject(project));
     }
 
     public NightStudy getBy(Long id) {
@@ -64,7 +65,7 @@ public class NightStudyService {
                 .forEach(NightStudy::reject);
     }
 
-    public List<NightStudy> getAllByProject(Long projectId) {
-        return repository.findAllByProject_Id(projectId);
+    public List<NightStudy> getAllByProject(NightStudyProject project) {
+        return repository.findAllByProject(project);
     }
 }

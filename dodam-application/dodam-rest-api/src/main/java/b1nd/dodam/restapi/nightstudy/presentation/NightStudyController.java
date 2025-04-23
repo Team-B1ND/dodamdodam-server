@@ -11,7 +11,6 @@ import b1nd.dodam.restapi.support.data.ResponseData;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -20,7 +19,6 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/night-study")
 @RequiredArgsConstructor
-@Slf4j
 public class NightStudyController {
 
     private final NightStudyUseCase useCase;
@@ -51,8 +49,8 @@ public class NightStudyController {
     }
 
     @DeleteMapping("/project")
-    public Response cancelProject(@RequestParam(name = "project") @NotNull Long project) {
-        return useCase.cancelProject(project);
+    public Response cancelProject(@RequestParam(name = "project") @NotNull Long projectId) {
+        return useCase.cancelProject(projectId);
     }
 
     @PatchMapping("/{id}/allow")

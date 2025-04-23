@@ -32,7 +32,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Component
 @Transactional(rollbackFor = Exception.class)
@@ -58,9 +58,17 @@ public class NightStudyUseCase {
         Student leader = studentRepository.getByMember(memberAuthenticationHolder.current());
         checkLeaderAndStudentsBanned(leader, req);
         NightStudyProject project = nightStudyProjectService.save(req.toEntity(leader));
-        nightStudyService.save(req.toEntity(leader, project));
-        for (Integer studentId : req.students()) nightStudyService.save(req.toEntity(studentRepository.getById(studentId), project));
+        List<Student> students = studentRepository.findAllById(req.students());
+        List<NightStudy> nightStudies = createNightStudies(leader, students, project, req);
+        nightStudyService.saveAll(nightStudies);
         return Response.created("프로젝트 심야자습 신청 성공");
+    }
+
+    private List<NightStudy> createNightStudies(Student leader, List<Student> students, NightStudyProject project, ApplyNightStudyProjectReq req) {
+        return Stream.concat(
+                Stream.of(req.toEntity(leader, project)),
+                students.stream().map(student -> req.toEntity(student, project))
+        ).toList();
     }
 
     private void checkLeaderAndStudentsBanned(Student leader, ApplyNightStudyProjectReq req) {
@@ -83,10 +91,10 @@ public class NightStudyUseCase {
     }
 
     public Response cancelProject(Long projectId) {
-        Student leader = studentRepository.getByMember(memberAuthenticationHolder.current());
         NightStudyProject project = nightStudyProjectService.getBy(projectId);
+        Student leader = studentRepository.getByMember(memberAuthenticationHolder.current());
         if (!project.isLeader(leader)) throw new NotNightStudyApplicantException();
-        nightStudyService.deleteAllByProject(projectId);
+        nightStudyService.deleteAllByProject(project);
         nightStudyProjectService.delete(project);
         return Response.ok("프로젝트 심야자습 취소 성공");
     }
@@ -127,7 +135,7 @@ public class NightStudyUseCase {
         Teacher teacher = teacherRepository.getByMember(leader);
         NightStudyProject project = nightStudyProjectService.getBy(projectId);
         project.modifyStatus(teacher, status, rejectReason);
-        List<NightStudy> nightStudies = nightStudyService.getAllByProject(projectId);
+        List<NightStudy> nightStudies = nightStudyService.getAllByProject(project);
         for (NightStudy n : nightStudies) n.modifyStatus(teacher, status, rejectReason);
     }
 
@@ -167,9 +175,9 @@ public class NightStudyUseCase {
     @Transactional(readOnly = true)
     public Response getMyBan() {
         Student student = studentRepository.getByMember(memberAuthenticationHolder.current());
-        NightStudyBan result = null;
-        result = nightStudyBanService.findByStudent(student);
-        return ResponseData.ok("내 심야자습 정지 여부 조회 성공", NightStudyBanRes.of(result));
+        NightStudyBanRes result;
+        result = NightStudyBanRes.of(nightStudyBanService.findByStudent(student));
+        return ResponseData.ok("내 심야자습 정지 여부 조회 성공", result);
     }
 
     @Transactional(readOnly = true)
