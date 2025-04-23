@@ -1,4 +1,6 @@
 dependencies {
+    implementation(project(":dodam-application:dodam-internal-process:dodam-process-listener"))
+
     implementation project(':dodam-system-core')
 
     implementation project(':dodam-system-domain:dodam-domain-rds')
