@@ -68,7 +68,7 @@ public class NightStudy extends BaseEntity {
 
     @Builder
     public NightStudy(NightStudyType type, String content, boolean doNeedPhone, String reasonForPhone,
-                      Student student, NightStudyProject project, LocalDate startAt, LocalDate endAt) {
+                      Student student, LocalDate startAt, LocalDate endAt) {
         isApplicationDuration();
         isInvalidStudyPeriod(startAt, endAt);
         doesHaveReasonForPhone(doNeedPhone, reasonForPhone);
@@ -78,7 +78,6 @@ public class NightStudy extends BaseEntity {
         this.doNeedPhone = doNeedPhone;
         this.reasonForPhone = reasonForPhone;
         this.status = ApprovalStatus.PENDING;
-        this.project = project;
         this.student = student;
         this.startAt = startAt;
         this.endAt = endAt;
@@ -88,8 +87,9 @@ public class NightStudy extends BaseEntity {
         this.status = ApprovalStatus.REJECTED;
     }
 
-    public void joinProject(NightStudyProject project) {
+    public NightStudy joinProject(NightStudyProject project) {
         this.project = project;
+        return this;
     }
 
     public void modifyStatus(Teacher teacher, ApprovalStatus status, String rejectReason) {

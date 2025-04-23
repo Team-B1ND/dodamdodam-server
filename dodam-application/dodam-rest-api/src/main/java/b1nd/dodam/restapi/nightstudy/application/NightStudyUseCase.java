@@ -57,7 +57,7 @@ public class NightStudyUseCase {
     public Response applyProject(ApplyNightStudyProjectReq req) {
         Student leader = studentRepository.getByMember(memberAuthenticationHolder.current());
         checkLeaderAndStudentsBanned(leader, req);
-        NightStudyProject project = nightStudyProjectService.save(req.toEntity(leader));
+        NightStudyProject project = nightStudyProjectService.save(req.toProjectEntity(leader));
         List<Student> students = studentRepository.findAllById(req.students());
         List<NightStudy> nightStudies = createNightStudies(leader, students, project, req);
         nightStudyService.saveAll(nightStudies);
@@ -66,8 +66,8 @@ public class NightStudyUseCase {
 
     private List<NightStudy> createNightStudies(Student leader, List<Student> students, NightStudyProject project, ApplyNightStudyProjectReq req) {
         return Stream.concat(
-                Stream.of(req.toEntity(leader, project)),
-                students.stream().map(student -> req.toEntity(student, project))
+                Stream.of(req.toEntity(leader).joinProject(project)),
+                students.stream().map(student -> req.toEntity(student).joinProject(project))
         ).toList();
     }
 
