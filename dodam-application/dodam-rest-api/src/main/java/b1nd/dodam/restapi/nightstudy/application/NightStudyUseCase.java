@@ -25,6 +25,7 @@ import b1nd.dodam.restapi.nightstudy.application.data.req.RejectNightStudyReq;
 import b1nd.dodam.restapi.nightstudy.application.data.res.*;
 import b1nd.dodam.restapi.support.data.Response;
 import b1nd.dodam.restapi.support.data.ResponseData;
+import b1nd.dodam.restapi.support.pushalarm.PushAlarmEvent;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -77,7 +78,7 @@ public class NightStudyUseCase {
     }
 
     private void throwExceptionWhenDurationIsDuplicate(Student student, LocalDate startAt, LocalDate endAt, NightStudyType type) {
-        if(nightStudyService.checkDurationDuplication(student, startAt, endAt, type)) {
+        if (nightStudyService.checkDurationDuplication(student, startAt, endAt, type)) {
             throw new NightStudyDuplicateException();
         }
     }
@@ -105,19 +106,19 @@ public class NightStudyUseCase {
         }
     }
 
-//    @PushAlarmEvent(target = "심야자습", status = ApprovalStatus.ALLOWED)
+    @PushAlarmEvent(target = "심야자습", status = ApprovalStatus.ALLOWED)
     public Response allow(Long id) {
         modifyStatus(id, ApprovalStatus.ALLOWED, null);
         return Response.noContent("심야자습 승인 성공");
     }
 
-//    @PushAlarmEvent(target = "심야자습", status = ApprovalStatus.REJECTED)
+    @PushAlarmEvent(target = "심야자습", status = ApprovalStatus.REJECTED)
     public Response reject(Long id, Optional<RejectNightStudyReq> req) {
         modifyStatus(id, ApprovalStatus.REJECTED, req.map(RejectNightStudyReq::rejectReason).orElse(null));
         return Response.noContent("심야자습 거절 성공");
     }
 
-//    @PushAlarmEvent(target = "심야자습", status = ApprovalStatus.PENDING)
+    @PushAlarmEvent(target = "심야자습", status = ApprovalStatus.PENDING)
     public Response revert(Long id) {
         modifyStatus(id, ApprovalStatus.PENDING, null);
         return Response.noContent("심야자습 대기 성공");
@@ -139,25 +140,25 @@ public class NightStudyUseCase {
         for (NightStudy n : nightStudies) n.modifyStatus(teacher, status, rejectReason);
     }
 
-//    @PushAlarmEvent(target = "심야자습", status = ApprovalStatus.ALLOWED)
+    @PushAlarmEvent(target = "심야자습", status = ApprovalStatus.ALLOWED)
     public Response allowProject(Long id) {
         modifyProjectStatus(id, ApprovalStatus.ALLOWED, null);
         return Response.noContent("프로젝트 심야자습 승인 성공");
     }
 
-//    @PushAlarmEvent(target = "심야자습", status = ApprovalStatus.REJECTED)
+    @PushAlarmEvent(target = "심야자습", status = ApprovalStatus.REJECTED)
     public Response rejectProject(Long id) {
         modifyProjectStatus(id, ApprovalStatus.REJECTED, null);
         return Response.noContent("프로젝트 심야자습 거절 성공");
     }
 
-//    @PushAlarmEvent(target = "심야자습", status = ApprovalStatus.PENDING)
+    @PushAlarmEvent(target = "심야자습", status = ApprovalStatus.PENDING)
     public Response revertProject(Long id) {
         modifyProjectStatus(id, ApprovalStatus.PENDING, null);
         return Response.noContent("프로젝트 심야자습 대기 성공");
     }
 
-//    @PushAlarmEvent(target = "심야자습", status = ApprovalStatus.BANNED)
+    @PushAlarmEvent(target = "심야자습", status = ApprovalStatus.BANNED)
     public Response applyBan(BanNightStudyReq req) {
         Student student = studentRepository.getById(req.student());
         nightStudyService.rejectAllByStudent(student);

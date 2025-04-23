@@ -67,8 +67,8 @@ public class NightStudy extends BaseEntity {
     private LocalDate endAt;
 
     @Builder
-    public NightStudy(NightStudyType type, String content, boolean doNeedPhone, String reasonForPhone,
-                      Student student, LocalDate startAt, LocalDate endAt) {
+    public NightStudy(NightStudyType type, String content, boolean doNeedPhone,
+                      String reasonForPhone, Student student, LocalDate startAt, LocalDate endAt) {
         isApplicationDuration();
         isInvalidStudyPeriod(startAt, endAt);
         doesHaveReasonForPhone(doNeedPhone, reasonForPhone);
@@ -109,13 +109,13 @@ public class NightStudy extends BaseEntity {
     }
 
     private void isInvalidStudyPeriod(LocalDate startAt, LocalDate endAt) {
-        if(startAt.isAfter(endAt) || startAt.plusDays(13L).isBefore(endAt)) {
+        if (startAt.isAfter(endAt) || startAt.plusDays(13L).isBefore(endAt)) {
             throw new InvalidNightStudyPeriodException();
         }
     }
 
     private void doesHaveReasonForPhone(boolean doNeedPhone, String reasonForPhone) {
-        if(doNeedPhone && reasonForPhone == null) {
+        if (doNeedPhone && reasonForPhone == null) {
             throw new ReasonForPhoneMissingException();
         }
     }
