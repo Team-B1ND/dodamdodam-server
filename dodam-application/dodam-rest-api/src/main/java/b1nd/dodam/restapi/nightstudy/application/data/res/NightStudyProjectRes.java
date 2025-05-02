@@ -2,7 +2,7 @@ package b1nd.dodam.restapi.nightstudy.application.data.res;
 
 import b1nd.dodam.domain.rds.nightstudy.entity.NightStudyProject;
 import b1nd.dodam.domain.rds.nightstudy.enumeration.NightStudyProjectRoom;
-import b1nd.dodam.domain.rds.nightstudy.enumeration.NightStudyType;
+import b1nd.dodam.domain.rds.nightstudy.enumeration.NightStudyProjectType;
 import b1nd.dodam.domain.rds.support.enumeration.ApprovalStatus;
 import b1nd.dodam.restapi.member.application.data.res.StudentWithImageRes;
 
@@ -11,7 +11,7 @@ import java.util.List;
 
 public record NightStudyProjectRes(
         Long id,
-        NightStudyType type,
+        NightStudyProjectType type,
         ApprovalStatus status,
         NightStudyProjectRoom room,
         String name,

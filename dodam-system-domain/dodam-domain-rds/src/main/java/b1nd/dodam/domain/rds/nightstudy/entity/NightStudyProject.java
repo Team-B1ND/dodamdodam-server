@@ -3,11 +3,14 @@ package b1nd.dodam.domain.rds.nightstudy.entity;
 import b1nd.dodam.domain.rds.member.entity.Student;
 import b1nd.dodam.domain.rds.member.entity.Teacher;
 import b1nd.dodam.domain.rds.nightstudy.enumeration.NightStudyProjectRoom;
-import b1nd.dodam.domain.rds.nightstudy.enumeration.NightStudyType;
+import b1nd.dodam.domain.rds.nightstudy.enumeration.NightStudyProjectType;
 import b1nd.dodam.domain.rds.support.enumeration.ApprovalStatus;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 
@@ -21,7 +24,7 @@ public class NightStudyProject {
 
     @NotNull
     @Enumerated(EnumType.STRING)
-    private NightStudyType type;
+    private NightStudyProjectType type;
 
     @NotNull
     private String name;
@@ -54,7 +57,7 @@ public class NightStudyProject {
     private String rejectReason;
 
     @Builder
-    public NightStudyProject(NightStudyType type, String name, String description, LocalDate startAt, LocalDate endAt, NightStudyProjectRoom room, Student leader, Teacher teacher) {
+    public NightStudyProject(NightStudyProjectType type, String name, String description, LocalDate startAt, LocalDate endAt, NightStudyProjectRoom room, Student leader, Teacher teacher) {
         this.type = type;
         this.name = name;
         this.description = description;

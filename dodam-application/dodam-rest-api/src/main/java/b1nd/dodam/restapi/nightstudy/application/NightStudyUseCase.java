@@ -10,7 +10,6 @@ import b1nd.dodam.domain.rds.member.repository.TeacherRepository;
 import b1nd.dodam.domain.rds.nightstudy.entity.NightStudy;
 import b1nd.dodam.domain.rds.nightstudy.entity.NightStudyBan;
 import b1nd.dodam.domain.rds.nightstudy.entity.NightStudyProject;
-import b1nd.dodam.domain.rds.nightstudy.enumeration.NightStudyType;
 import b1nd.dodam.domain.rds.nightstudy.exception.NightStudyDuplicateException;
 import b1nd.dodam.domain.rds.nightstudy.exception.NotNightStudyApplicantException;
 import b1nd.dodam.domain.rds.nightstudy.service.NightStudyBanService;
@@ -50,7 +49,7 @@ public class NightStudyUseCase {
     public Response apply(ApplyNightStudyReq req) {
         Student student = studentRepository.getByMember(memberAuthenticationHolder.current());
         nightStudyBanService.validateBan(student);
-        throwExceptionWhenDurationIsDuplicate(student, req.startAt(), req.endAt(), req.type());
+        throwExceptionWhenDurationIsDuplicate(student, req.startAt(), req.endAt());
         nightStudyService.save(req.toEntity(student));
         return Response.created("심야자습 신청 성공");
     }
@@ -77,8 +76,8 @@ public class NightStudyUseCase {
         nightStudyBanService.validateMultipleBans(req.students());
     }
 
-    private void throwExceptionWhenDurationIsDuplicate(Student student, LocalDate startAt, LocalDate endAt, NightStudyType type) {
-        if (nightStudyService.checkDurationDuplication(student, startAt, endAt, type)) {
+    private void throwExceptionWhenDurationIsDuplicate(Student student, LocalDate startAt, LocalDate endAt) {
+        if (nightStudyService.checkDurationDuplication(student, startAt, endAt)) {
             throw new NightStudyDuplicateException();
         }
     }

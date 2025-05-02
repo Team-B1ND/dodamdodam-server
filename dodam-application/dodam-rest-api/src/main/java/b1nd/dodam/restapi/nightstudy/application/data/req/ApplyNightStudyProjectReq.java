@@ -4,14 +4,14 @@ import b1nd.dodam.domain.rds.member.entity.Student;
 import b1nd.dodam.domain.rds.nightstudy.entity.NightStudy;
 import b1nd.dodam.domain.rds.nightstudy.entity.NightStudyProject;
 import b1nd.dodam.domain.rds.nightstudy.enumeration.NightStudyProjectRoom;
-import b1nd.dodam.domain.rds.nightstudy.enumeration.NightStudyType;
+import b1nd.dodam.domain.rds.nightstudy.enumeration.NightStudyProjectType;
 import jakarta.validation.constraints.NotNull;
 
 import java.time.LocalDate;
 import java.util.List;
 
 public record ApplyNightStudyProjectReq(
-        @NotNull NightStudyType type,
+        @NotNull NightStudyProjectType type,
         @NotNull String name,
         @NotNull String description,
         @NotNull LocalDate startAt,

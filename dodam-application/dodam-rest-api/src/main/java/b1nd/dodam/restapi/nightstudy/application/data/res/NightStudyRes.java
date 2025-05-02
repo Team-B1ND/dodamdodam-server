@@ -1,7 +1,6 @@
 package b1nd.dodam.restapi.nightstudy.application.data.res;
 
 import b1nd.dodam.domain.rds.nightstudy.entity.NightStudy;
-import b1nd.dodam.domain.rds.nightstudy.enumeration.NightStudyType;
 import b1nd.dodam.domain.rds.support.enumeration.ApprovalStatus;
 import b1nd.dodam.restapi.member.application.data.res.StudentRes;
 
@@ -10,7 +9,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 public record NightStudyRes(Long id,
-                            NightStudyType type,
                             String content,
                             ApprovalStatus status,
                             Boolean doNeedPhone,
@@ -28,7 +26,6 @@ public record NightStudyRes(Long id,
     public static NightStudyRes of(NightStudy nightStudy) {
         return new NightStudyRes(
                 nightStudy.getId(),
-                nightStudy.getType(),
                 nightStudy.getContent(),
                 nightStudy.getStatus(),
                 nightStudy.getDoNeedPhone(), nightStudy.getReasonForPhone(),

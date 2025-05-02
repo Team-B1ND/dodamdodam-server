@@ -3,7 +3,6 @@ package b1nd.dodam.domain.rds.nightstudy.service;
 import b1nd.dodam.domain.rds.member.entity.Student;
 import b1nd.dodam.domain.rds.nightstudy.entity.NightStudy;
 import b1nd.dodam.domain.rds.nightstudy.entity.NightStudyProject;
-import b1nd.dodam.domain.rds.nightstudy.enumeration.NightStudyType;
 import b1nd.dodam.domain.rds.nightstudy.exception.NightStudyNotFoundException;
 import b1nd.dodam.domain.rds.nightstudy.repository.NightStudyRepository;
 import b1nd.dodam.domain.rds.support.enumeration.ApprovalStatus;
@@ -40,8 +39,8 @@ public class NightStudyService {
                 .orElseThrow(NightStudyNotFoundException::new);
     }
 
-    public boolean checkDurationDuplication(Student student, LocalDate startAt, LocalDate endAt, NightStudyType type) {
-        return repository.existsValidByStudentAndDate(student, startAt, endAt, type);
+    public boolean checkDurationDuplication(Student student, LocalDate startAt, LocalDate endAt) {
+        return repository.existsValidByStudentAndDate(student, startAt, endAt);
     }
 
     public List<NightStudy> getMy(Student student, LocalDate now) {
