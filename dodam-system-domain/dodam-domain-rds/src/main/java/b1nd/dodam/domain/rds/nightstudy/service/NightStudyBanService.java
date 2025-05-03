@@ -2,6 +2,7 @@ package b1nd.dodam.domain.rds.nightstudy.service;
 
 import b1nd.dodam.core.util.ZonedDateTimeUtil;
 import b1nd.dodam.domain.rds.member.entity.Student;
+import b1nd.dodam.domain.rds.member.repository.StudentRepository;
 import b1nd.dodam.domain.rds.nightstudy.entity.NightStudyBan;
 import b1nd.dodam.domain.rds.nightstudy.exception.NightStudyBanNotFoundException;
 import b1nd.dodam.domain.rds.nightstudy.exception.NightStudyBannedStudentException;
@@ -16,6 +17,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class NightStudyBanService {
     private final NightStudyBanRepository nightStudyBanRepository;
+    private final StudentRepository studentRepository;
 
     public void updateBan(Student student, String reason, LocalDate today, LocalDate ended) {
         NightStudyBan ban = nightStudyBanRepository.findByStudent(student)
@@ -36,7 +38,8 @@ public class NightStudyBanService {
     }
 
     public void validateMultipleBans(List<Integer> studentIds) {
-        List<NightStudyBan> bans = nightStudyBanRepository.findByStudent_IdIn(studentIds);
+        List<Student> students = studentRepository.findAllById(studentIds);
+        List<NightStudyBan> bans = nightStudyBanRepository.findByStudentIn(students);
         if (!bans.isEmpty()) throw new NightStudyBannedStudentException();
     }
 

@@ -94,6 +94,7 @@ class SecurityConfig {
                         "/night-study/project/my"
                 ).hasRole(STUDENT)
                 .requestMatchers(GET, "/night-study/project/rooms").hasAnyRole(ADMIN, TEACHER, STUDENT)
+                .requestMatchers(GET, "/night-study/students/**").hasAnyRole(ADMIN, TEACHER, STUDENT)
                 .requestMatchers("/night-study/**").hasAnyRole(TEACHER, ADMIN)
 
                 .requestMatchers(POST, "/out-going").hasRole(STUDENT)

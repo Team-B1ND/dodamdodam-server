@@ -86,9 +86,8 @@ public class NightStudy extends BaseEntity {
         this.status = ApprovalStatus.REJECTED;
     }
 
-    public NightStudy joinProject(NightStudyProject project) {
+    public void joinProject(NightStudyProject project) {
         this.project = project;
-        return this;
     }
 
     public void modifyStatus(Teacher teacher, ApprovalStatus status, String rejectReason) {

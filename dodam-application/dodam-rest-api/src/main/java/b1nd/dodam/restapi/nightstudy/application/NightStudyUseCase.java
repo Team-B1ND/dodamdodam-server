@@ -67,10 +67,14 @@ public class NightStudyUseCase {
     }
 
     private List<NightStudy> createNightStudies(Student leader, List<Student> students, NightStudyProject project, ApplyNightStudyProjectReq req) {
-        return Stream.concat(
-                Stream.of(req.toEntity(leader).joinProject(project)),
-                students.stream().map(student -> req.toEntity(student).joinProject(project))
-        ).toList();
+        List<Student> participants = Stream.concat(Stream.of(leader), students.stream()).toList();
+        return participants.stream()
+                .map(student -> {
+                    NightStudy nightStudy = req.toEntity(student);
+                    nightStudy.joinProject(project);
+                    return nightStudy;
+                })
+                .toList();
     }
 
     private void checkLeaderAndStudentsBanned(Student leader, ApplyNightStudyProjectReq req) {
