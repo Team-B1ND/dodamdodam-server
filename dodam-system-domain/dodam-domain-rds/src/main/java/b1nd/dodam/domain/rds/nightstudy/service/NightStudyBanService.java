@@ -37,8 +37,7 @@ public class NightStudyBanService {
         if (ban != null) throw new NightStudyBannedStudentException();
     }
 
-    public void validateMultipleBans(List<Integer> studentIds) {
-        List<Student> students = studentRepository.findAllById(studentIds);
+    public void validateMultipleBans(List<Student> students) {
         List<NightStudyBan> bans = nightStudyBanRepository.findByStudentIn(students);
         if (!bans.isEmpty()) throw new NightStudyBannedStudentException();
     }

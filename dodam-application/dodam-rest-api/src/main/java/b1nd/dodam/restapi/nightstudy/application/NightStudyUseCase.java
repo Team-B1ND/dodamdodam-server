@@ -32,7 +32,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Stream;
 
 @Component
 @Transactional(rollbackFor = Exception.class)
@@ -58,17 +57,15 @@ public class NightStudyUseCase {
         Student leader = studentRepository.getByMember(memberAuthenticationHolder.current());
         List<Student> students = studentRepository.findAllById(req.students());
         checkLeaderAndStudentsBanned(leader, req);
-        if (nightStudyService.checkDurationDuplication(leader, req.startAt(), req.endAt())) throw new NightStudyDuplicateException();
-        if (nightStudyService.checkMultipleDurationDuplication(students, req.startAt(), req.endAt())) throw new NightStudyDuplicateException();
+        if (nightStudyService.checkMultipleDurationDuplication(leader, students, req.startAt(), req.endAt())) throw new NightStudyDuplicateException();
         NightStudyProject project = nightStudyProjectService.save(req.toProjectEntity(leader));
-        List<NightStudy> nightStudies = createNightStudies(leader, students, project, req);
+        List<NightStudy> nightStudies = createNightStudies(students, project, req);
         nightStudyService.saveAll(nightStudies);
         return Response.created("프로젝트 심야자습 신청 성공");
     }
 
-    private List<NightStudy> createNightStudies(Student leader, List<Student> students, NightStudyProject project, ApplyNightStudyProjectReq req) {
-        List<Student> participants = Stream.concat(Stream.of(leader), students.stream()).toList();
-        return participants.stream()
+    private List<NightStudy> createNightStudies(List<Student> students, NightStudyProject project, ApplyNightStudyProjectReq req) {
+        return students.stream()
                 .map(student -> {
                     NightStudy nightStudy = req.toEntity(student);
                     nightStudy.joinProject(project);
@@ -78,8 +75,9 @@ public class NightStudyUseCase {
     }
 
     private void checkLeaderAndStudentsBanned(Student leader, ApplyNightStudyProjectReq req) {
-        nightStudyBanService.validateBan(leader);
-        nightStudyBanService.validateMultipleBans(req.students());
+        List<Student> students = studentRepository.findAllById(req.students());
+        students.add(leader);
+        nightStudyBanService.validateMultipleBans(students);
     }
 
     private void throwExceptionWhenDurationIsDuplicate(Student student, LocalDate startAt, LocalDate endAt) {
