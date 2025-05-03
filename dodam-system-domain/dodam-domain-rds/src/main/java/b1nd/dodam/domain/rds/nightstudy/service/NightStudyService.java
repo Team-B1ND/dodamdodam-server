@@ -43,6 +43,10 @@ public class NightStudyService {
         return repository.existsValidByStudentAndDate(student, startAt, endAt);
     }
 
+    public boolean checkMultipleDurationDuplication(List<Student> students, LocalDate startAt, LocalDate endAt) {
+        return students.stream().anyMatch(student -> repository.existsValidByStudentAndDate(student, startAt, endAt));
+    }
+
     public List<NightStudy> getMy(Student student, LocalDate now) {
         return repository.findByStudentAndEndAtGreaterThanEqual(student, now);
     }
