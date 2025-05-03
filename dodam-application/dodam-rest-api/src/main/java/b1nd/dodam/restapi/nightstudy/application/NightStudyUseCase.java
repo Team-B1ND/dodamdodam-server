@@ -57,7 +57,7 @@ public class NightStudyUseCase {
         Student leader = studentRepository.getByMember(memberAuthenticationHolder.current());
         List<Student> students = studentRepository.findAllById(req.students());
         checkLeaderAndStudentsBanned(leader, req);
-        if (nightStudyService.checkMultipleDurationDuplication(leader, students, req.startAt(), req.endAt())) throw new NightStudyDuplicateException();
+        if (nightStudyService.checkMultipleDurationDuplication(leader, students, req.startAt(), req.endAt(), req.type())) throw new NightStudyDuplicateException();
         NightStudyProject project = nightStudyProjectService.save(req.toProjectEntity(leader));
         nightStudyService.saveAll(createNightStudies(students, project, req));
         return Response.created("프로젝트 심야자습 신청 성공");
