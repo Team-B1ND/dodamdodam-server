@@ -137,4 +137,9 @@ public class NightStudyController {
     public ResponseData<List<NightStudyProjectRoomRes>> getUsingProjectRooms() {
         return useCase.getRoomsInUse();
     }
+
+    @GetMapping("/students")
+    public ResponseData<List<StudentWithNightStudyBanRes>> getAvailableStudents() {
+        return useCase.getStudentsWithBan();
+    }
 }

@@ -252,4 +252,13 @@ public class NightStudyUseCase {
         List<NightStudyProjectRoomRes> result = NightStudyProjectRoomRes.of(nightStudyProjectService.getAllRoomsWithProjects(today));
         return ResponseData.ok("사용중인 프로젝트 실 조회 성공", result);
     }
+
+    @Transactional(readOnly = true)
+    public ResponseData<List<StudentWithNightStudyBanRes>> getStudentsWithBan() {
+        LocalDate today = ZonedDateTimeUtil.nowToLocalDate();
+        List<Student> students = studentRepository.findAllByMember_Status(ActiveStatus.ACTIVE);
+        List<Integer> bannedStudents = nightStudyBanService.findAllStudentIdByDate(today);
+        List<StudentWithNightStudyBanRes> result = StudentWithNightStudyBanRes.of(students, bannedStudents);
+        return ResponseData.ok("학생 조회 성공", result);
+    }
 }
