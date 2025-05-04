@@ -2,6 +2,7 @@ package b1nd.dodam.restapi.support.pushalarm;
 
 import b1nd.dodam.core.exception.global.InternalServerException;
 import b1nd.dodam.domain.rds.member.entity.Student;
+import b1nd.dodam.domain.rds.nightstudy.service.NightStudyProjectService;
 import b1nd.dodam.domain.rds.nightstudy.service.NightStudyService;
 import b1nd.dodam.domain.rds.outgoing.service.OutGoingService;
 import b1nd.dodam.domain.rds.outsleeping.service.OutSleepingService;
@@ -25,6 +26,7 @@ public class PushAlarmAspect {
     private final NightStudyService nightStudyService;
     private final OutGoingService outGoingService;
     private final OutSleepingService outSleepingService;
+    private final NightStudyProjectService nightStudyProjectService;
 
     @AfterReturning(pointcut = "@annotation(pushAlarmEvent)")
     public void handlePushAlarmEvent(JoinPoint joinPoint, PushAlarmEvent pushAlarmEvent) {
@@ -59,7 +61,6 @@ public class PushAlarmAspect {
             case "외박" -> outSleepingService.getById(id).getStudent();
             case "심야자습" -> nightStudyService.getBy(id).getStudent();
             default -> throw new InternalServerException();
-
         };
     }
 

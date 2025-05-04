@@ -16,8 +16,8 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class NightStudyBanService {
-    private final StudentRepository studentRepository;
     private final NightStudyBanRepository nightStudyBanRepository;
+    private final StudentRepository studentRepository;
 
     public void updateBan(Student student, String reason, LocalDate today, LocalDate ended) {
         NightStudyBan ban = nightStudyBanRepository.findByStudent(student)
@@ -37,6 +37,11 @@ public class NightStudyBanService {
         if (ban != null) throw new NightStudyBannedStudentException();
     }
 
+    public void validateMultipleBans(List<Student> students) {
+        List<NightStudyBan> bans = nightStudyBanRepository.findByStudentIn(students);
+        if (!bans.isEmpty()) throw new NightStudyBannedStudentException();
+    }
+
     public void save(NightStudyBan nightStudyBan) {
         nightStudyBanRepository.save(nightStudyBan);
     }
@@ -47,7 +52,7 @@ public class NightStudyBanService {
 
     public NightStudyBan findByStudent(Student student) {
         return nightStudyBanRepository.findByStudentAndEndedGreaterThanEqual(student, ZonedDateTimeUtil.nowToLocalDate())
-            .orElse(null);
+            .orElseThrow(NightStudyBanNotFoundException::new);
     }
 
     public List<NightStudyBan> getAllActiveBans() {
