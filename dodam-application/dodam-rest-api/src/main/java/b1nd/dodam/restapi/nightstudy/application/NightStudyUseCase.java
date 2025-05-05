@@ -142,19 +142,16 @@ public class NightStudyUseCase {
         for (NightStudy n : nightStudies) n.modifyStatus(teacher, status, rejectReason);
     }
 
-    @PushAlarmEvent(target = "심야자습", status = ApprovalStatus.ALLOWED)
     public Response allowProject(Long id) {
         modifyProjectStatus(id, ApprovalStatus.ALLOWED, null);
         return Response.noContent("프로젝트 심야자습 승인 성공");
     }
 
-    @PushAlarmEvent(target = "심야자습", status = ApprovalStatus.REJECTED)
     public Response rejectProject(Long id) {
         modifyProjectStatus(id, ApprovalStatus.REJECTED, null);
         return Response.noContent("프로젝트 심야자습 거절 성공");
     }
 
-    @PushAlarmEvent(target = "심야자습", status = ApprovalStatus.PENDING)
     public Response revertProject(Long id) {
         modifyProjectStatus(id, ApprovalStatus.PENDING, null);
         return Response.noContent("프로젝트 심야자습 대기 성공");
