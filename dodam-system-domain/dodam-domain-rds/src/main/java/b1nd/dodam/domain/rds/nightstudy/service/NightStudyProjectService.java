@@ -31,7 +31,7 @@ public class NightStudyProjectService {
     }
 
     public List<NightStudyProject> getPendingProjects(LocalDate date) {
-        return repository.findByStatusAndStartAtLessThanEqualAndEndAtGreaterThanEqual(ApprovalStatus.PENDING, date, date);
+        return repository.findByStatusAndEndAtGreaterThanEqual(ApprovalStatus.PENDING, date);
     }
 
     public List<NightStudyProject> getAllowedProjects(LocalDate date) {
