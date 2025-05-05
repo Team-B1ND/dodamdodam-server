@@ -1,5 +1,6 @@
 package b1nd.dodam.restapi.nightstudy.application.data.res;
 
+import b1nd.dodam.domain.rds.nightstudy.entity.NightStudy;
 import b1nd.dodam.domain.rds.nightstudy.entity.NightStudyProject;
 import b1nd.dodam.domain.rds.nightstudy.enumeration.NightStudyProjectRoom;
 import b1nd.dodam.domain.rds.nightstudy.enumeration.NightStudyProjectType;
@@ -18,15 +19,15 @@ public record NightStudyProjectRes(
         String description,
         LocalDate startAt,
         LocalDate endAt,
-        StudentWithImageRes leader
+        StudentWithImageRes leader,
+        List<StudentWithImageRes> participants
 ) {
-    public static List<NightStudyProjectRes> of(List<NightStudyProject> nightStudyProjects) {
-        return nightStudyProjects.stream()
-                .map(NightStudyProjectRes::of)
+    public static NightStudyProjectRes of(NightStudyProject project, List<NightStudy> nightStudies) {
+        List<StudentWithImageRes> participants = nightStudies.stream()
+                .map(nightStudy -> StudentWithImageRes.of(nightStudy.getStudent()))
+                .filter(student -> !student.equals(StudentWithImageRes.of(project.getLeader())))
                 .toList();
-    }
 
-    public static NightStudyProjectRes of(NightStudyProject project) {
         return new NightStudyProjectRes(
                 project.getId(),
                 project.getType(),
@@ -36,7 +37,8 @@ public record NightStudyProjectRes(
                 project.getDescription(),
                 project.getStartAt(),
                 project.getEndAt(),
-                StudentWithImageRes.of(project.getLeader())
+                StudentWithImageRes.of(project.getLeader()),
+                participants
         );
     }
 }
