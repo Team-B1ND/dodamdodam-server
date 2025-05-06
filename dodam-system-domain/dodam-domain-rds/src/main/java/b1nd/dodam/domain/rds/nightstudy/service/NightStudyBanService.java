@@ -1,23 +1,20 @@
 package b1nd.dodam.domain.rds.nightstudy.service;
 
-import b1nd.dodam.core.util.ZonedDateTimeUtil;
-import b1nd.dodam.domain.rds.member.entity.Student;
-import b1nd.dodam.domain.rds.member.repository.StudentRepository;
-import b1nd.dodam.domain.rds.nightstudy.entity.NightStudyBan;
-import b1nd.dodam.domain.rds.nightstudy.exception.NightStudyBanNotFoundException;
-import b1nd.dodam.domain.rds.nightstudy.exception.NightStudyBannedStudentException;
-import b1nd.dodam.domain.rds.nightstudy.repository.NightStudyBanRepository;
+import java.util.List;
+import java.time.LocalDate;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-
-import java.time.LocalDate;
-import java.util.List;
+import b1nd.dodam.core.util.ZonedDateTimeUtil;
+import b1nd.dodam.domain.rds.member.entity.Student;
+import b1nd.dodam.domain.rds.nightstudy.entity.NightStudyBan;
+import b1nd.dodam.domain.rds.nightstudy.repository.NightStudyBanRepository;
+import b1nd.dodam.domain.rds.nightstudy.exception.NightStudyBanNotFoundException;
+import b1nd.dodam.domain.rds.nightstudy.exception.NightStudyBannedStudentException;
 
 @Service
 @RequiredArgsConstructor
 public class NightStudyBanService {
     private final NightStudyBanRepository nightStudyBanRepository;
-    private final StudentRepository studentRepository;
 
     public void updateBan(Student student, String reason, LocalDate today, LocalDate ended) {
         NightStudyBan ban = nightStudyBanRepository.findByStudent(student)

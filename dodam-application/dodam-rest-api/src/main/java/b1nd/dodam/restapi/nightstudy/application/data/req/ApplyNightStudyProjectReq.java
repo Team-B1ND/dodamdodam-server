@@ -19,7 +19,7 @@ public record ApplyNightStudyProjectReq(
         @NotNull NightStudyProjectRoom room,
         List<Integer> students
         ) {
-        public NightStudyProject toProjectEntity(Student leader) {
+        public NightStudyProject toProjectEntity() {
                 return NightStudyProject.builder()
                         .type(type)
                         .name(name)
@@ -27,13 +27,11 @@ public record ApplyNightStudyProjectReq(
                         .startAt(startAt)
                         .endAt(endAt)
                         .room(room)
-                        .leader(leader)
                         .build();
         }
 
         public NightStudy toEntity(Student student) {
                 return NightStudy.builder()
-                        .type(type)
                         .content(description)
                         .doNeedPhone(false)
                         .reasonForPhone(null)

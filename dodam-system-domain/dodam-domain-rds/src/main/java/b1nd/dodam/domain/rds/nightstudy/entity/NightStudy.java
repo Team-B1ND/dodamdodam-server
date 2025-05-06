@@ -3,7 +3,6 @@ package b1nd.dodam.domain.rds.nightstudy.entity;
 import b1nd.dodam.core.util.ZonedDateTimeUtil;
 import b1nd.dodam.domain.rds.member.entity.Student;
 import b1nd.dodam.domain.rds.member.entity.Teacher;
-import b1nd.dodam.domain.rds.nightstudy.enumeration.NightStudyProjectType;
 import b1nd.dodam.domain.rds.nightstudy.exception.InvalidNightStudyPeriodException;
 import b1nd.dodam.domain.rds.nightstudy.exception.NightStudyApplicationDurationPassedException;
 import b1nd.dodam.domain.rds.nightstudy.exception.ReasonForPhoneMissingException;
@@ -28,9 +27,6 @@ public class NightStudy extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    @Enumerated(EnumType.STRING)
-    private NightStudyProjectType type;
 
     @NotNull
     @Size(min = 10, max = 250)
@@ -66,13 +62,11 @@ public class NightStudy extends BaseEntity {
     private LocalDate endAt;
 
     @Builder
-    public NightStudy(NightStudyProjectType type, String content, boolean doNeedPhone,
-                      String reasonForPhone, Student student, LocalDate startAt, LocalDate endAt) {
+    public NightStudy(String content, boolean doNeedPhone, String reasonForPhone, Student student, LocalDate startAt, LocalDate endAt) {
         isApplicationDuration();
         isInvalidStudyPeriod(startAt, endAt);
         doesHaveReasonForPhone(doNeedPhone, reasonForPhone);
 
-        this.type = type;
         this.content = content;
         this.doNeedPhone = doNeedPhone;
         this.reasonForPhone = reasonForPhone;

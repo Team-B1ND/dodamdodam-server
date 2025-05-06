@@ -1,7 +1,9 @@
 package b1nd.dodam.restapi.nightstudy.application.data.res;
 
-import b1nd.dodam.domain.rds.nightstudy.entity.NightStudy;
+import b1nd.dodam.domain.rds.member.entity.Student;
 import b1nd.dodam.domain.rds.nightstudy.entity.NightStudyProject;
+import b1nd.dodam.domain.rds.nightstudy.entity.NightStudyProjectMember;
+import b1nd.dodam.domain.rds.nightstudy.enumeration.NightStudyProjectMemberRole;
 import b1nd.dodam.domain.rds.nightstudy.enumeration.NightStudyProjectRoom;
 import b1nd.dodam.domain.rds.nightstudy.enumeration.NightStudyProjectType;
 import b1nd.dodam.domain.rds.support.enumeration.ApprovalStatus;
@@ -23,10 +25,12 @@ public record NightStudyProjectRes(
         StudentWithImageRes leader,
         List<StudentWithImageRes> participants
 ) {
-    public static NightStudyProjectRes of(NightStudyProject project, List<NightStudy> nightStudies) {
-        List<StudentWithImageRes> participants = nightStudies.stream()
-                .map(nightStudy -> StudentWithImageRes.of(nightStudy.getStudent()))
-                .filter(student -> !student.equals(StudentWithImageRes.of(project.getLeader())))
+    public static NightStudyProjectRes of(NightStudyProject project, List<NightStudyProjectMember> members) {
+        Student leader = members.stream().filter(member -> member.getRole() == NightStudyProjectMemberRole.LEADER).findFirst().get().getStudent();
+        List<StudentWithImageRes> participants = members.stream()
+                .map(NightStudyProjectMember::getStudent)
+                .filter(student -> !student.equals(leader))
+                .map(StudentWithImageRes::of)
                 .toList();
 
         return new NightStudyProjectRes(
@@ -39,7 +43,7 @@ public record NightStudyProjectRes(
                 project.getStartAt(),
                 project.getEndAt(),
                 project.getRejectReason(),
-                StudentWithImageRes.of(project.getLeader()),
+                StudentWithImageRes.of(leader),
                 participants
         );
     }
