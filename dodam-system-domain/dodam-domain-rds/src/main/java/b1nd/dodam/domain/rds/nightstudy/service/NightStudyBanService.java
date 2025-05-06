@@ -52,7 +52,7 @@ public class NightStudyBanService {
 
     public NightStudyBan findByStudent(Student student) {
         return nightStudyBanRepository.findByStudentAndEndedGreaterThanEqual(student, ZonedDateTimeUtil.nowToLocalDate())
-            .orElseThrow(NightStudyBanNotFoundException::new);
+            .orElse(null);
     }
 
     public List<NightStudyBan> getAllActiveBans() {
