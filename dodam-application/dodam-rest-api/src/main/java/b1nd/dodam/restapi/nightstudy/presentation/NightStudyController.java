@@ -74,8 +74,8 @@ public class NightStudyController {
     }
 
     @PatchMapping("/project/{id}/reject")
-    public Response rejectProject(@PathVariable Long id, @RequestBody Optional<ApplyNightStudyProjectReq> req) {
-        return useCase.rejectProject(id);
+    public Response rejectProject(@PathVariable Long id, @RequestBody Optional<RejectNightStudyReq> req) {
+        return useCase.rejectProject(id, req);
     }
 
     @PatchMapping("/project/{id}/revert")

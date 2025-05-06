@@ -19,6 +19,7 @@ public record NightStudyProjectRes(
         String description,
         LocalDate startAt,
         LocalDate endAt,
+        String rejectReason,
         StudentWithImageRes leader,
         List<StudentWithImageRes> participants
 ) {
@@ -37,6 +38,7 @@ public record NightStudyProjectRes(
                 project.getDescription(),
                 project.getStartAt(),
                 project.getEndAt(),
+                project.getRejectReason(),
                 StudentWithImageRes.of(project.getLeader()),
                 participants
         );

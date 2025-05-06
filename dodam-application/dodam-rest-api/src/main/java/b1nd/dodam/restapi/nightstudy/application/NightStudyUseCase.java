@@ -147,8 +147,8 @@ public class NightStudyUseCase {
         return Response.noContent("프로젝트 심야자습 승인 성공");
     }
 
-    public Response rejectProject(Long id) {
-        modifyProjectStatus(id, ApprovalStatus.REJECTED, null);
+    public Response rejectProject(Long id, Optional<RejectNightStudyReq> req) {
+        modifyProjectStatus(id, ApprovalStatus.REJECTED, req.map(RejectNightStudyReq::rejectReason).orElse(null));
         return Response.noContent("프로젝트 심야자습 거절 성공");
     }
 
