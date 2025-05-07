@@ -20,8 +20,7 @@ public record NightStudyProjectRes(
         String name,
         String description,
         LocalDate startAt,
-        LocalDate endAt,
-        String rejectReason
+        LocalDate endAt
 ) {
     public static NightStudyProjectRes of(NightStudyProject project) {
         return new NightStudyProjectRes(
@@ -32,8 +31,7 @@ public record NightStudyProjectRes(
                 project.getName(),
                 project.getDescription(),
                 project.getStartAt(),
-                project.getEndAt(),
-                project.getRejectReason()
+                project.getEndAt()
         );
     }
 }
