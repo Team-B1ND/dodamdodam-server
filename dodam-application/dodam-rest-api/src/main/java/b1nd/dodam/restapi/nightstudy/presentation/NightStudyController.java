@@ -1,5 +1,6 @@
 package b1nd.dodam.restapi.nightstudy.presentation;
 
+import b1nd.dodam.restapi.member.application.data.res.StudentRes;
 import b1nd.dodam.restapi.nightstudy.application.NightStudyUseCase;
 import b1nd.dodam.restapi.nightstudy.application.data.req.ApplyNightStudyProjectReq;
 import b1nd.dodam.restapi.nightstudy.application.data.req.ApplyNightStudyReq;
@@ -48,9 +49,9 @@ public class NightStudyController {
         return useCase.cancelBan(studentId);
     }
 
-    @DeleteMapping("/project")
-    public Response cancelProject(@RequestParam(name = "project") @NotNull Long projectId) {
-        return useCase.cancelProject(projectId);
+    @DeleteMapping("/project/{id}")
+    public Response cancelProject(@PathVariable Long id) {
+        return useCase.cancelProject(id);
     }
 
     @PatchMapping("/{id}/allow")
@@ -146,5 +147,10 @@ public class NightStudyController {
     @GetMapping("/students")
     public ResponseData<List<StudentWithNightStudyBanRes>> getAvailableStudents() {
         return useCase.getStudentsWithBan();
+    }
+
+    @GetMapping("/project/students")
+    public ResponseData<List<StudentRes>> getValidProjectStudents() {
+        return useCase.getProjectStudents();
     }
 }

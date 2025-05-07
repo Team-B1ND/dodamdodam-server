@@ -8,6 +8,7 @@ import b1nd.dodam.domain.rds.nightstudy.enumeration.NightStudyProjectType;
 import b1nd.dodam.domain.rds.nightstudy.exception.NightStudyDuplicateException;
 import b1nd.dodam.domain.rds.nightstudy.exception.NightStudyProjectMemberNotFoundException;
 import b1nd.dodam.domain.rds.nightstudy.repository.NightStudyProjectMemberRepository;
+import b1nd.dodam.domain.rds.support.enumeration.ApprovalStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -16,12 +17,15 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-
 public class NightStudyProjectMemberService {
     private final NightStudyProjectMemberRepository repository;
 
     public void saveAll(List<NightStudyProjectMember> members) {
         repository.saveAll(members);
+    }
+
+    public List<NightStudyProjectMember> getAllStudentByDate(LocalDate now) {
+        return repository.findMembersByStatusAndEndDateAfterAndType(ApprovalStatus.ALLOWED, now, NightStudyProjectType.NIGHT_STUDY_PROJECT_2);
     }
 
     public List<NightStudyProject> findByStudent(Student student, LocalDate now) {

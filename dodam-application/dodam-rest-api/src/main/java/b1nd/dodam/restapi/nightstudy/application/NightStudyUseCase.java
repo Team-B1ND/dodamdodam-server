@@ -9,6 +9,7 @@ import java.util.stream.Stream;
 
 import b1nd.dodam.domain.rds.nightstudy.enumeration.NightStudyProjectRoom;
 import b1nd.dodam.domain.rds.nightstudy.enumeration.NightStudyProjectType;
+import b1nd.dodam.restapi.member.application.data.res.StudentRes;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -149,7 +150,6 @@ public class NightStudyUseCase {
         project.modifyStatus(teacher, status);
     }
 
-    @PushAlarmEvent(target = "심야자습", status = ApprovalStatus.BANNED)
     public Response applyBan(BanNightStudyReq req) {
         Student student = studentRepository.getById(req.student());
         nightStudyService.rejectAllByStudent(student);
@@ -266,5 +266,11 @@ public class NightStudyUseCase {
         List<Integer> bannedStudents = nightStudyBanService.findAllStudentIdByDate(today);
         List<StudentWithNightStudyBanRes> result = StudentWithNightStudyBanRes.of(students, bannedStudents);
         return ResponseData.ok("학생 조회 성공", result);
+    }
+
+    @Transactional(readOnly = true)
+    public ResponseData<List<StudentRes>> getProjectStudents() {
+        List<Student> members = nightStudyProjectMemberService.getAllStudentByDate(ZonedDateTimeUtil.nowToLocalDate()).stream().map(NightStudyProjectMember::getStudent).toList();
+        return ResponseData.ok("프로젝트 참가 학생 조회 성공", members.stream().map(StudentRes::of).toList());
     }
 }
