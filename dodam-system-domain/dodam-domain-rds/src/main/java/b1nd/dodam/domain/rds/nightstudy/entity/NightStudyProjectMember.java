@@ -42,9 +42,11 @@ public class NightStudyProjectMember {
         this.role = role;
     }
 
-    public void modifyStatus(NightStudyProject project, Teacher teacher, ApprovalStatus status, String rejectReason) {
-        this.status = status;
-        this.teacher = teacher;
-        this.rejectReason = rejectReason;
+    public static NightStudyProjectMember toMember(Student student, NightStudyProject project, NightStudyProjectMemberRole role) {
+        return NightStudyProjectMember.builder()
+            .student(student)
+            .project(project)
+            .role(role)
+            .build();
     }
 }

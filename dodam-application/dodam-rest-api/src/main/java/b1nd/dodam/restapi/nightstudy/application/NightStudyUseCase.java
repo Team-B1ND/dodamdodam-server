@@ -33,9 +33,9 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Component
 @Transactional(rollbackFor = Exception.class)
@@ -62,26 +62,17 @@ public class NightStudyUseCase {
         Student leader = studentRepository.getByMember(memberAuthenticationHolder.current());
         List<Student> students = studentRepository.findAllById(req.students());
         checkLeaderAndStudentsBanned(leader, req);
-        if (nightStudyProjectMemberService.checkMultipleDurationDuplication(leader, students, req.startAt(), req.endAt())) throw new NightStudyDuplicateException();
+        nightStudyProjectMemberService.validateMultipleDurationDuplication(leader, students, req.startAt(), req.endAt(), req.type());
         NightStudyProject project = nightStudyProjectService.save(req.toProjectEntity());
-        nightStudyProjectMemberService.saveAll(createProjectMembers(leader, students, project));
+        nightStudyProjectMemberService.saveAll(getProjectMembers(leader, students, project));
         return Response.created("프로젝트 심야자습 신청 성공");
     }
 
-    private List<NightStudyProjectMember> createProjectMembers(Student leader, List<Student> students, NightStudyProject project) {
-        List<NightStudyProjectMember> members = new ArrayList<>(students.stream()
-                .map(student -> NightStudyProjectMember.builder()
-                        .student(student)
-                        .project(project)
-                        .role(NightStudyProjectMemberRole.MEMBER)
-                        .build())
-                .toList());
-        members.add(NightStudyProjectMember.builder()
-                .student(leader)
-                .project(project)
-                .role(NightStudyProjectMemberRole.LEADER)
-                .build());
-
+    private List<NightStudyProjectMember> getProjectMembers(Student leader, List<Student> students, NightStudyProject project) {
+        List<NightStudyProjectMember> members = students.stream()
+            .map(s -> NightStudyProjectMember.toMember(s, project, NightStudyProjectMemberRole.MEMBER))
+            .collect(Collectors.toList());
+        members.add(NightStudyProjectMember.toMember(leader, project, NightStudyProjectMemberRole.LEADER));
         return members;
     }
 
@@ -105,19 +96,19 @@ public class NightStudyUseCase {
         return Response.noContent("심야자습 취소 성공");
     }
 
-    public Response cancelProject(Long projectId) {
-        NightStudyProject project = nightStudyProjectService.getBy(projectId);
-        Student leader = studentRepository.getByMember(memberAuthenticationHolder.current());
-        NightStudyProjectMember member = nightStudyProjectMemberService.findByStudentAndProject(leader, project);
-        if (member.getRole() != NightStudyProjectMemberRole.LEADER) throw new NotNightStudyApplicantException();
-        nightStudyProjectService.delete(project);
-        return Response.ok("프로젝트 심야자습 취소 성공");
-    }
-
     private void throwExceptionWhenStudentIsNotApplicant(NightStudy nightStudy, Student student) {
         if (nightStudy.isApplicant(student)) {
             throw new NotNightStudyApplicantException();
         }
+    }
+
+    public Response cancelProject(Long projectId) {
+        NightStudyProject project = nightStudyProjectService.getBy(projectId);
+        Student student = studentRepository.getByMember(memberAuthenticationHolder.current());
+        NightStudyProjectMember leader = nightStudyProjectMemberService.findByStudentAndProject(student, project);
+        if (leader.getRole() != NightStudyProjectMemberRole.LEADER) throw new NotNightStudyApplicantException();
+        nightStudyProjectService.delete(project);
+        return Response.ok("프로젝트 심야자습 취소 성공");
     }
 
     @PushAlarmEvent(target = "심야자습", status = ApprovalStatus.ALLOWED)
@@ -146,12 +137,9 @@ public class NightStudyUseCase {
     }
 
     private void modifyProjectStatus(Long projectId, ApprovalStatus status, String rejectReason) {
-        Member leader = memberAuthenticationHolder.current();
-        Teacher teacher = teacherRepository.getByMember(leader);
         NightStudyProject project = nightStudyProjectService.getBy(projectId);
+        Teacher teacher = teacherRepository.getByMember(memberAuthenticationHolder.current());
         project.modifyStatus(teacher, status, rejectReason);
-        List<NightStudyProjectMember> nightStudies = nightStudyProjectMemberService.getAllByProject(project);
-        for (NightStudyProjectMember n : nightStudies) n.modifyStatus(teacher, status, rejectReason);
     }
 
     public Response allowProject(Long id) {
@@ -231,8 +219,8 @@ public class NightStudyUseCase {
     public ResponseData<List<NightStudyProjectRes>> getValidProjects() {
         LocalDate today = ZonedDateTimeUtil.nowToLocalDate();
         List<NightStudyProjectRes> result = nightStudyProjectService.getAllByDateRange(today).stream()
-                .map(this::toProjectRes)
-                .toList();
+            .map(NightStudyProjectRes::of)
+            .toList();
         return ResponseData.ok("유효한 모든 프로젝트 조회 성공", result);
     }
 
@@ -240,8 +228,8 @@ public class NightStudyUseCase {
     public ResponseData<List<NightStudyProjectRes>> getPendingProjects() {
         LocalDate today = ZonedDateTimeUtil.nowToLocalDate();
         List<NightStudyProjectRes> result = nightStudyProjectService.getPendingProjects(today).stream()
-                .map(this::toProjectRes)
-                .toList();
+            .map(NightStudyProjectRes::of)
+            .toList();
         return ResponseData.ok("대기중인 프로젝트 심야자습 조회 성공", result);
     }
 
@@ -249,8 +237,8 @@ public class NightStudyUseCase {
     public ResponseData<List<NightStudyProjectRes>> getAllowedProjects() {
         LocalDate today = ZonedDateTimeUtil.nowToLocalDate();
         List<NightStudyProjectRes> result = nightStudyProjectService.getAllowedProjects(today).stream()
-                .map(this::toProjectRes)
-                .toList();
+            .map(NightStudyProjectRes::of)
+            .toList();
         return ResponseData.ok("승인된 프로젝트 심야자습 조회 성공", result);
     }
 
@@ -259,14 +247,9 @@ public class NightStudyUseCase {
         Student student = studentRepository.getByMember(memberAuthenticationHolder.current());
         LocalDate today = ZonedDateTimeUtil.nowToLocalDate();
         List<NightStudyProjectRes> result = nightStudyProjectService.getMyProjects(student, today).stream()
-                .map(this::toProjectRes)
-                .toList();
+            .map(NightStudyProjectRes::of)
+            .toList();
         return ResponseData.ok("내 프로젝트 심야자습 조회 성공", result);
-    }
-
-    private NightStudyProjectRes toProjectRes(NightStudyProject project) {
-        List<NightStudyProjectMember> participants = nightStudyProjectMemberService.getAllByProject(project);
-        return NightStudyProjectRes.of(project, participants);
     }
 
     @Transactional(readOnly = true)

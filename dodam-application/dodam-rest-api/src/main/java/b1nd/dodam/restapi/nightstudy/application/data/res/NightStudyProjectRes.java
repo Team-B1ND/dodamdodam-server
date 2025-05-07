@@ -21,18 +21,9 @@ public record NightStudyProjectRes(
         String description,
         LocalDate startAt,
         LocalDate endAt,
-        String rejectReason,
-        StudentWithImageRes leader,
-        List<StudentWithImageRes> participants
+        String rejectReason
 ) {
-    public static NightStudyProjectRes of(NightStudyProject project, List<NightStudyProjectMember> members) {
-        Student leader = members.stream().filter(member -> member.getRole() == NightStudyProjectMemberRole.LEADER).findFirst().get().getStudent();
-        List<StudentWithImageRes> participants = members.stream()
-                .map(NightStudyProjectMember::getStudent)
-                .filter(student -> !student.equals(leader))
-                .map(StudentWithImageRes::of)
-                .toList();
-
+    public static NightStudyProjectRes of(NightStudyProject project) {
         return new NightStudyProjectRes(
                 project.getId(),
                 project.getType(),
@@ -42,9 +33,7 @@ public record NightStudyProjectRes(
                 project.getDescription(),
                 project.getStartAt(),
                 project.getEndAt(),
-                project.getRejectReason(),
-                StudentWithImageRes.of(leader),
-                participants
+                project.getRejectReason()
         );
     }
 }

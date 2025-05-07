@@ -4,6 +4,7 @@ import b1nd.dodam.domain.rds.member.entity.Student;
 import b1nd.dodam.domain.rds.nightstudy.entity.NightStudy;
 import b1nd.dodam.domain.rds.nightstudy.entity.NightStudyProject;
 import b1nd.dodam.domain.rds.nightstudy.entity.NightStudyProjectMember;
+import b1nd.dodam.domain.rds.nightstudy.enumeration.NightStudyProjectType;
 import b1nd.dodam.domain.rds.support.enumeration.ApprovalStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -17,22 +18,25 @@ public interface NightStudyProjectMemberRepository extends JpaRepository<NightSt
 
     Optional<NightStudyProjectMember> findByStudentAndProject(Student student, NightStudyProject project);
 
-    default boolean existsValidByStudentAndDate(Student student, LocalDate startAt, LocalDate endAt) {
-        return findValidStudyByStudentAndDate(
-                student, startAt, endAt, ApprovalStatus.REJECTED
-        ).isPresent();
+    default boolean existsValidByStudentAndDate(List<Student> students, LocalDate startAt, LocalDate endAt, NightStudyProjectType type) {
+        return findValidStudyByStudentAndDate(students, startAt, endAt, type, ApprovalStatus.REJECTED).isPresent();
     }
 
-    @Query("select m from NightStudyProjectMember m " +
-            "join m.project p " +
-            "where m.student = :student and " +
-            "(:startAt between p.startAt and p.endAt or :endAt between p.startAt and p.endAt) and " +
-            "p.status <> :status"
-    )
-    Optional<NightStudyProjectMember> findValidStudyByStudentAndDate(@Param("student") Student student,
-                                                    @Param("startAt") LocalDate startAt,
-                                                    @Param("endAt") LocalDate endAt,
-                                                    @Param("status") ApprovalStatus status);
+    @Query("""
+        select m from NightStudyProjectMember m
+        join m.project p
+        where m.student in :students and
+        (:startAt between p.startAt and p.endAt or :endAt between p.startAt and p.endAt) and
+        p.type = :type and
+        p.status <> :status
+    """)
+    Optional<NightStudyProjectMember> findValidStudyByStudentAndDate(
+        @Param("students") List<Student> students,
+        @Param("startAt") LocalDate startAt,
+        @Param("endAt") LocalDate endAt,
+        @Param("type") NightStudyProjectType type,
+        @Param("status") ApprovalStatus status
+    );
 
     List<NightStudyProjectMember> findAllByProject(NightStudyProject project);
 }
