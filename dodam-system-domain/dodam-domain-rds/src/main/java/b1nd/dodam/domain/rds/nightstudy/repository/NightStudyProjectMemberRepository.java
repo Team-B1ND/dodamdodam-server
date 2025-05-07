@@ -43,4 +43,17 @@ public interface NightStudyProjectMemberRepository extends JpaRepository<NightSt
     List<NightStudyProjectMember> findAllByProject(NightStudyProject project);
 
     List<NightStudyProjectMember> findByStudentAndProject_EndAtGreaterThanEqual(Student student, LocalDate now);
+
+    @Query("""
+    select m from NightStudyProjectMember m
+    join m.project p
+    where p.status = :status and
+        :today between p.startAt and p.endAt and
+        p.type = :type
+""")
+    List<NightStudyProjectMember> findMembersByStatusAndEndDateAfterAndType(
+            @Param("status") ApprovalStatus status,
+            @Param("today") LocalDate today,
+            @Param("type") NightStudyProjectType type
+    );
 }
