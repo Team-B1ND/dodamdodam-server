@@ -1,9 +1,9 @@
 package b1nd.dodam.domain.rds.nightstudy.repository;
 
 import b1nd.dodam.domain.rds.member.entity.Student;
-import b1nd.dodam.domain.rds.nightstudy.entity.NightStudy;
 import b1nd.dodam.domain.rds.nightstudy.entity.NightStudyProject;
 import b1nd.dodam.domain.rds.nightstudy.entity.NightStudyProjectMember;
+import b1nd.dodam.domain.rds.nightstudy.enumeration.NightStudyProjectRoom;
 import b1nd.dodam.domain.rds.nightstudy.enumeration.NightStudyProjectType;
 import b1nd.dodam.domain.rds.support.enumeration.ApprovalStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -18,8 +18,8 @@ public interface NightStudyProjectMemberRepository extends JpaRepository<NightSt
 
     Optional<NightStudyProjectMember> findByStudentAndProject(Student student, NightStudyProject project);
 
-    default boolean existsValidByStudentAndDate(List<Student> students, LocalDate startAt, LocalDate endAt, NightStudyProjectType type) {
-        return findValidStudyByStudentAndDate(students, startAt, endAt, type, ApprovalStatus.REJECTED).isPresent();
+    default boolean existsValidByStudentAndDate(List<Student> students, LocalDate startAt, LocalDate endAt, NightStudyProjectType type, List<NightStudyProjectRoom> rooms) {
+        return !findValidStudyByStudentAndDate(students, startAt, endAt, type, ApprovalStatus.REJECTED, rooms).isEmpty();
     }
 
     @Query("""
@@ -28,15 +28,19 @@ public interface NightStudyProjectMemberRepository extends JpaRepository<NightSt
         where m.student in :students and
         (:startAt between p.startAt and p.endAt or :endAt between p.startAt and p.endAt) and
         p.type = :type and
+        p.room in :rooms and
         p.status <> :status
     """)
-    Optional<NightStudyProjectMember> findValidStudyByStudentAndDate(
+    List<NightStudyProjectMember> findValidStudyByStudentAndDate(
         @Param("students") List<Student> students,
         @Param("startAt") LocalDate startAt,
         @Param("endAt") LocalDate endAt,
         @Param("type") NightStudyProjectType type,
-        @Param("status") ApprovalStatus status
+        @Param("status") ApprovalStatus status,
+        @Param("rooms") List<NightStudyProjectRoom> rooms
     );
 
     List<NightStudyProjectMember> findAllByProject(NightStudyProject project);
+
+    List<NightStudyProjectMember> findByStudentAndProject_EndAtGreaterThanEqual(Student student, LocalDate now);
 }

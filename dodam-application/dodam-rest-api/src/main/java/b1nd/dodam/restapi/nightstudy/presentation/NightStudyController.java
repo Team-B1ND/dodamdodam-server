@@ -118,6 +118,11 @@ public class NightStudyController {
         return useCase.getValidProjects();
     }
 
+    @GetMapping("/project/{id}")
+    public ResponseData<NightStudyWithStudentsRes> getProjectById(@PathVariable Long id) {
+        return useCase.getProjectDetails(id);
+    }
+
     @GetMapping("/project/my")
     public ResponseData<List<NightStudyProjectRes>> getMyProjects() {
         return useCase.getMyProjects();

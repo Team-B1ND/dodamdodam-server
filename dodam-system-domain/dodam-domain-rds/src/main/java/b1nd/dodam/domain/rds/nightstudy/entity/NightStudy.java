@@ -51,10 +51,6 @@ public class NightStudy extends BaseEntity {
 
     private String rejectReason;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "fk_project_id")
-    private NightStudyProject project;
-
     @NotNull
     private LocalDate startAt;
 
@@ -78,10 +74,6 @@ public class NightStudy extends BaseEntity {
 
     public void reject() {
         this.status = ApprovalStatus.REJECTED;
-    }
-
-    public void joinProject(NightStudyProject project) {
-        this.project = project;
     }
 
     public void modifyStatus(Teacher teacher, ApprovalStatus status, String rejectReason) {

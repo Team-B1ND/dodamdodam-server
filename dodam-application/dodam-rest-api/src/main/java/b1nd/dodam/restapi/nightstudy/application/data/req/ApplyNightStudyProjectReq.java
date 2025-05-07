@@ -1,8 +1,6 @@
 package b1nd.dodam.restapi.nightstudy.application.data.req;
 
 import jakarta.validation.constraints.NotNull;
-import b1nd.dodam.domain.rds.member.entity.Student;
-import b1nd.dodam.domain.rds.nightstudy.entity.NightStudy;
 import b1nd.dodam.domain.rds.nightstudy.entity.NightStudyProject;
 import b1nd.dodam.domain.rds.nightstudy.enumeration.NightStudyProjectRoom;
 import b1nd.dodam.domain.rds.nightstudy.enumeration.NightStudyProjectType;
@@ -19,7 +17,7 @@ public record ApplyNightStudyProjectReq(
     @NotNull NightStudyProjectRoom room,
     List<Integer> students
 ) {
-    public NightStudyProject toProjectEntity() {
+    public NightStudyProject toEntity() {
         return NightStudyProject.builder()
             .type(type)
             .name(name)
@@ -27,17 +25,6 @@ public record ApplyNightStudyProjectReq(
             .startAt(startAt)
             .endAt(endAt)
             .room(room)
-            .build();
-    }
-
-    public NightStudy toEntity(Student student) {
-        return NightStudy.builder()
-            .content(description)
-            .doNeedPhone(false)
-            .reasonForPhone(null)
-            .student(student)
-            .startAt(startAt)
-            .endAt(endAt)
             .build();
     }
 }
