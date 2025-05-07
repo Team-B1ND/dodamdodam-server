@@ -128,25 +128,25 @@ public class NightStudyUseCase {
         nightStudy.modifyStatus(teacher, status, rejectReason);
     }
 
-    private void modifyProjectStatus(Long projectId, ApprovalStatus status, String rejectReason) {
-        NightStudyProject project = nightStudyProjectService.getById(projectId);
-        Teacher teacher = teacherRepository.getByMember(memberAuthenticationHolder.current());
-        project.modifyStatus(teacher, status, rejectReason);
-    }
-
     public Response allowProject(Long id) {
-        modifyProjectStatus(id, ApprovalStatus.ALLOWED, null);
+        modifyProjectStatus(id, ApprovalStatus.ALLOWED);
         return Response.noContent("프로젝트 심야자습 승인 성공");
     }
 
-    public Response rejectProject(Long id, Optional<RejectNightStudyReq> req) {
-        modifyProjectStatus(id, ApprovalStatus.REJECTED, req.map(RejectNightStudyReq::rejectReason).orElse(null));
+    public Response rejectProject(Long id) {
+        modifyProjectStatus(id, ApprovalStatus.REJECTED);
         return Response.noContent("프로젝트 심야자습 거절 성공");
     }
 
     public Response revertProject(Long id) {
-        modifyProjectStatus(id, ApprovalStatus.PENDING, null);
+        modifyProjectStatus(id, ApprovalStatus.PENDING);
         return Response.noContent("프로젝트 심야자습 대기 성공");
+    }
+
+    private void modifyProjectStatus(Long projectId, ApprovalStatus status) {
+        NightStudyProject project = nightStudyProjectService.getById(projectId);
+        Teacher teacher = teacherRepository.getByMember(memberAuthenticationHolder.current());
+        project.modifyStatus(teacher, status);
     }
 
     @PushAlarmEvent(target = "심야자습", status = ApprovalStatus.BANNED)

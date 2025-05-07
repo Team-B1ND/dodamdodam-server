@@ -50,8 +50,6 @@ public class NightStudyProject {
     @JoinColumn(name = "fk_teacher_id")
     private Teacher teacher;
 
-    private String rejectReason;
-
     @Builder
     public NightStudyProject(NightStudyProjectType type, String name, String description, LocalDate startAt, LocalDate endAt, NightStudyProjectRoom room, Teacher teacher) {
         this.type = type;
@@ -64,9 +62,8 @@ public class NightStudyProject {
         this.teacher = teacher;
     }
 
-    public void modifyStatus(Teacher teacher, ApprovalStatus status, String rejectReason) {
+    public void modifyStatus(Teacher teacher, ApprovalStatus status) {
         this.status = status;
         this.teacher = teacher;
-        this.rejectReason = rejectReason;
     }
 }
