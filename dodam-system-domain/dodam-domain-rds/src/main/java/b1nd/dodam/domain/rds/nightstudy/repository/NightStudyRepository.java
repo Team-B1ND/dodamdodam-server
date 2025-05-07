@@ -18,15 +18,9 @@ import java.util.List;
 public interface NightStudyRepository extends JpaRepository<NightStudy, Long> {
 
     default boolean existsValidByStudentAndDate(Student student, LocalDate startAt, LocalDate endAt) {
-        return findValidStudyByStudentAndDate(
+        return !findValidStudyByStudentAndDate(
                 student, startAt, endAt, ApprovalStatus.REJECTED, PageRequest.of(0, 1)
-        ).size() != 0;
-    }
-
-    default boolean existsValidByStudentAndDateAndType(Student student, LocalDate startAt, LocalDate endAt, NightStudyProjectType type) {
-        return findValidStudyByStudentAndDateAndProjectType(
-                student, startAt, endAt, ApprovalStatus.REJECTED, type, PageRequest.of(0, 1)
-        ).size() != 0;
+        ).isEmpty();
     }
 
     @Query("select n from NightStudy n " +
@@ -38,19 +32,6 @@ public interface NightStudyRepository extends JpaRepository<NightStudy, Long> {
                                               @Param("endAt") LocalDate endAt,
                                               @Param("status") ApprovalStatus status,
                                               Pageable pageable);
-
-    @Query("select n from NightStudy n " +
-            "where n.student = :student and " +
-            "(:startAt between n.startAt and n.endAt or :endAt between n.startAt and n.endAt) and " +
-            "n.status <> :status and " +
-            "n.type = :projectType")
-    List<NightStudy> findValidStudyByStudentAndDateAndProjectType(
-            @Param("student") Student student,
-            @Param("startAt") LocalDate startAt,
-            @Param("endAt") LocalDate endAt,
-            @Param("status") ApprovalStatus status,
-            @Param("projectType") NightStudyProjectType type,
-            Pageable pageable);
 
     @EntityGraph(attributePaths = {"student.member"})
     List<NightStudy> findByStudentAndEndAtGreaterThanEqual(Student student, LocalDate now);
@@ -65,6 +46,4 @@ public interface NightStudyRepository extends JpaRepository<NightStudy, Long> {
 
     @EntityGraph(attributePaths = {"student.member"})
     List<NightStudy> findByEndAt(LocalDate endAt);
-
-    List<NightStudy> findAllByProject(NightStudyProject project);
 }

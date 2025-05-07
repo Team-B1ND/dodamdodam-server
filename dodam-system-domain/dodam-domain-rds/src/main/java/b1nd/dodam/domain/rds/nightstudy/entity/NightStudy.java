@@ -3,7 +3,6 @@ package b1nd.dodam.domain.rds.nightstudy.entity;
 import b1nd.dodam.core.util.ZonedDateTimeUtil;
 import b1nd.dodam.domain.rds.member.entity.Student;
 import b1nd.dodam.domain.rds.member.entity.Teacher;
-import b1nd.dodam.domain.rds.nightstudy.enumeration.NightStudyProjectType;
 import b1nd.dodam.domain.rds.nightstudy.exception.InvalidNightStudyPeriodException;
 import b1nd.dodam.domain.rds.nightstudy.exception.NightStudyApplicationDurationPassedException;
 import b1nd.dodam.domain.rds.nightstudy.exception.ReasonForPhoneMissingException;
@@ -29,9 +28,6 @@ public class NightStudy extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Enumerated(EnumType.STRING)
-    private NightStudyProjectType type;
-
     @NotNull
     @Size(min = 10, max = 250)
     private String content;
@@ -55,10 +51,6 @@ public class NightStudy extends BaseEntity {
 
     private String rejectReason;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "fk_project_id")
-    private NightStudyProject project;
-
     @NotNull
     private LocalDate startAt;
 
@@ -66,13 +58,11 @@ public class NightStudy extends BaseEntity {
     private LocalDate endAt;
 
     @Builder
-    public NightStudy(NightStudyProjectType type, String content, boolean doNeedPhone,
-                      String reasonForPhone, Student student, LocalDate startAt, LocalDate endAt) {
+    public NightStudy(String content, boolean doNeedPhone, String reasonForPhone, Student student, LocalDate startAt, LocalDate endAt) {
         isApplicationDuration();
         isInvalidStudyPeriod(startAt, endAt);
         doesHaveReasonForPhone(doNeedPhone, reasonForPhone);
 
-        this.type = type;
         this.content = content;
         this.doNeedPhone = doNeedPhone;
         this.reasonForPhone = reasonForPhone;
@@ -84,10 +74,6 @@ public class NightStudy extends BaseEntity {
 
     public void reject() {
         this.status = ApprovalStatus.REJECTED;
-    }
-
-    public void joinProject(NightStudyProject project) {
-        this.project = project;
     }
 
     public void modifyStatus(Teacher teacher, ApprovalStatus status, String rejectReason) {

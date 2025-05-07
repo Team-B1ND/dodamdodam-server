@@ -2,8 +2,7 @@ package b1nd.dodam.domain.rds.nightstudy.service;
 
 import b1nd.dodam.domain.rds.member.entity.Student;
 import b1nd.dodam.domain.rds.nightstudy.entity.NightStudy;
-import b1nd.dodam.domain.rds.nightstudy.entity.NightStudyProject;
-import b1nd.dodam.domain.rds.nightstudy.enumeration.NightStudyProjectType;
+import b1nd.dodam.domain.rds.nightstudy.exception.NightStudyDuplicateException;
 import b1nd.dodam.domain.rds.nightstudy.exception.NightStudyNotFoundException;
 import b1nd.dodam.domain.rds.nightstudy.repository.NightStudyRepository;
 import b1nd.dodam.domain.rds.support.enumeration.ApprovalStatus;
@@ -23,16 +22,8 @@ public class NightStudyService {
         repository.save(nightStudy);
     }
 
-    public void saveAll(List<NightStudy> nightStudies) {
-        repository.saveAll(nightStudies);
-    }
-
     public void delete(NightStudy nightStudy) {
         repository.delete(nightStudy);
-    }
-
-    public void deleteAllByProject(NightStudyProject project) {
-        repository.deleteAll(repository.findAllByProject(project));
     }
 
     public NightStudy getBy(Long id) {
@@ -40,13 +31,8 @@ public class NightStudyService {
                 .orElseThrow(NightStudyNotFoundException::new);
     }
 
-    public boolean checkDurationDuplication(Student student, LocalDate startAt, LocalDate endAt) {
-        return repository.existsValidByStudentAndDate(student, startAt, endAt);
-    }
-
-    public boolean checkMultipleDurationDuplication(Student leader, List<Student> students, LocalDate startAt, LocalDate endAt, NightStudyProjectType type) {
-        students.add(leader);
-        return students.stream().anyMatch(student -> repository.existsValidByStudentAndDateAndType(student, startAt, endAt, type));
+    public void validateDurationDuplication(Student student, LocalDate startAt, LocalDate endAt) {
+        if (repository.existsValidByStudentAndDate(student, startAt, endAt)) throw new NightStudyDuplicateException();
     }
 
     public List<NightStudy> getMy(Student student, LocalDate now) {
@@ -68,9 +54,5 @@ public class NightStudyService {
     public void rejectAllByStudent(Student student) {
         repository.findByStudentAndEndAtGreaterThanEqual(student, LocalDate.now())
                 .forEach(NightStudy::reject);
-    }
-
-    public List<NightStudy> getAllByProject(NightStudyProject project) {
-        return repository.findAllByProject(project);
     }
 }

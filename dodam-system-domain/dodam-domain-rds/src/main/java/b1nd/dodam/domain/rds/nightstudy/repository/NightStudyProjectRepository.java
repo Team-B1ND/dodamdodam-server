@@ -10,8 +10,6 @@ import java.util.List;
 
 public interface NightStudyProjectRepository extends JpaRepository<NightStudyProject, Long> {
 
-    List<NightStudyProject> findByLeaderAndStartAtLessThanEqualAndEndAtGreaterThanEqual(Student leader, LocalDate today1, LocalDate today2);
-
     List<NightStudyProject> findByStartAtLessThanEqualAndEndAtGreaterThanEqual(LocalDate today1, LocalDate today2);
 
     List<NightStudyProject> findByStatusAndStartAtLessThanEqualAndEndAtGreaterThanEqual(ApprovalStatus status, LocalDate today1, LocalDate today2);

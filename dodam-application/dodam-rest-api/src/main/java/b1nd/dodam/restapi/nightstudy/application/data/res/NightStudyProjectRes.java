@@ -1,7 +1,9 @@
 package b1nd.dodam.restapi.nightstudy.application.data.res;
 
-import b1nd.dodam.domain.rds.nightstudy.entity.NightStudy;
+import b1nd.dodam.domain.rds.member.entity.Student;
 import b1nd.dodam.domain.rds.nightstudy.entity.NightStudyProject;
+import b1nd.dodam.domain.rds.nightstudy.entity.NightStudyProjectMember;
+import b1nd.dodam.domain.rds.nightstudy.enumeration.NightStudyProjectMemberRole;
 import b1nd.dodam.domain.rds.nightstudy.enumeration.NightStudyProjectRoom;
 import b1nd.dodam.domain.rds.nightstudy.enumeration.NightStudyProjectType;
 import b1nd.dodam.domain.rds.support.enumeration.ApprovalStatus;
@@ -18,16 +20,9 @@ public record NightStudyProjectRes(
         String name,
         String description,
         LocalDate startAt,
-        LocalDate endAt,
-        StudentWithImageRes leader,
-        List<StudentWithImageRes> participants
+        LocalDate endAt
 ) {
-    public static NightStudyProjectRes of(NightStudyProject project, List<NightStudy> nightStudies) {
-        List<StudentWithImageRes> participants = nightStudies.stream()
-                .map(nightStudy -> StudentWithImageRes.of(nightStudy.getStudent()))
-                .filter(student -> !student.equals(StudentWithImageRes.of(project.getLeader())))
-                .toList();
-
+    public static NightStudyProjectRes of(NightStudyProject project) {
         return new NightStudyProjectRes(
                 project.getId(),
                 project.getType(),
@@ -36,9 +31,7 @@ public record NightStudyProjectRes(
                 project.getName(),
                 project.getDescription(),
                 project.getStartAt(),
-                project.getEndAt(),
-                StudentWithImageRes.of(project.getLeader()),
-                participants
+                project.getEndAt()
         );
     }
 }

@@ -74,7 +74,7 @@ public class NightStudyController {
     }
 
     @PatchMapping("/project/{id}/reject")
-    public Response rejectProject(@PathVariable Long id, @RequestBody Optional<ApplyNightStudyProjectReq> req) {
+    public Response rejectProject(@PathVariable Long id) {
         return useCase.rejectProject(id);
     }
 
@@ -116,6 +116,11 @@ public class NightStudyController {
     @GetMapping("/projects")
     public ResponseData<List<NightStudyProjectRes>> getAllValidProjects() {
         return useCase.getValidProjects();
+    }
+
+    @GetMapping("/project/{id}")
+    public ResponseData<NightStudyWithStudentsRes> getProjectById(@PathVariable Long id) {
+        return useCase.getProjectDetails(id);
     }
 
     @GetMapping("/project/my")

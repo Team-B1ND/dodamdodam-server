@@ -46,18 +46,12 @@ public class NightStudyProject {
     @Enumerated(EnumType.STRING)
     private ApprovalStatus status;
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "fk_leader_id", nullable = false)
-    private Student leader;
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "fk_teacher_id")
     private Teacher teacher;
 
-    private String rejectReason;
-
     @Builder
-    public NightStudyProject(NightStudyProjectType type, String name, String description, LocalDate startAt, LocalDate endAt, NightStudyProjectRoom room, Student leader, Teacher teacher) {
+    public NightStudyProject(NightStudyProjectType type, String name, String description, LocalDate startAt, LocalDate endAt, NightStudyProjectRoom room, Teacher teacher) {
         this.type = type;
         this.name = name;
         this.description = description;
@@ -65,17 +59,11 @@ public class NightStudyProject {
         this.endAt = endAt;
         this.room = room;
         this.status = ApprovalStatus.PENDING;
-        this.leader = leader;
         this.teacher = teacher;
     }
 
-    public boolean isLeader(Student student) {
-        return this.leader.equals(student);
-    }
-
-    public void modifyStatus(Teacher teacher, ApprovalStatus status, String rejectReason) {
+    public void modifyStatus(Teacher teacher, ApprovalStatus status) {
         this.status = status;
         this.teacher = teacher;
-        this.rejectReason = rejectReason;
     }
 }

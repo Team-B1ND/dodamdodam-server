@@ -25,7 +25,7 @@ public class NightStudyProjectService {
         repository.delete(nightStudyProject);
     }
 
-    public NightStudyProject getBy(Long id) {
+    public NightStudyProject getById(Long id) {
         return repository.findById(id)
                 .orElseThrow(NightStudyNotFoundException::new);
     }
@@ -40,10 +40,6 @@ public class NightStudyProjectService {
 
     public List<NightStudyProject> getAllByDateRange(LocalDate date) {
     return repository.findByStartAtLessThanEqualAndEndAtGreaterThanEqual(date, date);
-    }
-
-    public List<NightStudyProject> getMyProjects(Student leader, LocalDate date) {
-        return repository.findByLeaderAndStartAtLessThanEqualAndEndAtGreaterThanEqual(leader, date, date);
     }
 
     public List<NightStudyProject> getAllRoomsWithProjects(LocalDate date) {
