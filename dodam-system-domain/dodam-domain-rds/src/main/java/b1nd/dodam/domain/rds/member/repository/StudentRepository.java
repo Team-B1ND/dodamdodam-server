@@ -45,6 +45,7 @@ public interface StudentRepository extends JpaRepository<Student, Integer> {
     @EntityGraph(attributePaths = {"member"})
     List<Student> findAllByMember_Status(ActiveStatus memberStatus);
 
+
     @Query("SELECT m FROM student s JOIN s.member m")
     List<Member> findAllMembers();
 

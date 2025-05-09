@@ -36,11 +36,11 @@ import b1nd.dodam.restapi.auth.infrastructure.security.support.MemberAuthenticat
 @Transactional(rollbackFor = Exception.class)
 @RequiredArgsConstructor
 public class NightStudyUseCase {
-
     private final NightStudyService nightStudyService;
     private final NightStudyBanService nightStudyBanService;
     private final StudentRepository studentRepository;
     private final TeacherRepository teacherRepository;
+    private final MemberAuthenticationHolder authenticationHolder;
     private final MemberAuthenticationHolder memberAuthenticationHolder;
     private final NightStudyProjectService nightStudyProjectService;
     private final NightStudyProjectMemberService nightStudyProjectMemberService;
@@ -262,7 +262,8 @@ public class NightStudyUseCase {
     @Transactional(readOnly = true)
     public ResponseData<List<StudentWithNightStudyBanRes>> getStudentsWithBan() {
         LocalDate today = ZonedDateTimeUtil.nowToLocalDate();
-        List<Student> students = studentRepository.findAllByMember_Status(ActiveStatus.ACTIVE);
+        Member member = authenticationHolder.current();
+        List<Student> students = studentRepository.findAllByMember_StatusAndMemberNot(ActiveStatus.ACTIVE, member);
         List<Integer> bannedStudents = nightStudyBanService.findAllStudentIdByDate(today);
         List<StudentWithNightStudyBanRes> result = StudentWithNightStudyBanRes.of(students, bannedStudents);
         return ResponseData.ok("학생 조회 성공", result);
