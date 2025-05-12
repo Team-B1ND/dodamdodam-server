@@ -35,7 +35,7 @@ public class NightStudyBanService {
     }
 
     public void validateMultipleBans(List<Student> students) {
-        List<NightStudyBan> bans = nightStudyBanRepository.findByStudentIn(students);
+        List<NightStudyBan> bans = nightStudyBanRepository.findByStudentInAndEndedGreaterThanEqual(students, ZonedDateTimeUtil.nowToLocalDate());
         if (!bans.isEmpty()) throw new NightStudyBannedStudentException();
     }
 
