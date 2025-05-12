@@ -9,11 +9,11 @@ public enum NightStudyExceptionCode implements ExceptionCode {
     REASON_FOR_PHONE_MISSING(400, "핸드폰 사용이유 누락"),
     APPLICATION_DURATION_PASSED(403, "심야자습 신청 기간이 아님"),
     NOT_APPLICANT(403, "신청자가 아님"),
-    BANNED_STUDENT(403, "정지된 심야자습 신청 권한"),
     NOT_FOUND(404, "없는 심야자습"),
     BAN_NOT_FOUND(404, "없는 심야자습 정지"),
+    MEMBER_NOT_FOUND(404, "없는 프로젝트 멤버"),
     STUDY_DUPLICATE(409, "해당 날짜에 심야자습 중복"),
-    MEMBER_NOT_FOUND(404, "없는 프로젝트 멤버");
+    BANNED_STUDENT(412, "정지된 심야자습 신청 권한");
 
     private final int status;
     private final String message;
