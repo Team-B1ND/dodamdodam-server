@@ -14,7 +14,7 @@ public record StudentRes(
         String code
 ) implements Serializable {
     public static StudentRes of(Student student) {
-        if(student == null) {
+        if (student == null) {
             return null;
         }
         return new StudentRes(
