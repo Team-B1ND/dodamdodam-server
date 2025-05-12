@@ -1,36 +1,44 @@
 package b1nd.dodam.restapi.nightstudy.application;
 
+import b1nd.dodam.core.util.ZonedDateTimeUtil;
+import b1nd.dodam.domain.rds.member.entity.Member;
+import b1nd.dodam.domain.rds.member.entity.Student;
+import b1nd.dodam.domain.rds.member.entity.Teacher;
+import b1nd.dodam.domain.rds.member.enumeration.ActiveStatus;
+import b1nd.dodam.domain.rds.member.repository.StudentRepository;
+import b1nd.dodam.domain.rds.member.repository.TeacherRepository;
+import b1nd.dodam.domain.rds.nightstudy.entity.NightStudy;
+import b1nd.dodam.domain.rds.nightstudy.entity.NightStudyBan;
+import b1nd.dodam.domain.rds.nightstudy.entity.NightStudyProject;
+import b1nd.dodam.domain.rds.nightstudy.entity.NightStudyProjectMember;
+import b1nd.dodam.domain.rds.nightstudy.enumeration.NightStudyProjectMemberRole;
+import b1nd.dodam.domain.rds.nightstudy.enumeration.NightStudyProjectRoom;
+import b1nd.dodam.domain.rds.nightstudy.enumeration.NightStudyProjectType;
+import b1nd.dodam.domain.rds.nightstudy.exception.NotNightStudyApplicantException;
+import b1nd.dodam.domain.rds.nightstudy.service.NightStudyBanService;
+import b1nd.dodam.domain.rds.nightstudy.service.NightStudyProjectMemberService;
+import b1nd.dodam.domain.rds.nightstudy.service.NightStudyProjectService;
+import b1nd.dodam.domain.rds.nightstudy.service.NightStudyService;
+import b1nd.dodam.domain.rds.support.enumeration.ApprovalStatus;
+import b1nd.dodam.restapi.auth.infrastructure.security.support.MemberAuthenticationHolder;
+import b1nd.dodam.restapi.nightstudy.application.data.req.ApplyNightStudyProjectReq;
+import b1nd.dodam.restapi.nightstudy.application.data.req.ApplyNightStudyReq;
+import b1nd.dodam.restapi.nightstudy.application.data.req.BanNightStudyReq;
+import b1nd.dodam.restapi.nightstudy.application.data.req.RejectNightStudyReq;
+import b1nd.dodam.restapi.nightstudy.application.data.res.*;
+import b1nd.dodam.restapi.support.data.Response;
+import b1nd.dodam.restapi.support.data.ResponseData;
+import b1nd.dodam.restapi.support.pushalarm.PushAlarmEvent;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
+
 import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
-import b1nd.dodam.domain.rds.nightstudy.enumeration.NightStudyProjectRoom;
-import b1nd.dodam.domain.rds.nightstudy.enumeration.NightStudyProjectType;
-import b1nd.dodam.restapi.member.application.data.res.StudentRes;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
-import b1nd.dodam.core.util.ZonedDateTimeUtil;
-import b1nd.dodam.restapi.support.data.Response;
-import b1nd.dodam.domain.rds.nightstudy.entity.*;
-import b1nd.dodam.domain.rds.nightstudy.service.*;
-import b1nd.dodam.domain.rds.member.entity.Member;
-import b1nd.dodam.domain.rds.member.entity.Student;
-import b1nd.dodam.domain.rds.member.entity.Teacher;
-import b1nd.dodam.restapi.support.data.ResponseData;
-import b1nd.dodam.restapi.support.pushalarm.PushAlarmEvent;
-import b1nd.dodam.restapi.nightstudy.application.data.req.*;
-import b1nd.dodam.restapi.nightstudy.application.data.res.*;
-import b1nd.dodam.domain.rds.member.enumeration.ActiveStatus;
-import b1nd.dodam.domain.rds.support.enumeration.ApprovalStatus;
-import b1nd.dodam.domain.rds.member.repository.StudentRepository;
-import b1nd.dodam.domain.rds.member.repository.TeacherRepository;
-import b1nd.dodam.domain.rds.nightstudy.enumeration.NightStudyProjectMemberRole;
-import b1nd.dodam.domain.rds.nightstudy.exception.NotNightStudyApplicantException;
-import b1nd.dodam.restapi.auth.infrastructure.security.support.MemberAuthenticationHolder;
 
 @Component
 @Transactional(rollbackFor = Exception.class)
@@ -270,8 +278,10 @@ public class NightStudyUseCase {
     }
 
     @Transactional(readOnly = true)
-    public ResponseData<List<StudentRes>> getProjectStudents() {
-        List<Student> members = nightStudyProjectMemberService.getAllStudentByDate(ZonedDateTimeUtil.nowToLocalDate()).stream().map(NightStudyProjectMember::getStudent).toList();
-        return ResponseData.ok("프로젝트 참가 학생 조회 성공", members.stream().map(StudentRes::of).toList());
+    public ResponseData<List<StudentWithNightStudyProjectRes>> getProjectStudents() {
+        List<NightStudyProjectMember> members = nightStudyProjectMemberService.getAllStudentByDate(ZonedDateTimeUtil.nowToLocalDate());
+        return ResponseData.ok("프로젝트 참가 학생 조회 성공", members.stream()
+                .map(member -> StudentWithNightStudyProjectRes.of(member.getStudent(), member.getProject()))
+                .toList());
     }
 }

@@ -1,6 +1,5 @@
 package b1nd.dodam.restapi.nightstudy.presentation;
 
-import b1nd.dodam.restapi.member.application.data.res.StudentRes;
 import b1nd.dodam.restapi.nightstudy.application.NightStudyUseCase;
 import b1nd.dodam.restapi.nightstudy.application.data.req.ApplyNightStudyProjectReq;
 import b1nd.dodam.restapi.nightstudy.application.data.req.ApplyNightStudyReq;
@@ -150,7 +149,7 @@ public class NightStudyController {
     }
 
     @GetMapping("/project/students")
-    public ResponseData<List<StudentRes>> getValidProjectStudents() {
+    public ResponseData<List<StudentWithNightStudyProjectRes>> getValidProjectStudents() {
         return useCase.getProjectStudents();
     }
 }
