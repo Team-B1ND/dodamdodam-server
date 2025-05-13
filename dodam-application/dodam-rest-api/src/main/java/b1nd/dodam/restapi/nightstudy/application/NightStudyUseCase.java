@@ -12,7 +12,6 @@ import b1nd.dodam.domain.rds.nightstudy.entity.NightStudyBan;
 import b1nd.dodam.domain.rds.nightstudy.entity.NightStudyProject;
 import b1nd.dodam.domain.rds.nightstudy.entity.NightStudyProjectMember;
 import b1nd.dodam.domain.rds.nightstudy.enumeration.NightStudyProjectMemberRole;
-import b1nd.dodam.domain.rds.nightstudy.enumeration.NightStudyProjectRoom;
 import b1nd.dodam.domain.rds.nightstudy.enumeration.NightStudyProjectType;
 import b1nd.dodam.domain.rds.nightstudy.exception.NotNightStudyApplicantException;
 import b1nd.dodam.domain.rds.nightstudy.service.NightStudyBanService;
@@ -63,7 +62,7 @@ public class NightStudyUseCase {
     private void validateDuplicatedOrBanned(Student student, ApplyNightStudyReq req) {
         nightStudyBanService.validateBan(student);
         nightStudyService.validateDurationDuplication(student, req.startAt(), req.endAt());
-        nightStudyProjectMemberService.validateMultipleDurationDuplication(Collections.singletonList(student), req.startAt(), req.endAt(), NightStudyProjectType.NIGHT_STUDY_PROJECT_2, NightStudyProjectRoom.getAll());
+        nightStudyProjectMemberService.validateMultipleDurationDuplication(Collections.singletonList(student), req.startAt(), req.endAt(), NightStudyProjectType.NIGHT_STUDY_PROJECT_2);
     }
 
     public Response applyProject(ApplyNightStudyProjectReq req) {
@@ -78,7 +77,8 @@ public class NightStudyUseCase {
     private void checkLeaderAndStudentsDuplicatedOrBanned(Student leader, List<Student> students, ApplyNightStudyProjectReq req) {
         List<Student> participants = Stream.concat(Stream.of(leader), students.stream()).toList();
         nightStudyBanService.validateMultipleBans(participants);
-        nightStudyProjectMemberService.validateMultipleDurationDuplication(participants, req.startAt(), req.endAt(), req.type(), Collections.singletonList(req.room()));
+        nightStudyProjectMemberService.validateRoomDuplication(req.startAt(), req.endAt(), req.type(), Collections.singletonList(req.room()));
+        nightStudyProjectMemberService.validateMultipleDurationDuplication(participants, req.startAt(), req.endAt(), req.type());
     }
 
     private List<NightStudyProjectMember> getProjectMembers(Student leader, List<Student> students, NightStudyProject project) {

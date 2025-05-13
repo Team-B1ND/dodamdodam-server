@@ -41,7 +41,11 @@ public class NightStudyProjectMemberService {
         return repository.findAllByProject(project);
     }
 
-    public void validateMultipleDurationDuplication(List<Student> students, LocalDate startAt, LocalDate endAt, NightStudyProjectType type, List<NightStudyProjectRoom> rooms) {
-        if (repository.existsValidByStudentAndDate(students, startAt, endAt, type, rooms)) throw new NightStudyDuplicateException();
+    public void validateRoomDuplication(LocalDate startAt, LocalDate endAt, NightStudyProjectType type, List<NightStudyProjectRoom> rooms) {
+        if (repository.existsValidByRoomAndType(startAt, endAt, type, rooms)) throw new NightStudyDuplicateException();
+    }
+
+    public void validateMultipleDurationDuplication(List<Student> students, LocalDate startAt, LocalDate endAt, NightStudyProjectType type) {
+        if (repository.existsValidByStudentAndDate(students, startAt, endAt, type)) throw new NightStudyDuplicateException();
     }
 }
