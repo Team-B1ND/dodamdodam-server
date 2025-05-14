@@ -79,6 +79,7 @@ public class NightStudyUseCase {
         nightStudyBanService.validateMultipleBans(participants);
         nightStudyProjectMemberService.validateRoomDuplication(req.startAt(), req.endAt(), req.type(), Collections.singletonList(req.room()));
         nightStudyProjectMemberService.validateMultipleDurationDuplication(participants, req.startAt(), req.endAt(), req.type());
+        if (req.type() == NightStudyProjectType.NIGHT_STUDY_PROJECT_2) nightStudyService.validateNoActiveNightStudies(participants);
     }
 
     private List<NightStudyProjectMember> getProjectMembers(Student leader, List<Student> students, NightStudyProject project) {
