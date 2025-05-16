@@ -22,26 +22,6 @@ public interface NightStudyProjectMemberRepository extends JpaRepository<NightSt
         return !findValidStudyByStudentAndDate(students, startAt, endAt, type, ApprovalStatus.REJECTED).isEmpty();
     }
 
-    default boolean existsValidByRoomAndType(LocalDate startAt, LocalDate endAt, NightStudyProjectType type, List<NightStudyProjectRoom> rooms) {
-        return !findByProjectAndRoomAndDate(startAt, endAt, type, ApprovalStatus.REJECTED, rooms).isEmpty();
-    }
-
-    @Query("""
-        select m from NightStudyProjectMember  m
-        join m.project p
-        where (:startAt between p.startAt and p.endAt or :endAt between p.startAt and p.endAt) and
-        p.type = :type and
-        p.room in :rooms and
-        p.status <> :status
-    """)
-    List<NightStudyProjectMember> findByProjectAndRoomAndDate(
-        @Param("startAt") LocalDate startAt,
-        @Param("endAt") LocalDate endAt,
-        @Param("type") NightStudyProjectType type,
-        @Param("status") ApprovalStatus status,
-        @Param("rooms") List<NightStudyProjectRoom> rooms
-    );
-
     @Query("""
         select m from NightStudyProjectMember m
         join m.project p

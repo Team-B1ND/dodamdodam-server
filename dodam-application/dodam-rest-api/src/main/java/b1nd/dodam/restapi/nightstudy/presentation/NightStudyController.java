@@ -1,5 +1,6 @@
 package b1nd.dodam.restapi.nightstudy.presentation;
 
+import b1nd.dodam.domain.rds.nightstudy.enumeration.NightStudyProjectRoom;
 import b1nd.dodam.restapi.nightstudy.application.NightStudyUseCase;
 import b1nd.dodam.restapi.nightstudy.application.data.req.ApplyNightStudyProjectReq;
 import b1nd.dodam.restapi.nightstudy.application.data.req.ApplyNightStudyReq;
@@ -68,14 +69,14 @@ public class NightStudyController {
         return useCase.revert(id);
     }
 
-    @PatchMapping("/project/{id}/allow")
-    public Response allowProject(@PathVariable Long id) {
-        return useCase.allowProject(id);
+    @PatchMapping("/project/{id}/allow/{room}")
+    public Response allowProject(@PathVariable Long id, @PathVariable NightStudyProjectRoom room) {
+        return useCase.allowProject(id, room);
     }
 
     @PatchMapping("/project/{id}/reject")
-    public Response rejectProject(@PathVariable Long id) {
-        return useCase.rejectProject(id);
+    public Response rejectProject(@PathVariable Long id, @RequestBody RejectNightStudyReq req) {
+        return useCase.rejectProject(id, req);
     }
 
     @PatchMapping("/project/{id}/revert")
