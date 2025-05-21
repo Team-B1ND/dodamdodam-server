@@ -16,5 +16,6 @@ class DodamTokenProperties {
     private String reissueAccess;
     private String generateRefresh;
     private String verify;
+    private String key;
 
 }
