@@ -8,4 +8,5 @@ public interface BroadcastClubMemberRepository extends JpaRepository<BroadcastCl
 
     boolean existsByMember(Member member);
 
+    void deleteByMember(Member member);
 }

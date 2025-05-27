@@ -11,11 +11,17 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import static org.springframework.http.HttpMethod.*;
@@ -27,53 +33,74 @@ public class DormitoryManageMemberFilter extends OncePerRequestFilter {
     private final DormitoryManageMemberRepository repository;
     private final MemberAuthenticationHolder memberAuthenticationHolder;
     private final ErrorResponseSender errorResponseSender;
-    
-    private static final List<String> STUDENT_PATHS = Arrays.asList(
-        "/night-study/my", 
-        "/night-study/ban/my", 
-        "/night-study/project/my",
-        "/night-study/project/rooms", 
-        "/night-study/students/",
-        "/night-study",
-        "/night-study/project"
-    );
-    
+
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+
         final String uri = request.getRequestURI();
+        final String method = request.getMethod();
+
         if (!uri.contains("night-study")) {
             filterChain.doFilter(request, response);
             return;
         }
-        
-        if (isStudentAccessible(uri, request.getMethod())) {
+
+        if (isStudentAccessible(uri, method)) {
             filterChain.doFilter(request, response);
             return;
         }
-        
-        Member member;
+
         try {
-            member = memberAuthenticationHolder.current();
+            Member member = memberAuthenticationHolder.current();
+            MemberRole role = member.getRole();
+
+            if (MemberRole.ADMIN.equals(role) || MemberRole.TEACHER.equals(role)) {
+                filterChain.doFilter(request, response);
+                return;
+            }
+
+            if (MemberRole.STUDENT.equals(role) && repository.existsByMember(member)) {
+                addTeacherAuthority();
+                filterChain.doFilter(request, response);
+                return;
+            }
+
+            errorResponseSender.send(response, GlobalExceptionCode.INVALID_ROLE);
         } catch (Exception e) {
             errorResponseSender.send(response, GlobalExceptionCode.TOKEN_NOT_PROVIDED);
-            return;
         }
-        
-        if (MemberRole.ADMIN.equals(member.getRole()) ||
-            MemberRole.TEACHER.equals(member.getRole()) ||
-            (MemberRole.STUDENT.equals(member.getRole()) && repository.existsByMember(member))) {
-            filterChain.doFilter(request, response);
-            return;
+    }
+
+    private void addTeacherAuthority() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+
+        if (auth != null) {
+            Collection<? extends GrantedAuthority> authorities = auth.getAuthorities();
+            List<GrantedAuthority> updatedAuthorities = new ArrayList<>(authorities);
+
+            SimpleGrantedAuthority teacherAuthority = new SimpleGrantedAuthority("ROLE_TEACHER");
+            if (!updatedAuthorities.contains(teacherAuthority)) updatedAuthorities.add(teacherAuthority);
+
+            Authentication newAuth = new UsernamePasswordAuthenticationToken(
+                auth.getPrincipal(), auth.getCredentials(), updatedAuthorities);
+
+            SecurityContextHolder.getContext().setAuthentication(newAuth);
         }
-        
-        errorResponseSender.send(response, GlobalExceptionCode.INVALID_ROLE);
     }
 
     private boolean isStudentAccessible(String uri, String method) {
-        for (String path : STUDENT_PATHS) {
-            if (uri.contains(path)) return true;
+        if (GET.matches(method)) {
+            return uri.equals("/night-study/my") ||
+                   uri.equals("/night-study/ban/my") ||
+                   uri.equals("/night-study/project/my") ||
+                   uri.equals("/night-study/project/rooms") ||
+                   uri.contains("/night-study/students/");
         }
-        
-        return DELETE.matches(method) && !uri.contains("/night-study/ban");
+
+        if (POST.matches(method)) return uri.equals("/night-study") || uri.equals("/night-study/project");
+
+        if (DELETE.matches(method)) return !uri.contains("/night-study/ban");
+
+        return false;
     }
 }

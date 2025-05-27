@@ -8,4 +8,6 @@ public interface DormitoryManageMemberRepository extends JpaRepository<Dormitory
 
     boolean existsByMember(Member member);
 
+    void deleteByMember(Member member);
+
 }
