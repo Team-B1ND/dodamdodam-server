@@ -1,106 +1,73 @@
 package b1nd.dodam.restapi.auth.infrastructure.security.filter;
 
-import b1nd.dodam.core.exception.global.GlobalExceptionCode;
 import b1nd.dodam.domain.rds.member.entity.Member;
 import b1nd.dodam.domain.rds.member.enumeration.MemberRole;
+import b1nd.dodam.core.exception.global.GlobalExceptionCode;
+import b1nd.dodam.restapi.support.exception.ErrorResponseSender;
 import b1nd.dodam.domain.rds.member.repository.DormitoryManageMemberRepository;
 import b1nd.dodam.restapi.auth.infrastructure.security.support.MemberAuthenticationHolder;
-import b1nd.dodam.restapi.support.exception.ErrorResponseSender;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-
-import static org.springframework.http.HttpMethod.*;
 
 @Component
 @RequiredArgsConstructor
 public class DormitoryManageMemberFilter extends OncePerRequestFilter {
-    
-    private final DormitoryManageMemberRepository repository;
-    private final MemberAuthenticationHolder memberAuthenticationHolder;
+
     private final ErrorResponseSender errorResponseSender;
+    private final MemberAuthenticationHolder memberAuthenticationHolder;
+    private final DormitoryManageMemberRepository dormitoryManageMemberRepository;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-
-        final String uri = request.getRequestURI();
-        final String method = request.getMethod();
+        String uri = request.getRequestURI();
+        String method = request.getMethod();
 
         if (!uri.contains("night-study")) {
             filterChain.doFilter(request, response);
             return;
         }
 
-        if (isStudentAccessible(uri, method)) {
-            filterChain.doFilter(request, response);
-            return;
-        }
-
         try {
             Member member = memberAuthenticationHolder.current();
-            MemberRole role = member.getRole();
 
-            if (MemberRole.ADMIN.equals(role) || MemberRole.TEACHER.equals(role)) {
+            if (isPublicEndpoint(uri, method) ||
+                    isStudentAllowed(uri, method, member) ||
+                    hasNightStudyManageAccess(member)) {
                 filterChain.doFilter(request, response);
-                return;
+            } else {
+                errorResponseSender.send(response, GlobalExceptionCode.INVALID_ROLE);
             }
-
-            if (MemberRole.STUDENT.equals(role) && repository.existsByMember(member)) {
-                addTeacherAuthority();
-                filterChain.doFilter(request, response);
-                return;
-            }
-
-            errorResponseSender.send(response, GlobalExceptionCode.INVALID_ROLE);
         } catch (Exception e) {
             errorResponseSender.send(response, GlobalExceptionCode.TOKEN_NOT_PROVIDED);
         }
     }
 
-    private void addTeacherAuthority() {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-
-        if (auth != null) {
-            Collection<? extends GrantedAuthority> authorities = auth.getAuthorities();
-            List<GrantedAuthority> updatedAuthorities = new ArrayList<>(authorities);
-
-            SimpleGrantedAuthority teacherAuthority = new SimpleGrantedAuthority("ROLE_TEACHER");
-            if (!updatedAuthorities.contains(teacherAuthority)) updatedAuthorities.add(teacherAuthority);
-
-            Authentication newAuth = new UsernamePasswordAuthenticationToken(
-                auth.getPrincipal(), auth.getCredentials(), updatedAuthorities);
-
-            SecurityContextHolder.getContext().setAuthentication(newAuth);
-        }
+    private boolean isStudentAllowed(String uri, String method, Member member) {
+        if (member.getRole() != MemberRole.STUDENT) return false;
+        return switch (method) {
+            case "POST" -> uri.equals("/night-study") || uri.equals("/night-study/project");
+            case "DELETE" -> !uri.contains("/night-study/ban");
+            case "GET" -> uri.equals("/night-study/my") || uri.equals("/night-study/ban/my") || uri.equals("/night-study/project/my");
+            default -> false;
+        };
     }
 
-    private boolean isStudentAccessible(String uri, String method) {
-        if (GET.matches(method)) {
-            return uri.equals("/night-study/my") ||
-                   uri.equals("/night-study/ban/my") ||
-                   uri.equals("/night-study/project/my") ||
-                   uri.equals("/night-study/project/rooms") ||
-                   uri.contains("/night-study/students/");
-        }
+    private boolean isPublicEndpoint(String uri, String method) {
+        return "GET".equals(method) &&
+                (uri.equals("/night-study/project/rooms") || uri.contains("/night-study/students/"));
+    }
 
-        if (POST.matches(method)) return uri.equals("/night-study") || uri.equals("/night-study/project");
-
-        if (DELETE.matches(method)) return !uri.contains("/night-study/ban");
-
-        return false;
+    private boolean hasNightStudyManageAccess(Member member) {
+        MemberRole role = member.getRole();
+        return role == MemberRole.ADMIN ||
+                role == MemberRole.TEACHER ||
+                (role == MemberRole.STUDENT && dormitoryManageMemberRepository.existsByMember(member));
     }
 }

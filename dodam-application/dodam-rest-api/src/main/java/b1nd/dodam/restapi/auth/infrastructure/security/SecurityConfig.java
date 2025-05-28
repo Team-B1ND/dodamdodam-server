@@ -43,7 +43,7 @@ class SecurityConfig {
                 .csrf().disable()
                 .addFilterAfter(tokenFilter, UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(tokenExceptionFilter, TokenFilter.class)
-                .addFilterAfter(dormitoryManageMemberFilter, TokenFilter.class)
+                .addFilterAfter(dormitoryManageMemberFilter, AuthorizationFilter.class)
                 .addFilterAfter(broadcastMemberFilter, AuthorizationFilter.class)
 
                 .authorizeHttpRequests()
@@ -83,18 +83,6 @@ class SecurityConfig {
                 .requestMatchers(GET, "bus/qr-code/nonce").hasAnyRole(STUDENT)
                 .requestMatchers(POST, "/bus/qr-code/scan").permitAll()
                 .requestMatchers(GET, "/bus/{id}/seats").authenticated()
-
-                .requestMatchers(POST, "/night-study", "/night-study/project").hasRole(STUDENT)
-                .requestMatchers(DELETE, "/night-study/ban").hasAnyRole(TEACHER, ADMIN)
-                .requestMatchers(DELETE, "/night-study/**").hasRole(STUDENT)
-                .requestMatchers(GET,
-                        "/night-study/my",
-                        "/night-study/ban/my",
-                        "/night-study/project/my"
-                ).hasRole(STUDENT)
-                .requestMatchers(GET, "/night-study/project/rooms").hasAnyRole(ADMIN, TEACHER, STUDENT)
-                .requestMatchers(GET, "/night-study/students/**").hasAnyRole(ADMIN, TEACHER, STUDENT)
-                .requestMatchers("/night-study/**").hasAnyRole(TEACHER, ADMIN)
 
                 .requestMatchers(POST, "/out-going").hasRole(STUDENT)
                 .requestMatchers(DELETE, "/out-going/**").hasRole(STUDENT)
