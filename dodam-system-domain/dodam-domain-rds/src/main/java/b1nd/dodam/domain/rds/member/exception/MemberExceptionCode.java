@@ -14,10 +14,10 @@ public enum MemberExceptionCode implements ExceptionCode {
     PARENT_NOT_FOUND(404, "없는 부모님 정보"),
     TEACHER_NOT_FOUND(404, "없는 선생님"),
     BROADCAST_CLUB_MEMBER_NOT_FOUND(404, "없는 방송부원"),
-    DORMITORY_MANAGE_MEMBER_NOT_FOUND(404, "없는 자치의원"),
+    DORMITORY_MANAGE_MEMBER_NOT_FOUND(404, "없는 자치위원"),
     MEMBER_DUPLICATED(409, "이미 존재하는 멤버"),
     BROADCAST_CLUB_MEMBER_DUPLICATED(409, "이미 존재하는 방송부원"),
-    DORMITORY_MANAGE_MEMBER_DUPLICATED(409, "이미 존재하는 기숙사 자치의원"),
+    DORMITORY_MANAGE_MEMBER_DUPLICATED(409, "이미 존재하는 기숙사 자치위원"),
     CODE_NOT_FOUND(404, "없는 학생코드"),
     CHILD_DUPLICATED(409, "이미 존재하는 자녀")
     ;

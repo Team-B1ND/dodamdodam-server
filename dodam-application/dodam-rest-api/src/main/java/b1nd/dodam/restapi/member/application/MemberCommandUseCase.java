@@ -155,14 +155,14 @@ public class MemberCommandUseCase {
         Member member = memberRepository.getById(req.id());
         checkIfMemberIsAlreadyDormitoryManageMember(member);
         dormitoryManageMemberRepository.save(req.toEntity(member));
-        return Response.created("자치의원 등록 성공");
+        return Response.created("자치위원 등록 성공");
     }
 
     public Response removeDormitoryManageMember(ApplyDormitoryManageMemberReq req) {
         Member member = memberRepository.getById(req.id());
         checkIfMemberIsNotDormitoryManageMember(member);
         dormitoryManageMemberRepository.deleteByMember(req.toEntity(member).getMember());
-        return Response.ok("자치의원 삭제 성공");
+        return Response.ok("자치위원 삭제 성공");
     }
 
     private void checkIfMemberIsAlreadyDormitoryManageMember(Member member) {
