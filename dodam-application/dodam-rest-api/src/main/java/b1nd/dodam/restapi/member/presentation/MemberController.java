@@ -45,8 +45,13 @@ public class MemberController {
     }
 
     @PostMapping("/broadcast-club-member")
-    public Response apply(@RequestBody @Valid ApplyBroadcastClubMemberReq req) {
-        return commandUseCase.apply(req);
+    public Response applyBroadcastClubMember(@RequestBody @Valid ApplyBroadcastClubMemberReq req) {
+        return commandUseCase.applyBroadcastClubMember(req);
+    }
+
+    @PostMapping("/dormitory-manage-member")
+    public Response applyDormitoryManageMember(@RequestBody @Valid ApplyDormitoryManageMemberReq req) {
+        return commandUseCase.applyDormitoryManageMember(req);
     }
 
     @PostMapping("/auth-code/{type}")
@@ -70,6 +75,16 @@ public class MemberController {
     @DeleteMapping("/{id}")
     public Response delete(@PathVariable String id) {
         return commandUseCase.delete(id);
+    }
+
+    @DeleteMapping("/broadcast-club-member")
+    public Response removeBroadcastClubMember(@RequestBody @Valid ApplyBroadcastClubMemberReq req){
+        return commandUseCase.removeBroadcastClubMember(req);
+    }
+
+    @DeleteMapping("/dormitory-manage-member")
+    public Response removeDormitoryManageMember(@RequestBody @Valid ApplyDormitoryManageMemberReq req){
+        return commandUseCase.removeDormitoryManageMember(req);
     }
 
     @PatchMapping("/status/{id}")

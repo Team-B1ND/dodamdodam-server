@@ -8,9 +8,7 @@ import b1nd.dodam.domain.rds.member.entity.Teacher;
 import b1nd.dodam.domain.rds.member.enumeration.ActiveStatus;
 import b1nd.dodam.domain.rds.member.event.ParentRegisteredEvent;
 import b1nd.dodam.domain.rds.member.event.StudentRegisteredEvent;
-import b1nd.dodam.domain.rds.member.exception.BroadcastClubMemberDuplicatedException;
-import b1nd.dodam.domain.rds.member.exception.MemberDuplicatedException;
-import b1nd.dodam.domain.rds.member.exception.ParentNotFoundException;
+import b1nd.dodam.domain.rds.member.exception.*;
 import b1nd.dodam.domain.rds.member.repository.*;
 import b1nd.dodam.domain.rds.member.service.MemberService;
 import b1nd.dodam.domain.rds.member.service.support.MemberMessageUtil;
@@ -44,6 +42,7 @@ public class MemberCommandUseCase {
     private final ParentRepository parentRepository;
     private final StudentRelationRepository studentRelationRepository;
     private final BroadcastClubMemberRepository broadcastClubMemberRepository;
+    private final DormitoryManageMemberRepository dormitoryManageMemberRepository;
     private final MemberAuthenticationHolder memberAuthenticationHolder;
     private final ApplicationEventPublisher eventPublisher;
     private final SMTPClient smtpClient;
@@ -117,7 +116,7 @@ public class MemberCommandUseCase {
     }
 
     private void checkIfIdIsDuplicate(String id) {
-        if(memberRepository.existsById(id)) {
+        if (memberRepository.existsById(id)) {
             throw new MemberDuplicatedException();
         }
     }
@@ -126,16 +125,55 @@ public class MemberCommandUseCase {
         return Sha512PasswordEncoder.encode(rawPw);
     }
 
-    public Response apply(ApplyBroadcastClubMemberReq req) {
+    public Response applyBroadcastClubMember(ApplyBroadcastClubMemberReq req) {
         Member member = memberRepository.getById(req.id());
         checkIfMemberIsAlreadyBroadcastClubMember(member);
         broadcastClubMemberRepository.save(req.toEntity(member));
         return Response.created("방송부원 등록 성공");
     }
 
+    public Response removeBroadcastClubMember(ApplyBroadcastClubMemberReq req) {
+        Member member = memberRepository.getById(req.id());
+        checkIfMemberIsNotBroadcastClubMember(member);
+        broadcastClubMemberRepository.deleteByMember(req.toEntity(member).getMember());
+        return Response.ok("방송부원 삭제 성공");
+    }
+
     private void checkIfMemberIsAlreadyBroadcastClubMember(Member member) {
-        if(broadcastClubMemberRepository.existsByMember(member)) {
+        if (broadcastClubMemberRepository.existsByMember(member)) {
             throw new BroadcastClubMemberDuplicatedException();
+        }
+    }
+
+    private void checkIfMemberIsNotBroadcastClubMember(Member member) {
+        if (!broadcastClubMemberRepository.existsByMember(member)) {
+            throw new BroadcastClubMemberNotFoundException();
+        }
+    }
+
+    public Response applyDormitoryManageMember(ApplyDormitoryManageMemberReq req) {
+        Member member = memberRepository.getById(req.id());
+        checkIfMemberIsAlreadyDormitoryManageMember(member);
+        dormitoryManageMemberRepository.save(req.toEntity(member));
+        return Response.created("자치위원 등록 성공");
+    }
+
+    public Response removeDormitoryManageMember(ApplyDormitoryManageMemberReq req) {
+        Member member = memberRepository.getById(req.id());
+        checkIfMemberIsNotDormitoryManageMember(member);
+        dormitoryManageMemberRepository.deleteByMember(req.toEntity(member).getMember());
+        return Response.ok("자치위원 삭제 성공");
+    }
+
+    private void checkIfMemberIsAlreadyDormitoryManageMember(Member member) {
+        if (dormitoryManageMemberRepository.existsByMember(member)) {
+            throw new DormitoryManageMemberDuplicatedException();
+        }
+    }
+
+    private void checkIfMemberIsNotDormitoryManageMember(Member member) {
+        if (!dormitoryManageMemberRepository.existsByMember(member)) {
+            throw new DormitoryManageMemberNotFoundExcpetion();
         }
     }
 

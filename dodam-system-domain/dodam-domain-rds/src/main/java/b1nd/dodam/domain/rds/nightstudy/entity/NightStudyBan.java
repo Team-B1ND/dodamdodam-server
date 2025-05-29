@@ -1,6 +1,8 @@
 package b1nd.dodam.domain.rds.nightstudy.entity;
 
 import java.time.LocalDate;
+
+import b1nd.dodam.domain.rds.support.entity.BaseEntity;
 import lombok.Getter;
 import lombok.Builder;
 import lombok.AccessLevel;
@@ -13,7 +15,7 @@ import b1nd.dodam.domain.rds.member.entity.Student;
 @Entity(name = "night_study_ban")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class NightStudyBan {
+public class NightStudyBan extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

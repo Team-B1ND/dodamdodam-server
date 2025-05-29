@@ -89,6 +89,11 @@ public class NightStudyController {
         return useCase.getValid();
     }
 
+    @GetMapping("/all")
+    public ResponseData<List<NightStudyRes>> getAllValid() {
+        return useCase.getAll();
+    }
+
     @GetMapping("/my")
     public ResponseData<List<NightStudyRes>> getMy() {
         return useCase.getMy();

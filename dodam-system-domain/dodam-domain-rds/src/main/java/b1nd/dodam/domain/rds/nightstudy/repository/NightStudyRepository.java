@@ -2,8 +2,6 @@ package b1nd.dodam.domain.rds.nightstudy.repository;
 
 import b1nd.dodam.domain.rds.member.entity.Student;
 import b1nd.dodam.domain.rds.nightstudy.entity.NightStudy;
-import b1nd.dodam.domain.rds.nightstudy.entity.NightStudyProject;
-import b1nd.dodam.domain.rds.nightstudy.enumeration.NightStudyProjectType;
 import b1nd.dodam.domain.rds.support.enumeration.ApprovalStatus;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -33,8 +31,20 @@ public interface NightStudyRepository extends JpaRepository<NightStudy, Long> {
                                               @Param("status") ApprovalStatus status,
                                               Pageable pageable);
 
+    @Query("SELECT COUNT(n) > 0 FROM NightStudy n " +
+            "WHERE n.student IN :students AND " +
+            "n.status IN ('ALLOWED', 'PENDING') AND " +
+            "n.endAt >= :now")
+    boolean existsActiveNightStudy(@Param("students") List<Student> students,
+                                   @Param("now") LocalDate now);
+
     @EntityGraph(attributePaths = {"student.member"})
     List<NightStudy> findByStudentAndEndAtGreaterThanEqual(Student student, LocalDate now);
+
+    @Query("select n from NightStudy n join fetch n.student s join fetch n.student.member " +
+            "where n.endAt >= :now and n.startAt <= :now " +
+            "order by s.grade, s.room, s.number")
+    List<NightStudy> findAllByDate(@Param("now") LocalDate now);
 
     @EntityGraph(attributePaths = {"student.member"})
     List<NightStudy> findByStatus(ApprovalStatus status);

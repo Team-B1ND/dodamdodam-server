@@ -1,5 +1,6 @@
 package b1nd.dodam.domain.rds.nightstudy.service;
 
+import b1nd.dodam.core.util.ZonedDateTimeUtil;
 import b1nd.dodam.domain.rds.member.entity.Student;
 import b1nd.dodam.domain.rds.nightstudy.entity.NightStudy;
 import b1nd.dodam.domain.rds.nightstudy.exception.NightStudyDuplicateException;
@@ -33,6 +34,15 @@ public class NightStudyService {
 
     public void validateDurationDuplication(Student student, LocalDate startAt, LocalDate endAt) {
         if (repository.existsValidByStudentAndDate(student, startAt, endAt)) throw new NightStudyDuplicateException();
+    }
+
+    public void validateNoActiveNightStudies(List<Student> students) {
+        LocalDate now = ZonedDateTimeUtil.nowToLocalDate();
+        if (repository.existsActiveNightStudy(students, now)) throw new NightStudyDuplicateException();
+    }
+
+    public List<NightStudy> getAll(LocalDate now) {
+        return repository.findAllByDate(now);
     }
 
     public List<NightStudy> getMy(Student student, LocalDate now) {
