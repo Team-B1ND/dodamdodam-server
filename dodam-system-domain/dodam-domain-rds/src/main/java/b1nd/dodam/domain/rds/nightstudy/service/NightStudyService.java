@@ -41,6 +41,10 @@ public class NightStudyService {
         if (repository.existsActiveNightStudy(students, now)) throw new NightStudyDuplicateException();
     }
 
+    public List<NightStudy> getAll(LocalDate now) {
+        return repository.findAllByDate(now);
+    }
+
     public List<NightStudy> getMy(Student student, LocalDate now) {
         return repository.findByStudentAndEndAtGreaterThanEqual(student, now);
     }

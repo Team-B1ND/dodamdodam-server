@@ -188,6 +188,14 @@ public class NightStudyUseCase {
     }
 
     @Transactional(readOnly = true)
+    public ResponseData<List<NightStudyRes>> getAll() {
+        Student student = studentRepository.getByMember(memberAuthenticationHolder.current());
+        LocalDate now = ZonedDateTimeUtil.nowToLocalDate();
+        List<NightStudyRes> result = NightStudyRes.of(nightStudyService.getAll(now));
+        return ResponseData.ok("모든 심야자습 조회 성공", result);
+    }
+
+    @Transactional(readOnly = true)
     public ResponseData<List<NightStudyRes>> getMy() {
         Student student = studentRepository.getByMember(memberAuthenticationHolder.current());
         LocalDate now = ZonedDateTimeUtil.nowToLocalDate();
