@@ -2,8 +2,6 @@ package b1nd.dodam.domain.rds.nightstudy.repository;
 
 import b1nd.dodam.domain.rds.member.entity.Student;
 import b1nd.dodam.domain.rds.nightstudy.entity.NightStudy;
-import b1nd.dodam.domain.rds.nightstudy.entity.NightStudyProject;
-import b1nd.dodam.domain.rds.nightstudy.enumeration.NightStudyProjectType;
 import b1nd.dodam.domain.rds.support.enumeration.ApprovalStatus;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
