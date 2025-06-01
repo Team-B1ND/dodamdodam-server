@@ -8,10 +8,11 @@ import jakarta.validation.constraints.Size;
 
 import java.time.LocalDate;
 
-public record ApplyNightStudyReq(@NotNull @Size(min = 10, max = 250) String content,
-                                 @NotNull NightStudyType type,
-                                 @NotNull Boolean doNeedPhone, String reasonForPhone,
-                                 @NotNull LocalDate startAt, @NotNull LocalDate endAt) {
+public record ApplyNightStudyReq(
+        @NotNull @Size(min = 10, max = 250) String content,
+        @NotNull NightStudyType type,
+        @NotNull Boolean doNeedPhone, String reasonForPhone,
+        @NotNull LocalDate startAt, @NotNull LocalDate endAt) {
     public NightStudy toEntity(Student student) {
         return NightStudy.builder()
                 .content(content)
