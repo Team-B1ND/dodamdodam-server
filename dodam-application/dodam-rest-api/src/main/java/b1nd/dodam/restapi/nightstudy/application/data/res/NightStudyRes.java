@@ -9,16 +9,17 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
-public record NightStudyRes(Long id,
-                            String content,
-                            NightStudyType type,
-                            ApprovalStatus status,
-                            Boolean doNeedPhone,
-                            String reasonForPhone,
-                            StudentRes student,
-                            String rejectReason,
-                            LocalDate startAt, LocalDate endAt,
-                            LocalDateTime createdAt, LocalDateTime modifiedAt) {
+public record NightStudyRes(
+        Long id,
+        String content,
+        NightStudyType type,
+        ApprovalStatus status,
+        Boolean doNeedPhone,
+        String reasonForPhone,
+        StudentRes student,
+        String rejectReason,
+        LocalDate startAt, LocalDate endAt,
+        LocalDateTime createdAt, LocalDateTime modifiedAt) {
     public static List<NightStudyRes> of(List<NightStudy> nightStudies) {
         return nightStudies.parallelStream()
                 .map(NightStudyRes::of)
