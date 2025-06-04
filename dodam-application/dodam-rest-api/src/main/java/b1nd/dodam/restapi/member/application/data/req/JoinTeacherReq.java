@@ -4,11 +4,12 @@ import b1nd.dodam.domain.rds.member.entity.Member;
 import b1nd.dodam.domain.rds.member.entity.Teacher;
 import b1nd.dodam.domain.rds.member.enumeration.ActiveStatus;
 import b1nd.dodam.domain.rds.member.enumeration.MemberRole;
+import b1nd.dodam.restapi.support.validation.Phone;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
 
 public record JoinTeacherReq(@NotEmpty String id, @NotEmpty String pw, @NotEmpty String name, @NotEmpty @Email String email,
-                             @NotEmpty String phone, @NotEmpty String tel, @NotEmpty String position) {
+                             @NotEmpty @Phone String phone, @NotEmpty String tel, @NotEmpty String position) {
     public Teacher mapToTeacher(Member member) {
         return Teacher.builder()
                 .member(member)

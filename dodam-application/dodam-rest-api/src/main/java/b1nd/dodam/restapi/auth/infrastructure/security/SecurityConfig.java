@@ -1,10 +1,7 @@
 package b1nd.dodam.restapi.auth.infrastructure.security;
 
 import b1nd.dodam.core.exception.global.GlobalExceptionCode;
-import b1nd.dodam.restapi.auth.infrastructure.security.filter.BroadcastMemberFilter;
-import b1nd.dodam.restapi.auth.infrastructure.security.filter.DivisionPermissionInterceptor;
-import b1nd.dodam.restapi.auth.infrastructure.security.filter.TokenExceptionFilter;
-import b1nd.dodam.restapi.auth.infrastructure.security.filter.TokenFilter;
+import b1nd.dodam.restapi.auth.infrastructure.security.filter.*;
 import b1nd.dodam.restapi.support.exception.ErrorResponseSender;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -33,7 +30,7 @@ class SecurityConfig {
     private final TokenFilter tokenFilter;
     private final TokenExceptionFilter tokenExceptionFilter;
     private final BroadcastMemberFilter broadcastMemberFilter;
-    private final DivisionPermissionInterceptor divisionPermissionFilter;
+    private final DormitoryManageMemberFilter dormitoryManageMemberFilter;
     private final ErrorResponseSender errorResponseSender;
 
     @Bean
@@ -46,6 +43,7 @@ class SecurityConfig {
                 .csrf().disable()
                 .addFilterAfter(tokenFilter, UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(tokenExceptionFilter, TokenFilter.class)
+                .addFilterAfter(dormitoryManageMemberFilter, AuthorizationFilter.class)
                 .addFilterAfter(broadcastMemberFilter, AuthorizationFilter.class)
 
                 .authorizeHttpRequests()
@@ -54,7 +52,8 @@ class SecurityConfig {
                 
                 .requestMatchers(POST, "/auth/**").permitAll()
 
-                .requestMatchers(POST, "/member/broadcast-club-member").hasRole(ADMIN)
+                .requestMatchers("/member/broadcast-club-member").hasRole(ADMIN)
+                .requestMatchers("/member/dormitory-manage-member").hasRole(ADMIN)
                 .requestMatchers(POST, "/member/relation").hasAnyRole(PARENT)
                 .requestMatchers(POST, "/member/**").permitAll()
                 .requestMatchers(GET, "/member/my").authenticated()
@@ -84,18 +83,6 @@ class SecurityConfig {
                 .requestMatchers(GET, "bus/qr-code/nonce").hasAnyRole(STUDENT)
                 .requestMatchers(POST, "/bus/qr-code/scan").permitAll()
                 .requestMatchers(GET, "/bus/{id}/seats").authenticated()
-
-                .requestMatchers(POST, "/night-study", "/night-study/project").hasRole(STUDENT)
-                .requestMatchers(DELETE, "/night-study/ban").hasAnyRole(TEACHER, ADMIN)
-                .requestMatchers(DELETE, "/night-study/**").hasRole(STUDENT)
-                .requestMatchers(GET,
-                        "/night-study/my",
-                        "/night-study/ban/my",
-                        "/night-study/project/my"
-                ).hasRole(STUDENT)
-                .requestMatchers(GET, "/night-study/project/rooms").hasAnyRole(ADMIN, TEACHER, STUDENT)
-                .requestMatchers(GET, "/night-study/students/**").hasAnyRole(ADMIN, TEACHER, STUDENT)
-                .requestMatchers("/night-study/**").hasAnyRole(TEACHER, ADMIN)
 
                 .requestMatchers(POST, "/out-going").hasRole(STUDENT)
                 .requestMatchers(DELETE, "/out-going/**").hasRole(STUDENT)
@@ -166,5 +153,4 @@ class SecurityConfig {
 
         return source;
     }
-
 }

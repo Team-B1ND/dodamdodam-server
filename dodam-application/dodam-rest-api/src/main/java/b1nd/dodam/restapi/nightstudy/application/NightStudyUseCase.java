@@ -79,6 +79,7 @@ public class NightStudyUseCase {
         List<Student> participants = Stream.concat(Stream.of(leader), students.stream()).toList();
         nightStudyBanService.validateMultipleBans(participants);
         nightStudyProjectMemberService.validateMultipleDurationDuplication(participants, req.startAt(), req.endAt(), req.type());
+        if (req.type() == NightStudyProjectType.NIGHT_STUDY_PROJECT_2) nightStudyService.validateNoActiveNightStudies(participants);
     }
 
     private List<NightStudyProjectMember> getProjectMembers(Student leader, List<Student> students, NightStudyProject project) {
@@ -184,6 +185,14 @@ public class NightStudyUseCase {
     public ResponseData<List<NightStudyBanRes>> getAllActiveBans() {
         List<NightStudyBanRes> result = NightStudyBanRes.of(nightStudyBanService.getAllActiveBans());
         return ResponseData.ok("유효한 심야자습 정지 학생 조회 성공", result);
+    }
+
+    @Transactional(readOnly = true)
+    public ResponseData<List<NightStudyRes>> getAll() {
+        Student student = studentRepository.getByMember(memberAuthenticationHolder.current());
+        LocalDate now = ZonedDateTimeUtil.nowToLocalDate();
+        List<NightStudyRes> result = NightStudyRes.of(nightStudyService.getAll(now));
+        return ResponseData.ok("모든 심야자습 조회 성공", result);
     }
 
     @Transactional(readOnly = true)

@@ -31,7 +31,7 @@ public class BroadcastMemberFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         final String uri = request.getRequestURI();
 
-        if(isWakeupSongEndpoint(uri)) {
+        if (isWakeupSongEndpoint(uri)) {
             final String method = request.getMethod();
             final Member member;
 
@@ -52,12 +52,12 @@ public class BroadcastMemberFilter extends OncePerRequestFilter {
                     return ;
                 }
 
-                if(isTeacher(member.getRole())) {
+                if (isTeacher(member.getRole())) {
                     errorResponseSender.send(response, GlobalExceptionCode.INVALID_ROLE);
                     return ;
                 }
 
-                if(isNotBroadcastClubMemberAndAdmin(member)) {
+                if (isNotBroadcastClubMemberAndAdmin(member)) {
                     errorResponseSender.send(response, GlobalExceptionCode.INVALID_ROLE);
                     return ;
                 }
