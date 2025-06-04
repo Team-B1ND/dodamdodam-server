@@ -12,7 +12,7 @@ public enum MemberExceptionCode implements ExceptionCode {
     MEMBER_NOT_FOUND(404, "없는 멤버"),
     STUDENT_NOT_FOUND(404, "없는 학생"),
     PARENT_NOT_FOUND(404, "없는 부모님 정보"),
-    TEACHER_NOT_FOUND(404, "없는 선생님"),
+    TEACHER_NOT_FOUND(404, "없는 교사"),
     BROADCAST_CLUB_MEMBER_NOT_FOUND(404, "없는 방송부원"),
     DORMITORY_MANAGE_MEMBER_NOT_FOUND(404, "없는 자치위원"),
     MEMBER_DUPLICATED(409, "이미 존재하는 멤버"),

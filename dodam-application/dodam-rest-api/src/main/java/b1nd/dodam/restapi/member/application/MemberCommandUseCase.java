@@ -65,7 +65,7 @@ public class MemberCommandUseCase {
         memberAuthRedisService.validateUserAuth(userAgent, false);
         Member member = memberRepository.save(req.mapToMember(encodePw(req.pw())));
         teacherRepository.save(req.mapToTeacher(member));
-        return Response.created("선생님 회원가입 성공");
+        return Response.created("교사 회원가입 성공");
     }
 
     public Response join(String userAgent, JoinParentReq req) {
@@ -242,7 +242,7 @@ public class MemberCommandUseCase {
         Member member = memberRepository.getById(id);
         Teacher teacher = teacherRepository.getByMember(member);
         teacher.updateInfo(req.tel(), req.position());
-        return Response.noContent("선생 정보 수정 성공");
+        return Response.noContent("교사 정보 수정 성공");
     }
 
 }

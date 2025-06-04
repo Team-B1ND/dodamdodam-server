@@ -108,7 +108,7 @@ public class MemberController {
     }
 
     @PatchMapping("/info")
-    public Response updateMemberInfo(@RequestBody UpdateMemberInfoReq req) {
+    public Response updateMemberInfo(@RequestBody @Valid UpdateMemberInfoReq req) {
         return commandUseCase.updateMemberInfo(req);
     }
 
@@ -118,7 +118,7 @@ public class MemberController {
     }
 
     @PatchMapping("/teacher/info/{id}")
-    public Response updateTeacherForAdmin(@PathVariable String id, @RequestBody UpdateTeacherForAdminReq req){
+    public Response updateTeacherForAdmin(@PathVariable String id, @RequestBody @Valid UpdateTeacherForAdminReq req){
         return commandUseCase.updateTeacherForAdmin(id, req);
     }
 
