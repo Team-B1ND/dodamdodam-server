@@ -79,6 +79,7 @@ public class NightStudyUseCase {
         List<Student> participants = Stream.concat(Stream.of(leader), students.stream()).toList();
         nightStudyBanService.validateMultipleBans(participants);
         nightStudyProjectMemberService.validateMultipleDurationDuplication(participants, req.startAt(), req.endAt(), req.type());
+        if (req.type() == NightStudyProjectType.NIGHT_STUDY_PROJECT_2) nightStudyService.validateNoActiveNightStudies(participants);
     }
 
     private List<NightStudyProjectMember> getProjectMembers(Student leader, List<Student> students, NightStudyProject project) {

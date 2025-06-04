@@ -1,6 +1,5 @@
 package b1nd.dodam.domain.rds.nightstudy.service;
 
-import b1nd.dodam.domain.rds.member.entity.Student;
 import b1nd.dodam.domain.rds.nightstudy.entity.NightStudyProject;
 import b1nd.dodam.domain.rds.nightstudy.exception.NightStudyNotFoundException;
 import b1nd.dodam.domain.rds.nightstudy.repository.NightStudyProjectRepository;
@@ -43,6 +42,6 @@ public class NightStudyProjectService {
     }
 
     public List<NightStudyProject> getAllRoomsWithProjects(LocalDate date) {
-       return repository.findByStatusAndStartAtLessThanEqualAndEndAtGreaterThanEqualOrderByRoom(ApprovalStatus.ALLOWED, date, date);
+       return repository.findByStatusNotAndStartAtLessThanEqualAndEndAtGreaterThanEqualOrderByRoom(ApprovalStatus.REJECTED, date, date);
     }
 }

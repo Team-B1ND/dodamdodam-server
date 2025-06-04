@@ -31,6 +31,13 @@ public interface NightStudyRepository extends JpaRepository<NightStudy, Long> {
                                               @Param("status") ApprovalStatus status,
                                               Pageable pageable);
 
+    @Query("SELECT COUNT(n) > 0 FROM NightStudy n " +
+            "WHERE n.student IN :students AND " +
+            "n.status IN ('ALLOWED', 'PENDING') AND " +
+            "n.endAt >= :now")
+    boolean existsActiveNightStudy(@Param("students") List<Student> students,
+                                   @Param("now") LocalDate now);
+
     @EntityGraph(attributePaths = {"student.member"})
     List<NightStudy> findByStudentAndEndAtGreaterThanEqual(Student student, LocalDate now);
 
