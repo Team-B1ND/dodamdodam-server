@@ -5,6 +5,7 @@ import b1nd.dodam.domain.rds.member.entity.Teacher;
 import b1nd.dodam.domain.rds.nightstudy.enumeration.NightStudyProjectRoom;
 import b1nd.dodam.domain.rds.nightstudy.enumeration.NightStudyProjectType;
 import b1nd.dodam.domain.rds.support.enumeration.ApprovalStatus;
+import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
@@ -32,13 +33,14 @@ public class NightStudyProject {
     @NotNull
     private String description;
 
+    private String rejectReason;
+
     @NotNull
     private LocalDate startAt;
 
     @NotNull
     private LocalDate endAt;
 
-    @NotNull
     @Enumerated(EnumType.STRING)
     private NightStudyProjectRoom room;
 
@@ -51,15 +53,26 @@ public class NightStudyProject {
     private Teacher teacher;
 
     @Builder
-    public NightStudyProject(NightStudyProjectType type, String name, String description, LocalDate startAt, LocalDate endAt, NightStudyProjectRoom room, Teacher teacher) {
+    public NightStudyProject(NightStudyProjectType type, String name, String description, LocalDate startAt, LocalDate endAt, Teacher teacher) {
         this.type = type;
         this.name = name;
         this.description = description;
         this.startAt = startAt;
         this.endAt = endAt;
-        this.room = room;
         this.status = ApprovalStatus.PENDING;
         this.teacher = teacher;
+    }
+
+    public void reject(Teacher teacher, String rejectReason) {
+        this.teacher = teacher;
+        this.rejectReason = rejectReason;
+        this.status = ApprovalStatus.REJECTED;
+    }
+
+    public void modifyStatus(Teacher teacher, NightStudyProjectRoom room) {
+        this.teacher = teacher;
+        this.room = room;
+        this.status = ApprovalStatus.ALLOWED;
     }
 
     public void modifyStatus(Teacher teacher, ApprovalStatus status) {

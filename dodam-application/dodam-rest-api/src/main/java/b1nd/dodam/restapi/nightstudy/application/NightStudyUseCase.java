@@ -12,6 +12,7 @@ import b1nd.dodam.domain.rds.nightstudy.entity.NightStudyBan;
 import b1nd.dodam.domain.rds.nightstudy.entity.NightStudyProject;
 import b1nd.dodam.domain.rds.nightstudy.entity.NightStudyProjectMember;
 import b1nd.dodam.domain.rds.nightstudy.enumeration.NightStudyProjectMemberRole;
+import b1nd.dodam.domain.rds.nightstudy.enumeration.NightStudyProjectRoom;
 import b1nd.dodam.domain.rds.nightstudy.enumeration.NightStudyProjectType;
 import b1nd.dodam.domain.rds.nightstudy.exception.NotNightStudyApplicantException;
 import b1nd.dodam.domain.rds.nightstudy.service.NightStudyBanService;
@@ -77,7 +78,6 @@ public class NightStudyUseCase {
     private void checkLeaderAndStudentsDuplicatedOrBanned(Student leader, List<Student> students, ApplyNightStudyProjectReq req) {
         List<Student> participants = Stream.concat(Stream.of(leader), students.stream()).toList();
         nightStudyBanService.validateMultipleBans(participants);
-        nightStudyProjectMemberService.validateRoomDuplication(req.startAt(), req.endAt(), req.type(), Collections.singletonList(req.room()));
         nightStudyProjectMemberService.validateMultipleDurationDuplication(participants, req.startAt(), req.endAt(), req.type());
         if (req.type() == NightStudyProjectType.NIGHT_STUDY_PROJECT_2) nightStudyService.validateNoActiveNightStudies(participants);
     }
@@ -138,25 +138,25 @@ public class NightStudyUseCase {
         nightStudy.modifyStatus(teacher, status, rejectReason);
     }
 
-    public Response allowProject(Long id) {
-        modifyProjectStatus(id, ApprovalStatus.ALLOWED);
+    public Response allowProject(Long id, NightStudyProjectRoom room) {
+        NightStudyProject project = nightStudyProjectService.getById(id);
+        Teacher teacher = teacherRepository.getByMember(memberAuthenticationHolder.current());
+        project.modifyStatus(teacher, room);
         return Response.noContent("프로젝트 심야자습 승인 성공");
     }
 
-    public Response rejectProject(Long id) {
-        modifyProjectStatus(id, ApprovalStatus.REJECTED);
+    public Response rejectProject(Long id, RejectNightStudyReq req) {
+        NightStudyProject project = nightStudyProjectService.getById(id);
+        Teacher teacher = teacherRepository.getByMember(memberAuthenticationHolder.current());
+        project.reject(teacher, req.rejectReason());
         return Response.noContent("프로젝트 심야자습 거절 성공");
     }
 
     public Response revertProject(Long id) {
-        modifyProjectStatus(id, ApprovalStatus.PENDING);
-        return Response.noContent("프로젝트 심야자습 대기 성공");
-    }
-
-    private void modifyProjectStatus(Long projectId, ApprovalStatus status) {
-        NightStudyProject project = nightStudyProjectService.getById(projectId);
+        NightStudyProject project = nightStudyProjectService.getById(id);
         Teacher teacher = teacherRepository.getByMember(memberAuthenticationHolder.current());
-        project.modifyStatus(teacher, status);
+        project.modifyStatus(teacher, ApprovalStatus.PENDING);
+        return Response.noContent("프로젝트 심야자습 대기 성공");
     }
 
     public Response applyBan(BanNightStudyReq req) {
