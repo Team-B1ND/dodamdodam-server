@@ -29,14 +29,6 @@ public class NightStudyProjectService {
                 .orElseThrow(NightStudyNotFoundException::new);
     }
 
-    public List<NightStudyProject> getPendingProjects(LocalDate date) {
-        return repository.findByStatusAndEndAtGreaterThanEqual(ApprovalStatus.PENDING, date);
-    }
-
-    public List<NightStudyProject> getAllowedProjects(LocalDate date) {
-        return repository.findByStatusAndStartAtLessThanEqualAndEndAtGreaterThanEqual(ApprovalStatus.ALLOWED, date, date);
-    }
-
     public List<NightStudyProject> getAllByDateRange(LocalDate date) {
     return repository.findByStartAtLessThanEqualAndEndAtGreaterThanEqual(date, date);
     }

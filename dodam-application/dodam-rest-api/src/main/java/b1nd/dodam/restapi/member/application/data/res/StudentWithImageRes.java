@@ -11,7 +11,7 @@ public record StudentWithImageRes(
         String profileImage
 ) {
     public static StudentWithImageRes of(Student student) {
-        if(student == null) {
+        if (student == null) {
             return null;
         }
         return new StudentWithImageRes(

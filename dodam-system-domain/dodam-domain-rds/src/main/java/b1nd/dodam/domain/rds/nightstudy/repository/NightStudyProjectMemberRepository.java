@@ -3,7 +3,6 @@ package b1nd.dodam.domain.rds.nightstudy.repository;
 import b1nd.dodam.domain.rds.member.entity.Student;
 import b1nd.dodam.domain.rds.nightstudy.entity.NightStudyProject;
 import b1nd.dodam.domain.rds.nightstudy.entity.NightStudyProjectMember;
-import b1nd.dodam.domain.rds.nightstudy.enumeration.NightStudyProjectRoom;
 import b1nd.dodam.domain.rds.nightstudy.enumeration.NightStudyProjectType;
 import b1nd.dodam.domain.rds.support.enumeration.ApprovalStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -45,13 +44,21 @@ public interface NightStudyProjectMemberRepository extends JpaRepository<NightSt
     @Query("""
     select m from NightStudyProjectMember m
     join m.project p
-    where p.status = :status and
+    where p.status = 'ALLOWED' and
         :today between p.startAt and p.endAt and
         p.type = :type
 """)
-    List<NightStudyProjectMember> findMembersByStatusAndEndDateAfterAndType(
-            @Param("status") ApprovalStatus status,
+    List<NightStudyProjectMember> findAllowedProjectMembers(
             @Param("today") LocalDate today,
             @Param("type") NightStudyProjectType type
     );
+
+    @Query("""
+        SELECT m FROM NightStudyProjectMember m
+        JOIN FETCH m.project p
+        JOIN FETCH m.student s
+        WHERE p.status = :status AND p.endAt >= :date
+        ORDER BY p.id, m.role DESC
+    """)
+    List<NightStudyProjectMember> findMemberWithProjectByStatus(@Param("status") ApprovalStatus status, @Param("date") LocalDate date);
 }
