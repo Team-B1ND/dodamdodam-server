@@ -56,7 +56,7 @@ public interface NightStudyProjectMemberRepository extends JpaRepository<NightSt
         JOIN FETCH m.project p
         JOIN FETCH m.student s
         WHERE p.status = :status AND p.endAt >= :date
-        ORDER BY p.id, m.role DESC
+        ORDER BY p.id, m.role
     """)
     List<NightStudyProjectMember> findMemberWithProjectByStatus(@Param("status") ApprovalStatus status, @Param("date") LocalDate date);
 }

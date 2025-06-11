@@ -13,8 +13,6 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -46,19 +44,11 @@ public class NightStudyProjectMemberService {
         if (repository.existsValidByStudentAndDate(students, startAt, endAt, type)) throw new NightStudyDuplicateException();
     }
 
-    public List<NightStudyProjectMember> getPendingProjectMembers(LocalDate date) {
-        return repository.findMemberWithProjectByStatus(ApprovalStatus.PENDING, date);
-    }
-
     public List<NightStudyProjectMember> getAllowedProjectMembers(LocalDate date) {
         return repository.findMemberWithProjectByStatus(ApprovalStatus.ALLOWED, date);
     }
 
-    public Map<NightStudyProject, List<Student>> groupMembersByProject(List<NightStudyProjectMember> members) {
-        return members.stream()
-                .collect(Collectors.groupingBy(
-                        NightStudyProjectMember::getProject,
-                        Collectors.mapping(NightStudyProjectMember::getStudent, Collectors.toList())
-                ));
+    public List<NightStudyProjectMember> getPendingProjectMembers(LocalDate date) {
+        return repository.findMemberWithProjectByStatus(ApprovalStatus.PENDING, date);
     }
 }

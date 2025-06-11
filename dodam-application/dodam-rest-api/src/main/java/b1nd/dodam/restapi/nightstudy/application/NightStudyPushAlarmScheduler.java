@@ -2,7 +2,6 @@ package b1nd.dodam.restapi.nightstudy.application;
 
 import b1nd.dodam.domain.rds.nightstudy.entity.NightStudy;
 import b1nd.dodam.domain.rds.nightstudy.service.NightStudyService;
-import b1nd.dodam.firebase.client.FCMClient;
 import b1nd.dodam.process.listener.pushalarm.FcmEvent;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;

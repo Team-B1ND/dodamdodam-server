@@ -4,7 +4,6 @@ import b1nd.dodam.core.util.ZonedDateTimeUtil;
 import b1nd.dodam.domain.rds.bus.entity.Bus;
 import b1nd.dodam.domain.rds.bus.entity.BusApplication;
 import b1nd.dodam.domain.rds.bus.entity.BusTime;
-import b1nd.dodam.domain.rds.bus.entity.BusTimeToBus;
 import b1nd.dodam.domain.rds.bus.enumeration.BusApplicationStatus;
 import b1nd.dodam.domain.rds.bus.exception.BusAlreadyAppliedException;
 import b1nd.dodam.domain.rds.bus.repository.BusApplicationRepository;
@@ -22,7 +21,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 
 @Component
 @Transactional(readOnly = true)
