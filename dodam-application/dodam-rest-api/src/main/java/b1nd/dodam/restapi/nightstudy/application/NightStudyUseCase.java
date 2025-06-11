@@ -68,7 +68,7 @@ public class NightStudyUseCase {
 
     public Response applyProject(ApplyNightStudyProjectReq req) {
         Student leader = studentRepository.getByMember(memberAuthenticationHolder.current());
-        List<Student> students = studentRepository.findAllById(req.students());
+        List<Student> students = studentRepository.getByIds(req.students());
         checkLeaderAndStudentsDuplicatedOrBanned(leader, students, req);
         NightStudyProject project = nightStudyProjectService.save(req.toEntity());
         nightStudyProjectMemberService.saveAll(getProjectMembers(leader, students, project));
