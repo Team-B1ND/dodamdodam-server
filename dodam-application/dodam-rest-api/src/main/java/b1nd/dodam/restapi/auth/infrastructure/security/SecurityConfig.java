@@ -58,6 +58,7 @@ class SecurityConfig {
                 .requestMatchers(POST, "/member/**").permitAll()
                 .requestMatchers(GET, "/member/my").authenticated()
                 .requestMatchers(GET, "/member/check/broadcast-club-member").hasAnyRole(STUDENT, ADMIN)
+                .requestMatchers(GET, "/member/check/dormitory-manage-member").hasAnyRole(STUDENT, ADMIN)
                 .requestMatchers(GET, "/member/code/**").permitAll()
                 .requestMatchers(GET, "/member/relation").hasAnyRole(PARENT)
                 .requestMatchers(GET, "/member/**").hasAnyRole(TEACHER, ADMIN)
