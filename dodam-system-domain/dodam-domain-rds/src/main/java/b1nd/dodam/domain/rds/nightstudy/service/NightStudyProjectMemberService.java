@@ -26,7 +26,7 @@ public class NightStudyProjectMemberService {
     }
 
     public List<NightStudyProjectMember> getAllStudentByDate(LocalDate now) {
-        return repository.findAllowedProjectMembers(now, NightStudyProjectType.NIGHT_STUDY_PROJECT_2);
+        return repository.findAllowedProjectMembers(now);
     }
 
     public List<NightStudyProject> findByStudent(Student student, LocalDate now) {

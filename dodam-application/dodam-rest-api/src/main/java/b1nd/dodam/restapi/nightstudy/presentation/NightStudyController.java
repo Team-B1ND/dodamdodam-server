@@ -125,7 +125,7 @@ public class NightStudyController {
     }
 
     @GetMapping("/project/{id}")
-    public ResponseData<NightStudyProjectWithStudentsRes> getProjectById(@PathVariable Long id) {
+    public ResponseData<NightStudyProjectWithMembersRes> getProjectById(@PathVariable Long id) {
         return useCase.getProjectDetails(id);
     }
 
@@ -134,14 +134,14 @@ public class NightStudyController {
         return useCase.getMyProjects();
     }
 
-    @GetMapping("/project/pending")
-    public ResponseData<List<NightStudyProjectWithStudentsRes>> getPendingProjects() {
-        return useCase.getPendingProjects();
+    @GetMapping("/project/allowed")
+    public ResponseData<List<NightStudyProjectWithMembersRes>> getAllowedProjects() {
+        return useCase.getAllowedProjects();
     }
 
-    @GetMapping("/project/allowed")
-    public ResponseData<List<NightStudyProjectWithStudentsRes>> getAllowedProjects() {
-        return useCase.getAllowedProjects();
+    @GetMapping("/project/pending")
+    public ResponseData<List<NightStudyProjectWithMembersRes>> getPendingProjects() {
+        return useCase.getPendingProjects();
     }
 
     @GetMapping("/project/rooms")
