@@ -41,9 +41,9 @@ public class DormitoryManageMemberFilter extends OncePerRequestFilter {
                     isStudentAllowed(uri, method, member) ||
                     hasNightStudyManageAccess(member)) {
                 filterChain.doFilter(request, response);
-            } else {
-                errorResponseSender.send(response, GlobalExceptionCode.INVALID_ROLE);
+                return;
             }
+            errorResponseSender.send(response, GlobalExceptionCode.INVALID_ROLE);
         } catch (Exception e) {
             errorResponseSender.send(response, GlobalExceptionCode.TOKEN_NOT_PROVIDED);
         }
