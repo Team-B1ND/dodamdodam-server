@@ -176,6 +176,16 @@ public class MemberController {
         return queryUseCase.checkBroadcastClubMember(id);
     }
 
+    @GetMapping("/check/dormitory-manage-member")
+    public ResponseData<Boolean> checkDormitoryManageMember() {
+        return queryUseCase.checkDormitoryManageMember();
+    }
+
+    @GetMapping("/check/dormitory-manage-member/{id}")
+    public ResponseData<Boolean> checkDormitoryManageMember(@PathVariable String id) {
+        return queryUseCase.checkDormitoryManageMember(id);
+    }
+
     @GetMapping("/code/{code}")
     public ResponseData<MemberInfoRes> getMemberByCode(@PathVariable String code){
         return queryUseCase.getMemberByCode(code);

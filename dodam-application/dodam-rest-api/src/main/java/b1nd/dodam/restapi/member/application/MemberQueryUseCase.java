@@ -5,10 +5,7 @@ import b1nd.dodam.domain.rds.member.entity.Student;
 import b1nd.dodam.domain.rds.member.entity.Teacher;
 import b1nd.dodam.domain.rds.member.enumeration.ActiveStatus;
 import b1nd.dodam.domain.rds.member.enumeration.MemberRole;
-import b1nd.dodam.domain.rds.member.repository.BroadcastClubMemberRepository;
-import b1nd.dodam.domain.rds.member.repository.MemberRepository;
-import b1nd.dodam.domain.rds.member.repository.StudentRepository;
-import b1nd.dodam.domain.rds.member.repository.TeacherRepository;
+import b1nd.dodam.domain.rds.member.repository.*;
 import b1nd.dodam.domain.rds.member.service.MemberService;
 import b1nd.dodam.domain.redis.member.model.MemberInfoRedisModel;
 import b1nd.dodam.domain.redis.member.service.MemberSearchRedisService;
@@ -32,10 +29,11 @@ public class MemberQueryUseCase {
     private final MemberRepository memberRepository;
     private final StudentRepository studentRepository;
     private final TeacherRepository teacherRepository;
-    private final MemberService memberService;
     private final BroadcastClubMemberRepository broadcastClubMemberRepository;
-    private final MemberAuthenticationHolder memberAuthenticationHolder;
+    private final DormitoryManageMemberRepository dormitoryManageMemberRepository;
+    private final MemberService memberService;
     private final MemberSearchRedisService memberSearchRedisService;
+    private final MemberAuthenticationHolder memberAuthenticationHolder;
 
     public ResponseData<MemberInfoRes> getById(String id) {
         return ResponseData.ok("Id로 멤버 조회 성공", getMemberInfo(memberRepository.getById(id)));
@@ -93,6 +91,20 @@ public class MemberQueryUseCase {
 
     private ResponseData<Boolean> checkBroadcastClubMemberByMember(Member member) {
         return ResponseData.ok("방송부원 확인 성공", broadcastClubMemberRepository.existsByMember(member));
+    }
+
+    public ResponseData<Boolean> checkDormitoryManageMember() {
+        Member member = memberAuthenticationHolder.current();
+        return checkDormitoryManageMemberByMember(member);
+    }
+
+    public ResponseData<Boolean> checkDormitoryManageMember(String id) {
+        Member member = memberRepository.getById(id);
+        return checkDormitoryManageMemberByMember(member);
+    }
+
+    private ResponseData<Boolean> checkDormitoryManageMemberByMember(Member member) {
+        return ResponseData.ok("자치위원 확인 성공", dormitoryManageMemberRepository.existsByMember(member));
     }
 
     public ResponseData<MemberInfoRes> getMemberByCode(String code){
