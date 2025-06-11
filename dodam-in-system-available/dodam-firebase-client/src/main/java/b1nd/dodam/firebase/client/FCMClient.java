@@ -1,6 +1,5 @@
 package b1nd.dodam.firebase.client;
 
-import b1nd.dodam.core.exception.global.InternalServerException;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.messaging.FirebaseMessagingException;
 import com.google.firebase.messaging.Message;

@@ -1,15 +1,13 @@
 package b1nd.dodam.domain.rds.nightstudy.entity;
 
-import b1nd.dodam.domain.rds.member.entity.Teacher;
+import b1nd.dodam.domain.rds.member.entity.Student;
 import b1nd.dodam.domain.rds.nightstudy.enumeration.NightStudyProjectMemberRole;
-import b1nd.dodam.domain.rds.support.enumeration.ApprovalStatus;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
+import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.AccessLevel;
-import jakarta.persistence.*;
 import lombok.NoArgsConstructor;
-import b1nd.dodam.domain.rds.member.entity.Student;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 

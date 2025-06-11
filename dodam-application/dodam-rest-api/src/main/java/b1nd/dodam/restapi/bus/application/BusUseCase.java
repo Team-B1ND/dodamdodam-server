@@ -12,7 +12,6 @@ import b1nd.dodam.domain.rds.bus.repository.*;
 import b1nd.dodam.domain.rds.member.entity.Member;
 import b1nd.dodam.domain.rds.member.entity.Student;
 import b1nd.dodam.domain.rds.member.repository.StudentRepository;
-import b1nd.dodam.firebase.client.FCMClient;
 import b1nd.dodam.process.listener.pushalarm.FcmEvent;
 import b1nd.dodam.restapi.auth.infrastructure.security.support.MemberAuthenticationHolder;
 import b1nd.dodam.restapi.bus.application.data.req.BusPresetReq;

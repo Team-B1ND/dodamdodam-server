@@ -45,8 +45,13 @@ public class MemberController {
     }
 
     @PostMapping("/broadcast-club-member")
-    public Response apply(@RequestBody @Valid ApplyBroadcastClubMemberReq req) {
-        return commandUseCase.apply(req);
+    public Response applyBroadcastClubMember(@RequestBody @Valid ApplyBroadcastClubMemberReq req) {
+        return commandUseCase.applyBroadcastClubMember(req);
+    }
+
+    @PostMapping("/dormitory-manage-member")
+    public Response applyDormitoryManageMember(@RequestBody @Valid ApplyDormitoryManageMemberReq req) {
+        return commandUseCase.applyDormitoryManageMember(req);
     }
 
     @PostMapping("/auth-code/{type}")
@@ -72,6 +77,16 @@ public class MemberController {
         return commandUseCase.delete(id);
     }
 
+    @DeleteMapping("/broadcast-club-member")
+    public Response removeBroadcastClubMember(@RequestBody @Valid ApplyBroadcastClubMemberReq req){
+        return commandUseCase.removeBroadcastClubMember(req);
+    }
+
+    @DeleteMapping("/dormitory-manage-member")
+    public Response removeDormitoryManageMember(@RequestBody @Valid ApplyDormitoryManageMemberReq req){
+        return commandUseCase.removeDormitoryManageMember(req);
+    }
+
     @PatchMapping("/status/{id}")
     public Response updateStatus(@PathVariable String id, @RequestParam ActiveStatus status){
         return commandUseCase.status(id, status);
@@ -93,7 +108,7 @@ public class MemberController {
     }
 
     @PatchMapping("/info")
-    public Response updateMemberInfo(@RequestBody UpdateMemberInfoReq req) {
+    public Response updateMemberInfo(@RequestBody @Valid UpdateMemberInfoReq req) {
         return commandUseCase.updateMemberInfo(req);
     }
 
@@ -103,7 +118,7 @@ public class MemberController {
     }
 
     @PatchMapping("/teacher/info/{id}")
-    public Response updateTeacherForAdmin(@PathVariable String id, @RequestBody UpdateTeacherForAdminReq req){
+    public Response updateTeacherForAdmin(@PathVariable String id, @RequestBody @Valid UpdateTeacherForAdminReq req){
         return commandUseCase.updateTeacherForAdmin(id, req);
     }
 
@@ -159,6 +174,16 @@ public class MemberController {
     @GetMapping("/check/broadcast-club-member/{id}")
     public ResponseData<Boolean> checkBroadcastClubMember(@PathVariable String id) {
         return queryUseCase.checkBroadcastClubMember(id);
+    }
+
+    @GetMapping("/check/dormitory-manage-member")
+    public ResponseData<Boolean> checkDormitoryManageMember() {
+        return queryUseCase.checkDormitoryManageMember();
+    }
+
+    @GetMapping("/check/dormitory-manage-member/{id}")
+    public ResponseData<Boolean> checkDormitoryManageMember(@PathVariable String id) {
+        return queryUseCase.checkDormitoryManageMember(id);
     }
 
     @GetMapping("/code/{code}")

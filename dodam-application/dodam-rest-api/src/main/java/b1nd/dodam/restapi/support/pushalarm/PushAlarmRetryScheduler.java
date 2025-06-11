@@ -1,8 +1,7 @@
 package b1nd.dodam.restapi.support.pushalarm;
 
-import b1nd.dodam.core.exception.global.InternalServerException;
-import b1nd.dodam.domain.redis.fcm.FcmRedisMessage;
 import b1nd.dodam.domain.redis.fcm.FCMRedisQueueProducer;
+import b1nd.dodam.domain.redis.fcm.FcmRedisMessage;
 import b1nd.dodam.process.listener.pushalarm.FcmEvent;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;

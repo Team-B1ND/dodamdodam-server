@@ -4,10 +4,7 @@ import com.redis.lettucemod.api.sync.RedisModulesCommands;
 import com.redis.lettucemod.search.CreateOptions;
 import com.redis.lettucemod.search.Field;
 import io.lettuce.core.RedisCommandExecutionException;
-import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.stereotype.Component;
-
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.core.annotation.Order;

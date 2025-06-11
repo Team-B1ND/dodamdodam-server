@@ -72,7 +72,7 @@ public class ClubUseCase {
         Club club = clubService.findById(clubId);
         club.join(teacherRepository.getByMember(authHolder.current()));
         clubService.update(club);
-        return Response.ok("당담 선생님 등록 성공");
+        return Response.ok("당담 교사 등록 성공");
     }
 
     public Response update(UpdateClubReq req) {
