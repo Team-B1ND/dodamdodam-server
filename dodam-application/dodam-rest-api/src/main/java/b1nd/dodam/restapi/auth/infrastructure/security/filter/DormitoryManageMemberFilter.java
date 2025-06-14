@@ -61,7 +61,8 @@ public class DormitoryManageMemberFilter extends OncePerRequestFilter {
 
     private boolean isPublicEndpoint(String uri, String method) {
         return "GET".equals(method) &&
-                (uri.equals("/night-study/project/rooms") || uri.contains("/night-study/students/"));
+                (uri.equals("/night-study/project/rooms") ||
+                 uri.equals("/night-study/students"));
     }
 
     private boolean hasNightStudyManageAccess(Member member) {
