@@ -1,10 +1,13 @@
 package b1nd.dodam.restapi.nightstudy.application;
 
 import b1nd.dodam.core.util.ZonedDateTimeUtil;
+import b1nd.dodam.domain.rds.member.entity.DormitoryManageMember;
 import b1nd.dodam.domain.rds.member.entity.Member;
 import b1nd.dodam.domain.rds.member.entity.Student;
 import b1nd.dodam.domain.rds.member.entity.Teacher;
 import b1nd.dodam.domain.rds.member.enumeration.ActiveStatus;
+import b1nd.dodam.domain.rds.member.enumeration.MemberRole;
+import b1nd.dodam.domain.rds.member.repository.DormitoryManageMemberRepository;
 import b1nd.dodam.domain.rds.member.repository.StudentRepository;
 import b1nd.dodam.domain.rds.member.repository.TeacherRepository;
 import b1nd.dodam.domain.rds.nightstudy.entity.NightStudy;
@@ -52,6 +55,7 @@ public class NightStudyUseCase {
     private final MemberAuthenticationHolder memberAuthenticationHolder;
     private final NightStudyProjectService nightStudyProjectService;
     private final NightStudyProjectMemberService nightStudyProjectMemberService;
+    private final DormitoryManageMemberRepository dormitoryManageMemberRepository;
 
     public Response apply(ApplyNightStudyReq req) {
         Student student = studentRepository.getByMember(memberAuthenticationHolder.current());
@@ -133,30 +137,45 @@ public class NightStudyUseCase {
 
     private void modifyStatus(Long id, ApprovalStatus status, String rejectReason) {
         Member member = memberAuthenticationHolder.current();
-        Teacher teacher = teacherRepository.getByMember(member);
         NightStudy nightStudy = nightStudyService.getBy(id);
-        nightStudy.modifyStatus(teacher, status, rejectReason);
+        if (member.getRole() == MemberRole.TEACHER) {
+            Teacher teacher = teacherRepository.getByMember(member);
+            nightStudy.modifyStatusByTeacher(teacher, status, rejectReason);
+            return;
+        }
+        if (member.getRole() == MemberRole.STUDENT) {
+            DormitoryManageMember dormitoryManageMember = dormitoryManageMemberRepository.getByMember(member);
+            nightStudy.modifyStatusByDormitoryManageMember(dormitoryManageMember, status, rejectReason);
+        }
     }
 
     public Response allowProject(Long id, NightStudyProjectRoom room) {
-        NightStudyProject project = nightStudyProjectService.getById(id);
-        Teacher teacher = teacherRepository.getByMember(memberAuthenticationHolder.current());
-        project.modifyStatus(teacher, room);
+        modifyProjectStatus(id, ApprovalStatus.ALLOWED, room, null);
         return Response.noContent("프로젝트 심야자습 승인 성공");
     }
 
     public Response rejectProject(Long id, RejectNightStudyReq req) {
-        NightStudyProject project = nightStudyProjectService.getById(id);
-        Teacher teacher = teacherRepository.getByMember(memberAuthenticationHolder.current());
-        project.reject(teacher, req.rejectReason());
+        modifyProjectStatus(id, ApprovalStatus.REJECTED, null, req.rejectReason());
         return Response.noContent("프로젝트 심야자습 거절 성공");
     }
 
     public Response revertProject(Long id) {
-        NightStudyProject project = nightStudyProjectService.getById(id);
-        Teacher teacher = teacherRepository.getByMember(memberAuthenticationHolder.current());
-        project.modifyStatus(teacher, ApprovalStatus.PENDING);
+        modifyProjectStatus(id, ApprovalStatus.PENDING, null, null);
         return Response.noContent("프로젝트 심야자습 대기 성공");
+    }
+
+    private void modifyProjectStatus(Long id, ApprovalStatus status, NightStudyProjectRoom room, String rejectReason) {
+        Member member = memberAuthenticationHolder.current();
+        NightStudyProject project = nightStudyProjectService.getById(id);
+        if (member.getRole() == MemberRole.TEACHER) {
+            Teacher teacher = teacherRepository.getByMember(member);
+            project.modifyStatusByTeacher(teacher, status, room, rejectReason);
+            return;
+        }
+        if (member.getRole() == MemberRole.STUDENT) {
+            DormitoryManageMember dormitoryManageMember = dormitoryManageMemberRepository.getByMember(member);
+            project.modifyStatusByDormitoryManageMember(dormitoryManageMember, status, room, rejectReason);
+        }
     }
 
     public Response applyBan(BanNightStudyReq req) {

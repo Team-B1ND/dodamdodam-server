@@ -1,5 +1,6 @@
 package b1nd.dodam.domain.rds.nightstudy.entity;
 
+import b1nd.dodam.domain.rds.member.entity.DormitoryManageMember;
 import b1nd.dodam.domain.rds.member.entity.Teacher;
 import b1nd.dodam.domain.rds.nightstudy.enumeration.NightStudyProjectRoom;
 import b1nd.dodam.domain.rds.nightstudy.enumeration.NightStudyProjectType;
@@ -51,8 +52,12 @@ public class NightStudyProject extends BaseEntity {
     @JoinColumn(name = "fk_teacher_id")
     private Teacher teacher;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "fk_dormitory_manage_member_id")
+    private DormitoryManageMember dormitoryManageMember;
+
     @Builder
-    public NightStudyProject(NightStudyProjectType type, String name, String description, LocalDate startAt, LocalDate endAt, Teacher teacher) {
+    public NightStudyProject(NightStudyProjectType type, String name, String description, LocalDate startAt, LocalDate endAt, Teacher teacher, DormitoryManageMember dormitoryManageMember) {
         this.type = type;
         this.name = name;
         this.description = description;
@@ -60,22 +65,20 @@ public class NightStudyProject extends BaseEntity {
         this.endAt = endAt;
         this.status = ApprovalStatus.PENDING;
         this.teacher = teacher;
+        this.dormitoryManageMember = dormitoryManageMember;
     }
 
-    public void reject(Teacher teacher, String rejectReason) {
+    public void modifyStatusByTeacher(Teacher teacher, ApprovalStatus status, NightStudyProjectRoom room, String rejectReason) {
         this.teacher = teacher;
-        this.rejectReason = rejectReason;
-        this.status = ApprovalStatus.REJECTED;
-    }
-
-    public void modifyStatus(Teacher teacher, NightStudyProjectRoom room) {
-        this.teacher = teacher;
-        this.room = room;
-        this.status = ApprovalStatus.ALLOWED;
-    }
-
-    public void modifyStatus(Teacher teacher, ApprovalStatus status) {
         this.status = status;
-        this.teacher = teacher;
+        this.room = room;
+        this.rejectReason = rejectReason;
+    }
+
+    public void modifyStatusByDormitoryManageMember(DormitoryManageMember member, ApprovalStatus status, NightStudyProjectRoom room, String rejectReason) {
+        this.dormitoryManageMember = member;
+        this.status = status;
+        this.room = room;
+        this.rejectReason = rejectReason;
     }
 }
