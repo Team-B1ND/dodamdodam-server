@@ -141,7 +141,9 @@ public class NightStudyUseCase {
         if (member.getRole() == MemberRole.TEACHER) {
             Teacher teacher = teacherRepository.getByMember(member);
             nightStudy.modifyStatusByTeacher(teacher, status, rejectReason);
-        } else if (member.getRole() == MemberRole.STUDENT) {
+            return;
+        }
+        if (member.getRole() == MemberRole.STUDENT) {
             DormitoryManageMember dormitoryManageMember = dormitoryManageMemberRepository.getByMember(member);
             nightStudy.modifyStatusByDormitoryManageMember(dormitoryManageMember, status, rejectReason);
         }
@@ -152,8 +154,8 @@ public class NightStudyUseCase {
         return Response.noContent("프로젝트 심야자습 승인 성공");
     }
 
-    public Response rejectProject(Long id, Optional<RejectNightStudyReq> req) {
-        modifyProjectStatus(id, ApprovalStatus.REJECTED, null, req.map(RejectNightStudyReq::rejectReason).orElse(null));
+    public Response rejectProject(Long id, RejectNightStudyReq req) {
+        modifyProjectStatus(id, ApprovalStatus.REJECTED, null, req.rejectReason());
         return Response.noContent("프로젝트 심야자습 거절 성공");
     }
 
@@ -168,7 +170,9 @@ public class NightStudyUseCase {
         if (member.getRole() == MemberRole.TEACHER) {
             Teacher teacher = teacherRepository.getByMember(member);
             project.modifyStatusByTeacher(teacher, status, room, rejectReason);
-        } else if (member.getRole() == MemberRole.STUDENT) {
+            return;
+        }
+        if (member.getRole() == MemberRole.STUDENT) {
             DormitoryManageMember dormitoryManageMember = dormitoryManageMemberRepository.getByMember(member);
             project.modifyStatusByDormitoryManageMember(dormitoryManageMember, status, room, rejectReason);
         }
