@@ -65,6 +65,7 @@ app:
     generateAccess: ${TOKEN_GENERATE_ACCESS_URL}
     generateRefresh: ${TOKEN_GENERATE_REFRESH_URL}
     verify: ${TOKEN_VERIFY_URL}
+    key: ${TOKEN_GENERATE_KEY}
   jwt:
     issuer: ${JWT_ISSUER}
     tokenServer: ${TOKEN_SERVER_URL}

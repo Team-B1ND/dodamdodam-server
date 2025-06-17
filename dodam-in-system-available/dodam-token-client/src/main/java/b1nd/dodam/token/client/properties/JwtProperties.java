@@ -9,8 +9,7 @@ import org.springframework.context.annotation.Configuration;
 @Setter
 @Configuration
 @ConfigurationProperties("app.jwt")
-public
-class JwtProperties {
+public class JwtProperties {
 
     private String issuer;
     private String tokenServer;
