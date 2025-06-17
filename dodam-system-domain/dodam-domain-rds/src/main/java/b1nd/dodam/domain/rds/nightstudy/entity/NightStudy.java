@@ -1,6 +1,7 @@
 package b1nd.dodam.domain.rds.nightstudy.entity;
 
 import b1nd.dodam.core.util.ZonedDateTimeUtil;
+import b1nd.dodam.domain.rds.member.entity.DormitoryManageMember;
 import b1nd.dodam.domain.rds.member.entity.Student;
 import b1nd.dodam.domain.rds.member.entity.Teacher;
 import b1nd.dodam.domain.rds.nightstudy.enumeration.NightStudyType;
@@ -54,6 +55,10 @@ public class NightStudy extends BaseEntity {
     @JoinColumn(name = "fk_teacher_id")
     private Teacher teacher;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "fk_dormitory_manage_member")
+    private DormitoryManageMember dormitoryManageMember;
+
     private String rejectReason;
 
     @NotNull
@@ -82,9 +87,15 @@ public class NightStudy extends BaseEntity {
         this.status = ApprovalStatus.REJECTED;
     }
 
-    public void modifyStatus(Teacher teacher, ApprovalStatus status, String rejectReason) {
+    public void modifyStatusByTeacher(Teacher teacher, ApprovalStatus status, String rejectReason) {
         this.status = status;
         this.teacher = teacher;
+        this.rejectReason = rejectReason;
+    }
+
+    public void modifyStatusByDormitoryManageMember(DormitoryManageMember dormitoryManageMember, ApprovalStatus status, String rejectReason) {
+        this.status = status;
+        this.dormitoryManageMember = dormitoryManageMember;
         this.rejectReason = rejectReason;
     }
 
