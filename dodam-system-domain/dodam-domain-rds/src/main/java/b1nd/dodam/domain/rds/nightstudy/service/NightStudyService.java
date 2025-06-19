@@ -41,24 +41,28 @@ public class NightStudyService {
         if (repository.existsActiveNightStudy(students, now)) throw new NightStudyDuplicateException();
     }
 
-    public List<NightStudy> getAll(LocalDate now) {
-        return repository.findAllByDate(now);
+    public List<NightStudy> getAll() {
+        return repository.findAllByDate(ZonedDateTimeUtil.nowToLocalDate());
     }
 
-    public List<NightStudy> getMy(Student student, LocalDate now) {
-        return repository.findByStudentAndEndAtGreaterThanEqual(student, now);
+    public List<NightStudy> getMy(Student student) {
+        return repository.findByStudentAndEndAtGreaterThanEqual(student, ZonedDateTimeUtil.nowToLocalDate());
     }
 
     public List<NightStudy> getPending() {
         return repository.findByStatus(ApprovalStatus.PENDING);
     }
 
-    public List<NightStudy> getValid(LocalDate now) {
-        return repository.findAllowedStudyByDate(now, ApprovalStatus.ALLOWED);
+    public List<NightStudy> getValid() {
+        return repository.findAllowedStudyByDate(ZonedDateTimeUtil.nowToLocalDate(), ApprovalStatus.ALLOWED);
     }
 
     public List<NightStudy> getByEndDate(LocalDate endAt){
         return repository.findByEndAt(endAt);
+    }
+
+    public List<NightStudy> getCombinedStudy() {
+        return repository.findCombinedNightStudy(ZonedDateTimeUtil.nowToLocalDate());
     }
 
     public void rejectAllByStudent(Student student) {

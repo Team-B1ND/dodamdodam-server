@@ -71,7 +71,7 @@ public class MemberQueryUseCase {
         return MemberInfoRes.of(member, student, teacher);
     }
 
-    public ResponseData<List<MemberInfoRes>> getAll(){
+    public ResponseData<List<MemberInfoRes>> getAll() {
         return ResponseData.ok("모든 멤버 정보 조회 성공",
                 memberRepository.findByStatusOrderByStudent(ActiveStatus.ACTIVE)
                         .parallelStream()
@@ -107,12 +107,11 @@ public class MemberQueryUseCase {
         return ResponseData.ok("자치위원 확인 성공", dormitoryManageMemberRepository.existsByMember(member));
     }
 
-    public ResponseData<MemberInfoRes> getMemberByCode(String code){
-        return ResponseData.ok("학생 조회 성공", this.getMemberInfo(memberService.checkCode(code)
-                .getMember()));
+    public ResponseData<MemberInfoRes> getMemberByCode(String code) {
+        return ResponseData.ok("학생 조회 성공", this.getMemberInfo(memberService.checkCode(code).getMember()));
     }
 
-    public ResponseData<List<StudentRelationRes>> getStudentByPatent(){
+    public ResponseData<List<StudentRelationRes>> getStudentByPatent() {
         Member member = memberAuthenticationHolder.current();
         List<StudentRelationRes> studentRelationRes =
                 memberService.getStudentRelationByMember(member).stream()
