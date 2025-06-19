@@ -297,7 +297,7 @@ public class NightStudyUseCase {
     public ResponseData<NightStudyAndProjectRes> getCombined() {
         List<NightStudyProjectMember> members = nightStudyProjectMemberService.getAllStudentByDate();
         List<NightStudyRes> nightStudyRes = NightStudyRes.of(nightStudyService.getCombinedStudy());
-        List<StudentWithNightStudyProjectRes> projectStudents = convertToProjectStudentRes(members);
+        List<StudentWithNightStudyProjectRes> projectStudents = StudentWithNightStudyProjectRes.from(members);
         NightStudyAndProjectRes result = NightStudyAndProjectRes.of(nightStudyRes, projectStudents);
         return ResponseData.ok("심야자습 및 프로젝트 참가자 조회 성공", result);
     }
@@ -305,12 +305,6 @@ public class NightStudyUseCase {
     @Transactional(readOnly = true)
     public ResponseData<List<StudentWithNightStudyProjectRes>> getProjectStudents() {
         List<NightStudyProjectMember> members = nightStudyProjectMemberService.getAllStudentByDate();
-        return ResponseData.ok("프로젝트 참가 학생 조회 성공", convertToProjectStudentRes(members));
-    }
-
-    private List<StudentWithNightStudyProjectRes> convertToProjectStudentRes(List<NightStudyProjectMember> members) {
-        return members.stream()
-                .map(member -> StudentWithNightStudyProjectRes.of(member.getStudent(), member.getProject()))
-                .toList();
+        return ResponseData.ok("프로젝트 참가 학생 조회 성공", StudentWithNightStudyProjectRes.from(members));
     }
 }
