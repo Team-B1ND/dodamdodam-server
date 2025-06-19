@@ -3,13 +3,13 @@ package b1nd.dodam.restapi.nightstudy.application.data.res;
 import java.util.List;
 
 public record NightStudyAndProjectRes(
-        List<NightStudyRes> nightStudyRes,
-        List<StudentWithNightStudyProjectRes> studentWithNightStudyProjectRes
+        List<NightStudyRes> selfStudy,
+        List<StudentWithNightStudyProjectRes> projectStudy
 ) {
     public static NightStudyAndProjectRes of(
-            List<NightStudyRes> nightStudyRes,
-            List<StudentWithNightStudyProjectRes> studentWithNightStudyProjectRes
+            List<NightStudyRes> selfStudy,
+            List<StudentWithNightStudyProjectRes> projectStudy
     ) {
-        return new NightStudyAndProjectRes(nightStudyRes, studentWithNightStudyProjectRes);
+        return new NightStudyAndProjectRes(selfStudy, projectStudy);
     }
 }
