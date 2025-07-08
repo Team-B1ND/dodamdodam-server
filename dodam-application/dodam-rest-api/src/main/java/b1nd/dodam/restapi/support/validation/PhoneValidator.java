@@ -7,8 +7,7 @@ import java.util.regex.Pattern;
 
 public class PhoneValidator implements ConstraintValidator<Phone, String> {
     private static final String PHONE_PATTERN =
-            "^(01[0-9]-\\d{3,4}-\\d{4}|" +
-            "0[2-9][0-9]{0,1}-\\d{3,4}-\\d{4})$";
+            "^(01[016789]|02|0[3-6][0-9])\\d{7,8}$";
 
     private static final Pattern pattern = Pattern.compile(PHONE_PATTERN);
 

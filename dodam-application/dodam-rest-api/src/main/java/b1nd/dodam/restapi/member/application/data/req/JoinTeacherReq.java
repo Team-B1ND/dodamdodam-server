@@ -9,7 +9,7 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
 
 public record JoinTeacherReq(@NotEmpty String id, @NotEmpty String pw, @NotEmpty String name, @NotEmpty @Email String email,
-                             @NotEmpty @Phone String phone, @NotEmpty String tel, @NotEmpty String position) {
+                             @NotEmpty @Phone String phone, @NotEmpty @Phone String tel, @NotEmpty String position) {
     public Teacher mapToTeacher(Member member) {
         return Teacher.builder()
                 .member(member)
