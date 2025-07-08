@@ -40,7 +40,7 @@ public final class DodamTokenClient {
     private TokenInfoRes requestVerifyToken(String token) {
         return webClient.post(
             jwtProperties.getTokenServer() + tokenProperties.getVerify(),
-            new Token(token),
+            new Token(token, "asd"),
             TokenInfoRes.class
         ).block();
     }
@@ -48,7 +48,7 @@ public final class DodamTokenClient {
     private CompletableFuture<String> requestReissueToken(String refreshToken) {
         return webClient.post(
             jwtProperties.getTokenServer() + tokenProperties.getReissueAccess(),
-            new ReissueReq(refreshToken),
+            new ReissueReq(refreshToken, "asd"),
             TokenRes.class
         ).toFuture().thenApply(res -> res.data().token());
     }
@@ -56,7 +56,7 @@ public final class DodamTokenClient {
     private CompletableFuture<String> requestIssueToken(String userId, int role, String url) {
         return webClient.post(
             jwtProperties.getTokenServer() + url,
-            new TokenReq(userId, role),
+            new TokenReq(userId, role, "asd"),
             TokenRes.class
         ).toFuture().thenApply(res -> res.data().token());
     }
