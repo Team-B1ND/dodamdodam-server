@@ -70,4 +70,5 @@ public interface BusApplicationRepository extends JpaRepository<BusApplication, 
 
     Optional<BusApplication> findByBus(Bus bus);
 
+    void deleteAllByBus_Id(int busId);
 }
