@@ -30,6 +30,10 @@ public class BusApplicantService {
             .orElseThrow(BusApplicantNotFoundException::new);
     }
 
+    public BusApplicant getByStudentOrNull(Student student) {
+        return busApplicantRepository.findByStudent(student).orElse(null);
+    }
+
     public void save(BusApplicant busApplicant) {
         busApplicantRepository.save(busApplicant);
     }

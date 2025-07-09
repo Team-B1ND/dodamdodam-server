@@ -10,6 +10,8 @@ public record BusApplicantRes(
         BoardingType boardingType
 ) {
     public static BusApplicantRes of(BusApplicant busApplicant) {
+        if (busApplicant == null)
+            return null;
         return new BusApplicantRes(busApplicant.getBus().getId(), busApplicant.getBus().getName(), busApplicant.getSeat(), busApplicant.getBoardingType());
     }
 }

@@ -103,7 +103,7 @@ public class BusUseCase {
 
     public ResponseData<BusApplicantRes> my() {
         Student student = studentRepository.getByMember(authenticationHolder.current());
-        BusApplicant applicant = busApplicantService.getByStudent(student);
+        BusApplicant applicant = busApplicantService.getByStudentOrNull(student);
 
         return ResponseData.ok("내 버스 신청 정보 조회 성공", BusApplicantRes.of(applicant));
     }
