@@ -1,22 +1,13 @@
 package b1nd.dodam.domain.rds.bus.exception;
 
 import b1nd.dodam.core.exception.ExceptionCode;
-import lombok.RequiredArgsConstructor;
+import lombok.AllArgsConstructor;
 
-@RequiredArgsConstructor
+@AllArgsConstructor
 public enum BusExceptionCode implements ExceptionCode {
-
-    BUS_PERIOD_EXPIRED(410,"기간 만료된 버스"),
-    BUS_FULL_OF_SEAT(400,"버스 좌석 만료"),
-    BUS_ALREADY_APPLIED(409,"이미 신청한 버스"),
-    BUS_MEMBER_NOT_FOUND(404, "없는 버스 멤버"),
-    BUS_NOT_FOUND(404, "없는 버스"),
-    BUS_ACCESS_DENIED(403, "버스 권한 부족"),
-    BUS_API_KEY_INVALID(403, "버스 API 키가 유효하지 않음"),
-    BUS_PRESET_NOT_FOUND(404, "없는 버스 프리셋"),
-    BUS_PRESET_NAME_DUPLICATED(409, "중복된 프리셋 이름"),
-    BUS_TIME_NOT_FOUND(404, "없는 버스신청 기간"),
-    BUS_TIME_UNABLE(400, "버스 신청이 불가능한 기간");
+    BUS_NOT_FOUND(404, "버스를 찾을 수 없습니다."),
+    BUS_APPLICANT_NOT_FOUND(404, "버스 신청자가 아닙니다."),
+    BUS_ALREADY_APPLIED_POSITION(400, "이미 신청되어있는 자리입니다.")
     ;
 
     private final int status;
@@ -24,17 +15,16 @@ public enum BusExceptionCode implements ExceptionCode {
 
     @Override
     public int getStatus() {
-        return this.status;
+        return status;
     }
 
     @Override
     public String getExceptionName() {
-        return this.name();
+        return name();
     }
 
     @Override
     public String getMessage() {
-        return this.message;
+        return message;
     }
-
 }
