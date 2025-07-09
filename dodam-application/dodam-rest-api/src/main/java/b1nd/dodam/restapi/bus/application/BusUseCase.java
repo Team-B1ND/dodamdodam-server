@@ -8,6 +8,7 @@ import b1nd.dodam.domain.rds.bus.service.BusService;
 import b1nd.dodam.domain.rds.member.entity.Student;
 import b1nd.dodam.domain.rds.member.repository.StudentRepository;
 import b1nd.dodam.restapi.auth.infrastructure.security.support.MemberAuthenticationHolder;
+import b1nd.dodam.restapi.bus.application.data.req.BusApplicantReq;
 import b1nd.dodam.restapi.bus.application.data.req.BusReq;
 import b1nd.dodam.restapi.bus.application.data.res.BusApplicantRes;
 import b1nd.dodam.restapi.bus.application.data.res.BusDetailRes;
@@ -29,6 +30,17 @@ public class BusUseCase {
     private final StudentRepository studentRepository;
     private final BusApplicantService busApplicantService;
     private final MemberAuthenticationHolder authenticationHolder;
+
+    public Response createBusApplicant(BusApplicantReq req) {
+        Student student = studentRepository.getById(req.studentId());
+        BusApplicant applicant = BusApplicant.builder()
+            .bus(busService.getById(req.busId()))
+            .student(student)
+            .boardingType(BoardingType.BEFORE_BOARDING)
+            .build();
+        busApplicantService.save(applicant);
+        return Response.created("버스 탑승자 생성 성공");
+    }
 
     public ResponseData<BusDetailRes> busDetail(long id) {
         Bus bus = busService.getById(id);

@@ -1,6 +1,7 @@
 package b1nd.dodam.restapi.bus.presentation;
 
 import b1nd.dodam.restapi.bus.application.BusUseCase;
+import b1nd.dodam.restapi.bus.application.data.req.BusApplicantReq;
 import b1nd.dodam.restapi.bus.application.data.req.BusBoardReq;
 import b1nd.dodam.restapi.bus.application.data.req.BusReq;
 import b1nd.dodam.restapi.bus.application.data.res.BusApplicantRes;
@@ -42,6 +43,11 @@ class BusController {
     @PostMapping
     public Response createBus(@RequestBody BusReq req) {
         return useCase.createBus(req);
+    }
+
+    @PostMapping("/board")
+    public Response createBusApplicationStudent(@RequestBody BusApplicantReq req) {
+        return useCase.createBusApplicant(req);
     }
 
     @PostMapping("/board/{seat}")

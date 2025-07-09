@@ -4,6 +4,7 @@ import b1nd.dodam.domain.rds.bus.enumeration.BoardingType;
 import b1nd.dodam.domain.rds.member.entity.Student;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -27,6 +28,13 @@ public class BusApplicant {
 
     @Enumerated(EnumType.STRING)
     private BoardingType boardingType;
+
+    @Builder
+    public BusApplicant(Student student, Bus bus, BoardingType boardingType) {
+        this.student = student;
+        this.bus = bus;
+        this.boardingType = boardingType;
+    }
 
     public void updateBoardingType(BoardingType boardingType) {
         this.boardingType = boardingType;
