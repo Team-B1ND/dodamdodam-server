@@ -25,6 +25,10 @@ public class BusApplicantService {
             throw new BusAlreadyAppliedPositionException();
     }
 
+    public void deleteByBus(long busId) {
+        busApplicantRepository.deleteByBus_Id(busId);
+    }
+
     public BusApplicant getByStudent(Student student) {
         return busApplicantRepository.findByStudent(student)
             .orElseThrow(BusApplicantNotFoundException::new);

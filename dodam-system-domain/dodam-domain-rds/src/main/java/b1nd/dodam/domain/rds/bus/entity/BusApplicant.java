@@ -37,6 +37,8 @@ public class BusApplicant {
     }
 
     public void updateBoardingType(BoardingType boardingType) {
+        if (boardingType == BoardingType.UNBOARDED)
+            this.seat = null;
         this.boardingType = boardingType;
     }
 

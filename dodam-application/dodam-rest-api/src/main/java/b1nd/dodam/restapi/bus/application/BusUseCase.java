@@ -63,6 +63,7 @@ public class BusUseCase {
     }
 
     public Response deleteBus(long id) {
+        busApplicantService.deleteByBus(id);
         busService.deleteById(id);
         return Response.noContent("버스 삭제 성공");
     }
