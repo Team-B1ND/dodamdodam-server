@@ -78,12 +78,7 @@ class SecurityConfig {
 
                 .requestMatchers("/wakeup-song/**").permitAll()
 
-                .requestMatchers(GET, "/bus").permitAll()
-                .requestMatchers("/bus/apply/**").hasAnyRole(STUDENT, ADMIN)
-                .requestMatchers(GET, "/bus/qr-code").hasAnyRole(STUDENT, ADMIN)
-                .requestMatchers(GET, "bus/qr-code/nonce").hasAnyRole(STUDENT)
-                .requestMatchers(POST, "/bus/qr-code/scan").permitAll()
-                .requestMatchers(GET, "/bus/{id}/seats").authenticated()
+                .requestMatchers("/bus/**").permitAll()
 
                 .requestMatchers(POST, "/out-going").hasRole(STUDENT)
                 .requestMatchers(DELETE, "/out-going/**").hasRole(STUDENT)
