@@ -6,7 +6,7 @@ import b1nd.dodam.domain.rds.bus.enumeration.BoardingType;
 public record BusApplicantRes(
         long id,
         String name,
-        int seat,
+        Integer seat,
         BoardingType boardingType
 ) {
     public static BusApplicantRes of(BusApplicant busApplicant) {

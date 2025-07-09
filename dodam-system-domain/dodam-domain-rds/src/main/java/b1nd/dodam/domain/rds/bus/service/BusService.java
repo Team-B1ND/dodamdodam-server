@@ -2,6 +2,7 @@ package b1nd.dodam.domain.rds.bus.service;
 
 import b1nd.dodam.domain.rds.bus.entity.Bus;
 import b1nd.dodam.domain.rds.bus.exception.BusApplicantNotFoundException;
+import b1nd.dodam.domain.rds.bus.exception.BusNotFoundException;
 import b1nd.dodam.domain.rds.bus.repository.BusApplicantRepository;
 import b1nd.dodam.domain.rds.bus.repository.BusRepository;
 import lombok.RequiredArgsConstructor;
@@ -21,7 +22,7 @@ public class BusService {
 
     public Bus getById(Long id) {
         return busRepository.findById(id)
-            .orElseThrow(BusApplicantNotFoundException::new);
+            .orElseThrow(BusNotFoundException::new);
     }
 
     public void save(Bus bus) {
