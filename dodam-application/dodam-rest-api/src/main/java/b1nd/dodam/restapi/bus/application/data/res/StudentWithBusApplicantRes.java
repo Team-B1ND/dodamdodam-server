@@ -6,7 +6,7 @@ import b1nd.dodam.restapi.member.application.data.res.StudentRes;
 
 public record StudentWithBusApplicantRes(
     BoardingType boardingType,
-    int seat,
+    Integer seat,
     StudentRes student
 ) {
     public static StudentWithBusApplicantRes of(BusApplicant busApplicant) {
