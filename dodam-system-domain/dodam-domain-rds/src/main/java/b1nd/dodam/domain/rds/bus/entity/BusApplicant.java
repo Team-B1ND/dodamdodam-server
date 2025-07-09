@@ -24,7 +24,7 @@ public class BusApplicant {
     @JoinColumn(name = "fk_bus_id")
     private Bus bus;
 
-    private int seat;
+    private Integer seat;
 
     @Enumerated(EnumType.STRING)
     private BoardingType boardingType;
