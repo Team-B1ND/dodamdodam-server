@@ -41,4 +41,8 @@ public class BusApplicantService {
     public void save(BusApplicant busApplicant) {
         busApplicantRepository.save(busApplicant);
     }
+
+    public void saveAll(List<BusApplicant> busApplicants) {
+        busApplicantRepository.saveAll(busApplicants);
+    }
 }
