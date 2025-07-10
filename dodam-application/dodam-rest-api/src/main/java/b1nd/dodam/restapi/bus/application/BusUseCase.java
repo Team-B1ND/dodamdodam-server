@@ -32,13 +32,16 @@ public class BusUseCase {
     private final MemberAuthenticationHolder authenticationHolder;
 
     public Response createBusApplicant(BusApplicantReq req) {
-        Student student = studentRepository.getById(req.studentId());
-        BusApplicant applicant = BusApplicant.builder()
-            .bus(busService.getById(req.busId()))
-            .student(student)
-            .boardingType(BoardingType.BEFORE_BOARDING)
-            .build();
-        busApplicantService.save(applicant);
+        List<Student> student = studentRepository.getByIds(req.studentId());
+        List<BusApplicant> applicants = student.stream().map(s ->
+                BusApplicant.builder()
+                    .bus(busService.getById(req.busId()))
+                    .student(s)
+                    .boardingType(BoardingType.BEFORE_BOARDING)
+                    .build()
+            ).toList();
+
+        busApplicantService.saveAll(applicants);
         return Response.created("버스 탑승자 생성 성공");
     }
 
