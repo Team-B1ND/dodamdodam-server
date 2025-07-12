@@ -61,8 +61,8 @@ public class NightStudyBanService {
             .orElseThrow(NightStudyBanNotFoundException::new);
     }
 
-    public List<Integer> findAllStudentIdByDate(LocalDate date) {
-        return nightStudyBanRepository.findByEndedGreaterThanEqual(date)
+    public List<Integer> findAllStudentIdByDate() {
+        return nightStudyBanRepository.findByEndedGreaterThanEqual(ZonedDateTimeUtil.nowToLocalDate())
                 .stream()
                 .map(NightStudyBan::getStudentId)
                 .toList();
