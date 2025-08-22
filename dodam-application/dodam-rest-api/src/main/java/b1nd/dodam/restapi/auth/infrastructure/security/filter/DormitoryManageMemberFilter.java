@@ -54,7 +54,7 @@ public class DormitoryManageMemberFilter extends OncePerRequestFilter {
         return switch (method) {
             case "POST" -> uri.equals("/night-study") || uri.equals("/night-study/project");
             case "DELETE" -> !uri.contains("/night-study/ban");
-            case "GET" -> uri.equals("/night-study/my") || uri.equals("/night-study/ban/my") || uri.equals("/night-study/project/my");
+            case "GET" -> uri.equals("/night-study/my") || uri.equals("/night-study/ban/my") || uri.equals("/night-study/project/my") || uri.equals("/night-study");
             default -> false;
         };
     }
