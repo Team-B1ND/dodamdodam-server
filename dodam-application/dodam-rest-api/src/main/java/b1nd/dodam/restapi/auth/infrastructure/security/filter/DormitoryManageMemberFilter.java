@@ -29,7 +29,7 @@ public class DormitoryManageMemberFilter extends OncePerRequestFilter {
         String uri = request.getRequestURI();
         String method = request.getMethod();
 
-        if (!uri.contains("night-study")) {
+        if (!uri.contains("night-study") || isAllowedMethod(uri, method)) {
             filterChain.doFilter(request, response);
             return;
         }
@@ -49,12 +49,16 @@ public class DormitoryManageMemberFilter extends OncePerRequestFilter {
         }
     }
 
+    private boolean isAllowedMethod(String uri, String method) {
+        return "GET".equals(method) && uri.equals("/night-study");
+    }
+
     private boolean isStudentAllowed(String uri, String method, Member member) {
         if (member.getRole() != MemberRole.STUDENT) return false;
         return switch (method) {
             case "POST" -> uri.equals("/night-study") || uri.equals("/night-study/project");
             case "DELETE" -> !uri.contains("/night-study/ban");
-            case "GET" -> uri.equals("/night-study/my") || uri.equals("/night-study/ban/my") || uri.equals("/night-study/project/my") || uri.equals("/night-study");
+            case "GET" -> uri.equals("/night-study/my") || uri.equals("/night-study/ban/my") || uri.equals("/night-study/project/my");
             default -> false;
         };
     }
