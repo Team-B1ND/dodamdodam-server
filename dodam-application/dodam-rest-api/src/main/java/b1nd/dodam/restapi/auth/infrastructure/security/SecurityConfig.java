@@ -126,6 +126,8 @@ class SecurityConfig {
                 .requestMatchers(GET, "/clubs/join-requests/received").authenticated()
                 .requestMatchers(GET, "/clubs/join-requests/{studentId}").hasAnyRole(TEACHER, ADMIN)
 
+                .requestMatchers(GET, "/night-study").permitAll()
+
                 .anyRequest().authenticated()
                 .and()
                 .exceptionHandling()
