@@ -43,9 +43,9 @@ public interface NightStudyProjectMemberRepository extends JpaRepository<NightSt
 
     @Query("""
     select m from NightStudyProjectMember m
-    join m.project p
+    join fetch m.project p
     where p.status = 'ALLOWED' and
-        :today between p.startAt and p.endAt
+        :today <= p.endAt
 """)
     List<NightStudyProjectMember> findAllowedProjectMembers(
             @Param("today") LocalDate today

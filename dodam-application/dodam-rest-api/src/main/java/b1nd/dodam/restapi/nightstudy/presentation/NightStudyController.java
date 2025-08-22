@@ -154,6 +154,11 @@ public class NightStudyController {
         return useCase.getStudentsWithBan();
     }
 
+    @GetMapping("/combined")
+    public ResponseData<NightStudyAndProjectRes> getCombined() {
+        return useCase.getCombined();
+    }
+
     @GetMapping("/project/students")
     public ResponseData<List<StudentWithNightStudyProjectRes>> getValidProjectStudents() {
         return useCase.getProjectStudents();

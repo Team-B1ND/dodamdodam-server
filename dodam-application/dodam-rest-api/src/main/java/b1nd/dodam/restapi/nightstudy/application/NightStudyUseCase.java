@@ -1,6 +1,5 @@
 package b1nd.dodam.restapi.nightstudy.application;
 
-import b1nd.dodam.core.util.ZonedDateTimeUtil;
 import b1nd.dodam.domain.rds.member.entity.DormitoryManageMember;
 import b1nd.dodam.domain.rds.member.entity.Member;
 import b1nd.dodam.domain.rds.member.entity.Student;
@@ -37,7 +36,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -59,30 +57,28 @@ public class NightStudyUseCase {
 
     public Response apply(ApplyNightStudyReq req) {
         Student student = studentRepository.getByMember(memberAuthenticationHolder.current());
-        validateDuplicatedOrBanned(student, req);
+        validateBanned(student, req);
         nightStudyService.save(req.toEntity(student));
         return Response.created("심야자습 신청 성공");
     }
 
-    private void validateDuplicatedOrBanned(Student student, ApplyNightStudyReq req) {
+    private void validateBanned(Student student, ApplyNightStudyReq req) {
         nightStudyBanService.validateBan(student);
         nightStudyService.validateDurationDuplication(student, req.startAt(), req.endAt());
-        nightStudyProjectMemberService.validateMultipleDurationDuplication(Collections.singletonList(student), req.startAt(), req.endAt(), NightStudyProjectType.NIGHT_STUDY_PROJECT_2);
     }
 
     public Response applyProject(ApplyNightStudyProjectReq req) {
         Student leader = studentRepository.getByMember(memberAuthenticationHolder.current());
         List<Student> students = studentRepository.getByIds(req.students());
-        checkLeaderAndStudentsDuplicatedOrBanned(leader, students, req);
+        checkLeaderAndStudentsBanned(leader, students, req);
         NightStudyProject project = nightStudyProjectService.save(req.toEntity());
         nightStudyProjectMemberService.saveAll(getProjectMembers(leader, students, project));
         return Response.created("프로젝트 심야자습 신청 성공");
     }
 
-    private void checkLeaderAndStudentsDuplicatedOrBanned(Student leader, List<Student> students, ApplyNightStudyProjectReq req) {
+    private void checkLeaderAndStudentsBanned(Student leader, List<Student> students, ApplyNightStudyProjectReq req) {
         List<Student> participants = Stream.concat(Stream.of(leader), students.stream()).toList();
         nightStudyBanService.validateMultipleBans(participants);
-        nightStudyProjectMemberService.validateMultipleDurationDuplication(participants, req.startAt(), req.endAt(), req.type());
         if (req.type() == NightStudyProjectType.NIGHT_STUDY_PROJECT_2) nightStudyService.validateNoActiveNightStudies(participants);
     }
 
@@ -208,17 +204,14 @@ public class NightStudyUseCase {
 
     @Transactional(readOnly = true)
     public ResponseData<List<NightStudyRes>> getAll() {
-        Student student = studentRepository.getByMember(memberAuthenticationHolder.current());
-        LocalDate now = ZonedDateTimeUtil.nowToLocalDate();
-        List<NightStudyRes> result = NightStudyRes.of(nightStudyService.getAll(now));
+        List<NightStudyRes> result = NightStudyRes.of(nightStudyService.getAll());
         return ResponseData.ok("모든 심야자습 조회 성공", result);
     }
 
     @Transactional(readOnly = true)
     public ResponseData<List<NightStudyRes>> getMy() {
         Student student = studentRepository.getByMember(memberAuthenticationHolder.current());
-        LocalDate now = ZonedDateTimeUtil.nowToLocalDate();
-        List<NightStudyRes> result = NightStudyRes.of(nightStudyService.getMy(student, now));
+        List<NightStudyRes> result = NightStudyRes.of(nightStudyService.getMy(student));
         return ResponseData.ok("내 심야자습 조회 성공", result);
     }
 
@@ -230,19 +223,16 @@ public class NightStudyUseCase {
 
     @Transactional(readOnly = true)
     public ResponseData<List<NightStudyRes>> getValid() {
-        LocalDate now = ZonedDateTimeUtil.nowToLocalDate();
-        List<NightStudyRes> result = NightStudyRes.of(nightStudyService.getValid(now));
+        List<NightStudyRes> result = NightStudyRes.of(nightStudyService.getValid());
         return ResponseData.ok("승인된 심야자습 조회 성공", result);
     }
 
     @Transactional(readOnly = true)
     public ResponseData<List<StudentWithNightStudyBanRes>> getMembers() {
-        LocalDate now = ZonedDateTimeUtil.nowToLocalDate();
         List<Student> students = studentRepository.findAllByMember_Status(ActiveStatus.ACTIVE);
-        List<Integer> bannedStudentIds = nightStudyBanService.findAllStudentIdByDate(now);
+        List<Integer> bannedStudentIds = nightStudyBanService.findAllStudentIdByDate();
         return ResponseData.ok("학생 및 정지 여부 조회 성공", StudentWithNightStudyBanRes.of(students, bannedStudentIds));
     }
-
 
     @Transactional(readOnly = true)
     public ResponseData<NightStudyProjectWithMembersRes> getProjectDetails(Long id) {
@@ -253,8 +243,7 @@ public class NightStudyUseCase {
 
     @Transactional(readOnly = true)
     public ResponseData<List<NightStudyProjectRes>> getValidProjects() {
-        LocalDate today = ZonedDateTimeUtil.nowToLocalDate();
-        List<NightStudyProjectRes> result = nightStudyProjectService.getAllByDateRange(today).stream()
+        List<NightStudyProjectRes> result = nightStudyProjectService.getAllByDateRange().stream()
             .map(NightStudyProjectRes::of)
             .toList();
         return ResponseData.ok("유효한 모든 프로젝트 조회 성공", result);
@@ -262,15 +251,13 @@ public class NightStudyUseCase {
 
     @Transactional(readOnly = true)
     public ResponseData<List<NightStudyProjectWithMembersRes>> getPendingProjects() {
-        LocalDate today = ZonedDateTimeUtil.nowToLocalDate();
-        List<NightStudyProjectMember> members = nightStudyProjectMemberService.getPendingProjectMembers(today);
+        List<NightStudyProjectMember> members = nightStudyProjectMemberService.getPendingProjectMembers();
         return ResponseData.ok("대기중인 프로젝트 심야자습 조회 성공", convertToProjectWithMembersRes(members));
     }
 
     @Transactional(readOnly = true)
     public ResponseData<List<NightStudyProjectWithMembersRes>> getAllowedProjects() {
-        LocalDate today = ZonedDateTimeUtil.nowToLocalDate();
-        List<NightStudyProjectMember> members = nightStudyProjectMemberService.getAllowedProjectMembers(today);
+        List<NightStudyProjectMember> members = nightStudyProjectMemberService.getAllowedProjectMembers();
         return ResponseData.ok("승인된 프로젝트 심야자습 조회 성공", convertToProjectWithMembersRes(members));
     }
 
@@ -285,8 +272,7 @@ public class NightStudyUseCase {
     @Transactional(readOnly = true)
     public ResponseData<List<NightStudyProjectRes>> getMyProjects() {
         Student student = studentRepository.getByMember(memberAuthenticationHolder.current());
-        LocalDate today = ZonedDateTimeUtil.nowToLocalDate();
-        List<NightStudyProjectRes> result = nightStudyProjectMemberService.findByStudent(student, today).stream()
+        List<NightStudyProjectRes> result = nightStudyProjectMemberService.findByStudent(student).stream()
             .map(NightStudyProjectRes::of)
             .toList();
         return ResponseData.ok("내 프로젝트 심야자습 조회 성공", result);
@@ -294,26 +280,31 @@ public class NightStudyUseCase {
 
     @Transactional(readOnly = true)
     public ResponseData<List<NightStudyProjectRoomRes>> getRoomsInUse() {
-        LocalDate today = ZonedDateTimeUtil.nowToLocalDate();
-        List<NightStudyProjectRoomRes> result = NightStudyProjectRoomRes.of(nightStudyProjectService.getAllRoomsWithProjects(today));
+        List<NightStudyProjectRoomRes> result = NightStudyProjectRoomRes.of(nightStudyProjectService.getAllRoomsWithProjects());
         return ResponseData.ok("사용중인 프로젝트 실 조회 성공", result);
     }
 
     @Transactional(readOnly = true)
     public ResponseData<List<StudentWithNightStudyBanRes>> getStudentsWithBan() {
-        LocalDate today = ZonedDateTimeUtil.nowToLocalDate();
         Member member = authenticationHolder.current();
         List<Student> students = studentRepository.findAllByMember_StatusAndMemberNot(ActiveStatus.ACTIVE, member);
-        List<Integer> bannedStudents = nightStudyBanService.findAllStudentIdByDate(today);
+        List<Integer> bannedStudents = nightStudyBanService.findAllStudentIdByDate();
         List<StudentWithNightStudyBanRes> result = StudentWithNightStudyBanRes.of(students, bannedStudents);
         return ResponseData.ok("학생 조회 성공", result);
     }
 
     @Transactional(readOnly = true)
+    public ResponseData<NightStudyAndProjectRes> getCombined() {
+        List<NightStudyProjectMember> members = nightStudyProjectMemberService.getAllStudentByDate();
+        List<NightStudyRes> nightStudyRes = NightStudyRes.of(nightStudyService.getCombinedStudy());
+        List<StudentWithNightStudyProjectRes> projectStudents = StudentWithNightStudyProjectRes.from(members);
+        NightStudyAndProjectRes result = NightStudyAndProjectRes.of(nightStudyRes, projectStudents);
+        return ResponseData.ok("심야자습 및 프로젝트 참가자 조회 성공", result);
+    }
+
+    @Transactional(readOnly = true)
     public ResponseData<List<StudentWithNightStudyProjectRes>> getProjectStudents() {
-        List<NightStudyProjectMember> members = nightStudyProjectMemberService.getAllStudentByDate(ZonedDateTimeUtil.nowToLocalDate());
-        return ResponseData.ok("프로젝트 참가 학생 조회 성공", members.stream()
-                .map(member -> StudentWithNightStudyProjectRes.of(member.getStudent(), member.getProject()))
-                .toList());
+        List<NightStudyProjectMember> members = nightStudyProjectMemberService.getAllStudentByDate();
+        return ResponseData.ok("프로젝트 참가 학생 조회 성공", StudentWithNightStudyProjectRes.from(members));
     }
 }
