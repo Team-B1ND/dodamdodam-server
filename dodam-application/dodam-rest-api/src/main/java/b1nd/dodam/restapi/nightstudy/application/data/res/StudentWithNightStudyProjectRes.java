@@ -2,8 +2,11 @@ package b1nd.dodam.restapi.nightstudy.application.data.res;
 
 import b1nd.dodam.domain.rds.member.entity.Student;
 import b1nd.dodam.domain.rds.nightstudy.entity.NightStudyProject;
+import b1nd.dodam.domain.rds.nightstudy.entity.NightStudyProjectMember;
 import b1nd.dodam.domain.rds.nightstudy.enumeration.NightStudyProjectRoom;
 import b1nd.dodam.domain.rds.nightstudy.enumeration.NightStudyProjectType;
+
+import java.util.List;
 
 public record StudentWithNightStudyProjectRes(
         int id,
@@ -26,5 +29,11 @@ public record StudentWithNightStudyProjectRes(
                 project.getType(),
                 project.getRoom()
         );
+    }
+
+    public static List<StudentWithNightStudyProjectRes> from(List<NightStudyProjectMember> members) {
+        return members.stream()
+                .map(member -> StudentWithNightStudyProjectRes.of(member.getStudent(), member.getProject()))
+                .toList();
     }
 }

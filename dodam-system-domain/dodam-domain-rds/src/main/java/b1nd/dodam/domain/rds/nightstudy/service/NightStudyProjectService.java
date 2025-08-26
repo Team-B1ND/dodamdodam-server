@@ -1,5 +1,6 @@
 package b1nd.dodam.domain.rds.nightstudy.service;
 
+import b1nd.dodam.core.util.ZonedDateTimeUtil;
 import b1nd.dodam.domain.rds.nightstudy.entity.NightStudyProject;
 import b1nd.dodam.domain.rds.nightstudy.exception.NightStudyNotFoundException;
 import b1nd.dodam.domain.rds.nightstudy.repository.NightStudyProjectRepository;
@@ -29,11 +30,13 @@ public class NightStudyProjectService {
                 .orElseThrow(NightStudyNotFoundException::new);
     }
 
-    public List<NightStudyProject> getAllByDateRange(LocalDate date) {
-    return repository.findByStartAtLessThanEqualAndEndAtGreaterThanEqual(date, date);
+    public List<NightStudyProject> getAllByDateRange() {
+        LocalDate now = ZonedDateTimeUtil.nowToLocalDate();
+    return repository.findByStartAtLessThanEqualAndEndAtGreaterThanEqual(now, now);
     }
 
-    public List<NightStudyProject> getAllRoomsWithProjects(LocalDate date) {
-       return repository.findByStatusNotAndStartAtLessThanEqualAndEndAtGreaterThanEqualOrderByRoom(ApprovalStatus.REJECTED, date, date);
+    public List<NightStudyProject> getAllRoomsWithProjects() {
+        LocalDate now = ZonedDateTimeUtil.nowToLocalDate();
+       return repository.findByStatusNotAndStartAtLessThanEqualAndEndAtGreaterThanEqualOrderByRoom(ApprovalStatus.REJECTED, now, now);
     }
 }
