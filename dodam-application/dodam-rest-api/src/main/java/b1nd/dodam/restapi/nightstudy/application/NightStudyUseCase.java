@@ -117,19 +117,16 @@ public class NightStudyUseCase {
         return Response.ok("프로젝트 심야자습 취소 성공");
     }
 
-    @PushAlarmEvent(target = "심야자습", status = ApprovalStatus.ALLOWED)
     public Response allow(Long id) {
         modifyStatus(id, ApprovalStatus.ALLOWED, null);
         return Response.noContent("심야자습 승인 성공");
     }
 
-    @PushAlarmEvent(target = "심야자습", status = ApprovalStatus.REJECTED)
     public Response reject(Long id, Optional<RejectNightStudyReq> req) {
         modifyStatus(id, ApprovalStatus.REJECTED, req.map(RejectNightStudyReq::rejectReason).orElse(null));
         return Response.noContent("심야자습 거절 성공");
     }
 
-    @PushAlarmEvent(target = "심야자습", status = ApprovalStatus.PENDING)
     public Response revert(Long id) {
         modifyStatus(id, ApprovalStatus.PENDING, null);
         return Response.noContent("심야자습 대기 성공");
