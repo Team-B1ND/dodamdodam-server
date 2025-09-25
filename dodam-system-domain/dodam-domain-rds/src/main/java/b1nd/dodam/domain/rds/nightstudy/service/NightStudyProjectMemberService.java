@@ -3,8 +3,6 @@ package b1nd.dodam.domain.rds.nightstudy.service;
 import b1nd.dodam.domain.rds.member.entity.Student;
 import b1nd.dodam.domain.rds.nightstudy.entity.NightStudyProject;
 import b1nd.dodam.domain.rds.nightstudy.entity.NightStudyProjectMember;
-import b1nd.dodam.domain.rds.nightstudy.enumeration.NightStudyProjectType;
-import b1nd.dodam.domain.rds.nightstudy.exception.NightStudyDuplicateException;
 import b1nd.dodam.domain.rds.nightstudy.exception.NightStudyProjectMemberNotFoundException;
 import b1nd.dodam.domain.rds.nightstudy.repository.NightStudyProjectMemberRepository;
 import b1nd.dodam.domain.rds.support.enumeration.ApprovalStatus;
@@ -40,9 +38,6 @@ public class NightStudyProjectMemberService {
         return repository.findAllByProject(project);
     }
 
-    public void validateMultipleDurationDuplication(List<Student> students, LocalDate startAt, LocalDate endAt, NightStudyProjectType type) {
-        if (repository.existsValidByStudentAndDate(students, startAt, endAt, type)) throw new NightStudyDuplicateException();
-    }
 
     public List<NightStudyProjectMember> getAllowedProjectMembers(LocalDate date) {
         return repository.findMemberWithProjectByStatus(ApprovalStatus.ALLOWED, date);

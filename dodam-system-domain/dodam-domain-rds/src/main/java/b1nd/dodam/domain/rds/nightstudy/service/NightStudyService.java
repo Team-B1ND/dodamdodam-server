@@ -36,11 +36,6 @@ public class NightStudyService {
         if (repository.existsValidByStudentAndDate(student, startAt, endAt)) throw new NightStudyDuplicateException();
     }
 
-    public void validateNoActiveNightStudies(List<Student> students) {
-        LocalDate now = ZonedDateTimeUtil.nowToLocalDate();
-        if (repository.existsActiveNightStudy(students, now)) throw new NightStudyDuplicateException();
-    }
-
     public List<NightStudy> getAll(LocalDate now) {
         return repository.findAllByDate(now);
     }

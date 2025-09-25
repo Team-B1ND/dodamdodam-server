@@ -16,7 +16,6 @@ import b1nd.dodam.domain.rds.nightstudy.entity.NightStudyProject;
 import b1nd.dodam.domain.rds.nightstudy.entity.NightStudyProjectMember;
 import b1nd.dodam.domain.rds.nightstudy.enumeration.NightStudyProjectMemberRole;
 import b1nd.dodam.domain.rds.nightstudy.enumeration.NightStudyProjectRoom;
-import b1nd.dodam.domain.rds.nightstudy.enumeration.NightStudyProjectType;
 import b1nd.dodam.domain.rds.nightstudy.exception.NotNightStudyApplicantException;
 import b1nd.dodam.domain.rds.nightstudy.service.NightStudyBanService;
 import b1nd.dodam.domain.rds.nightstudy.service.NightStudyProjectMemberService;
@@ -31,13 +30,11 @@ import b1nd.dodam.restapi.nightstudy.application.data.req.RejectNightStudyReq;
 import b1nd.dodam.restapi.nightstudy.application.data.res.*;
 import b1nd.dodam.restapi.support.data.Response;
 import b1nd.dodam.restapi.support.data.ResponseData;
-import b1nd.dodam.restapi.support.pushalarm.PushAlarmEvent;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -59,31 +56,28 @@ public class NightStudyUseCase {
 
     public Response apply(ApplyNightStudyReq req) {
         Student student = studentRepository.getByMember(memberAuthenticationHolder.current());
-        validateDuplicatedOrBanned(student, req);
+        checkBanAndDuplication(student, req);
         nightStudyService.save(req.toEntity(student));
         return Response.created("심야자습 신청 성공");
     }
 
-    private void validateDuplicatedOrBanned(Student student, ApplyNightStudyReq req) {
+    private void checkBanAndDuplication(Student student, ApplyNightStudyReq req) {
         nightStudyBanService.validateBan(student);
         nightStudyService.validateDurationDuplication(student, req.startAt(), req.endAt());
-        nightStudyProjectMemberService.validateMultipleDurationDuplication(Collections.singletonList(student), req.startAt(), req.endAt(), NightStudyProjectType.NIGHT_STUDY_PROJECT_2);
     }
 
     public Response applyProject(ApplyNightStudyProjectReq req) {
         Student leader = studentRepository.getByMember(memberAuthenticationHolder.current());
         List<Student> students = studentRepository.getByIds(req.students());
-        checkLeaderAndStudentsDuplicatedOrBanned(leader, students, req);
+        checkMultipleBans(leader, students);
         NightStudyProject project = nightStudyProjectService.save(req.toEntity());
         nightStudyProjectMemberService.saveAll(getProjectMembers(leader, students, project));
         return Response.created("프로젝트 심야자습 신청 성공");
     }
 
-    private void checkLeaderAndStudentsDuplicatedOrBanned(Student leader, List<Student> students, ApplyNightStudyProjectReq req) {
+    private void checkMultipleBans(Student leader, List<Student> students) {
         List<Student> participants = Stream.concat(Stream.of(leader), students.stream()).toList();
         nightStudyBanService.validateMultipleBans(participants);
-        nightStudyProjectMemberService.validateMultipleDurationDuplication(participants, req.startAt(), req.endAt(), req.type());
-        if (req.type() == NightStudyProjectType.NIGHT_STUDY_PROJECT_2) nightStudyService.validateNoActiveNightStudies(participants);
     }
 
     private List<NightStudyProjectMember> getProjectMembers(Student leader, List<Student> students, NightStudyProject project) {
