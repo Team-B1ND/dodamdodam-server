@@ -13,6 +13,7 @@ public enum NightStudyExceptionCode implements ExceptionCode {
     BAN_NOT_FOUND(404, "없는 심야자습 정지"),
     MEMBER_NOT_FOUND(404, "없는 프로젝트 멤버"),
     STUDY_DUPLICATE(409, "해당 날짜에 심야자습 중복"),
+    STUDY_NOT_ALLOWED(401, "없는 삭제 권한"),
     BANNED_STUDENT(412, "정지된 심야자습 신청 권한");
 
     private final int status;

@@ -18,6 +18,7 @@ import b1nd.dodam.domain.rds.nightstudy.enumeration.NightStudyProjectMemberRole;
 import b1nd.dodam.domain.rds.nightstudy.enumeration.NightStudyProjectRoom;
 import b1nd.dodam.domain.rds.nightstudy.enumeration.NightStudyProjectType;
 import b1nd.dodam.domain.rds.nightstudy.exception.NotNightStudyApplicantException;
+import b1nd.dodam.domain.rds.nightstudy.exception.StudyNotAllowedException;
 import b1nd.dodam.domain.rds.nightstudy.service.NightStudyBanService;
 import b1nd.dodam.domain.rds.nightstudy.service.NightStudyProjectMemberService;
 import b1nd.dodam.domain.rds.nightstudy.service.NightStudyProjectService;
@@ -98,8 +99,15 @@ public class NightStudyUseCase {
         Student student = studentRepository.getByMember(memberAuthenticationHolder.current());
         NightStudy nightStudy = nightStudyService.getBy(id);
         throwExceptionWhenStudentIsNotApplicant(nightStudy, student);
+        throwExceptionWhenNightStudyAllowed(nightStudy);
         nightStudyService.delete(nightStudy);
         return Response.noContent("심야자습 취소 성공");
+    }
+
+    private void throwExceptionWhenNightStudyAllowed(NightStudy nightStudy) {
+        if (nightStudy.getStatus() == ApprovalStatus.ALLOWED) {
+            throw new StudyNotAllowedException();
+        }
     }
 
     private void throwExceptionWhenStudentIsNotApplicant(NightStudy nightStudy, Student student) {
