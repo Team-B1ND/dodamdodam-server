@@ -11,6 +11,6 @@ class GlobalExceptionHandler {
 
     @ExceptionHandler(BasicException::class)
     fun handleDodamException(exception: BasicException): ResponseEntity<Response<Unit>> {
-        return Response.Companion.error(exception).toResponseEntity()
+        return Response.error(exception).toResponseEntity()
     }
 }
