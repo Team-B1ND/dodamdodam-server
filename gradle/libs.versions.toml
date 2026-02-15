@@ -24,6 +24,12 @@ springBootStarterValidation = { module = "org.springframework.boot:spring-boot-s
 springBootStarterActuator = { module = "org.springframework.boot:spring-boot-starter-actuator" }
 springBootStarterTest = { module = "org.springframework.boot:spring-boot-starter-test" }
 
+# database
+mysql-jdbcDriver = { module = "com.mysql:mysql-connector-j" }
+mysql-r2dbcDriver = { module = "dev.miku:r2dbc-mysql" }
+springBootStarterData-jdbc = { module = "org.springframework.boot:spring-boot-starter-data-jdbc" }
+springBootStarterData-r2dbc = { module = "org.springframework.boot:spring-boot-starter-data-r2dbc" }
+
 # Kafka
 springKafka = { module = "org.springframework.kafka:spring-kafka" }
 kafkaClients = { module = "org.apache.kafka:kafka-clients", version.ref = "kafka" }
