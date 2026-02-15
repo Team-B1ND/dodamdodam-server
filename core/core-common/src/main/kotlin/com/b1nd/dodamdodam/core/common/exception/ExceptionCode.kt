@@ -5,5 +5,4 @@ import org.springframework.http.HttpStatus
 interface ExceptionCode {
     val status: HttpStatus
     val message: String
-    val exceptionName: String
 }

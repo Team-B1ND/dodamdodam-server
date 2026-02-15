@@ -29,5 +29,6 @@ include(":core:core-security")
 
 // Service modules
 include(":services:service-auth")
+include(":services:service-user")
 
 rootProject.name = "dodamdodam-server"
