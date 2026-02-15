@@ -5,10 +5,10 @@ import com.b1nd.dodamdodam.user.domain.student.entity.StudentEntity
 import com.b1nd.dodamdodam.user.domain.user.entity.UserEntity
 import com.b1nd.dodamdodam.user.domain.user.enumeration.StatusType
 
-fun StudentRegisterRequest.toUserEntity(encodedPassword: String): UserEntity {
+fun StudentRegisterRequest.toUserEntity(): UserEntity {
     return UserEntity(
         username = username,
-        password = encodedPassword,
+        password = password,
         name = name,
         phone = phone,
         status = StatusType.PENDING,

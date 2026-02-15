@@ -42,4 +42,8 @@ class UserEntity (
     fun generatePublicId() {
         publicId = UUID.randomUUID()
     }
+
+    fun updatePassword(newPassword: String) {
+        this.password = newPassword
+    }
 }
