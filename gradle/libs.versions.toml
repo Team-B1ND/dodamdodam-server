@@ -25,10 +25,10 @@ springBootStarterActuator = { module = "org.springframework.boot:spring-boot-sta
 springBootStarterTest = { module = "org.springframework.boot:spring-boot-starter-test" }
 
 # database
-mysql-driver = { module = "com.mysql:mysql-connector-j" }
-r2dbc-mysql-driver = { module = "dev.miku:r2dbc-mysql" }
-spring-boot-starter-data-jdbc = { module = "org.springframework.boot:spring-boot-starter-data-jdbc" }
-spring-boot-starter-data-r2dbc = { module = "org.springframework.boot:spring-boot-starter-data-r2dbc" }
+mysql-jdbcDriver = { module = "com.mysql:mysql-connector-j" }
+mysql-r2dbcDriver = { module = "dev.miku:r2dbc-mysql" }
+springBootStarterData-jdbc = { module = "org.springframework.boot:spring-boot-starter-data-jdbc" }
+springBootStarterData-r2dbc = { module = "org.springframework.boot:spring-boot-starter-data-r2dbc" }
 
 # Kafka
 springKafka = { module = "org.springframework.kafka:spring-kafka" }
