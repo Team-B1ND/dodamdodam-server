@@ -25,6 +25,7 @@
             <option value="$PROJECT_DIR$/buildSrc" />
             <option value="$PROJECT_DIR$/core" />
             <option value="$PROJECT_DIR$/core/core-common" />
+            <option value="$PROJECT_DIR$/core/core-jpa" />
             <option value="$PROJECT_DIR$/core/core-kafka" />
             <option value="$PROJECT_DIR$/core/core-security" />
             <option value="$PROJECT_DIR$/services" />
