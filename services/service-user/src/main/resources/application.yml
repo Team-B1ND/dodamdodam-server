@@ -1,6 +1,9 @@
 spring:
   application:
     name: service-user
+  
+  profiles:
+    active: local
 
 server:
   port: 8081
