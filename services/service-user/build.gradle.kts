@@ -10,4 +10,5 @@ dependencies {
     // database
     runtimeOnly(libs.mysql.jdbcDriver)
     implementation(libs.springBootStarterData.jdbc)
+    implementation(libs.springBootStarterData.jpa)
 }
