@@ -15,6 +15,7 @@ import jakarta.persistence.Table
 @Entity
 @Table(name = "user_roles")
 class UserRoleEntity(
+
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "user_id", nullable = false)
     val user: UserEntity,
@@ -24,6 +25,5 @@ class UserRoleEntity(
 ) {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    var id: Long? = null
-        protected set
+    val id: Long? = null
 }

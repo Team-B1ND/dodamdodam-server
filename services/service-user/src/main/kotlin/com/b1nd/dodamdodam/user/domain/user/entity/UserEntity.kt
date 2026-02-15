@@ -15,13 +15,10 @@ import java.util.UUID
 @Table(name = "users")
 class UserEntity (
     @Column(nullable = false)
-    var publicId: UUID? = null,
-
-    @Column(nullable = false)
     val username: String,
 
     @Column(nullable = false)
-    var nickname: String,
+    var name: String,
 
     @Column(nullable = false, length = 255)
     var password: String,
@@ -35,8 +32,11 @@ class UserEntity (
 ): BaseTimeEntity() {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    var id: Long? = null
-        protected set
+    val id: Long? = null
+
+    @Column(nullable = false)
+    var publicId: UUID? = null
+            protected set
 
     @PrePersist
     fun generatePublicId() {
