@@ -9,7 +9,6 @@ import com.b1nd.dodamdodam.user.domain.user.entity.UserEntity
 import com.b1nd.dodamdodam.user.domain.user.enumeration.RoleType
 import com.b1nd.dodamdodam.user.domain.user.service.UserService
 import jakarta.transaction.Transactional
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.stereotype.Component
 
 @Component
