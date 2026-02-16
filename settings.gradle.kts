@@ -26,6 +26,7 @@ include(":utils")
 include(":core:core-common")
 include(":core:core-kafka")
 include(":core:core-security")
+include("core:core-jpa")
 
 // Service modules
 include(":services:service-auth")

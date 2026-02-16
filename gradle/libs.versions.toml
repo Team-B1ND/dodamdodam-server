@@ -29,6 +29,9 @@ mysql-jdbcDriver = { module = "com.mysql:mysql-connector-j" }
 mysql-r2dbcDriver = { module = "dev.miku:r2dbc-mysql" }
 springBootStarterData-jdbc = { module = "org.springframework.boot:spring-boot-starter-data-jdbc" }
 springBootStarterData-r2dbc = { module = "org.springframework.boot:spring-boot-starter-data-r2dbc" }
+springBootStarterData-jpa = { module = "org.springframework.boot:spring-boot-starter-data-jpa" }
+flywayCore = { module = "org.flywaydb:flyway-core" }
+flywayMysql = { module = "org.flywaydb:flyway-mysql" }
 
 # Kafka
 springKafka = { module = "org.springframework.kafka:spring-kafka" }

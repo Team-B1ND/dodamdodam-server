@@ -2,9 +2,23 @@ package buildsrc.convention
 
 plugins {
     kotlin("jvm")
-    id("org.jetbrains.kotlin.plugin.spring")
+    kotlin("plugin.spring")
+    kotlin("plugin.noarg")
+    kotlin("plugin.allopen")
     id("org.springframework.boot")
     id("io.spring.dependency-management")
+}
+
+allOpen {
+    annotation("jakarta.persistence.Entity")
+    annotation("jakarta.persistence.MappedSuperclass")
+    annotation("jakarta.persistence.Embeddable")
+}
+
+noArg {
+    annotation("jakarta.persistence.Entity")
+    annotation("jakarta.persistence.MappedSuperclass")
+    annotation("jakarta.persistence.Embeddable")
 }
 
 kotlin {

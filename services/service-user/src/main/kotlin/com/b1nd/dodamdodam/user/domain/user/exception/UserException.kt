@@ -1,0 +1,7 @@
+package com.b1nd.dodamdodam.user.domain.user.exception
+
+import com.b1nd.dodamdodam.core.common.exception.BasicException
+
+class UserAlreadyExistsException: BasicException(UserExceptionCode.USER_ALREADY_EXISTED)
+class UserNotFoundException: BasicException(UserExceptionCode.USER_NOT_FOUNDED)
+class UserPasswordIncorrectException: BasicException(UserExceptionCode.USER_PASSWORD_INCORRECT)
