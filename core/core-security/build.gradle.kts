@@ -8,4 +8,5 @@ dependencies {
     api(libs.bundles.kotlinxEcosystem)
     
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
+    implementation("org.springframework.boot:spring-boot-starter-aop")
 }
