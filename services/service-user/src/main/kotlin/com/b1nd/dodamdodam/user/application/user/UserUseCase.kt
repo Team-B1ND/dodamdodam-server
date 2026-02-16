@@ -1,12 +1,12 @@
 package com.b1nd.dodamdodam.user.application.user
 
+import com.b1nd.dodamdodam.core.security.passport.enumerations.RoleType
 import com.b1nd.dodamdodam.user.application.user.data.request.StudentRegisterRequest
 import com.b1nd.dodamdodam.user.application.user.data.request.VerifyPasswordRequest
 import com.b1nd.dodamdodam.user.application.user.data.toStudentEntity
 import com.b1nd.dodamdodam.user.application.user.data.toUserEntity
 import com.b1nd.dodamdodam.user.domain.student.service.StudentService
 import com.b1nd.dodamdodam.user.domain.user.entity.UserEntity
-import com.b1nd.dodamdodam.user.domain.user.enumeration.RoleType
 import com.b1nd.dodamdodam.user.domain.user.service.UserService
 import jakarta.transaction.Transactional
 import org.springframework.stereotype.Component

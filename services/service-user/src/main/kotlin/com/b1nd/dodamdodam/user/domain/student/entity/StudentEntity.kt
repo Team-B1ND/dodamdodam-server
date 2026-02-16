@@ -1,5 +1,6 @@
 package com.b1nd.dodamdodam.user.domain.student.entity
 
+import com.b1nd.dodamdodam.core.jpa.entity.BaseTimeEntity
 import com.b1nd.dodamdodam.user.domain.user.entity.UserEntity
 import jakarta.persistence.Entity
 import jakarta.persistence.FetchType
@@ -23,7 +24,7 @@ class StudentEntity(
     var room: Int,
 
     var number: Int
-) {
+): BaseTimeEntity() {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long? = null

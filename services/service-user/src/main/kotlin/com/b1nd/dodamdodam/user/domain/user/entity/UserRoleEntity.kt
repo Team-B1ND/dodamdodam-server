@@ -1,6 +1,7 @@
 package com.b1nd.dodamdodam.user.domain.user.entity
 
-import com.b1nd.dodamdodam.user.domain.user.enumeration.RoleType
+import com.b1nd.dodamdodam.core.jpa.entity.BaseTimeEntity
+import com.b1nd.dodamdodam.core.security.passport.enumerations.RoleType
 import jakarta.persistence.Entity
 import jakarta.persistence.EnumType
 import jakarta.persistence.Enumerated
@@ -22,7 +23,7 @@ class UserRoleEntity(
 
     @Enumerated(EnumType.STRING)
     val role: RoleType
-) {
+): BaseTimeEntity() {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long? = null

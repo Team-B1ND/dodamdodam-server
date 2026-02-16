@@ -1,8 +1,8 @@
 package com.b1nd.dodamdodam.user.domain.user.service
 
+import com.b1nd.dodamdodam.core.security.passport.enumerations.RoleType
 import com.b1nd.dodamdodam.user.domain.user.entity.UserEntity
 import com.b1nd.dodamdodam.user.domain.user.entity.UserRoleEntity
-import com.b1nd.dodamdodam.user.domain.user.enumeration.RoleType
 import com.b1nd.dodamdodam.user.domain.user.exception.UserAlreadyExistsException
 import com.b1nd.dodamdodam.user.domain.user.exception.UserPasswordIncorrectException
 import com.b1nd.dodamdodam.user.domain.user.repository.UserRepository

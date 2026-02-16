@@ -1,6 +1,6 @@
 package com.b1nd.dodamdodam.core.security.configuration
 
-import com.b1nd.dodamdodam.core.security.annotation.autnetication.UserAccessAspect
+import com.b1nd.dodamdodam.core.security.annotation.authentication.UserAccessAspect
 import com.b1nd.dodamdodam.core.security.filter.PassportFilter
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.context.annotation.Bean

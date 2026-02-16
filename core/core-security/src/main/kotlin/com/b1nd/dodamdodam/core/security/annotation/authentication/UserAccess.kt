@@ -1,4 +1,4 @@
-package com.b1nd.dodamdodam.core.security.annotation.autnetication
+package com.b1nd.dodamdodam.core.security.annotation.authentication
 
 import com.b1nd.dodamdodam.core.security.passport.enumerations.RoleType
 

@@ -1,7 +1,6 @@
 package com.b1nd.dodamdodam.core.security.filter
 
 import com.b1nd.dodamdodam.core.security.exception.PassportExpiredException
-import com.b1nd.dodamdodam.core.security.exception.PassportNotFoundException
 import com.b1nd.dodamdodam.core.security.passport.Passport
 import com.b1nd.dodamdodam.core.security.passport.PassportUserDetails
 import com.b1nd.dodamdodam.core.security.passport.crypto.PassportCompressor
@@ -21,7 +20,12 @@ class PassportFilter(
         filterChain: FilterChain
     ) {
         val rawPassport = request.getHeader(headerName)
-            ?: throw PassportNotFoundException()
+
+        if (rawPassport.isNullOrBlank()) {
+            filterChain.doFilter(request, response)
+            return
+        }
+
         val passport: Passport = PassportCompressor.decompress(rawPassport)
 
         validateExpiredAt(passport)
