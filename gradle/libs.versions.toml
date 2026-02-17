@@ -7,9 +7,10 @@ kotlin = "2.1.0"
 kotlinxDatetime = "0.7.1"
 kotlinxSerializationJSON = "1.9.0"
 kotlinxCoroutines = "1.10.2"
-springBoot = "3.4.1"
+springBoot = "3.3.5"
 springDependencyManagement = "1.1.7"
 kafka = "3.9.0"
+r2dbcMysql = "1.0.2"
 
 [libraries]
 kotlinGradlePlugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
@@ -26,7 +27,7 @@ springBootStarterTest = { module = "org.springframework.boot:spring-boot-starter
 
 # database
 mysql-jdbcDriver = { module = "com.mysql:mysql-connector-j" }
-mysql-r2dbcDriver = { module = "dev.miku:r2dbc-mysql" }
+mysql-r2dbcDriver = { module = "io.asyncer:r2dbc-mysql", version.ref = "r2dbcMysql" }
 springBootStarterData-jdbc = { module = "org.springframework.boot:spring-boot-starter-data-jdbc" }
 springBootStarterData-r2dbc = { module = "org.springframework.boot:spring-boot-starter-data-r2dbc" }
 springBootStarterData-jpa = { module = "org.springframework.boot:spring-boot-starter-data-jpa" }

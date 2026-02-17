@@ -1,0 +1,20 @@
+spring:
+  data:
+    redis:
+      port: 6379
+      host: localhost
+  r2dbc:
+    url: r2dbc:${MYSQL_HOST}
+    username: ${MYSQL_USER}
+    password: ${MYSQL_PASSWORD}
+  flyway:
+    url: jdbc:${MYSQL_HOST}
+    user: ${MYSQL_USER}
+    password: ${MYSQL_PASSWORD}
+
+app:
+  auth:
+    url: http://localhost:8082
+
+server:
+  port: 8080

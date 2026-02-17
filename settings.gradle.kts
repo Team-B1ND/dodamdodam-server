@@ -29,6 +29,7 @@ include(":core:core-security")
 include("core:core-jpa")
 
 // Service modules
+include(":services:service-gateway")
 include(":services:service-auth")
 include(":services:service-user")
 

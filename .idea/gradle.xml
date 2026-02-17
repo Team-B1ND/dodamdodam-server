@@ -30,6 +30,7 @@
             <option value="$PROJECT_DIR$/core/core-security" />
             <option value="$PROJECT_DIR$/services" />
             <option value="$PROJECT_DIR$/services/service-auth" />
+            <option value="$PROJECT_DIR$/services/service-gateway" />
             <option value="$PROJECT_DIR$/services/service-user" />
             <option value="$PROJECT_DIR$/utils" />
           </set>

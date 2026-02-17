@@ -1,0 +1,24 @@
+spring:
+  application:
+    name: service-gateway
+
+  main:
+    web-application-type: reactive
+
+  cloud:
+    gateway:
+      httpclient:
+        connect-timeout: 3000
+        response-timeout: 5s
+
+  flyway:
+    locations: classpath:database/migration
+
+  profiles:
+    active: local
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: gateway,health,info
