@@ -13,10 +13,14 @@ class AuthClient(
 ) {
     private val webClient = webClientBuilder.baseUrl(properties.url).build()
 
-    suspend fun exchangePassport(jwt: String): String =
+    suspend fun exchangePassport(jwt: String?): String =
         webClient.post()
             .uri("/passport")
-            .header(HttpHeaders.AUTHORIZATION, "Bearer $jwt")
+            .apply {
+                jwt?.let { token ->
+                    header(HttpHeaders.AUTHORIZATION, "Bearer $token")
+                }
+            }
             .retrieve()
             .bodyToMono(String::class.java)
             .awaitSingle()

@@ -1,7 +1,8 @@
 package com.b1nd.dodamdodam.gateway.infrastructure.gateway.filter
 
+import com.b1nd.dodamdodam.gateway.domain.passport.repository.PassportCacheRepository
+import com.b1nd.dodamdodam.gateway.domain.passport.service.PassportService
 import com.b1nd.dodamdodam.gateway.infrastructure.auth.client.AuthClient
-import kotlinx.coroutines.reactive.awaitFirstOrNull
 import kotlinx.coroutines.reactor.awaitSingleOrNull
 import kotlinx.coroutines.reactor.mono
 import org.springframework.cloud.gateway.filter.GatewayFilterChain
@@ -14,6 +15,7 @@ import reactor.core.publisher.Mono
 @Component
 class PassportExchangeFilter(
     private val authClient: AuthClient,
+    private val service: PassportService,
     private val prefix: String = "Bearer "
 ): GlobalFilter {
     override fun filter(
@@ -21,11 +23,7 @@ class PassportExchangeFilter(
         chain: GatewayFilterChain
     ): Mono<Void>  = mono {
         val authHeader: String? = exchange.request.headers.getFirst(HttpHeaders.AUTHORIZATION)
-        if (authHeader == null || !authHeader.startsWith(prefix)) {
-            return@mono chain.filter(exchange).awaitFirstOrNull()
-        }
-
-        val jwt = authHeader.removePrefix(prefix).trim()
+        val jwt: String? = authHeader?.removePrefix(prefix)?.trim()
         val passport = extractPassport(jwt)
 
         val mutatedRequest =
@@ -40,7 +38,10 @@ class PassportExchangeFilter(
         ).awaitSingleOrNull()
     }
 
-    private suspend fun extractPassport(jwt: String): String {
-        return authClient.exchangePassport(jwt)
+    private suspend fun extractPassport(jwt: String?): String {
+        val passport = jwt?.let { service.find(it) }
+            ?: authClient.exchangePassport(jwt)
+        jwt?.let { service.save(it, passport) }
+        return passport
     }
 }
