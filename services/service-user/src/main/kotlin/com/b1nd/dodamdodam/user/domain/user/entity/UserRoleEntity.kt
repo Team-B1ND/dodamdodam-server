@@ -20,7 +20,6 @@ class UserRoleEntity(
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(
         name = "fk_user_id",
-        referencedColumnName = "public_id",
         nullable = false
     )
     val user: UserEntity,
