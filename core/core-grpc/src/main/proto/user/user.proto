@@ -1,0 +1,21 @@
+syntax = "proto3";
+
+package user;
+
+option java_multiple_files = true;
+option java_package = "com.b1nd.dodamdodam.grpc.user";
+
+service UserCredentialService {
+
+  rpc VerifyPassword (VerifyPasswordRequest)
+      returns (VerifyPasswordResponse);
+}
+
+message VerifyPasswordRequest {
+  string username = 1;
+  string raw_password = 2;
+}
+
+message VerifyPasswordResponse {
+  bool valid = 1;
+}
