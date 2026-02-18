@@ -12,4 +12,8 @@ dependencies {
     runtimeOnly(libs.mysql.jdbcDriver)
     implementation(libs.springBootStarterData.jdbc)
     implementation(libs.springBootStarterData.jpa)
+
+    // grpc
+    implementation(project(":core:core-grpc"))
+    implementation(libs.springGrpc)
 }
