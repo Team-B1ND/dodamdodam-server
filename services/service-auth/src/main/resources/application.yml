@@ -2,23 +2,22 @@ spring:
   application:
     name: service-auth
   
-  security:
-    enabled: true
-  
-  kafka:
-    enabled: false
-    bootstrap-servers: localhost:9092
+  profiles:
+    active: local
+
 
 server:
   port: 8081
-
-jwt:
-  secret: ${JWT_SECRET:default-secret-key-for-development-only-please-change-in-production}
-  access-token-expiration: 3600000
-  refresh-token-expiration: 604800000
 
 management:
   endpoints:
     web:
       exposure:
         include: health,info
+app:
+  jwt:
+    public-key: ${JWT_PUBLIC_KEY}
+    private-key: ${JWT_PRIVATE_KEY}
+    issuer: ${JWT_ISSUER}
+    access-expire-seconds: ${JWT_ACCESS_SECONDS}
+    refresh-expire-seconds: ${JWT_REFRESH_SECONDS}

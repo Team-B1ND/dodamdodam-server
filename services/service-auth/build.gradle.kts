@@ -11,4 +11,8 @@ dependencies {
     implementation(libs.mysql.jdbcDriver)
     implementation(libs.springBootStarterData.jdbc)
     implementation(libs.springBootStarterSecurity)
+
+    implementation(libs.jwt.nimbusJose)
+    implementation(project(":core:core-grpc"))
+    implementation(libs.springGrpc)
 }
