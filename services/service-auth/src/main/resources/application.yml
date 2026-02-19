@@ -6,8 +6,8 @@ spring:
     active: local
 
 
-server:
-  port: 8081
+  main:
+    web-application-type: servlet
 
 management:
   endpoints:

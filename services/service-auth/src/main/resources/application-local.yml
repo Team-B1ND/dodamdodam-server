@@ -1,13 +1,18 @@
 spring:
   datasource:
-    url: ${MYSQL_HOST}
+    url: jdbc:${MYSQL_HOST}
     username: ${MYSQL_USER}
     password: ${MYSQL_PASSWORD}
     driver-class-name: com.mysql.cj.jdbc.Driver
-  
+
+  flyway:
+    url: jdbc:${MYSQL_HOST}
+    user: ${MYSQL_USER}
+    password: ${MYSQL_PASSWORD}
+
   jpa:
     hibernate:
-      ddl-auto: create
+      ddl-auto: none
     show-sql: true
     properties:
       hibernate:

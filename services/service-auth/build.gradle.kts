@@ -15,4 +15,10 @@ dependencies {
     implementation(libs.jwt.nimbusJose)
     implementation(project(":core:core-grpc"))
     implementation(libs.springGrpc)
+
+    implementation("com.github.ua-parser:uap-java:1.6.1")
+
+    // flyway
+    implementation(libs.flywayCore)
+    implementation(libs.flywayMysql)
 }
