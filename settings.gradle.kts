@@ -34,5 +34,6 @@ include(":services:service-gateway")
 include(":services:service-auth")
 include(":services:service-user")
 include("services:service-inapp")
+include(":services:service-outsleeping")
 
 rootProject.name = "dodamdodam-server"
