@@ -8,9 +8,6 @@ import java.time.Duration
 class PassportService(
     private val repository: PassportCacheRepository
 ) {
-    suspend fun find(key: String): String? {
-        return repository.get(key)
-    }
 
     suspend fun save(key: String, value: String) {
         repository.set(key, value, Duration.ofMinutes(5))
