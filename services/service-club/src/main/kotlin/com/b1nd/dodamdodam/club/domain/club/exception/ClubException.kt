@@ -1,0 +1,13 @@
+package com.b1nd.dodamdodam.club.domain.club.exception
+
+import com.b1nd.dodamdodam.core.common.exception.BasicException
+
+class ClubNotFoundException : BasicException(ClubExceptionCode.CLUB_NOT_FOUND)
+class ClubMemberNotFoundException : BasicException(ClubExceptionCode.CLUB_MEMBER_NOT_FOUND)
+class ClubDuplicateException : BasicException(ClubExceptionCode.CLUB_NAME_DUPLICATE)
+class ClubJoinedException : BasicException(ClubExceptionCode.CLUB_JOINED)
+class ClubPermissionDeniedException : BasicException(ClubExceptionCode.CLUB_PERMISSION_DENIED)
+class InsufficientClubMembersException : BasicException(ClubExceptionCode.INSUFFICIENT_CLUB_MEMBERS)
+class InvalidClubMemberInviteException : BasicException(ClubExceptionCode.INVALID_CLUB_MEMBER_INVITATION)
+class ClubApplicationDurationPassedException : BasicException(ClubExceptionCode.APPLICATION_DURATION_PASSED)
+class OverflowMemberSizeException : BasicException(ClubExceptionCode.OVERFLOW_MEMBER_SIZE)
