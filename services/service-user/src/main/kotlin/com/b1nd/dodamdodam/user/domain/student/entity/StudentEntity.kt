@@ -16,7 +16,10 @@ import jakarta.persistence.Table
 class StudentEntity(
 
     @OneToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "user_id")
+    @JoinColumn(
+        name = "fk_user_id",
+        nullable = false
+    )
     val user: UserEntity,
 
     var grade: Int,

@@ -12,7 +12,7 @@ kotlin {
 dependencies {
     // Add a dependency on the Kotlin Gradle plugin, so that convention plugins can apply it.
     implementation(libs.kotlinGradlePlugin)
-    implementation("org.springframework.boot:spring-boot-gradle-plugin:3.4.1")
+    implementation("org.springframework.boot:spring-boot-gradle-plugin:3.3.5")
     implementation("io.spring.gradle:dependency-management-plugin:1.1.7")
     implementation("org.jetbrains.kotlin:kotlin-allopen:2.1.0")
     implementation("org.jetbrains.kotlin:kotlin-noarg:2.1.0")

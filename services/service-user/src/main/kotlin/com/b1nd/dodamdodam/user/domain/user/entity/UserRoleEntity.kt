@@ -18,7 +18,10 @@ import jakarta.persistence.Table
 class UserRoleEntity(
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "user_id", nullable = false)
+    @JoinColumn(
+        name = "fk_user_id",
+        nullable = false
+    )
     val user: UserEntity,
 
     @Enumerated(EnumType.STRING)

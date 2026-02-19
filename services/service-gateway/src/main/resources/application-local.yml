@@ -1,0 +1,36 @@
+spring:
+  data:
+    redis:
+      port: 6379
+      host: localhost
+  r2dbc:
+    url: r2dbc:${MYSQL_HOST}
+    username: ${MYSQL_USER}
+    password: ${MYSQL_PASSWORD}
+  flyway:
+    url: jdbc:${MYSQL_HOST}
+    user: ${MYSQL_USER}
+    password: ${MYSQL_PASSWORD}
+
+  cloud:
+    gateway:
+      routes:
+        - id: auth-service
+          uri: http://localhost:8082
+          predicates:
+            - Path=/auth/**
+          filters:
+            - StripPrefix=1
+
+app:
+  auth:
+    url: http://localhost:8082
+
+server:
+  port: 8080
+
+logging:
+  level:
+    org.springframework.r2dbc.core: DEBUG
+    org.springframework.data.r2dbc: DEBUG
+    io.r2dbc.mysql: DEBUG

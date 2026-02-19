@@ -1,0 +1,68 @@
+package com.b1nd.dodamdodam.gateway.infrastructure.gateway.filter
+
+import com.b1nd.dodamdodam.gateway.domain.passport.repository.PassportCacheRepository
+import com.b1nd.dodamdodam.gateway.infrastructure.auth.client.data.ExchangePassportResponse
+import com.b1nd.dodamdodam.gateway.infrastructure.auth.properties.AuthProperties
+import org.springframework.cloud.gateway.filter.GatewayFilterChain
+import org.springframework.cloud.gateway.filter.GlobalFilter
+import org.springframework.core.Ordered
+import org.springframework.http.HttpHeaders
+import org.springframework.stereotype.Component
+import org.springframework.web.reactive.function.client.WebClient
+import org.springframework.web.reactive.function.client.bodyToMono
+import org.springframework.web.server.ServerWebExchange
+import reactor.core.publisher.Mono
+import java.time.Duration
+
+@Component
+class PassportExchangeFilter(
+    private val webClientBuilder: WebClient.Builder,
+    private val properties: AuthProperties,
+    private val repository: PassportCacheRepository
+): GlobalFilter, Ordered {
+    private val webClient = webClientBuilder.baseUrl(properties.url).build()
+    
+    override fun getOrder(): Int = 0
+
+    override fun filter(exchange: ServerWebExchange, chain: GatewayFilterChain): Mono<Void> {
+        val authHeader: String? = exchange.request.headers.getFirst(HttpHeaders.AUTHORIZATION)
+        val jwt: String? = authHeader?.removePrefix("Bearer ")?.trim()
+
+        return extractPassport(jwt)
+            .flatMap { passport ->
+                val mutatedRequest = exchange.request.mutate()
+                    .header("X-User-Passport", passport)
+                    .build()
+                val mutatedExchange = exchange.mutate().request(mutatedRequest).build()
+                chain.filter(mutatedExchange)
+            }
+            .switchIfEmpty(chain.filter(exchange))
+    }
+
+    private fun extractPassport(jwt: String?): Mono<String> {
+        if (jwt.isNullOrBlank()) return Mono.empty()
+        
+        return repository.get(jwt)
+            .flatMap { cachedPassport ->
+                if (cachedPassport != null) {
+                    Mono.just(cachedPassport)
+                } else {
+                    exchangePassport(jwt)
+                        .flatMap { passport ->
+                            repository.set(jwt, passport, Duration.ofMinutes(5))
+                                .thenReturn(passport)
+                        }
+                }
+            }
+    }
+
+    private fun exchangePassport(jwt: String): Mono<String> {
+        return webClient.post()
+            .uri("/passport")
+            .header(HttpHeaders.AUTHORIZATION, "Bearer $jwt")
+            .retrieve()
+            .bodyToMono<ExchangePassportResponse>()
+            .map { it.passport }
+            .onErrorResume { Mono.empty() }
+    }
+}

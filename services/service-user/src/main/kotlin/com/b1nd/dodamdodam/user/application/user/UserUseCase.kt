@@ -26,7 +26,12 @@ class UserUseCase(
         studentService.create(request.toStudentEntity(savedUser))
     }
 
-    fun verifyPassword(request: VerifyPasswordRequest) {
-        userService.verify(request.username, request.password)
+    fun verifyPassword(request: VerifyPasswordRequest): Boolean {
+        try {
+            userService.verify(request.username, request.password)
+            return true
+        } catch (e: Exception) {
+            return false
+        }
     }
 }

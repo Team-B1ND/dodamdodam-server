@@ -14,5 +14,9 @@ spring:
         format_sql: true
         dialect: org.hibernate.dialect.MySQLDialect
 
+
 server:
   port: 8081
+grpc:
+  server:
+    port: 9090

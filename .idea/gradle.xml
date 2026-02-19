@@ -25,11 +25,14 @@
             <option value="$PROJECT_DIR$/buildSrc" />
             <option value="$PROJECT_DIR$/core" />
             <option value="$PROJECT_DIR$/core/core-common" />
+            <option value="$PROJECT_DIR$/core/core-grpc" />
             <option value="$PROJECT_DIR$/core/core-jpa" />
             <option value="$PROJECT_DIR$/core/core-kafka" />
             <option value="$PROJECT_DIR$/core/core-security" />
             <option value="$PROJECT_DIR$/services" />
             <option value="$PROJECT_DIR$/services/service-auth" />
+            <option value="$PROJECT_DIR$/services/service-gateway" />
+            <option value="$PROJECT_DIR$/services/service-inapp" />
             <option value="$PROJECT_DIR$/services/service-user" />
             <option value="$PROJECT_DIR$/utils" />
           </set>
