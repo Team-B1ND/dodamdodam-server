@@ -13,7 +13,7 @@ class BannerUseCase(
     private val bannerService: BannerService,
 ) {
     fun create(request: BannerRequest) {
-        bannerService.save(request.toBannerEntity())
+        bannerService.create(request.toBannerEntity())
     }
 
     fun modify(id: Long, request: BannerRequest) {

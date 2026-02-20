@@ -13,7 +13,7 @@ import jakarta.persistence.Table
 import java.time.LocalDateTime
 
 @Entity
-@Table(name = "banner")
+@Table(name = "banners")
 class BannerEntity(
     @Column(nullable = false)
     var title: String,

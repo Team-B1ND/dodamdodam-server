@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service
 class BannerService(
     private val bannerRepository: BannerRepository,
 ) {
-    fun save(banner: BannerEntity): BannerEntity = bannerRepository.save(banner)
+    fun create(banner: BannerEntity): BannerEntity = bannerRepository.save(banner)
 
     fun findById(id: Long): BannerEntity =
         bannerRepository.findById(id)
