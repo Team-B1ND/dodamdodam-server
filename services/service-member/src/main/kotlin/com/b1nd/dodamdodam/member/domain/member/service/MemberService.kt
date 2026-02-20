@@ -16,7 +16,7 @@ class MemberService(
     private val memberRepository: MemberRepository,
     private val memberRoleRepository: MemberRoleRepository,
 ) {
-    fun save(member: MemberEntity): MemberEntity = memberRepository.save(member)
+    fun create(member: MemberEntity): MemberEntity = memberRepository.save(member)
 
     fun getById(id: Long): MemberEntity =
         memberRepository.findById(id).orElseThrow { MemberNotFoundException() }
@@ -43,7 +43,7 @@ class MemberService(
         memberRepository.delete(member)
     }
 
-    fun saveRole(memberRole: MemberRoleEntity): MemberRoleEntity = memberRoleRepository.save(memberRole)
+    fun createRole(memberRole: MemberRoleEntity): MemberRoleEntity = memberRoleRepository.save(memberRole)
 
     fun getRoles(member: MemberEntity): List<MemberRoleEntity> = memberRoleRepository.findByMember(member)
 

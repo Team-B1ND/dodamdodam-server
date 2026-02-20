@@ -14,7 +14,7 @@ class ParentService(
     private val parentRepository: ParentRepository,
     private val studentRelationRepository: StudentRelationRepository,
 ) {
-    fun save(parent: ParentEntity): ParentEntity = parentRepository.save(parent)
+    fun create(parent: ParentEntity): ParentEntity = parentRepository.save(parent)
 
     fun getByMember(member: MemberEntity): ParentEntity =
         parentRepository.findByMember(member) ?: throw MemberNotFoundException()

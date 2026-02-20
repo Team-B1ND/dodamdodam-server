@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service
 class BroadcastClubMemberService(
     private val broadcastClubMemberRepository: BroadcastClubMemberRepository,
 ) {
-    fun save(broadcastClubMember: BroadcastClubMemberEntity): BroadcastClubMemberEntity =
+    fun create(broadcastClubMember: BroadcastClubMemberEntity): BroadcastClubMemberEntity =
         broadcastClubMemberRepository.save(broadcastClubMember)
 
     fun getByMember(member: MemberEntity): BroadcastClubMemberEntity =

@@ -49,9 +49,9 @@ class MemberUseCase(
             throw DuplicateUsernameException()
         }
         val encodedPassword = passwordEncoder.encode(request.password)
-        val member = memberService.save(request.toMemberEntity(encodedPassword))
-        studentService.save(request.toStudentEntity(member))
-        memberService.saveRole(MemberRoleEntity(member = member, role = RoleType.STUDENT))
+        val member = memberService.create(request.toMemberEntity(encodedPassword))
+        studentService.create(request.toStudentEntity(member))
+        memberService.createRole(MemberRoleEntity(member = member, role = RoleType.STUDENT))
     }
 
     fun joinTeacher(request: JoinTeacherRequest) {
@@ -59,9 +59,9 @@ class MemberUseCase(
             throw DuplicateUsernameException()
         }
         val encodedPassword = passwordEncoder.encode(request.password)
-        val member = memberService.save(request.toMemberEntity(encodedPassword))
-        teacherService.save(request.toTeacherEntity(member))
-        memberService.saveRole(MemberRoleEntity(member = member, role = RoleType.TEACHER))
+        val member = memberService.create(request.toMemberEntity(encodedPassword))
+        teacherService.create(request.toTeacherEntity(member))
+        memberService.createRole(MemberRoleEntity(member = member, role = RoleType.TEACHER))
     }
 
     @Transactional(readOnly = true)
@@ -167,8 +167,8 @@ class MemberUseCase(
         if (broadcastClubMemberService.existsByMember(member)) {
             throw DuplicateBroadcastClubMemberException()
         }
-        broadcastClubMemberService.save(BroadcastClubMemberEntity(member = member))
-        memberService.saveRole(MemberRoleEntity(member = member, role = RoleType.BROADCASTER))
+        broadcastClubMemberService.create(BroadcastClubMemberEntity(member = member))
+        memberService.createRole(MemberRoleEntity(member = member, role = RoleType.BROADCASTER))
     }
 
     fun removeBroadcastClubMember(request: ApplyBroadcastClubMemberRequest) {
@@ -180,7 +180,7 @@ class MemberUseCase(
             memberService.deleteRoles(member)
             memberService.getRoles(member)
                 .filter { it.role != RoleType.BROADCASTER }
-                .forEach { memberService.saveRole(MemberRoleEntity(member = member, role = it.role)) }
+                .forEach { memberService.createRole(MemberRoleEntity(member = member, role = it.role)) }
         }
     }
 
@@ -195,8 +195,8 @@ class MemberUseCase(
         if (dormitoryManageMemberService.existsByMember(member)) {
             throw DuplicateDormitoryManageMemberException()
         }
-        dormitoryManageMemberService.save(DormitoryManageMemberEntity(member = member))
-        memberService.saveRole(MemberRoleEntity(member = member, role = RoleType.DORMITORY_MANAGER))
+        dormitoryManageMemberService.create(DormitoryManageMemberEntity(member = member))
+        memberService.createRole(MemberRoleEntity(member = member, role = RoleType.DORMITORY_MANAGER))
     }
 
     fun removeDormitoryManageMember(request: ApplyDormitoryManageMemberRequest) {
@@ -208,7 +208,7 @@ class MemberUseCase(
             memberService.deleteRoles(member)
             memberService.getRoles(member)
                 .filter { it.role != RoleType.DORMITORY_MANAGER }
-                .forEach { memberService.saveRole(MemberRoleEntity(member = member, role = it.role)) }
+                .forEach { memberService.createRole(MemberRoleEntity(member = member, role = it.role)) }
         }
     }
 

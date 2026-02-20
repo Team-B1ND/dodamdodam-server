@@ -12,7 +12,7 @@ import jakarta.persistence.OneToOne
 import jakarta.persistence.Table
 
 @Entity
-@Table(name = "parent")
+@Table(name = "parents")
 class ParentEntity(
     @OneToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "fk_member_id", nullable = false)

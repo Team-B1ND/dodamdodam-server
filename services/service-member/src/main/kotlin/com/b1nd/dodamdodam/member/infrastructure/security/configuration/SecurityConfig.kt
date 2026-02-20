@@ -22,13 +22,7 @@ class SecurityConfig(
             .csrf { it.disable() }
             .addFilterBefore(passportFilter, UsernamePasswordAuthenticationFilter::class.java)
             .authorizeHttpRequests { auth ->
-                auth.requestMatchers(
-                    "/member/join-student",
-                    "/member/join-teacher",
-                    "/member/auth-code/**",
-                    "/health",
-                ).permitAll()
-                auth.anyRequest().authenticated()
+                auth.anyRequest().permitAll()
             }
         return http.build()
     }

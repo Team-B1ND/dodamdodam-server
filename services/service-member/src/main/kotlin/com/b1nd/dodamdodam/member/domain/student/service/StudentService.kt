@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service
 class StudentService(
     private val studentRepository: StudentRepository,
 ) {
-    fun save(student: StudentEntity): StudentEntity = studentRepository.save(student)
+    fun create(student: StudentEntity): StudentEntity = studentRepository.save(student)
 
     fun getByMember(member: MemberEntity): StudentEntity =
         studentRepository.findByMember(member) ?: throw StudentNotFoundException()

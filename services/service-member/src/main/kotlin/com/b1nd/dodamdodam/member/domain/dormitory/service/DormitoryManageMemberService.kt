@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service
 class DormitoryManageMemberService(
     private val dormitoryManageMemberRepository: DormitoryManageMemberRepository,
 ) {
-    fun save(dormitoryManageMember: DormitoryManageMemberEntity): DormitoryManageMemberEntity =
+    fun create(dormitoryManageMember: DormitoryManageMemberEntity): DormitoryManageMemberEntity =
         dormitoryManageMemberRepository.save(dormitoryManageMember)
 
     fun getByMember(member: MemberEntity): DormitoryManageMemberEntity =

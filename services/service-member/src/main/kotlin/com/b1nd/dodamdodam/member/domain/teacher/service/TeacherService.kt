@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service
 class TeacherService(
     private val teacherRepository: TeacherRepository,
 ) {
-    fun save(teacher: TeacherEntity): TeacherEntity = teacherRepository.save(teacher)
+    fun create(teacher: TeacherEntity): TeacherEntity = teacherRepository.save(teacher)
 
     fun getByMember(member: MemberEntity): TeacherEntity =
         teacherRepository.findByMember(member) ?: throw TeacherNotFoundException()

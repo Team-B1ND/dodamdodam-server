@@ -12,7 +12,7 @@ import jakarta.persistence.ManyToOne
 import jakarta.persistence.Table
 
 @Entity
-@Table(name = "dormitory_manage_member")
+@Table(name = "dormitory_manage_members")
 class DormitoryManageMemberEntity(
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "fk_member_id", nullable = false)

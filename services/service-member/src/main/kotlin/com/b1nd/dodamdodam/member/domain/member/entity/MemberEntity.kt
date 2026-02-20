@@ -12,7 +12,7 @@ import jakarta.persistence.Id
 import jakarta.persistence.Table
 
 @Entity
-@Table(name = "member")
+@Table(name = "members")
 class MemberEntity(
     @Column(nullable = false, unique = true)
     val username: String,

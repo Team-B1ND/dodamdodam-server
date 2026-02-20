@@ -12,7 +12,7 @@ import jakarta.persistence.OneToOne
 import jakarta.persistence.Table
 
 @Entity
-@Table(name = "broadcast_club_member")
+@Table(name = "broadcast_club_members")
 class BroadcastClubMemberEntity(
     @OneToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "fk_member_id", nullable = false)

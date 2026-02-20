@@ -13,7 +13,7 @@ import jakarta.persistence.OneToOne
 import jakarta.persistence.Table
 
 @Entity
-@Table(name = "student")
+@Table(name = "students")
 class StudentEntity(
     @OneToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "fk_member_id", nullable = false)
