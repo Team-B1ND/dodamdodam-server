@@ -81,13 +81,6 @@ class OutSleepingController(
         return Response.ok("내 외박 조회 성공", data).toResponseEntity()
     }
 
-    @GetMapping("/valid")
-    @UserAccess
-    fun findValid(): ResponseEntity<Response<List<OutSleepingResponse>>> {
-        val data = useCase.findValid()
-        return Response.ok("유효한 외박 조회 성공", data).toResponseEntity()
-    }
-
     @GetMapping("/residual")
     @UserAccess(roles = [RoleType.TEACHER])
     fun findResidualStudents(): ResponseEntity<Response<List<ResidualStudentResponse>>> {
