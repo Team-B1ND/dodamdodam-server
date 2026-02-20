@@ -1,0 +1,9 @@
+package com.b1nd.dodamdodam.outsleeping.domain.outsleeping.exception
+
+import com.b1nd.dodamdodam.core.common.exception.BasicException
+
+class OutSleepingNotFoundException : BasicException(OutSleepingExceptionCode.OUT_SLEEPING_NOT_FOUND)
+class OutSleepingForbiddenException : BasicException(OutSleepingExceptionCode.OUT_SLEEPING_FORBIDDEN)
+class OutSleepingAlreadyExistsException : BasicException(OutSleepingExceptionCode.OUT_SLEEPING_ALREADY_EXISTS)
+class OutSleepingNotPendingException : BasicException(OutSleepingExceptionCode.OUT_SLEEPING_NOT_PENDING)
+class OutSleepingStudentNotFoundException : BasicException(OutSleepingExceptionCode.OUT_SLEEPING_STUDENT_NOT_FOUND)

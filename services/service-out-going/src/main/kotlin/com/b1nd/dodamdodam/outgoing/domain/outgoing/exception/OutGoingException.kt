@@ -1,0 +1,9 @@
+package com.b1nd.dodamdodam.outgoing.domain.outgoing.exception
+
+import com.b1nd.dodamdodam.core.common.exception.BasicException
+
+class OutGoingNotFoundException : BasicException(OutGoingExceptionCode.OUT_GOING_NOT_FOUND)
+class OutGoingForbiddenException : BasicException(OutGoingExceptionCode.OUT_GOING_FORBIDDEN)
+class OutGoingAlreadyExistsException : BasicException(OutGoingExceptionCode.OUT_GOING_ALREADY_EXISTS)
+class OutGoingNotPendingException : BasicException(OutGoingExceptionCode.OUT_GOING_NOT_PENDING)
+class OutGoingStudentNotFoundException : BasicException(OutGoingExceptionCode.OUT_GOING_STUDENT_NOT_FOUND)
