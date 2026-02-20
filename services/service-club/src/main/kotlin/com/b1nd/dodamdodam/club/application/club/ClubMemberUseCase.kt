@@ -37,7 +37,7 @@ class ClubMemberUseCase(
             request.toClubMemberEntity(studentId, club)
         }
 
-        clubMemberService.saveAndValidateClubMembers(members)
+        clubMemberService.createAndValidateClubMembers(members)
     }
 
     fun setClubMemberStatus(request: ClubPassRequest, studentId: Long) {

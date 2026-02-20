@@ -36,11 +36,11 @@ class ClubService(
         return clubs
     }
 
-    fun save(club: ClubEntity): ClubEntity = clubRepository.save(club)
+    fun create(club: ClubEntity): ClubEntity = clubRepository.save(club)
 
-    fun saveAll(clubs: List<ClubEntity>): List<ClubEntity> = clubRepository.saveAll(clubs)
+    fun createAll(clubs: List<ClubEntity>): List<ClubEntity> = clubRepository.saveAll(clubs)
 
-    fun saveClubAndMembers(club: ClubEntity, leaderStudentId: Long, studentIds: List<Long>) {
+    fun createClubAndMembers(club: ClubEntity, leaderStudentId: Long, studentIds: List<Long>) {
         val savedClub = clubRepository.save(club)
 
         val leader = ClubMemberEntity(

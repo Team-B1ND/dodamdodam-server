@@ -1,5 +1,6 @@
 package com.b1nd.dodamdodam.club.infrastructure.grpc
 
+import com.b1nd.dodamdodam.grpc.member.GetStudentByUserIdRequest
 import com.b1nd.dodamdodam.grpc.member.GetStudentByUsernameRequest
 import com.b1nd.dodamdodam.grpc.member.GetStudentsByIdsRequest
 import com.b1nd.dodamdodam.grpc.member.GetTeacherByIdRequest
@@ -36,5 +37,12 @@ class MemberGrpcClient {
             .build()
 
         stub.getStudentByUsername(request)
+    }.getOrNull()
+
+    suspend fun getStudentByUserId(userId: String): StudentInfo? = runCatching {
+        val request = GetStudentByUserIdRequest.newBuilder()
+            .setUserId(userId)
+            .build()
+        stub.getStudentByUserId(request)
     }.getOrNull()
 }

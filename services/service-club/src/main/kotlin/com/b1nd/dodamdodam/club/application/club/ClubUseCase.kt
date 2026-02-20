@@ -26,16 +26,16 @@ class ClubUseCase(
     private val clubMemberService: ClubMemberService,
     private val memberGrpcClient: MemberGrpcClient,
 ) {
-    fun save(request: ClubTimeRequest) {
+    fun createTime(request: ClubTimeRequest) {
         clubService.setClubTime(request.toClubTimeEntity())
     }
 
-    fun save(request: CreateClubRequest, leaderStudentId: Long) {
+    fun create(request: CreateClubRequest, leaderStudentId: Long) {
         clubService.validateApplicationDuration(ClubTimeType.CLUB_CREATED)
         clubService.checkIsNameDuplicated(request.name)
         val club = request.toClubEntity()
         clubMemberService.validateAndRejectLeader(club, leaderStudentId, request.studentIds)
-        clubService.saveClubAndMembers(club, leaderStudentId, request.studentIds)
+        clubService.createClubAndMembers(club, leaderStudentId, request.studentIds)
     }
 
     fun delete(id: Long, studentId: Long) {
@@ -62,7 +62,7 @@ class ClubUseCase(
         clubs.forEach { club ->
             club.updateStatus(request.status, request.reason)
         }
-        clubService.saveAll(clubs)
+        clubService.createAll(clubs)
     }
 
     fun updateInfo(id: Long, request: UpdateClubInfoRequest, studentId: Long) {

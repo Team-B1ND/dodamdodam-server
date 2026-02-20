@@ -17,7 +17,7 @@ import jakarta.persistence.ManyToOne
 import jakarta.persistence.Table
 
 @Entity
-@Table(name = "club_member")
+@Table(name = "club_members")
 class ClubMemberEntity(
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
@@ -33,7 +33,7 @@ class ClubMemberEntity(
     @Column(name = "student_id", nullable = false)
     val studentId: Long,
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "fk_club_id", nullable = false)
     val club: ClubEntity,
 

@@ -21,11 +21,11 @@ class ClubMemberService(
     private val clubMemberRepository: ClubMemberRepository,
     private val clubRepository: ClubRepository,
 ) {
-    fun saveClubMembers(members: List<ClubMemberEntity>) {
+    fun createClubMembers(members: List<ClubMemberEntity>) {
         clubMemberRepository.saveAll(members)
     }
 
-    fun saveAndValidateClubMembers(members: List<ClubMemberEntity>) {
+    fun createAndValidateClubMembers(members: List<ClubMemberEntity>) {
         members.forEach { member ->
             validateByClubAndStudent(member.club, member.studentId)
         }

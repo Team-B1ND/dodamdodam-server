@@ -20,87 +20,89 @@ import com.b1nd.dodamdodam.club.application.club.data.response.ClubWithLeaderRes
 import com.b1nd.dodamdodam.club.domain.club.enumeration.ClubStatus
 import com.b1nd.dodamdodam.club.infrastructure.grpc.MemberGrpcClient
 import com.b1nd.dodamdodam.core.common.data.Response
-import com.b1nd.dodamdodam.core.security.passport.PassportUserDetails
+import com.b1nd.dodamdodam.core.security.annotation.authentication.UserAccess
+import com.b1nd.dodamdodam.core.security.passport.enumerations.RoleType
+import com.b1nd.dodamdodam.core.security.util.getCurrentUserId
 import kotlinx.coroutines.runBlocking
-import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PatchMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
-@RequestMapping("/clubs")
 class ClubController(
     private val clubUseCase: ClubUseCase,
     private val clubMemberUseCase: ClubMemberUseCase,
     private val clubApplicationUseCase: ClubApplicationUseCase,
     private val memberGrpcClient: MemberGrpcClient,
 ) {
-    private fun resolveStudentId(userDetails: PassportUserDetails): Long {
-        val username = userDetails.username
+    private fun resolveStudentId(): Long {
+        val userId = getCurrentUserId()
         val studentInfo = runBlocking {
-            memberGrpcClient.getStudentByUsername(username)
-        } ?: throw IllegalStateException("Student not found for username: $username")
+            memberGrpcClient.getStudentByUserId(userId)
+        } ?: throw IllegalStateException("학생 정보를 찾을 수 없어요")
         return studentInfo.id
     }
 
-    @PostMapping("/time")
+    @UserAccess(roles = [RoleType.TEACHER, RoleType.ADMIN])
+    @PostMapping("/clubs/time")
     fun saveClubTime(@RequestBody request: ClubTimeRequest): Response<Unit> {
-        clubUseCase.save(request)
+        clubUseCase.createTime(request)
         return Response.created("동아리 시간이 설정되었습니다.")
     }
 
-    @PostMapping
+    @UserAccess
+    @PostMapping("/clubs")
     fun createClub(
         @RequestBody request: CreateClubRequest,
-        @AuthenticationPrincipal userDetails: PassportUserDetails,
     ): Response<Unit> {
-        val studentId = resolveStudentId(userDetails)
-        clubUseCase.save(request, studentId)
+        val studentId = resolveStudentId()
+        clubUseCase.create(request, studentId)
         return Response.created("동아리가 생성되었습니다.")
     }
 
-    @PostMapping("/assignment")
+    @UserAccess(roles = [RoleType.TEACHER, RoleType.ADMIN])
+    @PostMapping("/clubs/assignment")
     fun assignmentClubMembers(): Response<Unit> {
         clubApplicationUseCase.assignmentClubMembers()
         return Response.ok("동아리 배정이 완료되었습니다.")
     }
 
-    @PostMapping("/status")
+    @UserAccess
+    @PostMapping("/clubs/status")
     fun setClubMemberStatus(
         @RequestBody request: ClubPassRequest,
-        @AuthenticationPrincipal userDetails: PassportUserDetails,
     ): Response<Unit> {
-        val studentId = resolveStudentId(userDetails)
+        val studentId = resolveStudentId()
         clubMemberUseCase.setClubMemberStatus(request, studentId)
         return Response.ok("동아리 멤버 상태가 변경되었습니다.")
     }
 
-    @PostMapping("/join-requests")
+    @UserAccess
+    @PostMapping("/clubs/join-requests")
     fun joinClubs(
         @RequestBody requests: List<JoinClubMemberRequest>,
-        @AuthenticationPrincipal userDetails: PassportUserDetails,
     ): Response<Unit> {
-        val studentId = resolveStudentId(userDetails)
+        val studentId = resolveStudentId()
         clubMemberUseCase.joinClubs(requests, studentId)
         return Response.created("동아리 가입 신청이 완료되었습니다.")
     }
 
-    @PostMapping("/{id}/waiting")
+    @UserAccess
+    @PostMapping("/clubs/{id}/waiting")
     fun setWaiting(
         @PathVariable id: Long,
-        @AuthenticationPrincipal userDetails: PassportUserDetails,
     ): Response<Unit> {
-        val studentId = resolveStudentId(userDetails)
+        val studentId = resolveStudentId()
         clubUseCase.setWaiting(id, studentId)
         return Response.ok("동아리가 대기 상태로 변경되었습니다.")
     }
 
-    @PostMapping("/{id}/teacher")
+    @UserAccess(roles = [RoleType.TEACHER, RoleType.ADMIN])
+    @PostMapping("/clubs/{id}/teacher")
     fun setTeacher(
         @PathVariable id: Long,
         @RequestBody teacherId: Long,
@@ -109,118 +111,113 @@ class ClubController(
         return Response.ok("동아리 담당 선생님이 설정되었습니다.")
     }
 
-    @PostMapping("/join-requests/{id}")
+    @UserAccess
+    @PostMapping("/clubs/join-requests/{id}")
     fun acceptJoinRequest(
         @PathVariable id: Long,
-        @AuthenticationPrincipal userDetails: PassportUserDetails,
     ): Response<Unit> {
-        val studentId = resolveStudentId(userDetails)
+        val studentId = resolveStudentId()
         clubMemberUseCase.updateClubJoinRequestReceived(id, studentId, ClubStatus.ALLOWED)
         return Response.ok("동아리 가입 요청이 수락되었습니다.")
     }
 
-    @DeleteMapping("/{id}")
+    @UserAccess
+    @DeleteMapping("/clubs/{id}")
     fun deleteClub(
         @PathVariable id: Long,
-        @AuthenticationPrincipal userDetails: PassportUserDetails,
     ): Response<Unit> {
-        val studentId = resolveStudentId(userDetails)
+        val studentId = resolveStudentId()
         clubUseCase.delete(id, studentId)
         return Response.ok("동아리가 삭제되었습니다.")
     }
 
-    @DeleteMapping("/join-requests/{id}")
+    @UserAccess
+    @DeleteMapping("/clubs/join-requests/{id}")
     fun rejectJoinRequest(
         @PathVariable id: Long,
-        @AuthenticationPrincipal userDetails: PassportUserDetails,
     ): Response<Unit> {
-        val studentId = resolveStudentId(userDetails)
+        val studentId = resolveStudentId()
         clubMemberUseCase.updateClubJoinRequestReceived(id, studentId, ClubStatus.REJECTED)
         return Response.ok("동아리 가입 요청이 거절되었습니다.")
     }
 
-    @PatchMapping("/{id}")
+    @UserAccess
+    @PatchMapping("/clubs/{id}")
     fun updateInfo(
         @PathVariable id: Long,
         @RequestBody request: UpdateClubInfoRequest,
-        @AuthenticationPrincipal userDetails: PassportUserDetails,
     ): Response<Unit> {
-        val studentId = resolveStudentId(userDetails)
+        val studentId = resolveStudentId()
         clubUseCase.updateInfo(id, request, studentId)
         return Response.ok("동아리 정보가 수정되었습니다.")
     }
 
-    @PatchMapping("/state")
+    @UserAccess(roles = [RoleType.TEACHER, RoleType.ADMIN])
+    @PatchMapping("/clubs/state")
     fun updateState(@RequestBody request: UpdateClubStatusRequest): Response<Unit> {
         clubUseCase.update(request)
         return Response.ok("동아리 상태가 변경되었습니다.")
     }
 
-    @GetMapping("/joined")
-    fun getJoinedClubs(
-        @AuthenticationPrincipal userDetails: PassportUserDetails,
-    ): Response<List<ClubMemberResponse>> {
-        val studentId = resolveStudentId(userDetails)
+    @UserAccess
+    @GetMapping("/clubs/joined")
+    fun getJoinedClubs(): Response<List<ClubMemberResponse>> {
+        val studentId = resolveStudentId()
         return Response.ok("참여 동아리 조회 성공", clubMemberUseCase.getJoinedClubs(studentId))
     }
 
-    @GetMapping
+    @GetMapping("/clubs")
     fun getClubs(): Response<List<ClubDetailResponse>> =
         Response.ok("동아리 목록 조회 성공", clubUseCase.getClubs())
 
-    @GetMapping("/leaders")
+    @GetMapping("/clubs/leaders")
     fun getClubsWithLeader(): Response<List<ClubWithLeaderResponse>> =
         Response.ok("동아리 목록(리더 포함) 조회 성공", clubUseCase.getClubsWithLeader())
 
-    @GetMapping("/{id}")
+    @GetMapping("/clubs/{id}")
     fun getClubDetail(@PathVariable id: Long): Response<ClubDetailResponse> =
         Response.ok("동아리 상세 조회 성공", clubUseCase.getClubDetail(id))
 
-    @GetMapping("/{clubId}/join-requests")
+    @UserAccess
+    @GetMapping("/clubs/{clubId}/join-requests")
     fun getPendingClubMembers(@PathVariable clubId: Long): Response<List<ClubJoinStudentResponse>> =
         Response.ok("동아리 가입 요청 목록 조회 성공", clubMemberUseCase.getPendingClubMembers(clubId))
 
-    @GetMapping("/{id}/leader")
+    @GetMapping("/clubs/{id}/leader")
     fun getClubLeader(@PathVariable id: Long): Response<ClubStudentResponse> =
         Response.ok("동아리 리더 조회 성공", clubMemberUseCase.getClubLeader(id))
 
-    @GetMapping("/time")
+    @GetMapping("/clubs/time")
     fun getClubTime(): Response<ClubTimeResponse> =
         Response.ok("동아리 시간 조회 성공", clubUseCase.find())
 
-    @GetMapping("/join-requests/received")
-    fun getReceivedJoinRequests(
-        @AuthenticationPrincipal userDetails: PassportUserDetails,
-    ): Response<List<ClubMemberResponse>> {
-        val studentId = resolveStudentId(userDetails)
+    @UserAccess
+    @GetMapping("/clubs/join-requests/received")
+    fun getReceivedJoinRequests(): Response<List<ClubMemberResponse>> {
+        val studentId = resolveStudentId()
         return Response.ok("받은 동아리 가입 요청 조회 성공", clubMemberUseCase.getMemberJoinRequests(studentId))
     }
 
-    @GetMapping("/{id}/members")
+    @UserAccess
+    @GetMapping("/clubs/{id}/members")
     fun getAllClubMembers(
         @PathVariable id: Long,
-        @AuthenticationPrincipal userDetails: PassportUserDetails,
     ): Response<ClubStudentListResponse> {
-        val studentId = resolveStudentId(userDetails)
+        val studentId = resolveStudentId()
         return Response.ok("동아리 멤버 조회 성공", clubMemberUseCase.getAllClubMembers(id, studentId))
     }
 
-    @GetMapping("/my")
-    fun getMyClubStatus(
-        @AuthenticationPrincipal userDetails: PassportUserDetails,
-    ): Response<List<ClubStatusResponse>> {
-        val studentId = resolveStudentId(userDetails)
+    @UserAccess
+    @GetMapping("/clubs/my")
+    fun getMyClubStatus(): Response<List<ClubStatusResponse>> {
+        val studentId = resolveStudentId()
         return Response.ok("내 동아리 상태 조회 성공", clubMemberUseCase.getStudentClubStatus(studentId))
     }
 
-    @GetMapping("/my/join-requests")
-    fun getMyJoinRequests(
-        @AuthenticationPrincipal userDetails: PassportUserDetails,
-    ): Response<List<ClubMemberResponse>> {
-        val studentId = resolveStudentId(userDetails)
+    @UserAccess
+    @GetMapping("/clubs/my/join-requests")
+    fun getMyJoinRequests(): Response<List<ClubMemberResponse>> {
+        val studentId = resolveStudentId()
         return Response.ok("내 동아리 가입 요청 조회 성공", clubMemberUseCase.getStudentJoinRequest(studentId))
     }
-
-    @GetMapping("/health")
-    fun health(): String = "OK"
 }

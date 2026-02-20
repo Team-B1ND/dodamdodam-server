@@ -15,10 +15,17 @@ service MemberQueryService {
 
   rpc GetStudentByUsername (GetStudentByUsernameRequest)
       returns (StudentInfo);
+
+  rpc GetStudentByUserId (GetStudentByUserIdRequest)
+      returns (StudentInfo);
 }
 
 message GetStudentByUsernameRequest {
   string username = 1;
+}
+
+message GetStudentByUserIdRequest {
+  string user_id = 1;
 }
 
 message GetStudentsByIdsRequest {

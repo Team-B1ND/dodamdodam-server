@@ -13,7 +13,7 @@ import jakarta.persistence.Id
 import jakarta.persistence.Table
 
 @Entity
-@Table(name = "club")
+@Table(name = "clubs")
 class ClubEntity(
     @Column(nullable = false)
     var name: String,

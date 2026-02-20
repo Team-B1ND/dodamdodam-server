@@ -1,4 +1,4 @@
-CREATE TABLE IF NOT EXISTS club (
+CREATE TABLE IF NOT EXISTS clubs (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(255) NOT NULL UNIQUE,
     short_description VARCHAR(255) NOT NULL,
@@ -13,7 +13,7 @@ CREATE TABLE IF NOT EXISTS club (
     modified_at DATETIME(6)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
-CREATE TABLE IF NOT EXISTS club_member (
+CREATE TABLE IF NOT EXISTS club_members (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     permission VARCHAR(50) NOT NULL,
     club_status VARCHAR(50) NOT NULL,
@@ -23,10 +23,10 @@ CREATE TABLE IF NOT EXISTS club_member (
     introduction TEXT,
     created_at DATETIME(6),
     modified_at DATETIME(6),
-    CONSTRAINT fk_club_member_club FOREIGN KEY (fk_club_id) REFERENCES club(id)
+    CONSTRAINT fk_club_member_club FOREIGN KEY (fk_club_id) REFERENCES clubs(id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
-CREATE TABLE IF NOT EXISTS club_of_time (
+CREATE TABLE IF NOT EXISTS club_times (
     id VARCHAR(50) PRIMARY KEY,
     start DATE NOT NULL,
     end DATE NOT NULL
