@@ -4,11 +4,13 @@ import com.b1nd.dodamdodam.core.security.passport.enumerations.RoleType
 import com.b1nd.dodamdodam.user.domain.user.entity.UserEntity
 import com.b1nd.dodamdodam.user.domain.user.entity.UserRoleEntity
 import com.b1nd.dodamdodam.user.domain.user.exception.UserAlreadyExistsException
+import com.b1nd.dodamdodam.user.domain.user.exception.UserNotFoundException
 import com.b1nd.dodamdodam.user.domain.user.exception.UserPasswordIncorrectException
 import com.b1nd.dodamdodam.user.domain.user.repository.UserRepository
 import com.b1nd.dodamdodam.user.domain.user.repository.UserRoleRepository
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.stereotype.Service
+import java.util.UUID
 
 @Service
 class UserService(
@@ -34,6 +36,15 @@ class UserService(
             ?: throw UserPasswordIncorrectException()
         if (!encoder.matches(password, user.password))
             throw UserPasswordIncorrectException()
+    }
+
+    fun getByPublicId(publicId: UUID): UserEntity {
+        return userRepository.findByPublicId(publicId)
+            ?: throw UserNotFoundException()
+    }
+
+    fun getByPublicIds(publicIds: List<UUID>): List<UserEntity> {
+        return userRepository.findByPublicIdIn(publicIds)
     }
 
     private fun checkDuplicateUser(username: String) {
