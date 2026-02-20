@@ -1,0 +1,55 @@
+syntax = "proto3";
+
+package user;
+
+option java_multiple_files = true;
+option java_package = "com.b1nd.dodamdodam.grpc.user";
+
+service UserQueryService {
+
+  rpc GetStudentsByUserIds (GetStudentsByUserIdsRequest)
+      returns (GetStudentsByUserIdsResponse);
+
+  rpc GetResidualStudents (GetResidualStudentsRequest)
+      returns (GetResidualStudentsResponse);
+}
+
+message GetStudentsByUserIdsRequest {
+  repeated string user_ids = 1;
+}
+
+message StudentDto {
+  int64 student_id = 1;
+  string user_id = 2;
+  string name = 3;
+  int32 grade = 4;
+  int32 room = 5;
+  int32 number = 6;
+}
+
+message GetStudentsByUserIdsResponse {
+  repeated StudentDto students = 1;
+}
+
+message GetResidualStudentsRequest {
+  repeated string absent_user_ids = 1;
+}
+
+message ResidualStudentDto {
+  string public_id = 1;
+  string name = 2;
+  string username = 3;
+  string role = 4;
+  string profile_image = 5;
+  string phone = 6;
+  int64 student_id = 7;
+  int32 grade = 8;
+  int32 room = 9;
+  int32 number = 10;
+  string created_at = 11;
+  string modified_at = 12;
+}
+
+message GetResidualStudentsResponse {
+  repeated ResidualStudentDto students = 1;
+}
