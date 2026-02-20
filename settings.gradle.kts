@@ -34,5 +34,7 @@ include(":services:service-gateway")
 include(":services:service-auth")
 include(":services:service-user")
 include("services:service-inapp")
+include(":services:service-club")
+include(":services:service-banner")
 
 rootProject.name = "dodamdodam-server"
