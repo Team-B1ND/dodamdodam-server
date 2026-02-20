@@ -59,6 +59,11 @@ class OutSleepingUseCase(
         return enrichWithStudentInfo(entities)
     }
 
+    fun findValid(): List<OutSleepingResponse> {
+        val entities = outSleepingService.findValid(LocalDate.now())
+        return enrichWithStudentInfo(entities)
+    }
+
     fun findResidualStudents(): List<ResidualStudentResponse> {
         val absentUserIds = outSleepingService.findValid(LocalDate.now()).map { it.studentId }
         val residualDtos = runBlocking { userGrpcClient.getResidualStudents(absentUserIds) }

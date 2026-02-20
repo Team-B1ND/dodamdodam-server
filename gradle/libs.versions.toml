@@ -4,6 +4,7 @@
 
 [versions]
 kotlin = "2.1.0"
+jsoup = "1.21.1"
 kotlinxDatetime = "0.7.1"
 kotlinxSerializationJSON = "1.9.0"
 kotlinxCoroutines = "1.10.2"
@@ -45,6 +46,9 @@ springGrpc = { module = "net.devh:grpc-spring-boot-starter", version.ref= "grpc"
 
 # jwt
 jwt-nimbusJose = { module = "com.nimbusds:nimbus-jose-jwt", version.ref = "nimbusJoseJwt"}
+
+# html scraping
+jsoup = { module = "org.jsoup:jsoup", version.ref = "jsoup" }
 
 # Libraries can be bundled together for easier import
 [bundles]

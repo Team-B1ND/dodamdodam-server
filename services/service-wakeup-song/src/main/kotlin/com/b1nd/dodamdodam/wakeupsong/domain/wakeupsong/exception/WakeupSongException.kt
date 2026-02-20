@@ -1,0 +1,11 @@
+package com.b1nd.dodamdodam.wakeupsong.domain.wakeupsong.exception
+
+import com.b1nd.dodamdodam.core.common.exception.BasicException
+
+class WakeupSongNotFoundException : BasicException(WakeupSongExceptionCode.WAKEUP_SONG_NOT_FOUND)
+class WakeupSongAlreadyAppliedException : BasicException(WakeupSongExceptionCode.WAKEUP_SONG_ALREADY_APPLIED)
+class WakeupSongNotApplicantException : BasicException(WakeupSongExceptionCode.WAKEUP_SONG_NOT_APPLICANT)
+class WakeupSongUrlMalformedException : BasicException(WakeupSongExceptionCode.WAKEUP_SONG_URL_MALFORMED)
+class WakeupSongUnsupportedTypeException : BasicException(WakeupSongExceptionCode.WAKEUP_SONG_UNSUPPORTED_TYPE)
+class WakeupSongSearchFailedException : BasicException(WakeupSongExceptionCode.WAKEUP_SONG_SEARCH_FAILED)
+class WakeupSongStudentNotFoundException : BasicException(WakeupSongExceptionCode.WAKEUP_SONG_STUDENT_NOT_FOUND)
