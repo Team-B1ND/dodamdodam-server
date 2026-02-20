@@ -1,14 +1,15 @@
 package com.b1nd.dodamdodam.user.presentation.user.grpc
 
 import com.b1nd.dodamdodam.core.common.coroutine.CoroutineBlockingExecutor
-import com.b1nd.dodamdodam.grpc.user.GetUserInfoByUsernameRequest
-import com.b1nd.dodamdodam.grpc.user.GetUserInfosByUsernamesRequest
-import com.b1nd.dodamdodam.grpc.user.GetUserInfosByUsernamesResponse
+import com.b1nd.dodamdodam.grpc.user.GetUserInfoByUserIdRequest
+import com.b1nd.dodamdodam.grpc.user.GetUserInfosByUserIdsRequest
+import com.b1nd.dodamdodam.grpc.user.GetUserInfosByUserIdsResponse
 import com.b1nd.dodamdodam.grpc.user.UserInfoResponse
 import com.b1nd.dodamdodam.grpc.user.UserInfoServiceGrpcKt
 import com.b1nd.dodamdodam.user.domain.user.entity.UserEntity
 import com.b1nd.dodamdodam.user.domain.user.service.UserService
 import net.devh.boot.grpc.server.service.GrpcService
+import java.util.UUID
 
 @GrpcService
 class UserInfoGrpcController(
@@ -16,23 +17,23 @@ class UserInfoGrpcController(
     private val blockingExecutor: CoroutineBlockingExecutor
 ): UserInfoServiceGrpcKt.UserInfoServiceCoroutineImplBase() {
 
-    override suspend fun getUserInfoByUsername(request: GetUserInfoByUsernameRequest): UserInfoResponse {
+    override suspend fun getUserInfoByUserId(request: GetUserInfoByUserIdRequest): UserInfoResponse {
         val user: UserEntity = blockingExecutor.execute {
-            userService.getByUsername(request.username)
+            userService.getByPublicId(UUID.fromString(request.userId))
         }
-        return toUserInfoResponse(user)
+        return buildUserInfoResponse(user)
     }
 
-    override suspend fun getUserInfosByUsernames(request: GetUserInfosByUsernamesRequest): GetUserInfosByUsernamesResponse {
+    override suspend fun getUserInfosByUserIds(request: GetUserInfosByUserIdsRequest): GetUserInfosByUserIdsResponse {
         val users: List<UserEntity> = blockingExecutor.execute {
-            userService.getByUsernames(request.usernamesList)
+            userService.getByPublicIds(request.userIdsList.map { UUID.fromString(it) })
         }
-        return GetUserInfosByUsernamesResponse.newBuilder()
-            .addAllUsers(users.map { toUserInfoResponse(it) })
+        return GetUserInfosByUserIdsResponse.newBuilder()
+            .addAllUsers(users.map { buildUserInfoResponse(it) })
             .build()
     }
 
-    private fun toUserInfoResponse(user: UserEntity): UserInfoResponse {
+    private fun buildUserInfoResponse(user: UserEntity): UserInfoResponse {
         return UserInfoResponse.newBuilder()
             .setUserId(user.publicId.toString())
             .setName(user.name)

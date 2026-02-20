@@ -9,7 +9,7 @@ data class NoticeFileResponse(
     val fileType: FileType
 ) {
     companion object {
-        fun of(file: NoticeFileEntity): NoticeFileResponse {
+        fun fromNoticeFileEntity(file: NoticeFileEntity): NoticeFileResponse {
             return NoticeFileResponse(
                 fileUrl = file.fileUrl,
                 fileName = file.fileName,
@@ -17,8 +17,8 @@ data class NoticeFileResponse(
             )
         }
 
-        fun of(files: List<NoticeFileEntity>): List<NoticeFileResponse> {
-            return files.map { of(it) }
+        fun fromNoticeFileEntities(files: List<NoticeFileEntity>): List<NoticeFileResponse> {
+            return files.map { fromNoticeFileEntity(it) }
         }
     }
 }

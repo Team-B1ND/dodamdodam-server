@@ -1,5 +1,6 @@
 plugins {
     id("buildsrc.convention.spring-boot-application")
+    kotlin("kapt")
 }
 
 dependencies {
@@ -8,16 +9,18 @@ dependencies {
     implementation(project(":core:core-jpa"))
     implementation(project(":core:core-grpc"))
 
-    // database
     runtimeOnly(libs.mysql.jdbcDriver)
     implementation(libs.springBootStarterData.jdbc)
     implementation(libs.springBootStarterData.jpa)
     implementation(libs.springBootStarterSecurity)
 
-    // grpc
     implementation(libs.springGrpc)
 
-    // flyway
     implementation(libs.flywayCore)
     implementation(libs.flywayMysql)
+
+    implementation(libs.querydslJpa) { artifact { classifier = "jakarta" } }
+    kapt(libs.querydslApt) { artifact { classifier = "jakarta" } }
+    kapt("jakarta.annotation:jakarta.annotation-api")
+    kapt("jakarta.persistence:jakarta.persistence-api")
 }

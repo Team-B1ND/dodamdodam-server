@@ -7,7 +7,6 @@ import com.b1nd.dodamdodam.notice.domain.notice.exception.NotNoticeAuthorExcepti
 import com.b1nd.dodamdodam.notice.domain.notice.exception.NoticeNotFoundException
 import com.b1nd.dodamdodam.notice.domain.notice.repository.NoticeFileRepository
 import com.b1nd.dodamdodam.notice.domain.notice.repository.NoticeRepository
-import org.springframework.data.domain.PageRequest
 import org.springframework.stereotype.Service
 
 @Service
@@ -15,11 +14,11 @@ class NoticeService(
     private val noticeRepository: NoticeRepository,
     private val noticeFileRepository: NoticeFileRepository
 ) {
-    fun save(notice: NoticeEntity): NoticeEntity {
+    fun create(notice: NoticeEntity): NoticeEntity {
         return noticeRepository.save(notice)
     }
 
-    fun saveAllFiles(files: List<NoticeFileEntity>) {
+    fun createFiles(files: List<NoticeFileEntity>) {
         noticeFileRepository.saveAll(files)
     }
 
@@ -33,7 +32,7 @@ class NoticeService(
             NoticeStatus.CREATED,
             keyword,
             lastId,
-            PageRequest.of(0, limit)
+            limit
         )
     }
 
@@ -45,22 +44,22 @@ class NoticeService(
             .groupBy { it.notice.id!! }
     }
 
-    fun updateNotice(id: Long, memberId: String, title: String?, content: String?) {
+    fun updateNotice(id: Long, userId: String, title: String?, content: String?) {
         val notice = getById(id)
-        checkPermission(notice, memberId)
+        checkPermission(notice, userId)
         notice.updateNotice(title, content)
         noticeRepository.save(notice)
     }
 
-    fun deleteNotice(id: Long, memberId: String) {
+    fun deleteNotice(id: Long, userId: String) {
         val notice = getById(id)
-        checkPermission(notice, memberId)
+        checkPermission(notice, userId)
         notice.noticeStatus = NoticeStatus.DELETED
         noticeRepository.save(notice)
     }
 
-    private fun checkPermission(notice: NoticeEntity, memberId: String) {
-        if (notice.memberId != memberId) {
+    private fun checkPermission(notice: NoticeEntity, userId: String) {
+        if (notice.userId != userId) {
             throw NotNoticeAuthorException()
         }
     }

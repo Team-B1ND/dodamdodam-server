@@ -1,16 +1,16 @@
 package com.b1nd.dodamdodam.notice.application.notice
 
 import com.b1nd.dodamdodam.core.common.data.Response
-import com.b1nd.dodamdodam.core.security.passport.PassportUserDetails
+import com.b1nd.dodamdodam.core.security.util.getCurrentUserId
 import com.b1nd.dodamdodam.notice.application.notice.data.request.GenerateNoticeRequest
 import com.b1nd.dodamdodam.notice.application.notice.data.request.ModifyNoticeRequest
 import com.b1nd.dodamdodam.notice.application.notice.data.response.MemberInfoResponse
 import com.b1nd.dodamdodam.notice.application.notice.data.response.NoticeResponse
+import com.b1nd.dodamdodam.notice.application.notice.data.response.NoticeResponseMapper
 import com.b1nd.dodamdodam.notice.domain.notice.entity.NoticeEntity
 import com.b1nd.dodamdodam.notice.domain.notice.service.NoticeService
 import com.b1nd.dodamdodam.notice.infrastructure.user.client.UserClient
 import kotlinx.coroutines.runBlocking
-import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.stereotype.Component
 import org.springframework.transaction.annotation.Transactional
 
@@ -18,14 +18,15 @@ import org.springframework.transaction.annotation.Transactional
 @Transactional(rollbackFor = [Exception::class])
 class NoticeUseCase(
     private val noticeService: NoticeService,
-    private val userClient: UserClient
+    private val userClient: UserClient,
+    private val noticeResponseMapper: NoticeResponseMapper
 ) {
     fun register(request: GenerateNoticeRequest): Response<Long> {
-        val memberId = getCurrentUsername()
-        val notice = noticeService.save(request.toEntity(memberId))
+        val userId = getCurrentUserId()
+        val notice = noticeService.create(request.toEntity(userId))
         val files = request.toNoticeFiles(notice)
         if (files.isNotEmpty()) {
-            noticeService.saveAllFiles(files)
+            noticeService.createFiles(files)
         }
         return Response.created("공지 생성 성공", notice.id)
     }
@@ -38,47 +39,37 @@ class NoticeUseCase(
     }
 
     fun modify(id: Long, request: ModifyNoticeRequest): Response<Unit> {
-        val memberId = getCurrentUsername()
-        noticeService.updateNotice(id, memberId, request.title, request.content)
+        val userId = getCurrentUserId()
+        noticeService.updateNotice(id, userId, request.title, request.content)
         return Response.ok("공지 수정 성공")
     }
 
     fun delete(id: Long): Response<Unit> {
-        val memberId = getCurrentUsername()
-        noticeService.deleteNotice(id, memberId)
+        val userId = getCurrentUserId()
+        noticeService.deleteNotice(id, userId)
         return Response.ok("공지 삭제 성공")
     }
 
     private fun convertToNoticeResponses(notices: List<NoticeEntity>): List<NoticeResponse> {
         val noticeFileMap = noticeService.getNoticeFileMap(notices)
-        val memberIds = notices.map { it.memberId }.distinct()
-        val memberInfoMap = fetchMemberInfos(memberIds)
+        val userIds = notices.map { it.userId }.distinct()
+        val memberInfoMap = fetchMemberInfos(userIds)
 
         return notices.map { notice ->
-            NoticeResponse.of(
+            noticeResponseMapper.toNoticeResponse(
                 notice = notice,
                 files = noticeFileMap.getOrDefault(notice.id!!, emptyList()),
-                memberInfo = memberInfoMap[notice.memberId]
+                memberInfo = memberInfoMap[notice.userId]
             )
         }
     }
 
-    private fun fetchMemberInfos(memberIds: List<String>): Map<String, MemberInfoResponse> {
-        if (memberIds.isEmpty()) {
+    private fun fetchMemberInfos(userIds: List<String>): Map<String, MemberInfoResponse> {
+        if (userIds.isEmpty()) {
             return emptyMap()
         }
         return runBlocking {
-            val result = mutableMapOf<String, MemberInfoResponse>()
-            val infos = userClient.getUserInfosByUsernames(memberIds)
-            memberIds.forEach { memberId ->
-                infos[memberId]?.let { result[memberId] = it }
-            }
-            result
+            userClient.getUserInfosByUserIds(userIds)
         }
-    }
-
-    private fun getCurrentUsername(): String {
-        val userDetails = SecurityContextHolder.getContext().authentication.principal as PassportUserDetails
-        return userDetails.username
     }
 }

@@ -2,18 +2,17 @@ package com.b1nd.dodamdodam.notice.application.notice.data.request
 
 import com.b1nd.dodamdodam.notice.domain.notice.entity.NoticeEntity
 import com.b1nd.dodamdodam.notice.domain.notice.entity.NoticeFileEntity
-import com.b1nd.dodamdodam.notice.domain.notice.enumeration.FileType
 
 data class GenerateNoticeRequest(
     val title: String,
     val content: String,
     val files: List<FileRequest>?
 ) {
-    fun toEntity(memberId: String): NoticeEntity {
+    fun toEntity(userId: String): NoticeEntity {
         return NoticeEntity(
             title = title,
             content = content,
-            memberId = memberId
+            userId = userId
         )
     }
 
@@ -31,9 +30,3 @@ data class GenerateNoticeRequest(
         }
     }
 }
-
-data class FileRequest(
-    val url: String,
-    val name: String,
-    val fileType: FileType
-)

@@ -10,6 +10,7 @@ import com.b1nd.dodamdodam.user.domain.user.repository.UserRepository
 import com.b1nd.dodamdodam.user.domain.user.repository.UserRoleRepository
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.stereotype.Service
+import java.util.UUID
 
 @Service
 class UserService(
@@ -37,13 +38,13 @@ class UserService(
             throw UserPasswordIncorrectException()
     }
 
-    fun getByUsername(username: String): UserEntity {
-        return userRepository.findByUsername(username)
+    fun getByPublicId(publicId: UUID): UserEntity {
+        return userRepository.findByPublicId(publicId)
             ?: throw UserNotFoundException()
     }
 
-    fun getByUsernames(usernames: List<String>): List<UserEntity> {
-        return userRepository.findByUsernameIn(usernames)
+    fun getByPublicIds(publicIds: List<UUID>): List<UserEntity> {
+        return userRepository.findByPublicIdIn(publicIds)
     }
 
     private fun checkDuplicateUser(username: String) {

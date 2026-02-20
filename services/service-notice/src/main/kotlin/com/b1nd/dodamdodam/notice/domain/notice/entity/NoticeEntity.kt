@@ -12,7 +12,7 @@ import jakarta.persistence.Id
 import jakarta.persistence.Table
 
 @Entity
-@Table(name = "notice")
+@Table(name = "notices")
 class NoticeEntity(
     @Column(nullable = false)
     var title: String,
@@ -25,7 +25,7 @@ class NoticeEntity(
     var noticeStatus: NoticeStatus = NoticeStatus.CREATED,
 
     @Column(nullable = false)
-    val memberId: String
+    val userId: String
 ): BaseTimeEntity() {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

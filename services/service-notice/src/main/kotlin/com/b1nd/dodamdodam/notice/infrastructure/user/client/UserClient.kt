@@ -1,51 +1,53 @@
 package com.b1nd.dodamdodam.notice.infrastructure.user.client
 
-import com.b1nd.dodamdodam.core.common.exception.base.BaseInternalServerException
-import com.b1nd.dodamdodam.grpc.user.GetUserInfoByUsernameRequest
-import com.b1nd.dodamdodam.grpc.user.GetUserInfosByUsernamesRequest
-import com.b1nd.dodamdodam.grpc.user.UserInfoResponse
+import com.b1nd.dodamdodam.grpc.user.GetUserInfoByUserIdRequest
+import com.b1nd.dodamdodam.grpc.user.GetUserInfosByUserIdsRequest
 import com.b1nd.dodamdodam.grpc.user.UserInfoServiceGrpcKt
 import com.b1nd.dodamdodam.notice.application.notice.data.response.MemberInfoResponse
+import com.b1nd.dodamdodam.notice.domain.notice.exception.UserNotFoundException
+import com.b1nd.dodamdodam.notice.domain.notice.exception.UserServiceException
+import com.b1nd.dodamdodam.notice.infrastructure.user.mapper.UserInfoMapper
+import io.grpc.Status
 import io.grpc.StatusException
 import net.devh.boot.grpc.client.inject.GrpcClient
 import org.springframework.stereotype.Component
 
 @Component
-class UserClient {
+class UserClient(
+    private val userInfoMapper: UserInfoMapper
+) {
     @GrpcClient("service-user")
     private lateinit var stub: UserInfoServiceGrpcKt.UserInfoServiceCoroutineStub
 
-    suspend fun getUserInfoByUsername(username: String): MemberInfoResponse? = runCatching {
-        val request = GetUserInfoByUsernameRequest.newBuilder()
-            .setUsername(username)
+    suspend fun getUserInfoByUserId(userId: String): MemberInfoResponse? = runCatching {
+        val request = GetUserInfoByUserIdRequest.newBuilder()
+            .setUserId(userId)
             .build()
 
-        toMemberInfoResponse(stub.getUserInfoByUsername(request))
+        userInfoMapper.toMemberInfoResponse(stub.getUserInfoByUserId(request))
     }.onFailure { ex ->
         if (ex is StatusException) {
-            throw BaseInternalServerException()
+            when (ex.status.code) {
+                Status.Code.NOT_FOUND -> throw UserNotFoundException()
+                else -> throw UserServiceException()
+            }
         }
     }.getOrNull()
 
-    suspend fun getUserInfosByUsernames(usernames: List<String>): Map<String, MemberInfoResponse> = runCatching {
-        val request = GetUserInfosByUsernamesRequest.newBuilder()
-            .addAllUsernames(usernames)
+    suspend fun getUserInfosByUserIds(userIds: List<String>): Map<String, MemberInfoResponse> = runCatching {
+        val request = GetUserInfosByUserIdsRequest.newBuilder()
+            .addAllUserIds(userIds)
             .build()
 
-        stub.getUserInfosByUsernames(request).usersList.associate { userInfo ->
-            userInfo.name to toMemberInfoResponse(userInfo)
+        stub.getUserInfosByUserIds(request).usersList.associate { userInfo ->
+            userInfo.userId to userInfoMapper.toMemberInfoResponse(userInfo)
         }
     }.onFailure { ex ->
         if (ex is StatusException) {
-            throw BaseInternalServerException()
+            when (ex.status.code) {
+                Status.Code.NOT_FOUND -> throw UserNotFoundException()
+                else -> throw UserServiceException()
+            }
         }
     }.getOrDefault(emptyMap())
-
-    private fun toMemberInfoResponse(userInfo: UserInfoResponse): MemberInfoResponse {
-        return MemberInfoResponse(
-            id = userInfo.userId,
-            name = userInfo.name,
-            profileImage = userInfo.profileImage.ifEmpty { null }
-        )
-    }
 }

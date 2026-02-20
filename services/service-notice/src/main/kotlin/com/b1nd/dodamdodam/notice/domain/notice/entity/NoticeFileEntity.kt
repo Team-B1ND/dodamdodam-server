@@ -14,7 +14,7 @@ import jakarta.persistence.ManyToOne
 import jakarta.persistence.Table
 
 @Entity
-@Table(name = "notice_file")
+@Table(name = "notice_files")
 class NoticeFileEntity(
     @Column(nullable = false, columnDefinition = "LONGTEXT")
     val fileUrl: String,
@@ -26,7 +26,7 @@ class NoticeFileEntity(
     @Column(nullable = false)
     val fileType: FileType,
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "fk_notice_id", nullable = false)
     val notice: NoticeEntity
 ) {
