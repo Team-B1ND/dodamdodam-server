@@ -6,7 +6,7 @@ import com.b1nd.dodamdodam.bus.domain.bus.enumeration.BoardingType
 data class MemberWithBusApplicantResponse(
     val boardingType: BoardingType,
     val seat: Int?,
-    val memberId: String,
+    val userId: String,
     val memberName: String?,
     val profileImage: String?
 ) {
@@ -19,7 +19,7 @@ data class MemberWithBusApplicantResponse(
             return MemberWithBusApplicantResponse(
                 boardingType = applicant.boardingType,
                 seat = applicant.seat,
-                memberId = applicant.memberId,
+                userId = applicant.userId,
                 memberName = memberName,
                 profileImage = profileImage
             )

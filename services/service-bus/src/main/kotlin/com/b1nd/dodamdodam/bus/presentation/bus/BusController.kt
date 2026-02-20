@@ -8,6 +8,8 @@ import com.b1nd.dodamdodam.bus.application.bus.data.response.BusApplicantRespons
 import com.b1nd.dodamdodam.bus.application.bus.data.response.BusDetailResponse
 import com.b1nd.dodamdodam.bus.application.bus.data.response.BusResponse
 import com.b1nd.dodamdodam.core.common.data.Response
+import com.b1nd.dodamdodam.core.security.annotation.authentication.UserAccess
+import com.b1nd.dodamdodam.core.security.passport.enumerations.RoleType
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PatchMapping
@@ -15,69 +17,72 @@ import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
-@RequestMapping("/bus")
 class BusController(
     private val busUseCase: BusUseCase
 ) {
-    @GetMapping
+    @GetMapping("/bus")
     fun getBuses(): Response<List<BusResponse>> {
         return busUseCase.getBuses()
     }
 
-    @GetMapping("/{id}/seats")
+    @GetMapping("/bus/{id}/seats")
     fun getRequestedSeats(@PathVariable id: Long): Response<List<Int?>> {
         return busUseCase.getRequestedSeats(id)
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/bus/{id}")
     fun busDetail(@PathVariable id: Long): Response<BusDetailResponse> {
         return busUseCase.busDetail(id)
     }
 
-    @GetMapping("/my")
+    @UserAccess
+    @GetMapping("/bus/my")
     fun getMy(): Response<BusApplicantResponse?> {
         return busUseCase.my()
     }
 
-    @PostMapping
+    @UserAccess(roles = [RoleType.TEACHER, RoleType.ADMIN])
+    @PostMapping("/bus")
     fun createBus(@RequestBody request: BusRequest): Response<Unit> {
         return busUseCase.createBus(request)
     }
 
-    @PostMapping("/board")
+    @UserAccess(roles = [RoleType.TEACHER, RoleType.ADMIN])
+    @PostMapping("/bus/board")
     fun createBusApplicant(@RequestBody request: BusApplicantRequest): Response<Unit> {
         return busUseCase.createBusApplicant(request)
     }
 
-    @PostMapping("/board/{seat}")
+    @UserAccess
+    @PostMapping("/bus/board/{seat}")
     fun apply(@PathVariable seat: Int): Response<Unit> {
         return busUseCase.apply(seat)
     }
 
-    @PutMapping("/{id}")
+    @UserAccess(roles = [RoleType.TEACHER, RoleType.ADMIN])
+    @PutMapping("/bus/{id}")
     fun updateBus(@PathVariable id: Long, @RequestBody request: BusRequest): Response<Unit> {
         return busUseCase.updateBus(id, request)
     }
 
-    @PatchMapping("/board/{seat}")
+    @UserAccess
+    @PatchMapping("/bus/board/{seat}")
     fun changeSeat(@PathVariable seat: Int): Response<Unit> {
         return busUseCase.changeSeat(seat)
     }
 
-    @PatchMapping("/board")
+    @UserAccess
+    @PatchMapping("/bus/board")
     fun changeBoard(@RequestBody request: BusBoardRequest): Response<Unit> {
         return busUseCase.changeBoardingType(request)
     }
 
-    @DeleteMapping("/{id}")
+    @UserAccess(roles = [RoleType.TEACHER, RoleType.ADMIN])
+    @DeleteMapping("/bus/{id}")
     fun deleteBus(@PathVariable id: Long): Response<Unit> {
         return busUseCase.deleteBus(id)
     }
-
-    @GetMapping("/health")
-    fun health(): String = "OK"
 }

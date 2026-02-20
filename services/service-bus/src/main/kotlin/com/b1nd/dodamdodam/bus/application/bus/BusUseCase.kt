@@ -13,9 +13,9 @@ import com.b1nd.dodamdodam.bus.domain.bus.service.BusApplicantService
 import com.b1nd.dodamdodam.bus.domain.bus.service.BusService
 import com.b1nd.dodamdodam.bus.infrastructure.user.client.UserClient
 import com.b1nd.dodamdodam.core.common.data.Response
-import com.b1nd.dodamdodam.core.security.passport.PassportUserDetails
+import com.b1nd.dodamdodam.core.security.util.getCurrentUserId
+import com.b1nd.dodamdodam.grpc.user.UserInfoResponse
 import kotlinx.coroutines.runBlocking
-import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.stereotype.Component
 import org.springframework.transaction.annotation.Transactional
 
@@ -27,20 +27,20 @@ class BusUseCase(
     private val userClient: UserClient
 ) {
     fun createBus(request: BusRequest): Response<Unit> {
-        busService.save(request.toEntity())
+        busService.create(request.toEntity())
         return Response.created("버스 생성 성공")
     }
 
     fun createBusApplicant(request: BusApplicantRequest): Response<Unit> {
         val bus = busService.getById(request.busId)
-        val applicants = request.memberIds.map { memberId ->
+        val applicants = request.userIds.map { userId ->
             BusApplicantEntity(
-                memberId = memberId,
+                userId = userId,
                 bus = bus,
                 boardingType = BoardingType.BEFORE_BOARDING
             )
         }
-        busApplicantService.saveAll(applicants)
+        busApplicantService.createAll(applicants)
         return Response.created("버스 탑승자 생성 성공")
     }
 
@@ -57,7 +57,7 @@ class BusUseCase(
         val memberInfoMap = fetchMemberInfoMap(applicants)
 
         val users = applicants.map { applicant ->
-            val info = memberInfoMap[applicant.memberId]
+            val info = memberInfoMap[applicant.userId]
             MemberWithBusApplicantResponse.of(
                 applicant = applicant,
                 memberName = info?.name,
@@ -75,36 +75,36 @@ class BusUseCase(
     }
 
     fun apply(seat: Int): Response<Unit> {
-        val memberId = getCurrentUsername()
-        val applicant = busApplicantService.getByMemberId(memberId)
+        val userId = getCurrentUserId()
+        val applicant = busApplicantService.getByUserId(userId)
         busApplicantService.checkSeatAvailable(applicant.bus, seat)
         applicant.updateSeat(seat)
         applicant.updateBoardingType(BoardingType.BEFORE_BOARDING)
-        busApplicantService.save(applicant)
+        busApplicantService.create(applicant)
         return Response.created("버스 신청 성공")
     }
 
     fun changeBoardingType(request: BusBoardRequest): Response<Unit> {
-        val memberId = getCurrentUsername()
-        val applicant = busApplicantService.getByMemberId(memberId)
+        val userId = getCurrentUserId()
+        val applicant = busApplicantService.getByUserId(userId)
         applicant.updateBoardingType(request.boardingType)
-        busApplicantService.save(applicant)
+        busApplicantService.create(applicant)
         return Response.ok("탑승정보 수정 성공")
     }
 
     fun changeSeat(seat: Int): Response<Unit> {
-        val memberId = getCurrentUsername()
-        val applicant = busApplicantService.getByMemberId(memberId)
+        val userId = getCurrentUserId()
+        val applicant = busApplicantService.getByUserId(userId)
         busApplicantService.checkSeatAvailable(applicant.bus, seat)
         applicant.updateSeat(seat)
-        busApplicantService.save(applicant)
+        busApplicantService.create(applicant)
         return Response.ok("버스 좌석 변경 성공")
     }
 
     fun updateBus(id: Long, request: BusRequest): Response<Unit> {
         val bus = busService.getById(id)
         bus.modifyName(request.name)
-        busService.save(bus)
+        busService.create(bus)
         return Response.ok("버스 정보 수정 성공")
     }
 
@@ -116,21 +116,16 @@ class BusUseCase(
 
     @Transactional(readOnly = true)
     fun my(): Response<BusApplicantResponse?> {
-        val memberId = getCurrentUsername()
-        val applicant = busApplicantService.getByMemberIdOrNull(memberId)
+        val userId = getCurrentUserId()
+        val applicant = busApplicantService.getByUserIdOrNull(userId)
         return Response.ok("내 버스 신청 정보 조회 성공", BusApplicantResponse.of(applicant))
     }
 
     private fun fetchMemberInfoMap(
         applicants: List<BusApplicantEntity>
-    ): Map<String, com.b1nd.dodamdodam.grpc.user.UserInfoResponse> {
-        val memberIds = applicants.map { it.memberId }.distinct()
-        if (memberIds.isEmpty()) return emptyMap()
-        return runBlocking { userClient.getUserInfosByUsernames(memberIds) }
-    }
-
-    private fun getCurrentUsername(): String {
-        val userDetails = SecurityContextHolder.getContext().authentication.principal as PassportUserDetails
-        return userDetails.username
+    ): Map<String, UserInfoResponse> {
+        val userIds = applicants.map { it.userId }.distinct()
+        if (userIds.isEmpty()) return emptyMap()
+        return runBlocking { userClient.getUserInfosByUserIds(userIds) }
     }
 }

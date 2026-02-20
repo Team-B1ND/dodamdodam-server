@@ -25,20 +25,20 @@ class BusApplicantService(
         busApplicantRepository.deleteAllByBusId(busId)
     }
 
-    fun getByMemberId(memberId: String): BusApplicantEntity {
-        return busApplicantRepository.findByMemberId(memberId)
+    fun getByUserId(userId: String): BusApplicantEntity {
+        return busApplicantRepository.findByUserId(userId)
             ?: throw BusApplicantNotFoundException()
     }
 
-    fun getByMemberIdOrNull(memberId: String): BusApplicantEntity? {
-        return busApplicantRepository.findByMemberId(memberId)
+    fun getByUserIdOrNull(userId: String): BusApplicantEntity? {
+        return busApplicantRepository.findByUserId(userId)
     }
 
-    fun save(applicant: BusApplicantEntity) {
+    fun create(applicant: BusApplicantEntity) {
         busApplicantRepository.save(applicant)
     }
 
-    fun saveAll(applicants: List<BusApplicantEntity>) {
+    fun createAll(applicants: List<BusApplicantEntity>) {
         busApplicantRepository.saveAll(applicants)
     }
 }

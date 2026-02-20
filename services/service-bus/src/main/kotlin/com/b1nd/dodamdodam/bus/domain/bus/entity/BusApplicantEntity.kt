@@ -14,12 +14,12 @@ import jakarta.persistence.ManyToOne
 import jakarta.persistence.Table
 
 @Entity
-@Table(name = "bus_applicant")
+@Table(name = "bus_applicants")
 class BusApplicantEntity(
     @Column(nullable = false)
-    val memberId: String,
+    val userId: String,
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "fk_bus_id", nullable = false)
     val bus: BusEntity,
 

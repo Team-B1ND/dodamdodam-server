@@ -13,11 +13,11 @@ service UserCredentialService {
 
 service UserInfoService {
 
-  rpc GetUserInfoByUsername (GetUserInfoByUsernameRequest)
+  rpc GetUserInfoByUserId (GetUserInfoByUserIdRequest)
       returns (UserInfoResponse);
 
-  rpc GetUserInfosByUsernames (GetUserInfosByUsernamesRequest)
-      returns (GetUserInfosByUsernamesResponse);
+  rpc GetUserInfosByUserIds (GetUserInfosByUserIdsRequest)
+      returns (GetUserInfosByUserIdsResponse);
 }
 
 message VerifyPasswordRequest {
@@ -29,21 +29,20 @@ message VerifyPasswordResponse {
   bool valid = 1;
 }
 
-message GetUserInfoByUsernameRequest {
-  string username = 1;
+message GetUserInfoByUserIdRequest {
+  string user_id = 1;
 }
 
-message GetUserInfosByUsernamesRequest {
-  repeated string usernames = 1;
-}
-
-message GetUserInfosByUsernamesResponse {
-  repeated UserInfoResponse users = 1;
+message GetUserInfosByUserIdsRequest {
+  repeated string user_ids = 1;
 }
 
 message UserInfoResponse {
   string user_id = 1;
-  string username = 2;
-  string name = 3;
-  string profile_image = 4;
+  string name = 2;
+  string profile_image = 3;
+}
+
+message GetUserInfosByUserIdsResponse {
+  repeated UserInfoResponse users = 1;
 }

@@ -20,7 +20,7 @@ class BusService(
             .orElseThrow { BusNotFoundException() }
     }
 
-    fun save(bus: BusEntity): BusEntity {
+    fun create(bus: BusEntity): BusEntity {
         return busRepository.save(bus)
     }
 

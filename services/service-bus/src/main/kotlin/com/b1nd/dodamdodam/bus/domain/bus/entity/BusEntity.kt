@@ -8,7 +8,7 @@ import jakarta.persistence.Id
 import jakarta.persistence.Table
 
 @Entity
-@Table(name = "bus")
+@Table(name = "buses")
 class BusEntity(
     @Column(nullable = false)
     var name: String

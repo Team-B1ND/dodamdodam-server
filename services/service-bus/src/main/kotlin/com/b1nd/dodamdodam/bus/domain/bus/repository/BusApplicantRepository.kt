@@ -11,5 +11,5 @@ interface BusApplicantRepository : JpaRepository<BusApplicantEntity, Long> {
     fun findByBusAndSeat(bus: BusEntity, seat: Int): BusApplicantEntity?
 
     @EntityGraph(attributePaths = ["bus"])
-    fun findByMemberId(memberId: String): BusApplicantEntity?
+    fun findByUserId(userId: String): BusApplicantEntity?
 }
