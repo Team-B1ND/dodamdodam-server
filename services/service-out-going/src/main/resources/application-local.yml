@@ -1,0 +1,31 @@
+spring:
+  datasource:
+    url: jdbc:${MYSQL_HOST}
+    username: ${MYSQL_USER}
+    password: ${MYSQL_PASSWORD}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: none
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.MySQLDialect
+
+  flyway:
+    url: jdbc:${MYSQL_HOST}
+    user: ${MYSQL_USER}
+    password: ${MYSQL_PASSWORD}
+
+grpc:
+  server:
+    port: -1
+  client:
+    service-user:
+      address: 'static://localhost:9090'
+      negotiation-type: plaintext
+
+server:
+  port: 8084

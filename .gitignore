@@ -44,3 +44,15 @@ bin/
 
 ### Mac OS ###
 .DS_Store
+
+AGENTS.md
+.claude
+
+### Local dev scripts & logs ###
+*.log
+*.ps1
+run-*.bat
+start-*.bat
+build-*.bat
+gen_passport.py
+test_endpoints.py
