@@ -55,7 +55,7 @@ class OutSleepingController(
     @UserAccess(roles = [RoleType.TEACHER])
     fun revert(@PathVariable id: Long): ResponseEntity<Response<Unit>> {
         useCase.revert(id)
-        return Response.noContent<Unit>("외박이 대기 상태로 변경되었어요.").toResponseEntity()
+        return Response.noContent<Unit>("외박 승인이 취소되었어요.").toResponseEntity()
     }
 
     @DeleteMapping("/{id}")

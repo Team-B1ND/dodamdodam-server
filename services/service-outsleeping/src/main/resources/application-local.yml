@@ -20,6 +20,8 @@ spring:
     password: ${MYSQL_PASSWORD}
 
 grpc:
+  server:
+    port: -1
   client:
     service-user:
       address: 'static://localhost:9090'

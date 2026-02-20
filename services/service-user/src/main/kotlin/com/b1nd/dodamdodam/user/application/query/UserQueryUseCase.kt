@@ -15,7 +15,7 @@ class UserQueryUseCase(
     private val userRoleRepository: UserRoleRepository
 ) {
     fun getStudentsByUserIds(userIds: List<UUID>): List<StudentEntity> =
-        studentRepository.findByUserPublicIdIn(userIds)
+        studentRepository.findByUserPublicIdInFetchUser(userIds)
 
     fun getResidualStudents(absentUserIds: List<UUID>): List<Pair<StudentEntity, UserRoleEntity?>> {
         val residualStudents = if (absentUserIds.isEmpty()) {

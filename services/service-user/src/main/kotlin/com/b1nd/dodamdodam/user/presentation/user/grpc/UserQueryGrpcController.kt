@@ -22,20 +22,18 @@ class UserQueryGrpcController(
     private val dtFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSSSS")
 
     override suspend fun getStudentsByUserIds(request: GetStudentsByUserIdsRequest): GetStudentsByUserIdsResponse {
-        val students = blockingExecutor.execute {
+        val dtos = blockingExecutor.execute {
             val userIds = request.userIdsList.map { UUID.fromString(it) }
-            useCase.getStudentsByUserIds(userIds)
-        }
-
-        val dtos = students.map { student ->
-            StudentDto.newBuilder()
-                .setStudentId(student.id!!)
-                .setUserId(student.user.publicId.toString())
-                .setName(student.user.name)
-                .setGrade(student.grade)
-                .setRoom(student.room)
-                .setNumber(student.number)
-                .build()
+            useCase.getStudentsByUserIds(userIds).map { student ->
+                StudentDto.newBuilder()
+                    .setStudentId(student.id!!)
+                    .setUserId(student.user.publicId.toString())
+                    .setName(student.user.name)
+                    .setGrade(student.grade)
+                    .setRoom(student.room)
+                    .setNumber(student.number)
+                    .build()
+            }
         }
 
         return GetStudentsByUserIdsResponse.newBuilder()
@@ -44,27 +42,25 @@ class UserQueryGrpcController(
     }
 
     override suspend fun getResidualStudents(request: GetResidualStudentsRequest): GetResidualStudentsResponse {
-        val pairs = blockingExecutor.execute {
+        val dtos = blockingExecutor.execute {
             val absentUserIds = request.absentUserIdsList.map { UUID.fromString(it) }
-            useCase.getResidualStudents(absentUserIds)
-        }
-
-        val dtos = pairs.map { (student, roleEntity) ->
-            val user = student.user
-            ResidualStudentDto.newBuilder()
-                .setPublicId(user.publicId.toString())
-                .setName(user.name)
-                .setUsername(user.username)
-                .setRole(roleEntity?.role?.name ?: "STUDENT")
-                .setProfileImage(user.profileImage ?: "")
-                .setPhone(user.phone ?: "")
-                .setStudentId(student.id!!)
-                .setGrade(student.grade)
-                .setRoom(student.room)
-                .setNumber(student.number)
-                .setCreatedAt(student.user.createdAt?.format(dtFormatter) ?: "")
-                .setModifiedAt(student.user.modifiedAt?.format(dtFormatter) ?: "")
-                .build()
+            useCase.getResidualStudents(absentUserIds).map { (student, roleEntity) ->
+                val user = student.user
+                ResidualStudentDto.newBuilder()
+                    .setPublicId(user.publicId.toString())
+                    .setName(user.name)
+                    .setUsername(user.username)
+                    .setRole(roleEntity?.role?.name ?: "STUDENT")
+                    .setProfileImage(user.profileImage ?: "")
+                    .setPhone(user.phone ?: "")
+                    .setStudentId(student.id!!)
+                    .setGrade(student.grade)
+                    .setRoom(student.room)
+                    .setNumber(student.number)
+                    .setCreatedAt(student.user.createdAt?.format(dtFormatter) ?: "")
+                    .setModifiedAt(student.user.modifiedAt?.format(dtFormatter) ?: "")
+                    .build()
+            }
         }
 
         return GetResidualStudentsResponse.newBuilder()
