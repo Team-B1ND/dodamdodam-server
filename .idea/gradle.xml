@@ -33,6 +33,7 @@
             <option value="$PROJECT_DIR$/services/service-auth" />
             <option value="$PROJECT_DIR$/services/service-gateway" />
             <option value="$PROJECT_DIR$/services/service-inapp" />
+            <option value="$PROJECT_DIR$/services/service-member" />
             <option value="$PROJECT_DIR$/services/service-user" />
             <option value="$PROJECT_DIR$/utils" />
           </set>

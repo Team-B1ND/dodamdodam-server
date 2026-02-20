@@ -1,0 +1,24 @@
+package com.b1nd.dodamdodam.member.domain.member.exception
+
+import com.b1nd.dodamdodam.core.common.exception.BasicException
+
+class MemberAlreadyActiveException : BasicException(MemberExceptionCode.MEMBER_ALREADY_ACTIVE)
+class InvalidAuthCodeException : BasicException(MemberExceptionCode.INVALID_AUTH_CODE)
+class InvalidRequestException : BasicException(MemberExceptionCode.INVALID_REQUEST)
+class InvalidEmailException : BasicException(MemberExceptionCode.INVALID_EMAIL)
+class InvalidPhoneException : BasicException(MemberExceptionCode.INVALID_PHONE)
+class AuthCodeExpiredException : BasicException(MemberExceptionCode.AUTH_CODE_EXPIRED)
+class MemberDeactivatedException : BasicException(MemberExceptionCode.MEMBER_DEACTIVATED)
+class PermissionDeniedException : BasicException(MemberExceptionCode.PERMISSION_DENIED)
+class MemberPendingException : BasicException(MemberExceptionCode.MEMBER_PENDING)
+class MemberNotFoundException : BasicException(MemberExceptionCode.MEMBER_NOT_FOUND)
+class BroadcastClubMemberNotFoundException : BasicException(MemberExceptionCode.BROADCAST_CLUB_MEMBER_NOT_FOUND)
+class DormitoryManageMemberNotFoundException : BasicException(MemberExceptionCode.DORMITORY_MANAGE_MEMBER_NOT_FOUND)
+class StudentNotFoundException : BasicException(MemberExceptionCode.STUDENT_NOT_FOUND)
+class TeacherNotFoundException : BasicException(MemberExceptionCode.TEACHER_NOT_FOUND)
+class DuplicateUsernameException : BasicException(MemberExceptionCode.DUPLICATE_USERNAME)
+class DuplicateBroadcastClubMemberException : BasicException(MemberExceptionCode.DUPLICATE_BROADCAST_CLUB_MEMBER)
+class DuplicateDormitoryManageMemberException : BasicException(MemberExceptionCode.DUPLICATE_DORMITORY_MANAGE_MEMBER)
+class DuplicateEmailException : BasicException(MemberExceptionCode.DUPLICATE_EMAIL)
+class MemberProcessingErrorException : BasicException(MemberExceptionCode.MEMBER_PROCESSING_ERROR)
+class AuthCodeSendErrorException : BasicException(MemberExceptionCode.AUTH_CODE_SEND_ERROR)
