@@ -11,6 +11,15 @@ service UserCredentialService {
       returns (VerifyPasswordResponse);
 }
 
+service UserInfoService {
+
+  rpc GetUserInfoByUsername (GetUserInfoByUsernameRequest)
+      returns (UserInfoResponse);
+
+  rpc GetUserInfosByUsernames (GetUserInfosByUsernamesRequest)
+      returns (GetUserInfosByUsernamesResponse);
+}
+
 message VerifyPasswordRequest {
   string username = 1;
   string raw_password = 2;
@@ -18,4 +27,23 @@ message VerifyPasswordRequest {
 
 message VerifyPasswordResponse {
   bool valid = 1;
+}
+
+message GetUserInfoByUsernameRequest {
+  string username = 1;
+}
+
+message GetUserInfosByUsernamesRequest {
+  repeated string usernames = 1;
+}
+
+message GetUserInfosByUsernamesResponse {
+  repeated UserInfoResponse users = 1;
+}
+
+message UserInfoResponse {
+  string user_id = 1;
+  string username = 2;
+  string name = 3;
+  string profile_image = 4;
 }
