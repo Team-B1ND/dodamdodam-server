@@ -15,7 +15,7 @@ class PrincipalService(
     private val refreshTokenRepository: PrincipalRefreshTokenRepository
 ) {
     fun getByUsername(username: String) =
-        repository.findByUsernameAndStatusIsTrue(username)
+        repository.findByUsername(username)
             ?: throw UserNotFoundException()
 
     fun saveRefreshToken(principal: PrincipalEntity, refreshToken: String, userAgent: String? = null) {
