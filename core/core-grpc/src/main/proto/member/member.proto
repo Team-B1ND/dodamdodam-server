@@ -1,0 +1,58 @@
+syntax = "proto3";
+
+package member;
+
+option java_multiple_files = true;
+option java_package = "com.b1nd.dodamdodam.grpc.member";
+
+service MemberQueryService {
+
+  rpc GetStudentsByIds (GetStudentsByIdsRequest)
+      returns (GetStudentsByIdsResponse);
+
+  rpc GetTeacherById (GetTeacherByIdRequest)
+      returns (TeacherInfo);
+
+  rpc GetStudentByUsername (GetStudentByUsernameRequest)
+      returns (StudentInfo);
+
+  rpc GetStudentByUserId (GetStudentByUserIdRequest)
+      returns (StudentInfo);
+}
+
+message GetStudentByUsernameRequest {
+  string username = 1;
+}
+
+message GetStudentByUserIdRequest {
+  string user_id = 1;
+}
+
+message GetStudentsByIdsRequest {
+  repeated int64 student_ids = 1;
+}
+
+message GetStudentsByIdsResponse {
+  repeated StudentInfo students = 1;
+}
+
+message GetTeacherByIdRequest {
+  int64 teacher_id = 1;
+}
+
+message StudentInfo {
+  int64 id = 1;
+  string name = 2;
+  int32 grade = 3;
+  int32 room = 4;
+  int32 number = 5;
+  string profile_image = 6;
+  int64 member_id = 7;
+}
+
+message TeacherInfo {
+  int64 id = 1;
+  string name = 2;
+  string tel = 3;
+  string position = 4;
+}
