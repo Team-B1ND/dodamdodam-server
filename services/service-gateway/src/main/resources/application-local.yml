@@ -21,6 +21,12 @@ spring:
             - Path=/auth/**
           filters:
             - StripPrefix=1
+        - id: user-service
+          uri: http://localhost:8081
+          predicates:
+            - Path=/user/**
+          filters:
+            - StripPrefix=1
 
 app:
   auth:

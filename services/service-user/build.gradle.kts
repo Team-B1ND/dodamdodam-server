@@ -13,6 +13,10 @@ dependencies {
     implementation(libs.springBootStarterData.jdbc)
     implementation(libs.springBootStarterData.jpa)
 
+    // flyway
+    implementation(libs.flywayCore)
+    implementation(libs.flywayMysql)
+
     // grpc
     implementation(project(":core:core-grpc"))
     implementation(libs.springGrpc)

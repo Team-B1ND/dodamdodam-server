@@ -5,6 +5,9 @@ spring:
   profiles:
     active: local
 
+  flyway:
+    locations: classpath:database/migration
+
 server:
   port: 8081
 

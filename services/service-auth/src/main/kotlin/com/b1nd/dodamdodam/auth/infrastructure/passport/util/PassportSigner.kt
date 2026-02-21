@@ -23,7 +23,7 @@ class PassportSigner {
             os,
             version,
             issuedAt = System.currentTimeMillis(),
-            expiredAt = System.currentTimeMillis()
+            expiredAt = System.currentTimeMillis() + (2 * 60 * 1000L) //TODO: 시간 변경 및 properties 로 변경
         )
     }
 }

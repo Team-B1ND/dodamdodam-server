@@ -1,9 +1,7 @@
 package com.b1nd.dodamdodam.core.kafka.producer
 
 import org.springframework.kafka.core.KafkaTemplate
-import org.springframework.stereotype.Component
 
-@Component
 class KafkaMessageProducer(
     private val kafkaTemplate: KafkaTemplate<String, Any>
 ) {

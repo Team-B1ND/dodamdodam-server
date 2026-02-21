@@ -1,12 +1,15 @@
 package com.b1nd.dodamdodam.core.common.data
 
 import com.b1nd.dodamdodam.core.common.exception.BasicException
+import com.fasterxml.jackson.annotation.JsonInclude
+import com.fasterxml.jackson.annotation.JsonProperty
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 
 data class Response<T>(
     val status: Int,
     val message: String,
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     val data: T? = null
 ) {
     companion object {

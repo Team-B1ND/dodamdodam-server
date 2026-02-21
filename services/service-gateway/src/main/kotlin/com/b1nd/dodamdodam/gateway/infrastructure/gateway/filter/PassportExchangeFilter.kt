@@ -7,6 +7,7 @@ import org.springframework.cloud.gateway.filter.GatewayFilterChain
 import org.springframework.cloud.gateway.filter.GlobalFilter
 import org.springframework.core.Ordered
 import org.springframework.http.HttpHeaders
+import org.springframework.http.server.reactive.ServerHttpRequestDecorator
 import org.springframework.stereotype.Component
 import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.bodyToMono
@@ -30,18 +31,28 @@ class PassportExchangeFilter(
 
         return extractPassport(jwt)
             .flatMap { passport ->
-                val mutatedRequest = exchange.request.mutate()
-                    .header("X-User-Passport", passport)
-                    .build()
-                val mutatedExchange = exchange.mutate().request(mutatedRequest).build()
-                chain.filter(mutatedExchange)
+
+                val decoratedRequest = object : ServerHttpRequestDecorator(exchange.request) {
+                    override fun getHeaders(): HttpHeaders {
+                        val headers = HttpHeaders()
+                        headers.putAll(super.getHeaders())
+                        headers.set("X-User-Passport", passport)
+                        return headers
+                    }
+                }
+
+                chain.filter(
+                    exchange.mutate()
+                        .request(decoratedRequest)
+                        .build()
+                )
             }
             .switchIfEmpty(chain.filter(exchange))
     }
 
     private fun extractPassport(jwt: String?): Mono<String> {
-        if (jwt.isNullOrBlank()) return Mono.empty()
-        
+        if (jwt.isNullOrBlank()) return exchangePassport()
+
         return repository.get(jwt)
             .flatMap { cachedPassport ->
                 if (cachedPassport != null) {
@@ -56,10 +67,14 @@ class PassportExchangeFilter(
             }
     }
 
-    private fun exchangePassport(jwt: String): Mono<String> {
+    private fun exchangePassport(jwt: String? = null): Mono<String> {
         return webClient.post()
             .uri("/passport")
-            .header(HttpHeaders.AUTHORIZATION, "Bearer $jwt")
+            .headers { headers ->
+                if (!jwt.isNullOrBlank()) {
+                    headers.set(HttpHeaders.AUTHORIZATION, "Bearer $jwt")
+                }
+            }
             .retrieve()
             .bodyToMono<ExchangePassportResponse>()
             .map { it.passport }
