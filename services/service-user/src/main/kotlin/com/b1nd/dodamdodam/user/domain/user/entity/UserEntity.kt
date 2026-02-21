@@ -46,4 +46,10 @@ class UserEntity (
     fun updatePassword(newPassword: String) {
         this.password = newPassword
     }
+
+    fun updateInfo(name: String, phone: String?, profileImage: String?) {
+        this.name = name
+        this.phone = phone
+        this.profileImage = profileImage
+    }
 }

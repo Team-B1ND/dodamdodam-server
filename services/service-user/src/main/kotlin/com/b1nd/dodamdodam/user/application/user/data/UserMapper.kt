@@ -1,5 +1,8 @@
 package com.b1nd.dodamdodam.user.application.user.data
 
+import com.b1nd.dodamdodam.core.kafka.event.user.UserCreatedEvent
+import com.b1nd.dodamdodam.core.kafka.event.user.UserUpdatedEvent
+import com.b1nd.dodamdodam.core.security.passport.enumerations.RoleType
 import com.b1nd.dodamdodam.user.application.user.data.request.StudentRegisterRequest
 import com.b1nd.dodamdodam.user.application.user.data.request.TeacherRegisterRequest
 import com.b1nd.dodamdodam.user.domain.student.entity.StudentEntity
@@ -42,3 +45,25 @@ fun TeacherRegisterRequest.toTeacherEntity(user: UserEntity): TeacherEntity {
         user = user
     )
 }
+
+fun UserEntity.toUserCreatedEvent(role: RoleType): UserCreatedEvent =
+    UserCreatedEvent(
+        publicId = publicId!!,
+        username = username,
+        status = status == StatusType.ACTIVE,
+        name = name,
+        phone = phone,
+        profileImage = profileImage,
+        role = role.name
+    )
+
+fun UserEntity.toUserUpdatedEvent(roles: Collection<RoleType>): UserUpdatedEvent =
+    UserUpdatedEvent(
+        publicId = publicId!!,
+        username = username,
+        status = status == StatusType.ACTIVE,
+        roles = roles.map { it.name },
+        name = name,
+        phone = phone,
+        profileImage = profileImage
+    )

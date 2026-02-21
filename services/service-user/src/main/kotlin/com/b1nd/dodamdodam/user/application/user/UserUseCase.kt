@@ -1,9 +1,14 @@
 package com.b1nd.dodamdodam.user.application.user
 
+import com.b1nd.dodamdodam.core.kafka.constants.KafkaTopics
+import com.b1nd.dodamdodam.core.kafka.producer.KafkaMessageProducer
 import com.b1nd.dodamdodam.core.security.passport.enumerations.RoleType
 import com.b1nd.dodamdodam.user.application.user.data.request.StudentRegisterRequest
 import com.b1nd.dodamdodam.user.application.user.data.request.TeacherRegisterRequest
+import com.b1nd.dodamdodam.user.application.user.data.request.UpdateUserRequest
 import com.b1nd.dodamdodam.user.application.user.data.request.VerifyPasswordRequest
+import com.b1nd.dodamdodam.user.application.user.data.toUserCreatedEvent
+import com.b1nd.dodamdodam.user.application.user.data.toUserUpdatedEvent
 import com.b1nd.dodamdodam.user.application.user.data.toStudentEntity
 import com.b1nd.dodamdodam.user.application.user.data.toTeacherEntity
 import com.b1nd.dodamdodam.user.application.user.data.toUserEntity
@@ -19,7 +24,8 @@ import org.springframework.stereotype.Component
 class UserUseCase(
     private val userService: UserService,
     private val studentService: StudentService,
-    private val teacherService: TeacherService
+    private val teacherService: TeacherService,
+    private val kafkaMessageProducer: KafkaMessageProducer
 ) {
     fun registerStudent(request: StudentRegisterRequest) {
         //TODO 전화번호 검증 로직
@@ -28,6 +34,10 @@ class UserUseCase(
             RoleType.STUDENT
         )
         studentService.create(request.toStudentEntity(savedUser))
+        kafkaMessageProducer.send(
+            KafkaTopics.USER_CREATED,
+            savedUser.toUserCreatedEvent(RoleType.STUDENT)
+        )
     }
 
     fun registerTeacher(request: TeacherRegisterRequest) {
@@ -37,6 +47,20 @@ class UserUseCase(
             RoleType.TEACHER,
         )
         teacherService.create(request.toTeacherEntity(savedUser))
+        kafkaMessageProducer.send(
+            KafkaTopics.USER_CREATED,
+            savedUser.toUserCreatedEvent(RoleType.TEACHER)
+        )
+    }
+
+    fun updateUser(id: Long, request: UpdateUserRequest): UserEntity {
+        val updatedUser = userService.update(id, request)
+        val roles = userService.getRoles(updatedUser)
+        kafkaMessageProducer.send(
+            KafkaTopics.USER_UPDATED,
+            updatedUser.toUserUpdatedEvent(roles)
+        )
+        return updatedUser
     }
 
     fun verifyPassword(request: VerifyPasswordRequest): Boolean {

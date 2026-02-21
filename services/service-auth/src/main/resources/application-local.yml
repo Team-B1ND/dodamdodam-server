@@ -27,3 +27,8 @@ grpc:
 
 server:
   port: 8082
+
+app:
+  kafka:
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS}
+    consumer-group-id: service-auth

@@ -36,7 +36,7 @@ class SecurityConfig(
             .csrf { it.disable() }
             .addFilterBefore(passportFilter, UsernamePasswordAuthenticationFilter::class.java)
             .authorizeHttpRequests { auth ->
-                auth.requestMatchers("/passport", "/health", "/login").permitAll()
+                auth.requestMatchers("/passport", "/login").permitAll()
                 auth.anyRequest().authenticated()
             }
         return http.build()
