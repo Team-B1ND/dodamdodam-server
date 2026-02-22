@@ -9,5 +9,5 @@ enum class SecurityExceptionCode(
 ): ExceptionCode {
     ACCESS_DENIED(HttpStatus.FORBIDDEN, "접근 권한이 없어요."),
     AUTHENTICATION_REQUIRED(HttpStatus.UNAUTHORIZED, "로그인이 필요해요."),
-    USER_DISABLED(HttpStatus.FORBIDDEN, "사용자가 비활성 상태예요."),
+    USER_DISABLED(HttpStatus.FORBIDDEN, "사용자가 비활성 상태이거나 접근 권한이 없어요."),
 }

@@ -1,7 +1,9 @@
 package com.b1nd.dodamdodam.gateway.infrastructure.gateway.exception
 
+import com.b1nd.dodamdodam.core.common.data.Response
+import com.b1nd.dodamdodam.core.common.exception.BasicException
+import com.b1nd.dodamdodam.core.common.exception.base.BaseInternalServerException
 import com.fasterxml.jackson.databind.ObjectMapper
-import org.slf4j.LoggerFactory
 import org.springframework.boot.web.reactive.error.ErrorWebExceptionHandler
 import org.springframework.core.annotation.Order
 import org.springframework.core.io.buffer.DataBuffer
@@ -13,34 +15,31 @@ import org.springframework.web.server.ServerWebExchange
 import reactor.core.publisher.Mono
 
 @Order(-2)
+@Component
 class GlobalErrorWebExceptionHandler(
     private val objectMapper: ObjectMapper
 ) : ErrorWebExceptionHandler {
-    private val log = LoggerFactory.getLogger(javaClass)
-
     override fun handle(exchange: ServerWebExchange, ex: Throwable): Mono<Void> {
-        val request = exchange.request
         val response = exchange.response
 
-        log.error("Gateway error - Method: ${request.method}, Path: ${request.uri.path}, Error: ${ex.message}", ex)
-
-        val status = when (ex) {
-            is ResponseStatusException -> ex.statusCode
-            else -> HttpStatus.INTERNAL_SERVER_ERROR
+        if (response.isCommitted) {
+            return Mono.error(ex)
         }
 
-        response.statusCode = status
+        val body: Response<Unit> = when (ex) {
+            is BasicException -> Response.error(ex)
+            is ResponseStatusException -> Response.of(
+                status = HttpStatus.valueOf(ex.statusCode.value()),
+                message = ex.reason ?: "요청을 처리하지 못했어요."
+            )
+            else -> Response.error(BaseInternalServerException())
+        }
+
+        response.statusCode = HttpStatus.valueOf(body.status)
         response.headers.contentType = MediaType.APPLICATION_JSON
 
-        val errorResponse = mapOf(
-            "status" to status.value(),
-            "error" to status,
-            "message" to (ex.message ?: "Unknown error"),
-            "path" to request.uri.path
-        )
-
         val buffer: DataBuffer = response.bufferFactory()
-            .wrap(objectMapper.writeValueAsBytes(errorResponse))
+            .wrap(objectMapper.writeValueAsBytes(body))
 
         return response.writeWith(Mono.just(buffer))
     }
