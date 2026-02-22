@@ -3,6 +3,7 @@ package com.b1nd.dodamdodam.auth.application.passport
 import com.b1nd.dodamdodam.auth.application.passport.data.response.ExchangePassportResponse
 import com.b1nd.dodamdodam.auth.domain.principal.service.PrincipalService
 import com.b1nd.dodamdodam.auth.infrastructure.passport.util.PassportSigner
+import com.b1nd.dodamdodam.core.common.data.Response
 import com.b1nd.dodamdodam.core.common.holder.HeaderRequestHolder
 import com.b1nd.dodamdodam.core.security.jwt.JwtVerifier
 import com.b1nd.dodamdodam.core.security.jwt.data.JwtClaims
@@ -22,7 +23,7 @@ class PassportUseCase(
     private val passportSigner: PassportSigner,
     private final val prefix: String = "Bearer "
 ) {
-    fun exchange(): ExchangePassportResponse {
+    fun exchange(): Response<ExchangePassportResponse> {
         val request = HeaderRequestHolder.current()
         val claims = extractClaims(request)
         val principal = claims?.let { service.getByUsername(it.username) }
@@ -36,7 +37,7 @@ class PassportUseCase(
             os = os,
             version = version
         )
-        return ExchangePassportResponse(PassportCompressor.compress(passport))
+        return Response.ok("passport 발급에 성공했어요.", ExchangePassportResponse(PassportCompressor.compress(passport)))
     }
 
     private fun extractClaims(request: HttpServletRequest): JwtClaims? {

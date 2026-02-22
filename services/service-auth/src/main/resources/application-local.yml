@@ -22,8 +22,13 @@ spring:
 grpc:
   client:
     service-user:
-      address: 'static://localhost:9090'
+      address: 'static://localhost:9091'
       negotiation-type: plaintext
 
 server:
   port: 8082
+
+app:
+  kafka:
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS}
+    consumer-group-id: service-auth

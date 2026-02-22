@@ -5,6 +5,8 @@ spring:
   profiles:
     active: local
 
+  flyway:
+    locations: classpath:database/migration
 
   main:
     web-application-type: servlet

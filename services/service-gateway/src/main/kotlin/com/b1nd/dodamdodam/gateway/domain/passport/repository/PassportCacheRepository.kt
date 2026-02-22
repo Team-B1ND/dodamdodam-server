@@ -9,8 +9,9 @@ import java.time.Duration
 class PassportCacheRepository(
     private val redisTemplate: ReactiveStringRedisTemplate
 ) {
-    fun get(key: String): Mono<String?> =
-        redisTemplate.opsForValue().get(key)
+    fun get(key: String): Mono<String> {
+        return redisTemplate.opsForValue().get(key)
+    }
 
     fun set(key: String, value: String, ttl: Duration): Mono<Boolean> =
         redisTemplate.opsForValue().set(key, value, ttl)

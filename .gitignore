@@ -39,6 +39,8 @@ bin/
 /nbdist/
 /.nb-gradle/
 
+.docker
+
 ### VS Code ###
 .vscode/
 

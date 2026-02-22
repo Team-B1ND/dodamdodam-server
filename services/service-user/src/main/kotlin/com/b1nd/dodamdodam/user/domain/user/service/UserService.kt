@@ -1,9 +1,11 @@
 package com.b1nd.dodamdodam.user.domain.user.service
 
 import com.b1nd.dodamdodam.core.security.passport.enumerations.RoleType
+import com.b1nd.dodamdodam.user.application.user.data.request.UpdateUserRequest
 import com.b1nd.dodamdodam.user.domain.user.entity.UserEntity
 import com.b1nd.dodamdodam.user.domain.user.entity.UserRoleEntity
 import com.b1nd.dodamdodam.user.domain.user.exception.UserAlreadyExistsException
+import com.b1nd.dodamdodam.user.domain.user.exception.UserNotFoundException
 import com.b1nd.dodamdodam.user.domain.user.exception.UserPasswordIncorrectException
 import com.b1nd.dodamdodam.user.domain.user.repository.UserRepository
 import com.b1nd.dodamdodam.user.domain.user.repository.UserRoleRepository
@@ -24,10 +26,23 @@ class UserService(
         return savedUser
     }
 
+    fun update(id: Long, request: UpdateUserRequest): UserEntity {
+        val user = userRepository.findById(id)
+            .orElseThrow { UserNotFoundException() }
+
+        user.updateInfo(request.name, request.phone, request.profileImage)
+        return userRepository.save(user)
+    }
+
     fun addRole(user: UserEntity, roles: List<RoleType>) {
         val userRoles = roles.map { UserRoleEntity(user, it) }
         userRoleRepository.saveAll(userRoles)
     }
+
+    fun getRoles(user: UserEntity): Set<RoleType> =
+        userRoleRepository.findAllByUser(user)
+            .map { it.role }
+            .toSet()
 
     fun verify(username: String, password: String) {
         val user = userRepository.findByUsername(username)

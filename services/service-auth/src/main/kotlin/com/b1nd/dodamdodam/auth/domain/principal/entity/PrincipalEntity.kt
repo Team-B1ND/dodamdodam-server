@@ -25,4 +25,10 @@ class PrincipalEntity(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long? = null
+
+    fun update(status: Boolean, username: String, roles: Set<RoleType>) {
+        this.status = status
+        this.username = username
+        this.roles = roles
+    }
 }
