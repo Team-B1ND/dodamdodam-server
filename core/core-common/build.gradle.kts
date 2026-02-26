@@ -5,5 +5,5 @@ plugins {
 dependencies {
     api(libs.bundles.kotlinxEcosystem)
     api("org.springframework.boot:spring-boot-starter-web")
+    api(libs.springdoc.openapi.starter.common)
 }
-

@@ -17,6 +17,7 @@ dependencies {
     implementation(libs.springGrpc)
 
     implementation("com.github.ua-parser:uap-java:1.6.1")
+    implementation(libs.springdoc.openapi.webmvc.ui)
 
     // flyway
     implementation(libs.flywayCore)

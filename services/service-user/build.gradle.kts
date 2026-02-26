@@ -12,6 +12,7 @@ dependencies {
     runtimeOnly(libs.mysql.jdbcDriver)
     implementation(libs.springBootStarterData.jdbc)
     implementation(libs.springBootStarterData.jpa)
+    implementation(libs.springdoc.openapi.webmvc.ui)
 
     // flyway
     implementation(libs.flywayCore)
