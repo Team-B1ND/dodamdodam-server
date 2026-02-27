@@ -4,24 +4,25 @@ import com.b1nd.dodamdodam.core.security.passport.PassportUserDetails
 import com.b1nd.dodamdodam.wakeupsong.application.wakeupsong.data.request.WakeupSongKeywordRequest
 import com.b1nd.dodamdodam.wakeupsong.application.wakeupsong.data.request.WakeupSongUrlRequest
 import com.b1nd.dodamdodam.wakeupsong.application.wakeupsong.data.response.MelonChartResponse
+import com.b1nd.dodamdodam.wakeupsong.application.wakeupsong.data.response.WakeupSongListResponse
 import com.b1nd.dodamdodam.wakeupsong.application.wakeupsong.data.response.WakeupSongResponse
 import com.b1nd.dodamdodam.wakeupsong.application.wakeupsong.data.response.WakeupSongSearchResponse
 import com.b1nd.dodamdodam.wakeupsong.domain.wakeupsong.entity.WakeupSongEntity
-import com.b1nd.dodamdodam.wakeupsong.domain.wakeupsong.enumeration.WakeupSongStatus
+import com.b1nd.dodamdodam.wakeupsong.domain.wakeupsong.enumeration.WakeupSongStatusType
 import com.b1nd.dodamdodam.wakeupsong.domain.wakeupsong.exception.WakeupSongSearchFailedException
 import com.b1nd.dodamdodam.wakeupsong.domain.wakeupsong.exception.WakeupSongUnsupportedTypeException
 import com.b1nd.dodamdodam.wakeupsong.domain.wakeupsong.service.WakeupSongService
 import com.b1nd.dodamdodam.wakeupsong.infrastructure.melon.MelonChartService
 import com.b1nd.dodamdodam.wakeupsong.infrastructure.user.client.UserGrpcClient
 import com.b1nd.dodamdodam.wakeupsong.infrastructure.youtube.YoutubeClient
-import jakarta.transaction.Transactional
 import kotlinx.coroutines.runBlocking
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.stereotype.Component
+import org.springframework.transaction.annotation.Transactional
 import java.util.UUID
 
 @Component
-@Transactional(rollbackOn = [Exception::class])
+@Transactional(rollbackFor = [Exception::class])
 class WakeupSongUseCase(
     private val wakeupSongService: WakeupSongService,
     private val youtubeClient: YoutubeClient,
@@ -34,21 +35,32 @@ class WakeupSongUseCase(
         return (principal as PassportUserDetails).passport.userId!!
     }
 
-    fun getMy(): List<WakeupSongResponse> =
-        wakeupSongService.findAllByStudentId(currentUserId())
-            .map { WakeupSongResponse.of(it) }
+    @Transactional(readOnly = true)
+    fun getMy(): WakeupSongListResponse =
+        WakeupSongListResponse(
+            wakeupSongService.findAllByStudentId(currentUserId())
+                .map { WakeupSongResponse.fromEntity(it) }
+        )
 
-    fun getAllowed(): List<WakeupSongResponse> =
-        wakeupSongService.findAllByStatus(WakeupSongStatus.ALLOWED)
-            .map { WakeupSongResponse.of(it) }
+    @Transactional(readOnly = true)
+    fun getAllowed(): WakeupSongListResponse =
+        WakeupSongListResponse(
+            wakeupSongService.findAllByStatus(WakeupSongStatusType.ALLOWED)
+                .map { WakeupSongResponse.fromEntity(it) }
+        )
 
-    fun getPending(): List<WakeupSongResponse> =
-        wakeupSongService.findAllByStatus(WakeupSongStatus.PENDING)
-            .map { WakeupSongResponse.of(it) }
+    @Transactional(readOnly = true)
+    fun getPending(): WakeupSongListResponse =
+        WakeupSongListResponse(
+            wakeupSongService.findAllByStatus(WakeupSongStatusType.PENDING)
+                .map { WakeupSongResponse.fromEntity(it) }
+        )
 
+    @Transactional(readOnly = true)
     fun getChart(): List<MelonChartResponse> =
         melonChartService.fetchChart()
 
+    @Transactional(readOnly = true)
     fun search(keyword: String): List<WakeupSongSearchResponse> =
         youtubeClient.search(keyword, limit = 5)
 

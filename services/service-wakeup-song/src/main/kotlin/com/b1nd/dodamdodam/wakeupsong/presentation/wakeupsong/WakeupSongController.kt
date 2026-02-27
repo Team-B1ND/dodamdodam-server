@@ -7,7 +7,7 @@ import com.b1nd.dodamdodam.wakeupsong.application.wakeupsong.WakeupSongUseCase
 import com.b1nd.dodamdodam.wakeupsong.application.wakeupsong.data.request.WakeupSongKeywordRequest
 import com.b1nd.dodamdodam.wakeupsong.application.wakeupsong.data.request.WakeupSongUrlRequest
 import com.b1nd.dodamdodam.wakeupsong.application.wakeupsong.data.response.MelonChartResponse
-import com.b1nd.dodamdodam.wakeupsong.application.wakeupsong.data.response.WakeupSongResponse
+import com.b1nd.dodamdodam.wakeupsong.application.wakeupsong.data.response.WakeupSongListResponse
 import com.b1nd.dodamdodam.wakeupsong.application.wakeupsong.data.response.WakeupSongSearchResponse
 import jakarta.validation.Valid
 import org.springframework.http.ResponseEntity
@@ -29,21 +29,21 @@ class WakeupSongController(
 
     @GetMapping("/my")
     @UserAccess(roles = [RoleType.STUDENT])
-    fun getMy(): ResponseEntity<Response<List<WakeupSongResponse>>> {
+    fun getMy(): ResponseEntity<Response<WakeupSongListResponse>> {
         val data = useCase.getMy()
         return Response.ok("내 기상송 조회 성공", data).toResponseEntity()
     }
 
     @GetMapping("/allowed")
     @UserAccess(roles = [RoleType.STUDENT])
-    fun getAllowed(): ResponseEntity<Response<List<WakeupSongResponse>>> {
+    fun getAllowed(): ResponseEntity<Response<WakeupSongListResponse>> {
         val data = useCase.getAllowed()
         return Response.ok("승인된 기상송 조회 성공", data).toResponseEntity()
     }
 
     @GetMapping("/pending")
     @UserAccess(roles = [RoleType.TEACHER])
-    fun getPending(): ResponseEntity<Response<List<WakeupSongResponse>>> {
+    fun getPending(): ResponseEntity<Response<WakeupSongListResponse>> {
         val data = useCase.getPending()
         return Response.ok("대기 중인 기상송 조회 성공", data).toResponseEntity()
     }

@@ -1,7 +1,7 @@
 package com.b1nd.dodamdodam.wakeupsong.domain.wakeupsong.service
 
 import com.b1nd.dodamdodam.wakeupsong.domain.wakeupsong.entity.WakeupSongEntity
-import com.b1nd.dodamdodam.wakeupsong.domain.wakeupsong.enumeration.WakeupSongStatus
+import com.b1nd.dodamdodam.wakeupsong.domain.wakeupsong.enumeration.WakeupSongStatusType
 import com.b1nd.dodamdodam.wakeupsong.domain.wakeupsong.exception.WakeupSongAlreadyAppliedException
 import com.b1nd.dodamdodam.wakeupsong.domain.wakeupsong.exception.WakeupSongNotFoundException
 import com.b1nd.dodamdodam.wakeupsong.domain.wakeupsong.exception.WakeupSongNotApplicantException
@@ -28,7 +28,7 @@ class WakeupSongService(
     fun findById(id: Long): WakeupSongEntity =
         repository.findById(id).orElseThrow { WakeupSongNotFoundException() }
 
-    fun findAllByStatus(status: WakeupSongStatus): List<WakeupSongEntity> =
+    fun findAllByStatus(status: WakeupSongStatusType): List<WakeupSongEntity> =
         repository.findAllByStatus(status)
 
     fun findAllByStudentId(studentId: UUID): List<WakeupSongEntity> =
@@ -36,13 +36,13 @@ class WakeupSongService(
 
     fun allow(id: Long) {
         val entity = findById(id)
-        entity.status = WakeupSongStatus.ALLOWED
+        entity.status = WakeupSongStatusType.ALLOWED
         entity.playAt = LocalDate.now().plusDays(1)
     }
 
     fun deny(id: Long) {
         val entity = findById(id)
-        entity.status = WakeupSongStatus.DENIED
+        entity.status = WakeupSongStatusType.DENIED
     }
 
     fun deleteById(id: Long, studentId: UUID) {

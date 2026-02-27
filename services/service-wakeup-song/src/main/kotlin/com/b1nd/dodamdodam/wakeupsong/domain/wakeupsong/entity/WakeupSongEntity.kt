@@ -1,7 +1,7 @@
 package com.b1nd.dodamdodam.wakeupsong.domain.wakeupsong.entity
 
 import com.b1nd.dodamdodam.core.jpa.entity.BaseTimeEntity
-import com.b1nd.dodamdodam.wakeupsong.domain.wakeupsong.enumeration.WakeupSongStatus
+import com.b1nd.dodamdodam.wakeupsong.domain.wakeupsong.enumeration.WakeupSongStatusType
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
 import jakarta.persistence.EnumType
@@ -17,7 +17,7 @@ import java.util.UUID
 @Table(name = "wakeup_songs")
 class WakeupSongEntity(
 
-    @Column(nullable = false, columnDefinition = "BINARY(16)")
+    @Column(nullable = false, name = "fk_student_id")
     val studentId: UUID,
 
     @Column(nullable = false, length = 20)
@@ -37,7 +37,7 @@ class WakeupSongEntity(
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    var status: WakeupSongStatus = WakeupSongStatus.PENDING,
+    var status: WakeupSongStatusType = WakeupSongStatusType.PENDING,
 
     var playAt: LocalDate? = null
 
