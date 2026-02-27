@@ -5,8 +5,8 @@ import com.b1nd.dodamdodam.grpc.user.GetResidualStudentsRequest
 import com.b1nd.dodamdodam.grpc.user.GetResidualStudentsResponse
 import com.b1nd.dodamdodam.grpc.user.GetStudentsByUserIdsRequest
 import com.b1nd.dodamdodam.grpc.user.GetStudentsByUserIdsResponse
-import com.b1nd.dodamdodam.grpc.user.ResidualStudentDto
-import com.b1nd.dodamdodam.grpc.user.StudentDto
+import com.b1nd.dodamdodam.grpc.user.ResidualStudent
+import com.b1nd.dodamdodam.grpc.user.Student
 import com.b1nd.dodamdodam.grpc.user.UserQueryServiceGrpcKt
 import com.b1nd.dodamdodam.user.application.query.UserQueryUseCase
 import net.devh.boot.grpc.server.service.GrpcService
@@ -25,7 +25,7 @@ class UserQueryGrpcController(
         val dtos = blockingExecutor.execute {
             val userIds = request.userIdsList.map { UUID.fromString(it) }
             useCase.getStudentsByUserIds(userIds).map { student ->
-                StudentDto.newBuilder()
+                Student.newBuilder()
                     .setStudentId(student.id!!)
                     .setUserId(student.user.publicId.toString())
                     .setName(student.user.name)
@@ -46,7 +46,7 @@ class UserQueryGrpcController(
             val absentUserIds = request.absentUserIdsList.map { UUID.fromString(it) }
             useCase.getResidualStudents(absentUserIds).map { (student, roleEntity) ->
                 val user = student.user
-                ResidualStudentDto.newBuilder()
+                ResidualStudent.newBuilder()
                     .setPublicId(user.publicId.toString())
                     .setName(user.name)
                     .setUsername(user.username)

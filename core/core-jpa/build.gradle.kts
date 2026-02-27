@@ -1,9 +1,14 @@
 plugins {
     id("buildsrc.convention.spring-boot-library")
+    kotlin("kapt")
 }
 
 dependencies {
     api(libs.springBootStarterData.jpa)
+
+    // QueryDSL Q-class generation for superclass
+    api("com.querydsl:querydsl-jpa:${libs.versions.querydsl.get()}:jakarta")
+    kapt("com.querydsl:querydsl-apt:${libs.versions.querydsl.get()}:jakarta")
 }
 
 allOpen {

@@ -3,13 +3,15 @@ package com.b1nd.dodamdodam.outsleeping.application.outsleeping
 import com.b1nd.dodamdodam.core.security.passport.PassportUserDetails
 import com.b1nd.dodamdodam.outsleeping.application.outsleeping.data.request.OutSleepingRequest
 import com.b1nd.dodamdodam.outsleeping.application.outsleeping.data.request.RejectRequest
+import com.b1nd.dodamdodam.outsleeping.application.outsleeping.data.response.OutSleepingListResponse
+import com.b1nd.dodamdodam.outsleeping.application.outsleeping.data.response.ResidualStudentListResponse
 import com.b1nd.dodamdodam.outsleeping.application.outsleeping.data.response.OutSleepingResponse
 import com.b1nd.dodamdodam.outsleeping.application.outsleeping.data.response.ResidualStudentResponse
 import com.b1nd.dodamdodam.outsleeping.application.outsleeping.data.response.StudentInfo
 import com.b1nd.dodamdodam.outsleeping.domain.outsleeping.entity.OutSleepingEntity
 import com.b1nd.dodamdodam.outsleeping.domain.outsleeping.service.OutSleepingService
 import com.b1nd.dodamdodam.outsleeping.infrastructure.user.client.UserGrpcClient
-import jakarta.transaction.Transactional
+import org.springframework.transaction.annotation.Transactional
 import kotlinx.coroutines.runBlocking
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.stereotype.Component
@@ -17,7 +19,7 @@ import java.time.LocalDate
 import java.util.UUID
 
 @Component
-@Transactional(rollbackOn = [Exception::class])
+@Transactional(rollbackFor = [Exception::class])
 class OutSleepingUseCase(
     private val outSleepingService: OutSleepingService,
     private val userGrpcClient: UserGrpcClient
@@ -49,20 +51,23 @@ class OutSleepingUseCase(
 
     fun delete(id: Long) = outSleepingService.delete(id, currentUserId())
 
-    fun findByDate(date: LocalDate): List<OutSleepingResponse> {
+    @Transactional(readOnly = true)
+    fun findByDate(date: LocalDate): OutSleepingListResponse {
         val entities = outSleepingService.findByDate(date)
-        return enrichWithStudentInfo(entities)
+        return OutSleepingListResponse(enrichWithStudentInfo(entities))
     }
 
-    fun findMy(): List<OutSleepingResponse> {
+    @Transactional(readOnly = true)
+    fun findMy(): OutSleepingListResponse {
         val entities = outSleepingService.findByStudentId(currentUserId())
-        return enrichWithStudentInfo(entities)
+        return OutSleepingListResponse(enrichWithStudentInfo(entities))
     }
 
-    fun findResidualStudents(): List<ResidualStudentResponse> {
+    @Transactional(readOnly = true)
+    fun findResidualStudents(): ResidualStudentListResponse {
         val absentUserIds = outSleepingService.findValid(LocalDate.now()).map { it.studentId }
         val residualDtos = runBlocking { userGrpcClient.getResidualStudents(absentUserIds) }
-        return residualDtos.map { ResidualStudentResponse.from(it) }
+        return ResidualStudentListResponse(residualDtos.map { ResidualStudentResponse.from(it) })
     }
 
     private fun enrichWithStudentInfo(entities: List<OutSleepingEntity>): List<OutSleepingResponse> {
@@ -73,7 +78,7 @@ class OutSleepingUseCase(
 
         return entities.mapNotNull { entity ->
             val dto = studentByUserId[entity.studentId] ?: return@mapNotNull null
-            OutSleepingResponse.of(entity, StudentInfo(
+            OutSleepingResponse.fromEntity(entity, StudentInfo(
                 id = dto.studentId,
                 name = dto.name,
                 grade = dto.grade,

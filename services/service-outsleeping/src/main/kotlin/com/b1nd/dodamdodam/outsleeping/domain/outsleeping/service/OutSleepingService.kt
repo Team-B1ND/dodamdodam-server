@@ -1,7 +1,7 @@
 package com.b1nd.dodamdodam.outsleeping.domain.outsleeping.service
 
 import com.b1nd.dodamdodam.outsleeping.domain.outsleeping.entity.OutSleepingEntity
-import com.b1nd.dodamdodam.outsleeping.domain.outsleeping.enumeration.OutSleepingStatus
+import com.b1nd.dodamdodam.outsleeping.domain.outsleeping.enumeration.OutSleepingStatusType
 import com.b1nd.dodamdodam.outsleeping.domain.outsleeping.exception.OutSleepingAlreadyExistsException
 import com.b1nd.dodamdodam.outsleeping.domain.outsleeping.exception.OutSleepingForbiddenException
 import com.b1nd.dodamdodam.outsleeping.domain.outsleeping.exception.OutSleepingNotFoundException
@@ -27,25 +27,25 @@ class OutSleepingService(
 
     fun allow(id: Long) {
         val entity = findById(id)
-        entity.status = OutSleepingStatus.ALLOWED
+        entity.status = OutSleepingStatusType.ALLOWED
     }
 
     fun reject(id: Long, rejectReason: String?) {
         val entity = findById(id)
-        entity.status = OutSleepingStatus.REJECTED
+        entity.status = OutSleepingStatusType.REJECTED
         entity.rejectReason = rejectReason
     }
 
     fun revert(id: Long) {
         val entity = findById(id)
-        entity.status = OutSleepingStatus.PENDING
+        entity.status = OutSleepingStatusType.PENDING
         entity.rejectReason = null
     }
 
     fun delete(id: Long, studentId: UUID) {
         val entity = findById(id)
         if (entity.studentId != studentId) throw OutSleepingForbiddenException()
-        if (entity.status != OutSleepingStatus.PENDING) throw OutSleepingNotPendingException()
+        if (entity.status != OutSleepingStatusType.PENDING) throw OutSleepingNotPendingException()
         repository.delete(entity)
     }
 
@@ -57,6 +57,6 @@ class OutSleepingService(
 
     fun findValid(today: LocalDate): List<OutSleepingEntity> =
         repository.findByStatusAndStartAtLessThanEqualAndEndAtGreaterThanEqual(
-            OutSleepingStatus.ALLOWED, today, today
+            OutSleepingStatusType.ALLOWED, today, today
         )
 }

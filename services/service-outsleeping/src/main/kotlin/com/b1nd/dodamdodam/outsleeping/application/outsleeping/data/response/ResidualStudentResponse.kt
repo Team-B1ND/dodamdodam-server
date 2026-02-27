@@ -1,9 +1,10 @@
 package com.b1nd.dodamdodam.outsleeping.application.outsleeping.data.response
 
-import com.b1nd.dodamdodam.grpc.user.ResidualStudentDto
+import com.b1nd.dodamdodam.grpc.user.ResidualStudent
+import java.util.UUID
 
 data class ResidualStudentResponse(
-    val id: String,
+    val id: UUID,
     val name: String,
     val email: String,
     val role: String,
@@ -14,9 +15,9 @@ data class ResidualStudentResponse(
     val modifiedAt: String
 ) {
     companion object {
-        fun from(dto: ResidualStudentDto): ResidualStudentResponse =
+        fun from(dto: ResidualStudent): ResidualStudentResponse =
             ResidualStudentResponse(
-                id = dto.publicId,
+                id = UUID.fromString(dto.publicId),
                 name = dto.name,
                 email = dto.username,
                 role = dto.role,

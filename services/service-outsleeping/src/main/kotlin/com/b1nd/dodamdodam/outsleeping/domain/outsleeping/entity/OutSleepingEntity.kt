@@ -1,7 +1,7 @@
 package com.b1nd.dodamdodam.outsleeping.domain.outsleeping.entity
 
 import com.b1nd.dodamdodam.core.jpa.entity.BaseTimeEntity
-import com.b1nd.dodamdodam.outsleeping.domain.outsleeping.enumeration.OutSleepingStatus
+import com.b1nd.dodamdodam.outsleeping.domain.outsleeping.enumeration.OutSleepingStatusType
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
 import jakarta.persistence.EnumType
@@ -17,7 +17,7 @@ import java.util.UUID
 @Table(name = "out_sleepings")
 class OutSleepingEntity(
 
-    @Column(nullable = false, columnDefinition = "BINARY(16)")
+    @Column(name = "fk_student_id", nullable = false)
     val studentId: UUID,
 
     @Column(nullable = false)
@@ -25,7 +25,7 @@ class OutSleepingEntity(
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    var status: OutSleepingStatus = OutSleepingStatus.PENDING,
+    var status: OutSleepingStatusType = OutSleepingStatusType.PENDING,
 
     var rejectReason: String? = null,
 

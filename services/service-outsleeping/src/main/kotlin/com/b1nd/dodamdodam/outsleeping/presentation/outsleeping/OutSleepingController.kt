@@ -6,8 +6,8 @@ import com.b1nd.dodamdodam.core.security.passport.enumerations.RoleType
 import com.b1nd.dodamdodam.outsleeping.application.outsleeping.OutSleepingUseCase
 import com.b1nd.dodamdodam.outsleeping.application.outsleeping.data.request.OutSleepingRequest
 import com.b1nd.dodamdodam.outsleeping.application.outsleeping.data.request.RejectRequest
-import com.b1nd.dodamdodam.outsleeping.application.outsleeping.data.response.OutSleepingResponse
-import com.b1nd.dodamdodam.outsleeping.application.outsleeping.data.response.ResidualStudentResponse
+import com.b1nd.dodamdodam.outsleeping.application.outsleeping.data.response.OutSleepingListResponse
+import com.b1nd.dodamdodam.outsleeping.application.outsleeping.data.response.ResidualStudentListResponse
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.PatchMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
+import jakarta.validation.Valid
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
@@ -28,7 +29,7 @@ class OutSleepingController(
     @PostMapping
     @UserAccess(roles = [RoleType.STUDENT])
     fun apply(
-        @RequestBody request: OutSleepingRequest
+        @RequestBody @Valid request: OutSleepingRequest
     ): ResponseEntity<Response<Unit>> {
         useCase.apply(request)
         return Response.created<Unit>("외박 신청이 완료되었어요.").toResponseEntity()
@@ -69,21 +70,21 @@ class OutSleepingController(
     @UserAccess(roles = [RoleType.TEACHER])
     fun findByDate(
         @RequestParam date: LocalDate
-    ): ResponseEntity<Response<List<OutSleepingResponse>>> {
+    ): ResponseEntity<Response<OutSleepingListResponse>> {
         val data = useCase.findByDate(date)
         return Response.ok("날짜별 외박 조회 성공", data).toResponseEntity()
     }
 
     @GetMapping("/my")
     @UserAccess(roles = [RoleType.STUDENT])
-    fun findMy(): ResponseEntity<Response<List<OutSleepingResponse>>> {
+    fun findMy(): ResponseEntity<Response<OutSleepingListResponse>> {
         val data = useCase.findMy()
         return Response.ok("내 외박 조회 성공", data).toResponseEntity()
     }
 
     @GetMapping("/residual")
     @UserAccess(roles = [RoleType.TEACHER])
-    fun findResidualStudents(): ResponseEntity<Response<List<ResidualStudentResponse>>> {
+    fun findResidualStudents(): ResponseEntity<Response<ResidualStudentListResponse>> {
         val data = useCase.findResidualStudents()
         return Response.ok("잔류 학생 조회 성공", data).toResponseEntity()
     }

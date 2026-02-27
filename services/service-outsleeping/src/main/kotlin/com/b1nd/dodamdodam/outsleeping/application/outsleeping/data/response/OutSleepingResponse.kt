@@ -1,9 +1,8 @@
 package com.b1nd.dodamdodam.outsleeping.application.outsleeping.data.response
 
 import com.b1nd.dodamdodam.outsleeping.domain.outsleeping.entity.OutSleepingEntity
-import com.b1nd.dodamdodam.outsleeping.domain.outsleeping.enumeration.OutSleepingStatus
+import com.b1nd.dodamdodam.outsleeping.domain.outsleeping.enumeration.OutSleepingStatusType
 import java.time.LocalDate
-import java.time.LocalDateTime
 
 data class StudentInfo(
     val id: Long,
@@ -14,28 +13,22 @@ data class StudentInfo(
 )
 
 data class OutSleepingResponse(
-    val id: Long,
     val reason: String,
-    val status: OutSleepingStatus,
+    val status: OutSleepingStatusType,
     val student: StudentInfo,
     val rejectReason: String?,
     val startAt: LocalDate,
-    val endAt: LocalDate,
-    val createdAt: LocalDateTime?,
-    val modifiedAt: LocalDateTime?
+    val endAt: LocalDate
 ) {
     companion object {
-        fun of(entity: OutSleepingEntity, student: StudentInfo): OutSleepingResponse =
+        fun fromEntity(entity: OutSleepingEntity, student: StudentInfo): OutSleepingResponse =
             OutSleepingResponse(
-                id = entity.id!!,
                 reason = entity.reason,
                 status = entity.status,
                 student = student,
                 rejectReason = entity.rejectReason,
                 startAt = entity.startAt,
-                endAt = entity.endAt,
-                createdAt = entity.createdAt,
-                modifiedAt = entity.modifiedAt
+                endAt = entity.endAt
             )
     }
 }

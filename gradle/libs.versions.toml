@@ -13,6 +13,7 @@ kafka = "3.9.0"
 r2dbcMysql = "1.0.2"
 grpc = "3.1.0.RELEASE"
 nimbusJoseJwt = "10.0.2"
+querydsl = "5.1.0"
 
 [libraries]
 kotlinGradlePlugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
@@ -45,6 +46,10 @@ springGrpc = { module = "net.devh:grpc-spring-boot-starter", version.ref= "grpc"
 
 # jwt
 jwt-nimbusJose = { module = "com.nimbusds:nimbus-jose-jwt", version.ref = "nimbusJoseJwt"}
+
+# QueryDSL
+querydsl-jpa = { module = "com.querydsl:querydsl-jpa", version.ref = "querydsl" }
+querydsl-apt = { module = "com.querydsl:querydsl-apt", version.ref = "querydsl" }
 
 # Libraries can be bundled together for easier import
 [bundles]

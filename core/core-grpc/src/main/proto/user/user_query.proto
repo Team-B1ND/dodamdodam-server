@@ -18,7 +18,7 @@ message GetStudentsByUserIdsRequest {
   repeated string user_ids = 1;
 }
 
-message StudentDto {
+message Student {
   int64 student_id = 1;
   string user_id = 2;
   string name = 3;
@@ -28,14 +28,14 @@ message StudentDto {
 }
 
 message GetStudentsByUserIdsResponse {
-  repeated StudentDto students = 1;
+  repeated Student students = 1;
 }
 
 message GetResidualStudentsRequest {
   repeated string absent_user_ids = 1;
 }
 
-message ResidualStudentDto {
+message ResidualStudent {
   string public_id = 1;
   string name = 2;
   string username = 3;
@@ -51,5 +51,5 @@ message ResidualStudentDto {
 }
 
 message GetResidualStudentsResponse {
-  repeated ResidualStudentDto students = 1;
+  repeated ResidualStudent students = 1;
 }

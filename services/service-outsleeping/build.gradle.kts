@@ -1,5 +1,6 @@
 plugins {
     id("buildsrc.convention.spring-boot-application")
+    kotlin("kapt")
 }
 
 dependencies {
@@ -22,4 +23,8 @@ dependencies {
 
     // security
     implementation(libs.springBootStarterSecurity)
+
+    // QueryDSL
+    implementation("com.querydsl:querydsl-jpa:${libs.versions.querydsl.get()}:jakarta")
+    kapt("com.querydsl:querydsl-apt:${libs.versions.querydsl.get()}:jakarta")
 }
