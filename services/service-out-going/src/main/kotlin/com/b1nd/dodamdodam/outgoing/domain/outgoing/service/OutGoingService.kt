@@ -1,7 +1,7 @@
 package com.b1nd.dodamdodam.outgoing.domain.outgoing.service
 
 import com.b1nd.dodamdodam.outgoing.domain.outgoing.entity.OutGoingEntity
-import com.b1nd.dodamdodam.outgoing.domain.outgoing.enumeration.OutGoingStatus
+import com.b1nd.dodamdodam.outgoing.domain.outgoing.enumeration.OutGoingStatusType
 import com.b1nd.dodamdodam.outgoing.domain.outgoing.exception.OutGoingAlreadyExistsException
 import com.b1nd.dodamdodam.outgoing.domain.outgoing.exception.OutGoingForbiddenException
 import com.b1nd.dodamdodam.outgoing.domain.outgoing.exception.OutGoingNotFoundException
@@ -27,25 +27,25 @@ class OutGoingService(
 
     fun allow(id: Long) {
         val entity = findById(id)
-        entity.status = OutGoingStatus.ALLOWED
+        entity.status = OutGoingStatusType.ALLOWED
     }
 
     fun reject(id: Long, rejectReason: String?) {
         val entity = findById(id)
-        entity.status = OutGoingStatus.REJECTED
+        entity.status = OutGoingStatusType.REJECTED
         entity.rejectReason = rejectReason
     }
 
     fun revert(id: Long) {
         val entity = findById(id)
-        entity.status = OutGoingStatus.PENDING
+        entity.status = OutGoingStatusType.PENDING
         entity.rejectReason = null
     }
 
     fun delete(id: Long, studentId: UUID) {
         val entity = findById(id)
         if (entity.studentId != studentId) throw OutGoingForbiddenException()
-        if (entity.status != OutGoingStatus.PENDING) throw OutGoingNotPendingException()
+        if (entity.status != OutGoingStatusType.PENDING) throw OutGoingNotPendingException()
         repository.delete(entity)
     }
 

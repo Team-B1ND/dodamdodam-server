@@ -1,7 +1,7 @@
 package com.b1nd.dodamdodam.outgoing.domain.outgoing.entity
 
 import com.b1nd.dodamdodam.core.jpa.entity.BaseTimeEntity
-import com.b1nd.dodamdodam.outgoing.domain.outgoing.enumeration.OutGoingStatus
+import com.b1nd.dodamdodam.outgoing.domain.outgoing.enumeration.OutGoingStatusType
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
 import jakarta.persistence.EnumType
@@ -17,7 +17,7 @@ import java.util.UUID
 @Table(name = "out_goings")
 class OutGoingEntity(
 
-    @Column(nullable = false, columnDefinition = "BINARY(16)")
+    @Column(nullable = false, name = "fk_student_id")
     val studentId: UUID,
 
     @Column(nullable = false)
@@ -25,7 +25,7 @@ class OutGoingEntity(
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    var status: OutGoingStatus = OutGoingStatus.PENDING,
+    var status: OutGoingStatusType = OutGoingStatusType.PENDING,
 
     var rejectReason: String? = null,
 

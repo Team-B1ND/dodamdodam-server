@@ -6,7 +6,8 @@ import com.b1nd.dodamdodam.core.security.passport.enumerations.RoleType
 import com.b1nd.dodamdodam.outgoing.application.outgoing.OutGoingUseCase
 import com.b1nd.dodamdodam.outgoing.application.outgoing.data.request.OutGoingRequest
 import com.b1nd.dodamdodam.outgoing.application.outgoing.data.request.RejectRequest
-import com.b1nd.dodamdodam.outgoing.application.outgoing.data.response.OutGoingResponse
+import com.b1nd.dodamdodam.outgoing.application.outgoing.data.response.OutGoingListResponse
+import jakarta.validation.Valid
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
@@ -27,7 +28,7 @@ class OutGoingController(
     @PostMapping
     @UserAccess(roles = [RoleType.STUDENT])
     fun apply(
-        @RequestBody request: OutGoingRequest
+        @RequestBody @Valid request: OutGoingRequest
     ): ResponseEntity<Response<Unit>> {
         useCase.apply(request)
         return Response.created<Unit>("외출 신청이 완료되었어요.").toResponseEntity()
@@ -68,14 +69,14 @@ class OutGoingController(
     @UserAccess(roles = [RoleType.TEACHER])
     fun findByDate(
         @RequestParam date: LocalDate
-    ): ResponseEntity<Response<List<OutGoingResponse>>> {
+    ): ResponseEntity<Response<OutGoingListResponse>> {
         val data = useCase.findByDate(date)
         return Response.ok("날짜별 외출 조회 성공", data).toResponseEntity()
     }
 
     @GetMapping("/my")
     @UserAccess(roles = [RoleType.STUDENT])
-    fun findMy(): ResponseEntity<Response<List<OutGoingResponse>>> {
+    fun findMy(): ResponseEntity<Response<OutGoingListResponse>> {
         val data = useCase.findMy()
         return Response.ok("내 외출 조회 성공", data).toResponseEntity()
     }

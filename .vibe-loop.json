@@ -1,0 +1,110 @@
+{
+  "version": 2,
+  "tasks": [
+    {
+      "id": "mm4qnp1dlqqk",
+      "createdAt": "2026-02-27T10:17:41.761Z",
+      "updatedAt": "2026-02-27T10:28:19.234Z",
+      "title": "Proto: DTO 네이밍 제거 (user_query.proto:21)",
+      "priority": "medium",
+      "status": "completed",
+      "completedAt": "2026-02-27T10:28:19.234Z"
+    },
+    {
+      "id": "mm4qnr491gee",
+      "createdAt": "2026-02-27T10:17:44.457Z",
+      "updatedAt": "2026-02-27T10:28:19.804Z",
+      "title": "Request: OutSleepingRequest @NotNull/@NotBlank, RejectRequest @Nullable 추가",
+      "priority": "medium",
+      "status": "completed",
+      "completedAt": "2026-02-27T10:28:19.804Z"
+    },
+    {
+      "id": "mm4qntlhag78",
+      "createdAt": "2026-02-27T10:17:47.669Z",
+      "updatedAt": "2026-02-27T10:28:20.383Z",
+      "title": "Response: id/createdAt/modifiedAt 제거, Enum Type suffix, from~Entity 네이밍, ResidualStudentResponse UUID",
+      "priority": "medium",
+      "status": "completed",
+      "completedAt": "2026-02-27T10:28:20.383Z"
+    },
+    {
+      "id": "mm4qnvp8nl5v",
+      "createdAt": "2026-02-27T10:17:50.396Z",
+      "updatedAt": "2026-02-27T10:28:21.048Z",
+      "title": "UseCase: readOnly 추가, List → Response 래핑",
+      "priority": "medium",
+      "status": "completed",
+      "completedAt": "2026-02-27T10:28:21.048Z"
+    },
+    {
+      "id": "mm4qnxp4pkq7",
+      "createdAt": "2026-02-27T10:17:52.984Z",
+      "updatedAt": "2026-02-27T10:28:21.670Z",
+      "title": "Entity: fk_student_id 네이밍, columnDefinition 제거 / Repository: QueryDSL 적용",
+      "priority": "medium",
+      "status": "completed",
+      "completedAt": "2026-02-27T10:28:21.670Z"
+    },
+    {
+      "id": "mm4ve9ad29t3",
+      "createdAt": "2026-02-27T12:30:19.525Z",
+      "updatedAt": "2026-02-27T12:32:38.061Z",
+      "title": "service-out-going: Request 검증 어노테이션 추가",
+      "description": "OutGoingRequest: @field:NotBlank(reason), @field:NotNull(startAt, endAt). RejectRequest: @field:Nullable(rejectReason). Controller: @Valid 추가",
+      "priority": "high",
+      "status": "completed",
+      "completedAt": "2026-02-27T12:32:38.061Z"
+    },
+    {
+      "id": "mm4vechedado",
+      "createdAt": "2026-02-27T12:30:23.666Z",
+      "updatedAt": "2026-02-27T12:32:55.845Z",
+      "title": "service-out-going: Response 정리 및 Enum/Companion 네이밍 변경",
+      "description": "OutGoingResponse: id/createdAt/modifiedAt 제거, of→fromEntity. OutGoingStatus→OutGoingStatusType. OutGoingListResponse wrapper 신규 생성. UseCase/Controller 타입 갱신",
+      "priority": "high",
+      "status": "completed",
+      "completedAt": "2026-02-27T12:32:55.845Z"
+    },
+    {
+      "id": "mm4vef2ucogt",
+      "createdAt": "2026-02-27T12:30:27.030Z",
+      "updatedAt": "2026-02-27T12:33:23.216Z",
+      "title": "service-out-going: UseCase @Transactional 변경 및 readOnly 추가",
+      "description": "jakarta.transaction.Transactional → Spring @Transactional(rollbackFor=[Exception::class]), 조회 메서드에 @Transactional(readOnly=true) 추가",
+      "priority": "high",
+      "status": "completed",
+      "completedAt": "2026-02-27T12:33:23.216Z"
+    },
+    {
+      "id": "mm4veie7ezyg",
+      "createdAt": "2026-02-27T12:30:31.327Z",
+      "updatedAt": "2026-02-27T12:34:43.004Z",
+      "title": "service-out-going: Entity/Repository QueryDSL 적용",
+      "description": "Entity: columnDefinition 제거, name=\"fk_student_id\" 추가. build.gradle.kts: kapt+QueryDSL. OutGoingRepositoryCustom/Impl 신규. QueryDslConfig 신규. V2 Flyway 마이그레이션",
+      "priority": "high",
+      "status": "completed",
+      "completedAt": "2026-02-27T12:34:43.004Z"
+    },
+    {
+      "id": "mm4vekv65m75",
+      "createdAt": "2026-02-27T12:30:34.530Z",
+      "updatedAt": "2026-02-27T12:37:04.190Z",
+      "title": "service-out-going: 빌드 검증 및 커밋 푸시",
+      "description": "./gradlew :services:service-out-going:build 실행 후 커밋 컨벤션 준수하여 push",
+      "priority": "medium",
+      "status": "completed",
+      "completedAt": "2026-02-27T12:37:04.190Z"
+    },
+    {
+      "id": "mm4veoqnree5",
+      "createdAt": "2026-02-27T12:30:39.551Z",
+      "updatedAt": "2026-02-27T12:32:24.889Z",
+      "title": "service-outsleeping: Response/Enum/UseCase 미완료 부분 수정",
+      "description": "OutSleepingResponse: id/createdAt/modifiedAt 제거, of→fromEntity. OutSleepingStatus→OutSleepingStatusType. OutSleepingListResponse/ResidualStudentListResponse wrapper. UseCase @Transactional Spring으로 변경, readOnly 추가",
+      "priority": "high",
+      "status": "completed",
+      "completedAt": "2026-02-27T12:32:24.889Z"
+    }
+  ]
+}

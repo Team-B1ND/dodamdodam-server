@@ -1,6 +1,6 @@
 package com.b1nd.dodamdodam.outgoing.domain.outgoing.enumeration
 
-enum class OutGoingStatus {
+enum class OutGoingStatusType {
     PENDING,
     ALLOWED,
     REJECTED

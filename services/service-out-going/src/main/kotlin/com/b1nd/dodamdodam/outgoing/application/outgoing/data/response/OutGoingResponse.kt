@@ -1,7 +1,7 @@
 package com.b1nd.dodamdodam.outgoing.application.outgoing.data.response
 
 import com.b1nd.dodamdodam.outgoing.domain.outgoing.entity.OutGoingEntity
-import com.b1nd.dodamdodam.outgoing.domain.outgoing.enumeration.OutGoingStatus
+import com.b1nd.dodamdodam.outgoing.domain.outgoing.enumeration.OutGoingStatusType
 import java.time.LocalDateTime
 
 data class StudentInfo(
@@ -13,28 +13,22 @@ data class StudentInfo(
 )
 
 data class OutGoingResponse(
-    val id: Long,
     val reason: String,
-    val status: OutGoingStatus,
+    val status: OutGoingStatusType,
     val student: StudentInfo,
     val rejectReason: String?,
     val startAt: LocalDateTime,
-    val endAt: LocalDateTime,
-    val createdAt: LocalDateTime?,
-    val modifiedAt: LocalDateTime?
+    val endAt: LocalDateTime
 ) {
     companion object {
-        fun of(entity: OutGoingEntity, student: StudentInfo): OutGoingResponse =
+        fun fromEntity(entity: OutGoingEntity, student: StudentInfo): OutGoingResponse =
             OutGoingResponse(
-                id = entity.id!!,
                 reason = entity.reason,
                 status = entity.status,
                 student = student,
                 rejectReason = entity.rejectReason,
                 startAt = entity.startAt,
-                endAt = entity.endAt,
-                createdAt = entity.createdAt,
-                modifiedAt = entity.modifiedAt
+                endAt = entity.endAt
             )
     }
 }

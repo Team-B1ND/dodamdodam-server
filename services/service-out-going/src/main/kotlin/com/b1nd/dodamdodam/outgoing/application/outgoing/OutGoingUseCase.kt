@@ -3,20 +3,21 @@ package com.b1nd.dodamdodam.outgoing.application.outgoing
 import com.b1nd.dodamdodam.core.security.passport.PassportUserDetails
 import com.b1nd.dodamdodam.outgoing.application.outgoing.data.request.OutGoingRequest
 import com.b1nd.dodamdodam.outgoing.application.outgoing.data.request.RejectRequest
+import com.b1nd.dodamdodam.outgoing.application.outgoing.data.response.OutGoingListResponse
 import com.b1nd.dodamdodam.outgoing.application.outgoing.data.response.OutGoingResponse
 import com.b1nd.dodamdodam.outgoing.application.outgoing.data.response.StudentInfo
 import com.b1nd.dodamdodam.outgoing.domain.outgoing.entity.OutGoingEntity
 import com.b1nd.dodamdodam.outgoing.domain.outgoing.service.OutGoingService
 import com.b1nd.dodamdodam.outgoing.infrastructure.user.client.UserGrpcClient
-import jakarta.transaction.Transactional
 import kotlinx.coroutines.runBlocking
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.stereotype.Component
+import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDate
 import java.util.UUID
 
 @Component
-@Transactional(rollbackOn = [Exception::class])
+@Transactional(rollbackFor = [Exception::class])
 class OutGoingUseCase(
     private val outGoingService: OutGoingService,
     private val userGrpcClient: UserGrpcClient
@@ -48,14 +49,16 @@ class OutGoingUseCase(
 
     fun delete(id: Long) = outGoingService.delete(id, currentUserId())
 
-    fun findByDate(date: LocalDate): List<OutGoingResponse> {
+    @Transactional(readOnly = true)
+    fun findByDate(date: LocalDate): OutGoingListResponse {
         val entities = outGoingService.findByDate(date)
-        return enrichWithStudentInfo(entities)
+        return OutGoingListResponse(enrichWithStudentInfo(entities))
     }
 
-    fun findMy(): List<OutGoingResponse> {
+    @Transactional(readOnly = true)
+    fun findMy(): OutGoingListResponse {
         val entities = outGoingService.findByStudentId(currentUserId())
-        return enrichWithStudentInfo(entities)
+        return OutGoingListResponse(enrichWithStudentInfo(entities))
     }
 
     private fun enrichWithStudentInfo(entities: List<OutGoingEntity>): List<OutGoingResponse> {
@@ -66,7 +69,7 @@ class OutGoingUseCase(
 
         return entities.mapNotNull { entity ->
             val dto = studentByUserId[entity.studentId] ?: return@mapNotNull null
-            OutGoingResponse.of(entity, StudentInfo(
+            OutGoingResponse.fromEntity(entity, StudentInfo(
                 id = dto.studentId,
                 name = dto.name,
                 grade = dto.grade,
