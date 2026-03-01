@@ -64,7 +64,7 @@ class PassportExchangeFilter(
             .switchIfEmpty(
                 exchangePassport(jwt)
                     .flatMap { passport ->
-                        repository.set(jwt, passport, Duration.ofMinutes(5))
+                        repository.set(jwt, passport, Duration.ofMinutes(2))
                             .thenReturn(passport)
                     }
             )

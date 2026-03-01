@@ -13,6 +13,7 @@ kafka = "3.9.0"
 r2dbcMysql = "1.0.2"
 grpc = "3.1.0.RELEASE"
 nimbusJoseJwt = "10.0.2"
+springdocOpenapi = "2.6.0"
 
 [libraries]
 kotlinGradlePlugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
@@ -45,6 +46,8 @@ springGrpc = { module = "net.devh:grpc-spring-boot-starter", version.ref= "grpc"
 
 # jwt
 jwt-nimbusJose = { module = "com.nimbusds:nimbus-jose-jwt", version.ref = "nimbusJoseJwt"}
+springdoc-openapi-webmvc-ui = { module = "org.springdoc:springdoc-openapi-starter-webmvc-ui", version.ref = "springdocOpenapi" }
+springdoc-openapi-starter-common = { module = "org.springdoc:springdoc-openapi-starter-common", version.ref = "springdocOpenapi" }
 
 # Libraries can be bundled together for easier import
 [bundles]

@@ -1,9 +1,10 @@
 package com.b1nd.dodamdodam.user.domain.user.service
 
 import com.b1nd.dodamdodam.core.security.passport.enumerations.RoleType
-import com.b1nd.dodamdodam.user.application.user.data.request.UpdateUserRequest
+import com.b1nd.dodamdodam.user.application.user.data.request.UpdateUserInfoRequest
 import com.b1nd.dodamdodam.user.domain.user.entity.UserEntity
 import com.b1nd.dodamdodam.user.domain.user.entity.UserRoleEntity
+import com.b1nd.dodamdodam.user.domain.user.enumeration.StatusType
 import com.b1nd.dodamdodam.user.domain.user.exception.UserAlreadyExistsException
 import com.b1nd.dodamdodam.user.domain.user.exception.UserNotFoundException
 import com.b1nd.dodamdodam.user.domain.user.exception.UserPasswordIncorrectException
@@ -11,6 +12,7 @@ import com.b1nd.dodamdodam.user.domain.user.repository.UserRepository
 import com.b1nd.dodamdodam.user.domain.user.repository.UserRoleRepository
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.stereotype.Service
+import java.util.UUID
 
 @Service
 class UserService(
@@ -26,12 +28,34 @@ class UserService(
         return savedUser
     }
 
-    fun update(id: Long, request: UpdateUserRequest): UserEntity {
-        val user = userRepository.findById(id)
-            .orElseThrow { UserNotFoundException() }
-
-        user.updateInfo(request.name, request.phone, request.profileImage)
+    fun update(publicId: UUID, name: String?, phone: String?, profileImage: String?): UserEntity {
+        val user = userRepository.findByPublicId(publicId)
+            ?: throw UserNotFoundException()
+        user.updateInfo(name, phone, profileImage)
         return userRepository.save(user)
+    }
+
+    fun delete(publicId: UUID): UserEntity {
+        val user = userRepository.findByPublicId(publicId)
+            ?: throw UserNotFoundException()
+        user.status = StatusType.DEACTIVATED
+        return userRepository.save(user)
+    }
+
+    fun enable(publicId: UUID): UserEntity {
+        val user = userRepository.findByPublicId(publicId)
+            ?: throw UserNotFoundException()
+        user.status = StatusType.ACTIVE
+        return userRepository.save(user)
+    }
+
+    fun updatePassword(publicId: UUID, postPassword: String, newPassword: String) {
+        val user = userRepository.findByPublicId(publicId)
+            ?: throw UserNotFoundException()
+        if (!encoder.matches(postPassword, user.password)) throw UserPasswordIncorrectException()
+
+        user.updatePassword(encoder.encode(newPassword))
+        userRepository.save(user)
     }
 
     fun addRole(user: UserEntity, roles: List<RoleType>) {

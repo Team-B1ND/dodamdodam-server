@@ -11,12 +11,21 @@ spring:
   main:
     web-application-type: servlet
 
+springdoc:
+  swagger-ui:
+    disable-swagger-default-url: true
+    config-url: ${app.swagger.gateway-prefix}/v3/api-docs/swagger-config
+    url: ${app.swagger.gateway-prefix}/v3/api-docs
+
 management:
   endpoints:
     web:
       exposure:
         include: health,info
 app:
+  swagger:
+    enabled: true
+    gateway-prefix: /auth
   jwt:
     public-key: ${JWT_PUBLIC_KEY}
     private-key: ${JWT_PRIVATE_KEY}

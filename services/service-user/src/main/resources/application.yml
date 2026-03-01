@@ -8,6 +8,12 @@ spring:
   flyway:
     locations: classpath:database/migration
 
+springdoc:
+  swagger-ui:
+    disable-swagger-default-url: true
+    config-url: ${app.swagger.gateway-prefix}/v3/api-docs/swagger-config
+    url: ${app.swagger.gateway-prefix}/v3/api-docs
+
 server:
   port: 8081
 
@@ -16,3 +22,8 @@ management:
     web:
       exposure:
         include: health,info
+
+app:
+  swagger:
+    enabled: true
+    gateway-prefix: /user
