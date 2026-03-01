@@ -56,3 +56,4 @@ start-*.bat
 build-*.bat
 gen_passport.py
 test_endpoints.py
+.vibe-loop.json

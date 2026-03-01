@@ -1,6 +1,7 @@
 package com.b1nd.dodamdodam.wakeupsong.application.wakeupsong
 
-import com.b1nd.dodamdodam.core.security.passport.PassportUserDetails
+import com.b1nd.dodamdodam.core.security.passport.holder.PassportHolder
+import com.b1nd.dodamdodam.core.security.passport.requireUserId
 import com.b1nd.dodamdodam.wakeupsong.application.wakeupsong.data.request.WakeupSongKeywordRequest
 import com.b1nd.dodamdodam.wakeupsong.application.wakeupsong.data.request.WakeupSongUrlRequest
 import com.b1nd.dodamdodam.wakeupsong.application.wakeupsong.data.response.MelonChartResponse
@@ -16,7 +17,6 @@ import com.b1nd.dodamdodam.wakeupsong.infrastructure.melon.MelonChartService
 import com.b1nd.dodamdodam.wakeupsong.infrastructure.user.client.UserGrpcClient
 import com.b1nd.dodamdodam.wakeupsong.infrastructure.youtube.YoutubeClient
 import kotlinx.coroutines.runBlocking
-import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.stereotype.Component
 import org.springframework.transaction.annotation.Transactional
 import java.util.UUID
@@ -30,15 +30,10 @@ class WakeupSongUseCase(
     private val userGrpcClient: UserGrpcClient
 ) {
 
-    private fun currentUserId(): UUID {
-        val principal = SecurityContextHolder.getContext().authentication?.principal
-        return (principal as PassportUserDetails).passport.userId!!
-    }
-
     @Transactional(readOnly = true)
     fun getMy(): WakeupSongListResponse =
         WakeupSongListResponse(
-            wakeupSongService.findAllByStudentId(currentUserId())
+            wakeupSongService.findAllByStudentId(PassportHolder.current().requireUserId())
                 .map { WakeupSongResponse.fromEntity(it) }
         )
 
@@ -65,7 +60,7 @@ class WakeupSongUseCase(
         youtubeClient.search(keyword, limit = 5)
 
     fun applyByUrl(request: WakeupSongUrlRequest) {
-        val studentId = currentUserId()
+        val studentId = PassportHolder.current().requireUserId()
         runBlocking { userGrpcClient.getStudentByUserId(studentId) }
 
         val (videoTitle, channelTitle, thumbnailUrl) = youtubeClient.getVideoInfoByUrl(request.videoUrl)
@@ -85,7 +80,7 @@ class WakeupSongUseCase(
     }
 
     fun applyByKeyword(request: WakeupSongKeywordRequest) {
-        val studentId = currentUserId()
+        val studentId = PassportHolder.current().requireUserId()
         runBlocking { userGrpcClient.getStudentByUserId(studentId) }
 
         val query = "${request.title} ${request.artist}"
@@ -109,7 +104,7 @@ class WakeupSongUseCase(
 
     fun deny(id: Long) = wakeupSongService.deny(id)
 
-    fun deleteMy(id: Long) = wakeupSongService.deleteById(id, currentUserId())
+    fun deleteMy(id: Long) = wakeupSongService.deleteById(id, PassportHolder.current().requireUserId())
 
     fun deleteById(id: Long) = wakeupSongService.deleteByIdAsAdmin(id)
 
