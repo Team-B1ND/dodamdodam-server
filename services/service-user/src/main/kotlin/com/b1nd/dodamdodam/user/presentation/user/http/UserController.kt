@@ -40,7 +40,7 @@ class UserController(
         userUseCase.changePassword(request)
 
     @UserAccess(roles = [RoleType.ADMIN])
-    @PostMapping("enable-user")
+    @PostMapping("/enable-user")
     fun enableUser(@RequestBody request: EnableUserRequest) =
         userUseCase.enableUser(request)
 
