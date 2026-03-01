@@ -13,6 +13,7 @@ dependencies {
     implementation(libs.springBootStarterData.jdbc)
     implementation(libs.springBootStarterData.jpa)
     implementation(libs.springBootStarterSecurity)
+    implementation(libs.springdoc.openapi.webmvc.ui)
 
     // grpc
     implementation(libs.springGrpc)

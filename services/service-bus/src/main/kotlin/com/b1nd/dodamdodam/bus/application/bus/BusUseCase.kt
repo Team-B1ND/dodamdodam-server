@@ -13,7 +13,8 @@ import com.b1nd.dodamdodam.bus.domain.bus.service.BusApplicantService
 import com.b1nd.dodamdodam.bus.domain.bus.service.BusService
 import com.b1nd.dodamdodam.bus.infrastructure.user.client.UserClient
 import com.b1nd.dodamdodam.core.common.data.Response
-import com.b1nd.dodamdodam.core.security.util.getCurrentUserId
+import com.b1nd.dodamdodam.core.security.passport.holder.PassportHolder
+import com.b1nd.dodamdodam.core.security.passport.requireUserId
 import com.b1nd.dodamdodam.grpc.user.UserInfoResponse
 import kotlinx.coroutines.runBlocking
 import org.springframework.stereotype.Component
@@ -75,7 +76,7 @@ class BusUseCase(
     }
 
     fun apply(seat: Int): Response<Unit> {
-        val userId = getCurrentUserId()
+        val userId = PassportHolder.current().requireUserId().toString()
         val applicant = busApplicantService.getByUserId(userId)
         busApplicantService.checkSeatAvailable(applicant.bus, seat)
         applicant.updateSeat(seat)
@@ -85,7 +86,7 @@ class BusUseCase(
     }
 
     fun changeBoardingType(request: BusBoardRequest): Response<Unit> {
-        val userId = getCurrentUserId()
+        val userId = PassportHolder.current().requireUserId().toString()
         val applicant = busApplicantService.getByUserId(userId)
         applicant.updateBoardingType(request.boardingType)
         busApplicantService.create(applicant)
@@ -93,7 +94,7 @@ class BusUseCase(
     }
 
     fun changeSeat(seat: Int): Response<Unit> {
-        val userId = getCurrentUserId()
+        val userId = PassportHolder.current().requireUserId().toString()
         val applicant = busApplicantService.getByUserId(userId)
         busApplicantService.checkSeatAvailable(applicant.bus, seat)
         applicant.updateSeat(seat)
@@ -116,7 +117,7 @@ class BusUseCase(
 
     @Transactional(readOnly = true)
     fun my(): Response<BusApplicantResponse?> {
-        val userId = getCurrentUserId()
+        val userId = PassportHolder.current().requireUserId().toString()
         val applicant = busApplicantService.getByUserIdOrNull(userId)
         return Response.ok("내 버스 신청 정보 조회 성공", BusApplicantResponse.of(applicant))
     }
