@@ -11,6 +11,7 @@ dependencies {
     implementation(libs.mysql.jdbcDriver)
     implementation(libs.springBootStarterData.jpa)
     implementation(libs.springBootStarterSecurity)
+    implementation(libs.springdoc.openapi.webmvc.ui)
 
     implementation(libs.springGrpc)
 

@@ -22,7 +22,8 @@ import com.b1nd.dodamdodam.club.infrastructure.grpc.MemberGrpcClient
 import com.b1nd.dodamdodam.core.common.data.Response
 import com.b1nd.dodamdodam.core.security.annotation.authentication.UserAccess
 import com.b1nd.dodamdodam.core.security.passport.enumerations.RoleType
-import com.b1nd.dodamdodam.core.security.util.getCurrentUserId
+import com.b1nd.dodamdodam.core.security.passport.holder.PassportHolder
+import com.b1nd.dodamdodam.core.security.passport.requireUserId
 import kotlinx.coroutines.runBlocking
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
@@ -40,7 +41,7 @@ class ClubController(
     private val memberGrpcClient: MemberGrpcClient,
 ) {
     private fun resolveStudentId(): Long {
-        val userId = getCurrentUserId()
+        val userId = PassportHolder.current().requireUserId().toString()
         val studentInfo = runBlocking {
             memberGrpcClient.getStudentByUserId(userId)
         } ?: throw IllegalStateException("학생 정보를 찾을 수 없어요")
