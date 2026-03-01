@@ -10,6 +10,7 @@ dependencies {
     implementation(libs.mysql.jdbcDriver)
     implementation(libs.springBootStarterData.jdbc)
     implementation(libs.springBootStarterSecurity)
+    implementation(libs.springdoc.openapi.webmvc.ui)
 
     // flyway
     implementation(libs.flywayCore)
