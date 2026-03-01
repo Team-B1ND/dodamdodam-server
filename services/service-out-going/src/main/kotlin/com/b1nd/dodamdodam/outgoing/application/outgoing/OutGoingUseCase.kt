@@ -1,6 +1,7 @@
 package com.b1nd.dodamdodam.outgoing.application.outgoing
 
-import com.b1nd.dodamdodam.core.security.passport.PassportUserDetails
+import com.b1nd.dodamdodam.core.security.passport.holder.PassportHolder
+import com.b1nd.dodamdodam.core.security.passport.requireUserId
 import com.b1nd.dodamdodam.outgoing.application.outgoing.data.request.OutGoingRequest
 import com.b1nd.dodamdodam.outgoing.application.outgoing.data.request.RejectRequest
 import com.b1nd.dodamdodam.outgoing.application.outgoing.data.response.OutGoingListResponse
@@ -10,7 +11,6 @@ import com.b1nd.dodamdodam.outgoing.domain.outgoing.entity.OutGoingEntity
 import com.b1nd.dodamdodam.outgoing.domain.outgoing.service.OutGoingService
 import com.b1nd.dodamdodam.outgoing.infrastructure.user.client.UserGrpcClient
 import kotlinx.coroutines.runBlocking
-import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.stereotype.Component
 import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDate
@@ -22,13 +22,9 @@ class OutGoingUseCase(
     private val outGoingService: OutGoingService,
     private val userGrpcClient: UserGrpcClient
 ) {
-    private fun currentUserId(): UUID {
-        val principal = SecurityContextHolder.getContext().authentication?.principal
-        return (principal as PassportUserDetails).passport.userId!!
-    }
 
     fun apply(request: OutGoingRequest) {
-        val studentId = currentUserId()
+        val studentId = PassportHolder.current().requireUserId()
         runBlocking { userGrpcClient.getStudentByUserId(studentId) }
 
         val entity = OutGoingEntity(
@@ -47,7 +43,7 @@ class OutGoingUseCase(
 
     fun revert(id: Long) = outGoingService.revert(id)
 
-    fun delete(id: Long) = outGoingService.delete(id, currentUserId())
+    fun delete(id: Long) = outGoingService.delete(id, PassportHolder.current().requireUserId())
 
     @Transactional(readOnly = true)
     fun findByDate(date: LocalDate): OutGoingListResponse {
@@ -57,7 +53,7 @@ class OutGoingUseCase(
 
     @Transactional(readOnly = true)
     fun findMy(): OutGoingListResponse {
-        val entities = outGoingService.findByStudentId(currentUserId())
+        val entities = outGoingService.findByStudentId(PassportHolder.current().requireUserId())
         return OutGoingListResponse(enrichWithStudentInfo(entities))
     }
 
