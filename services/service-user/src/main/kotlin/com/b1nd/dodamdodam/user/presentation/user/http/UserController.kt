@@ -1,6 +1,5 @@
 package com.b1nd.dodamdodam.user.presentation.user.http
 
-import com.b1nd.dodamdodam.core.common.data.Response
 import com.b1nd.dodamdodam.core.security.annotation.authentication.UserAccess
 import com.b1nd.dodamdodam.core.security.passport.enumerations.RoleType
 import com.b1nd.dodamdodam.user.application.user.UserUseCase
