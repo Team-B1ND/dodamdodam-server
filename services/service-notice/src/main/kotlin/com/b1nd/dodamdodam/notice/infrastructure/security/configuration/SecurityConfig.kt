@@ -17,6 +17,11 @@ class SecurityConfig(
             .csrf { it.disable() }
             .addFilterBefore(passportFilter, UsernamePasswordAuthenticationFilter::class.java)
             .authorizeHttpRequests { auth ->
+                auth.requestMatchers(
+                    "/v3/api-docs/**",
+                    "/swagger-ui/**",
+                    "/swagger-ui.html"
+                ).permitAll()
                 auth.anyRequest().permitAll()
             }
         return http.build()

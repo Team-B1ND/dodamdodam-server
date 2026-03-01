@@ -1,7 +1,8 @@
 package com.b1nd.dodamdodam.notice.application.notice
 
 import com.b1nd.dodamdodam.core.common.data.Response
-import com.b1nd.dodamdodam.core.security.util.getCurrentUserId
+import com.b1nd.dodamdodam.core.security.passport.holder.PassportHolder
+import com.b1nd.dodamdodam.core.security.passport.requireUserId
 import com.b1nd.dodamdodam.notice.application.notice.data.request.GenerateNoticeRequest
 import com.b1nd.dodamdodam.notice.application.notice.data.request.ModifyNoticeRequest
 import com.b1nd.dodamdodam.notice.application.notice.data.response.MemberInfoResponse
@@ -22,7 +23,7 @@ class NoticeUseCase(
     private val noticeResponseMapper: NoticeResponseMapper
 ) {
     fun register(request: GenerateNoticeRequest): Response<Long> {
-        val userId = getCurrentUserId()
+        val userId = PassportHolder.current().requireUserId().toString()
         val notice = noticeService.create(request.toEntity(userId))
         val files = request.toNoticeFiles(notice)
         if (files.isNotEmpty()) {
@@ -39,13 +40,13 @@ class NoticeUseCase(
     }
 
     fun modify(id: Long, request: ModifyNoticeRequest): Response<Unit> {
-        val userId = getCurrentUserId()
+        val userId = PassportHolder.current().requireUserId().toString()
         noticeService.updateNotice(id, userId, request.title, request.content)
         return Response.ok("공지 수정 성공")
     }
 
     fun delete(id: Long): Response<Unit> {
-        val userId = getCurrentUserId()
+        val userId = PassportHolder.current().requireUserId().toString()
         noticeService.deleteNotice(id, userId)
         return Response.ok("공지 삭제 성공")
     }
