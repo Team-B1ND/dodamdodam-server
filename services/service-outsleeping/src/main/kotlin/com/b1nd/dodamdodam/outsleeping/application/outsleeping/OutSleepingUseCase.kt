@@ -1,6 +1,7 @@
 package com.b1nd.dodamdodam.outsleeping.application.outsleeping
 
-import com.b1nd.dodamdodam.core.security.passport.PassportUserDetails
+import com.b1nd.dodamdodam.core.security.passport.holder.PassportHolder
+import com.b1nd.dodamdodam.core.security.passport.requireUserId
 import com.b1nd.dodamdodam.outsleeping.application.outsleeping.data.request.OutSleepingRequest
 import com.b1nd.dodamdodam.outsleeping.application.outsleeping.data.request.RejectRequest
 import com.b1nd.dodamdodam.outsleeping.application.outsleeping.data.response.OutSleepingListResponse
@@ -13,7 +14,6 @@ import com.b1nd.dodamdodam.outsleeping.domain.outsleeping.service.OutSleepingSer
 import com.b1nd.dodamdodam.outsleeping.infrastructure.user.client.UserGrpcClient
 import org.springframework.transaction.annotation.Transactional
 import kotlinx.coroutines.runBlocking
-import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.stereotype.Component
 import java.time.LocalDate
 import java.util.UUID
@@ -24,13 +24,9 @@ class OutSleepingUseCase(
     private val outSleepingService: OutSleepingService,
     private val userGrpcClient: UserGrpcClient
 ) {
-    private fun currentUserId(): UUID {
-        val principal = SecurityContextHolder.getContext().authentication?.principal
-        return (principal as PassportUserDetails).passport.userId!!
-    }
 
     fun apply(request: OutSleepingRequest) {
-        val studentId = currentUserId()
+        val studentId = PassportHolder.current().requireUserId()
         runBlocking { userGrpcClient.getStudentByUserId(studentId) }
 
         val entity = OutSleepingEntity(
@@ -49,7 +45,7 @@ class OutSleepingUseCase(
 
     fun revert(id: Long) = outSleepingService.revert(id)
 
-    fun delete(id: Long) = outSleepingService.delete(id, currentUserId())
+    fun delete(id: Long) = outSleepingService.delete(id, PassportHolder.current().requireUserId())
 
     @Transactional(readOnly = true)
     fun findByDate(date: LocalDate): OutSleepingListResponse {
@@ -59,7 +55,7 @@ class OutSleepingUseCase(
 
     @Transactional(readOnly = true)
     fun findMy(): OutSleepingListResponse {
-        val entities = outSleepingService.findByStudentId(currentUserId())
+        val entities = outSleepingService.findByStudentId(PassportHolder.current().requireUserId())
         return OutSleepingListResponse(enrichWithStudentInfo(entities))
     }
 
