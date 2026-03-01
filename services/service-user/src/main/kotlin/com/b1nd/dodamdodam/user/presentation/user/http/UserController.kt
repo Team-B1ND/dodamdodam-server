@@ -46,6 +46,6 @@ class UserController(
 
     @UserAccess
     @DeleteMapping
-    fun quitUser(): Response<Any> =
+    fun quitUser() =
         userUseCase.quitUser()
 }
