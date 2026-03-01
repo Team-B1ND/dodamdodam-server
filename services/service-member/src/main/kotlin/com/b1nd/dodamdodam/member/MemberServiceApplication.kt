@@ -1,5 +1,6 @@
 package com.b1nd.dodamdodam.member
 
+import com.b1nd.dodamdodam.core.common.swagger.annotation.EnableDodamSwagger
 import com.b1nd.dodamdodam.core.security.annotation.EnableDodamSecurity
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.context.properties.ConfigurationPropertiesScan
@@ -10,6 +11,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 @EnableDodamSecurity
 @EnableWebSecurity
 @ConfigurationPropertiesScan
+@EnableDodamSwagger
 class MemberServiceApplication
 
 fun main(args: Array<String>) {

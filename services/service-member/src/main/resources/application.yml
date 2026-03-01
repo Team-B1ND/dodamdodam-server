@@ -8,6 +8,12 @@ spring:
   main:
     web-application-type: servlet
 
+springdoc:
+  swagger-ui:
+    disable-swagger-default-url: true
+    config-url: ${app.swagger.gateway-prefix}/v3/api-docs/swagger-config
+    url: ${app.swagger.gateway-prefix}/v3/api-docs
+
 management:
   endpoints:
     web:
@@ -16,3 +22,8 @@ management:
 
 server:
   port: 8083
+
+app:
+  swagger:
+    enabled: true
+    gateway-prefix: /member

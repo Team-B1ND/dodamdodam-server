@@ -3,7 +3,8 @@ package com.b1nd.dodamdodam.member.presentation.member
 import com.b1nd.dodamdodam.core.common.data.Response
 import com.b1nd.dodamdodam.core.security.annotation.authentication.UserAccess
 import com.b1nd.dodamdodam.core.security.passport.enumerations.RoleType
-import com.b1nd.dodamdodam.core.security.util.getCurrentUsername
+import com.b1nd.dodamdodam.core.security.passport.holder.PassportHolder
+import com.b1nd.dodamdodam.core.security.passport.requireUsername
 import com.b1nd.dodamdodam.member.application.member.MemberUseCase
 import com.b1nd.dodamdodam.member.application.member.data.AuthType
 import com.b1nd.dodamdodam.member.application.member.data.request.ApplyBroadcastClubMemberRequest
@@ -31,7 +32,7 @@ class MemberController(
     private val memberUseCase: MemberUseCase,
 ) {
     private fun getCurrentMemberId(): Long {
-        return memberUseCase.getMemberIdByUsername(getCurrentUsername())
+        return memberUseCase.getMemberIdByUsername(PassportHolder.current().requireUsername())
     }
 
     @PostMapping("/member/join-student")

@@ -16,6 +16,9 @@ dependencies {
     // security
     implementation(libs.springBootStarterSecurity)
 
+    // swagger
+    implementation(libs.springdoc.openapi.webmvc.ui)
+
     // flyway
     implementation(libs.flywayCore)
     implementation(libs.flywayMysql)
