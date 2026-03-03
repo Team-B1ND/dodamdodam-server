@@ -6,6 +6,7 @@ import com.b1nd.dodamdodam.user.infrastructure.phoneverification.enumeration.Pho
 import com.b1nd.dodamdodam.user.infrastructure.phoneverification.exception.PhoneNotVerifiedException
 import com.b1nd.dodamdodam.user.infrastructure.phoneverification.exception.PhoneVerificationCodeExpiredException
 import com.b1nd.dodamdodam.user.infrastructure.phoneverification.exception.PhoneVerificationCodeMismatchException
+import com.b1nd.dodamdodam.user.infrastructure.sms.GabiaSmsSender
 import org.springframework.stereotype.Service
 import java.time.Duration
 import java.util.concurrent.ThreadLocalRandom
@@ -13,15 +14,19 @@ import java.util.concurrent.ThreadLocalRandom
 @Service
 class PhoneVerificationStore(
     private val redisService: RedisService,
-    private val smsSender: SmsSender
+    private val gabiaSmsSender: GabiaSmsSender
 ) {
     fun requestCode(phone: String) {
         val code = generateCode()
-        val ttl = Duration.ofMinutes(2)
 
-        redisService.set(PhoneVerificationRedisKey.CODE, phone, code, ttl)
-        redisService.set(PhoneVerificationRedisKey.STATUS, phone, PhoneVerificationStatusType.PENDING.name, ttl)
-        smsSender.send(phone, "인증번호 [$code]를 2분 이내에 입력해주세요.")
+        redisService.set(PhoneVerificationRedisKey.CODE, phone, code, Duration.ofMinutes(CODE_EXPIRE_MINUTES))
+        redisService.set(
+            PhoneVerificationRedisKey.STATUS,
+            phone,
+            PhoneVerificationStatusType.PENDING.name,
+            Duration.ofMinutes(STATUS_EXPIRE_MINUTES)
+        )
+        gabiaSmsSender.send(phone, "[Web발신]\n[인증번호: $code] 도담도담 인증을 1분안에 진행해 주세요.")
     }
 
     fun verifyCode(phone: String, code: String) {
@@ -30,7 +35,12 @@ class PhoneVerificationStore(
         if (savedCode != code) throw PhoneVerificationCodeMismatchException()
 
         redisService.delete(PhoneVerificationRedisKey.CODE, phone)
-        redisService.set(PhoneVerificationRedisKey.STATUS, phone, PhoneVerificationStatusType.ACTIVE.name)
+        redisService.set(
+            PhoneVerificationRedisKey.STATUS,
+            phone,
+            PhoneVerificationStatusType.ACTIVE.name,
+            Duration.ofMinutes(STATUS_EXPIRE_MINUTES)
+        )
     }
 
     fun ensureActive(phone: String?) {
@@ -41,5 +51,10 @@ class PhoneVerificationStore(
 
     private fun generateCode(): String {
         return ThreadLocalRandom.current().nextInt(0, 1_000_000).toString().padStart(6, '0')
+    }
+
+    companion object {
+        private const val CODE_EXPIRE_MINUTES = 1L
+        private const val STATUS_EXPIRE_MINUTES = 2L
     }
 }
