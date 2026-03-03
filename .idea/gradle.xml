@@ -35,6 +35,7 @@
             <option value="$PROJECT_DIR$/services/service-gateway" />
             <option value="$PROJECT_DIR$/services/service-inapp" />
             <option value="$PROJECT_DIR$/services/service-user" />
+            <option value="$PROJECT_DIR$/services/service-wakeup-song" />
             <option value="$PROJECT_DIR$/utils" />
           </set>
         </option>
