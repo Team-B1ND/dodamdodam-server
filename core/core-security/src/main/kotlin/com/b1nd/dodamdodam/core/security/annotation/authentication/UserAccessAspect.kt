@@ -17,6 +17,10 @@ class UserAccessAspect {
 
         val principalEnabled: Boolean = (authentication?.principal as? UserDetails)?.isEnabled ?: false
 
+        if (userAccess.hasAnyRoleOnly && authentication?.authorities?.isEmpty() == true) {
+            throw AccessDeniedException()
+        }
+
         if (userAccess.enabledOnly && !principalEnabled) {
             throw UserDisabledException()
         }
