@@ -23,13 +23,13 @@ class TeamUseCase(
         return Response.created("팀이 생성되었어요.")
     }
 
-    fun addTeamMember(request: AddTeamMemberRequest): Response<Any> {
+    fun addTeamMembers(request: AddTeamMemberRequest): Response<Any> {
         val team = teamService.getById(request.teamId)
         teamService.addMember(team, request.users)
         return Response.ok("팀 멤버가 추가되었어요.")
     }
 
-    fun deleteTeamMember(request: DeleteTeamMemberRequest): Response<Any> {
+    fun deleteTeamMembers(request: DeleteTeamMemberRequest): Response<Any> {
         teamService.deleteMember(request.teamId, request.users)
         return Response.ok("팀 멤버가 삭제되었어요.")
     }
