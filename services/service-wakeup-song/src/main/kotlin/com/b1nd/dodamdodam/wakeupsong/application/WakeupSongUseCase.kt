@@ -112,7 +112,7 @@ class WakeupSongUseCase(
         val videoId = YouTubeClient.extractVideoId(url)
             ?: throw YouTubeVideoNotFoundException()
         val videoInfo = youTubeClient.getVideoInfo(videoId)
-        val file = ytDlpClient.downloadMp3(url)
+        val file = ytDlpClient.downloadMp3(videoId)
         val bytes = Files.readAllBytes(file)
         Files.deleteIfExists(file)
         val response = FileDownloadResponse(bytes, "${videoInfo.videoTitle}.mp3", MediaType.parseMediaType("audio/mpeg"))

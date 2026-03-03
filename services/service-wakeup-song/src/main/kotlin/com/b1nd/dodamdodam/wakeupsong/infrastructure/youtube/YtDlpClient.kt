@@ -9,7 +9,12 @@ import java.util.concurrent.TimeUnit
 @Component
 class YtDlpClient {
 
-    fun downloadMp3(url: String): Path {
+    fun downloadMp3(videoId: String): Path {
+        require(videoId.matches(Regex("^[a-zA-Z0-9_-]{11}$"))) {
+            "Invalid video ID"
+        }
+
+        val safeUrl = "https://www.youtube.com/watch?v=$videoId"
         val tmpFile = Files.createTempFile("wakeup-song-", ".mp3")
         Files.delete(tmpFile)
 
@@ -21,7 +26,7 @@ class YtDlpClient {
             "--audio-format", "mp3",
             "--audio-quality", "0",
             "-o", "$outputTemplate.%(ext)s",
-            url
+            safeUrl
         )
             .redirectErrorStream(true)
             .start()
