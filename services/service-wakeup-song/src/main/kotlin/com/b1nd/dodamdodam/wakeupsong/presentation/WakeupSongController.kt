@@ -13,7 +13,7 @@ class WakeupSongController(
 ) {
 
     @UserAccess(hasAnyRoleOnly = true)
-    @GetMapping("/my")
+    @GetMapping("/me")
     fun getMyWakeupSongs() = wakeupSongUseCase.getMyWakeupSongs()
 
     @UserAccess(roles = [RoleType.STUDENT])
@@ -24,7 +24,7 @@ class WakeupSongController(
         @RequestParam day: Int
     ) = wakeupSongUseCase.getAllowed(year, month, day)
 
-    @UserAccess(roles = [RoleType.TEACHER])
+    @UserAccess(roles = [RoleType.BROADCASTER])
     @GetMapping("/pending")
     fun getPending() = wakeupSongUseCase.getPending()
 
@@ -46,15 +46,15 @@ class WakeupSongController(
     fun applyByKeyword(@RequestBody request: ApplyWakeupSongByKeywordRequest) =
         wakeupSongUseCase.applyByKeyword(request)
 
-    @UserAccess(roles = [RoleType.TEACHER])
+    @UserAccess(roles = [RoleType.BROADCASTER])
     @PatchMapping("/allow/{id}")
     fun allow(@PathVariable id: Long) = wakeupSongUseCase.allow(id)
 
-    @UserAccess(roles = [RoleType.TEACHER])
+    @UserAccess(roles = [RoleType.BROADCASTER])
     @PatchMapping("/deny/{id}")
     fun deny(@PathVariable id: Long) = wakeupSongUseCase.deny(id)
 
     @UserAccess(hasAnyRoleOnly = true)
-    @DeleteMapping("/my/{id}")
+    @DeleteMapping("/me/{id}")
     fun deleteMyWakeupSong(@PathVariable id: Long) = wakeupSongUseCase.deleteMyWakeupSong(id)
 }

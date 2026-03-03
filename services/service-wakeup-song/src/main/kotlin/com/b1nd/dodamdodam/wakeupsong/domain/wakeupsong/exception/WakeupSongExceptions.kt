@@ -6,3 +6,4 @@ class WakeupSongNotFoundException : BasicException(WakeupSongExceptionCode.WAKEU
 class WakeupSongNotOwnerException : BasicException(WakeupSongExceptionCode.WAKEUP_SONG_NOT_OWNER)
 class YouTubeVideoNotFoundException : BasicException(WakeupSongExceptionCode.YOUTUBE_VIDEO_NOT_FOUND)
 class MelonChartFetchFailedException : BasicException(WakeupSongExceptionCode.MELON_CHART_FETCH_FAILED)
+class AudioDownloadFailedException : BasicException(WakeupSongExceptionCode.AUDIO_DOWNLOAD_FAILED)

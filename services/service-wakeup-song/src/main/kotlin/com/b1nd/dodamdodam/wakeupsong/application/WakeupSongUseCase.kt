@@ -14,16 +14,19 @@ import com.b1nd.dodamdodam.wakeupsong.domain.wakeupsong.exception.WakeupSongNotO
 import com.b1nd.dodamdodam.wakeupsong.domain.wakeupsong.exception.YouTubeVideoNotFoundException
 import com.b1nd.dodamdodam.wakeupsong.domain.wakeupsong.service.WakeupSongService
 import com.b1nd.dodamdodam.wakeupsong.infrastructure.melon.MelonChartClient
+import com.b1nd.dodamdodam.wakeupsong.infrastructure.youtube.YtDlpClient
 import com.b1nd.dodamdodam.wakeupsong.infrastructure.youtube.YouTubeClient
 import org.springframework.stereotype.Component
 import org.springframework.transaction.annotation.Transactional
+import java.nio.file.Path
 
 @Component
 @Transactional(rollbackFor = [Exception::class])
 class WakeupSongUseCase(
     private val wakeupSongService: WakeupSongService,
     private val youTubeClient: YouTubeClient,
-    private val melonChartClient: MelonChartClient
+    private val melonChartClient: MelonChartClient,
+    private val ytDlpClient: YtDlpClient
 ) {
 
     fun applyWakeupSong(request: ApplyWakeupSongRequest): Response<Any> {
@@ -99,5 +102,13 @@ class WakeupSongUseCase(
     fun getMelonChart(): Response<List<MelonChartResponse>> {
         val chart = melonChartClient.getChart()
         return Response.ok("멜론 차트를 조회했어요.", chart)
+    }
+
+    fun downloadMp3(url: String): Pair<Path, String> {
+        val videoId = YouTubeClient.extractVideoId(url)
+            ?: throw YouTubeVideoNotFoundException()
+        val videoInfo = youTubeClient.getVideoInfo(videoId)
+        val file = ytDlpClient.downloadMp3(url)
+        return Pair(file, videoInfo.videoTitle)
     }
 }
