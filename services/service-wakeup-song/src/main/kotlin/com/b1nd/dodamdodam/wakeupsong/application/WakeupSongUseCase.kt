@@ -1,12 +1,12 @@
 package com.b1nd.dodamdodam.wakeupsong.application
 
+import com.b1nd.dodamdodam.core.common.data.FileDownloadResponse
 import com.b1nd.dodamdodam.core.common.data.Response
 import com.b1nd.dodamdodam.core.security.passport.holder.PassportHolder
 import com.b1nd.dodamdodam.core.security.passport.requireUserId
 import com.b1nd.dodamdodam.wakeupsong.application.data.request.ApplyWakeupSongByKeywordRequest
 import com.b1nd.dodamdodam.wakeupsong.application.data.request.ApplyWakeupSongRequest
 import com.b1nd.dodamdodam.wakeupsong.application.data.response.MelonChartResponse
-import com.b1nd.dodamdodam.wakeupsong.application.data.response.Mp3DownloadResponse
 import com.b1nd.dodamdodam.wakeupsong.application.data.response.WakeupSongResponse
 import com.b1nd.dodamdodam.wakeupsong.application.data.response.YouTubeSearchResponse
 import com.b1nd.dodamdodam.wakeupsong.application.data.toEntity
@@ -18,9 +18,11 @@ import com.b1nd.dodamdodam.wakeupsong.infrastructure.melon.MelonChartClient
 import com.b1nd.dodamdodam.wakeupsong.infrastructure.youtube.YtDlpClient
 import com.b1nd.dodamdodam.wakeupsong.infrastructure.youtube.YouTubeClient
 import org.springframework.core.io.Resource
+import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Component
 import org.springframework.transaction.annotation.Transactional
+import java.nio.file.Files
 
 @Component
 @Transactional(rollbackFor = [Exception::class])
@@ -111,7 +113,9 @@ class WakeupSongUseCase(
             ?: throw YouTubeVideoNotFoundException()
         val videoInfo = youTubeClient.getVideoInfo(videoId)
         val file = ytDlpClient.downloadMp3(url)
-        val result = Mp3DownloadResponse(file, videoInfo.videoTitle)
-        return Response.toFileResponseEntity(result.file, "${result.title}.mp3", "audio/mpeg")
+        val bytes = Files.readAllBytes(file)
+        Files.deleteIfExists(file)
+        val response = FileDownloadResponse(bytes, "${videoInfo.videoTitle}.mp3", MediaType.parseMediaType("audio/mpeg"))
+        return Response.toFileResponseEntity(response)
     }
 }
