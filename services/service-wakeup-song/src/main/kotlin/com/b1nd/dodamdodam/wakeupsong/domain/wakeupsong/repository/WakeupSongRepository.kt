@@ -12,7 +12,7 @@ interface WakeupSongRepository : JpaRepository<WakeupSongEntity, Long> {
 
     fun findAllByStatus(status: WakeupSongStatus): List<WakeupSongEntity>
 
-    fun findAllByStatusAndCreatedAtBetween(
+    fun findAllByStatusAndCreatedAtGreaterThanEqualAndCreatedAtLessThan(
         status: WakeupSongStatus,
         start: LocalDateTime,
         end: LocalDateTime

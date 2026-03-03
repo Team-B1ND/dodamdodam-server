@@ -68,12 +68,14 @@ class WakeupSongUseCase(
     fun allow(id: Long): Response<Any> {
         val wakeupSong = wakeupSongService.getById(id)
         wakeupSong.allow()
+        wakeupSongService.save(wakeupSong)
         return Response.ok("기상송이 승인되었어요.")
     }
 
     fun deny(id: Long): Response<Any> {
         val wakeupSong = wakeupSongService.getById(id)
         wakeupSong.deny()
+        wakeupSongService.save(wakeupSong)
         return Response.ok("기상송이 거절되었어요.")
     }
 

@@ -12,6 +12,7 @@ class MelonChartClient {
         try {
             val document = Jsoup.connect(MELON_CHART_URL)
                 .userAgent(USER_AGENT)
+                .timeout(5000)
                 .get()
 
             val songs = mutableListOf<MelonChartResponse>()

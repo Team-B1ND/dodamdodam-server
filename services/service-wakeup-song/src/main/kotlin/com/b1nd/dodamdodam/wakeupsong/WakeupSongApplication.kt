@@ -12,8 +12,8 @@ import org.springframework.data.jpa.repository.config.EnableJpaAuditing
 @EnableDodamSecurity
 @ConfigurationPropertiesScan
 @EnableDodamSwagger
-class WakeupSongApplication
+class WakeupSongServiceApplication
 
 fun main(args: Array<String>) {
-    runApplication<WakeupSongApplication>(*args)
+    runApplication<WakeupSongServiceApplication>(*args)
 }

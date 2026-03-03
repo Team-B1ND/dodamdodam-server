@@ -6,14 +6,20 @@ import com.b1nd.dodamdodam.wakeupsong.infrastructure.youtube.data.InnerTubeClien
 import com.b1nd.dodamdodam.wakeupsong.infrastructure.youtube.data.InnerTubeContext
 import com.b1nd.dodamdodam.wakeupsong.infrastructure.youtube.data.InnerTubeSearchRequest
 import com.fasterxml.jackson.databind.JsonNode
+import org.springframework.boot.web.client.ClientHttpRequestFactories
+import org.springframework.boot.web.client.ClientHttpRequestFactorySettings
 import org.springframework.stereotype.Component
 import org.springframework.web.client.RestClient
+import java.time.Duration
 
 @Component
 class YouTubeClient {
 
     private val restClient = RestClient.builder()
         .baseUrl("https://www.youtube.com/youtubei/v1")
+        .requestFactory(ClientHttpRequestFactories.get(ClientHttpRequestFactorySettings.DEFAULTS
+            .withConnectTimeout(Duration.ofSeconds(5))
+            .withReadTimeout(Duration.ofSeconds(10))))
         .build()
 
     fun search(keyword: String): List<YouTubeSearchResponse> {

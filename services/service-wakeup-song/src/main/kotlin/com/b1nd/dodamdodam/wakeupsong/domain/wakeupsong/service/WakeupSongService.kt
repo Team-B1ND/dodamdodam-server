@@ -26,9 +26,11 @@ class WakeupSongService(
 
     fun getAllowed(year: Int, month: Int, day: Int): List<WakeupSongEntity> {
         val date = LocalDate.of(year, month, day)
-        val start = LocalDateTime.of(date, LocalTime.MIN)
-        val end = LocalDateTime.of(date, LocalTime.MAX)
-        return wakeupSongRepository.findAllByStatusAndCreatedAtBetween(WakeupSongStatus.ALLOWED, start, end)
+        val start = date.atStartOfDay()
+        val end = date.plusDays(1).atStartOfDay()
+        return wakeupSongRepository.findAllByStatusAndCreatedAtGreaterThanEqualAndCreatedAtLessThan(
+            WakeupSongStatus.ALLOWED, start, end
+        )
     }
 
     fun getPending(): List<WakeupSongEntity> =
