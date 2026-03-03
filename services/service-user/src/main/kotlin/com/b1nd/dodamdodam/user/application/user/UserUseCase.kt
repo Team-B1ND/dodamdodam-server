@@ -11,6 +11,7 @@ import com.b1nd.dodamdodam.user.application.user.data.request.EnableUserRequest
 import com.b1nd.dodamdodam.user.application.user.data.request.StudentRegisterRequest
 import com.b1nd.dodamdodam.user.application.user.data.request.TeacherRegisterRequest
 import com.b1nd.dodamdodam.user.application.user.data.request.UpdateStudentInfoRequest
+import com.b1nd.dodamdodam.user.application.user.data.request.UpdateTeacherInfoRequest
 import com.b1nd.dodamdodam.user.application.user.data.request.UpdateUserInfoRequest
 import com.b1nd.dodamdodam.user.application.user.data.request.VerifyPasswordRequest
 import com.b1nd.dodamdodam.user.application.user.data.response.UserInfoResponse
@@ -110,6 +111,13 @@ class UserUseCase(
         val user = userService.get(passport.requireUserId())
         studentService.update(user, request.garde, request.room, request.number)
         return Response.ok("학생정보가 변경되었어요.")
+    }
+
+    fun updateTeacher(request: UpdateTeacherInfoRequest): Response<Any> {
+        val passport = PassportHolder.current()
+        val user = userService.get(passport.requireUserId())
+        teacherService.update(user, request.position)
+        return Response.ok("선생님 정보가 변경되었어요.")
     }
 
     fun changePassword(request: ChangePasswordRequest): Response<Any> {

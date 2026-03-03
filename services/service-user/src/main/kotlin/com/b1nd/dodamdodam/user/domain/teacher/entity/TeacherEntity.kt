@@ -27,4 +27,8 @@ class TeacherEntity(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long? = null
+
+    fun updateInfo(position: String?) {
+        position?.let { this.position = it }
+    }
 }

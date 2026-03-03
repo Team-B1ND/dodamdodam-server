@@ -14,6 +14,12 @@ class TeacherService(
         repository.save(teacher)
     }
 
+    fun update(userEntity: UserEntity, position: String?) {
+        val teacher = get(userEntity)
+        teacher.updateInfo(position)
+        repository.save(teacher)
+    }
+
     fun get(userEntity: UserEntity) =
         repository.findByUser(userEntity)
             ?: throw TeacherNotFoundException()

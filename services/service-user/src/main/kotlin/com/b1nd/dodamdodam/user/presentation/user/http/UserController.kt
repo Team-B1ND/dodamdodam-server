@@ -8,6 +8,7 @@ import com.b1nd.dodamdodam.user.application.user.data.request.EnableUserRequest
 import com.b1nd.dodamdodam.user.application.user.data.request.StudentRegisterRequest
 import com.b1nd.dodamdodam.user.application.user.data.request.TeacherRegisterRequest
 import com.b1nd.dodamdodam.user.application.user.data.request.UpdateStudentInfoRequest
+import com.b1nd.dodamdodam.user.application.user.data.request.UpdateTeacherInfoRequest
 import com.b1nd.dodamdodam.user.application.user.data.request.UpdateUserInfoRequest
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.PatchMapping
@@ -19,7 +20,6 @@ import org.springframework.web.bind.annotation.RestController
 class UserController(
     private val userUseCase: UserUseCase
 ) {
-
     @UserAccess(hasAnyRoleOnly = true)
     @PostMapping("/me")
     fun getMe() =
@@ -30,10 +30,15 @@ class UserController(
     fun registerStudent(@RequestBody request: StudentRegisterRequest) =
         userUseCase.registerStudent(request)
 
-    @UserAccess
-    @PatchMapping("student")
+    @UserAccess(roles = [RoleType.STUDENT])
+    @PatchMapping("/student")
     fun editStudentInfo(@RequestBody request: UpdateStudentInfoRequest) =
         userUseCase.updateStudent(request)
+
+    @UserAccess(roles = [RoleType.TEACHER])
+    @PatchMapping("/teacher")
+    fun editTeacherInfo(@RequestBody request: UpdateTeacherInfoRequest) =
+        userUseCase.updateTeacher(request)
 
     @UserAccess(enabledOnly = false)
     @PostMapping("/register-teacher")
