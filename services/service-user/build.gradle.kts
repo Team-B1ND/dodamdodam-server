@@ -7,6 +7,7 @@ dependencies {
     implementation(project(":core:core-security"))
     implementation(project(":core:core-kafka"))
     implementation(project(":core:core-jpa"))
+    implementation(project(":core:core-redis"))
 
     // database
     runtimeOnly(libs.mysql.jdbcDriver)

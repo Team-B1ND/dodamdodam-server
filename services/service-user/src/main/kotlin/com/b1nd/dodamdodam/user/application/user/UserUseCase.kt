@@ -7,7 +7,9 @@ import com.b1nd.dodamdodam.core.security.passport.enumerations.RoleType
 import com.b1nd.dodamdodam.core.security.passport.holder.PassportHolder
 import com.b1nd.dodamdodam.core.security.passport.requireUserId
 import com.b1nd.dodamdodam.user.application.user.data.request.ChangePasswordRequest
+import com.b1nd.dodamdodam.user.application.user.data.request.ConfirmPhoneVerificationRequest
 import com.b1nd.dodamdodam.user.application.user.data.request.EnableUserRequest
+import com.b1nd.dodamdodam.user.application.user.data.request.RequestPhoneVerificationRequest
 import com.b1nd.dodamdodam.user.application.user.data.request.StudentRegisterRequest
 import com.b1nd.dodamdodam.user.application.user.data.request.TeacherRegisterRequest
 import com.b1nd.dodamdodam.user.application.user.data.request.UpdateStudentInfoRequest
@@ -24,6 +26,7 @@ import com.b1nd.dodamdodam.user.domain.student.service.StudentService
 import com.b1nd.dodamdodam.user.domain.teacher.service.TeacherService
 import com.b1nd.dodamdodam.user.domain.user.entity.UserEntity
 import com.b1nd.dodamdodam.user.domain.user.service.UserService
+import com.b1nd.dodamdodam.user.infrastructure.phoneverification.service.PhoneVerificationStore
 import jakarta.transaction.Transactional
 import org.springframework.stereotype.Component
 
@@ -33,6 +36,7 @@ class UserUseCase(
     private val userService: UserService,
     private val studentService: StudentService,
     private val teacherService: TeacherService,
+    private val phoneVerificationStore: PhoneVerificationStore,
     private val kafkaMessageProducer: KafkaMessageProducer
 ) {
     fun getMyInfo(): Response<UserInfoResponse> {
@@ -46,7 +50,7 @@ class UserUseCase(
     }
 
     fun registerStudent(request: StudentRegisterRequest): Response<Any> {
-        //TODO 전화번호 검증 로직
+        phoneVerificationStore.ensureActive(request.phone)
         val savedUser: UserEntity = userService.create(
             request.toUserEntity(),
             RoleType.STUDENT
@@ -60,7 +64,7 @@ class UserUseCase(
     }
 
     fun registerTeacher(request: TeacherRegisterRequest): Response<Any> {
-        //TODO 전화번호 검증 로직
+        phoneVerificationStore.ensureActive(request.phone)
         val savedUser: UserEntity = userService.create(
             request.toUserEntity(),
             RoleType.TEACHER,
@@ -134,5 +138,15 @@ class UserUseCase(
         } catch (_: Exception) {
             return false
         }
+    }
+
+    fun requestPhoneVerification(request: RequestPhoneVerificationRequest): Response<Any> {
+        phoneVerificationStore.requestCode(request.phone)
+        return Response.ok("휴대폰 인증번호를 전송했어요.")
+    }
+
+    fun confirmPhoneVerification(request: ConfirmPhoneVerificationRequest): Response<Any> {
+        phoneVerificationStore.verifyCode(request.phone, request.code)
+        return Response.ok("휴대폰 인증을 성공했어요.")
     }
 }

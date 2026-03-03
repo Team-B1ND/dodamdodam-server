@@ -1,0 +1,7 @@
+package com.b1nd.dodamdodam.user.infrastructure.phoneverification.exception
+
+import com.b1nd.dodamdodam.core.common.exception.BasicException
+
+class PhoneVerificationCodeExpiredException: BasicException(PhoneVerificationExceptionCode.PHONE_VERIFICATION_CODE_EXPIRED)
+class PhoneVerificationCodeMismatchException: BasicException(PhoneVerificationExceptionCode.PHONE_VERIFICATION_CODE_MISMATCH)
+class PhoneNotVerifiedException: BasicException(PhoneVerificationExceptionCode.PHONE_NOT_VERIFIED)

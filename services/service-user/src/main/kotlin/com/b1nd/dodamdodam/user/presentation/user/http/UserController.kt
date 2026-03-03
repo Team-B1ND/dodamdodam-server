@@ -4,7 +4,9 @@ import com.b1nd.dodamdodam.core.security.annotation.authentication.UserAccess
 import com.b1nd.dodamdodam.core.security.passport.enumerations.RoleType
 import com.b1nd.dodamdodam.user.application.user.UserUseCase
 import com.b1nd.dodamdodam.user.application.user.data.request.ChangePasswordRequest
+import com.b1nd.dodamdodam.user.application.user.data.request.ConfirmPhoneVerificationRequest
 import com.b1nd.dodamdodam.user.application.user.data.request.EnableUserRequest
+import com.b1nd.dodamdodam.user.application.user.data.request.RequestPhoneVerificationRequest
 import com.b1nd.dodamdodam.user.application.user.data.request.StudentRegisterRequest
 import com.b1nd.dodamdodam.user.application.user.data.request.TeacherRegisterRequest
 import com.b1nd.dodamdodam.user.application.user.data.request.UpdateStudentInfoRequest
@@ -29,6 +31,16 @@ class UserController(
     @PostMapping("/register-student")
     fun registerStudent(@RequestBody request: StudentRegisterRequest) =
         userUseCase.registerStudent(request)
+
+    @UserAccess(enabledOnly = false)
+    @PostMapping("/phone-verification/request")
+    fun requestPhoneVerification(@RequestBody request: RequestPhoneVerificationRequest) =
+        userUseCase.requestPhoneVerification(request)
+
+    @UserAccess(enabledOnly = false)
+    @PostMapping("/phone-verification/confirm")
+    fun confirmPhoneVerification(@RequestBody request: ConfirmPhoneVerificationRequest) =
+        userUseCase.confirmPhoneVerification(request)
 
     @UserAccess(roles = [RoleType.STUDENT])
     @PatchMapping("/student")
