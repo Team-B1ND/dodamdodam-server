@@ -20,11 +20,15 @@ class UserService(
     private val userRoleRepository: UserRoleRepository,
     private val encoder: BCryptPasswordEncoder
 ) {
+    fun get(publicId: UUID): UserEntity =
+        userRepository.findByPublicId(publicId)
+            ?: throw UserNotFoundException()
+
     fun create(user: UserEntity, role: RoleType): UserEntity {
         checkDuplicateUser(user.username)
         user.updatePassword(encoder.encode(user.password))
         val savedUser = userRepository.save(user)
-        addRole(savedUser, listOf(role))
+        addRole(savedUser, setOf(role))
         return savedUser
     }
 
@@ -58,8 +62,12 @@ class UserService(
         userRepository.save(user)
     }
 
-    fun addRole(user: UserEntity, roles: List<RoleType>) {
-        val userRoles = roles.map { UserRoleEntity(user, it) }
+    fun addRole(user: UserEntity, roles: Set<RoleType>) {
+        val existingRoles = getRoles(user)
+        val rolesToAdd = roles.subtract(existingRoles)
+        if (rolesToAdd.isEmpty()) return
+
+        val userRoles = rolesToAdd.map { UserRoleEntity(user, it) }
         userRoleRepository.saveAll(userRoles)
     }
 

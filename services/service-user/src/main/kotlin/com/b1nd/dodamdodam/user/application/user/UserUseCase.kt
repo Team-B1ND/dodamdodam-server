@@ -10,8 +10,10 @@ import com.b1nd.dodamdodam.user.application.user.data.request.ChangePasswordRequ
 import com.b1nd.dodamdodam.user.application.user.data.request.EnableUserRequest
 import com.b1nd.dodamdodam.user.application.user.data.request.StudentRegisterRequest
 import com.b1nd.dodamdodam.user.application.user.data.request.TeacherRegisterRequest
+import com.b1nd.dodamdodam.user.application.user.data.request.UpdateStudentInfoRequest
 import com.b1nd.dodamdodam.user.application.user.data.request.UpdateUserInfoRequest
 import com.b1nd.dodamdodam.user.application.user.data.request.VerifyPasswordRequest
+import com.b1nd.dodamdodam.user.application.user.data.response.UserInfoResponse
 import com.b1nd.dodamdodam.user.application.user.data.toUserCreatedEvent
 import com.b1nd.dodamdodam.user.application.user.data.toUserUpdatedEvent
 import com.b1nd.dodamdodam.user.application.user.data.toStudentEntity
@@ -32,6 +34,16 @@ class UserUseCase(
     private val teacherService: TeacherService,
     private val kafkaMessageProducer: KafkaMessageProducer
 ) {
+    fun getMyInfo(): Response<UserInfoResponse> {
+        val userId = PassportHolder.current().requireUserId()
+        val user = userService.get(userId)
+        val roles = userService.getRoles(user)
+        return Response.ok(
+            "내 정보를 조회했어요.",
+            UserInfoResponse.fromEntity(user, roles, studentService.getOrNull(user), teacherService.getOrNull(user))
+        )
+    }
+
     fun registerStudent(request: StudentRegisterRequest): Response<Any> {
         //TODO 전화번호 검증 로직
         val savedUser: UserEntity = userService.create(
@@ -91,6 +103,13 @@ class UserUseCase(
             updatedUser.toUserUpdatedEvent(roles)
         )
         return Response.ok("유저 정보가 변경되었어요.")
+    }
+
+    fun updateStudent(request: UpdateStudentInfoRequest): Response<Any> {
+        val passport = PassportHolder.current()
+        val user = userService.get(passport.requireUserId())
+        studentService.update(user, request.garde, request.room, request.number)
+        return Response.ok("학생정보가 변경되었어요.")
     }
 
     fun changePassword(request: ChangePasswordRequest): Response<Any> {

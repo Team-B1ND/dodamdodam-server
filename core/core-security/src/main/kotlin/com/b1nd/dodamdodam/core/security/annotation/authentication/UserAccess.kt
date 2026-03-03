@@ -6,5 +6,6 @@ import com.b1nd.dodamdodam.core.security.passport.enumerations.RoleType
 @Retention(AnnotationRetention.RUNTIME)
 annotation class UserAccess(
     val roles: Array<RoleType> = [],
-    val enabledOnly: Boolean = true
+    val enabledOnly: Boolean = true,
+    val hasAnyRoleOnly: Boolean = false
 )

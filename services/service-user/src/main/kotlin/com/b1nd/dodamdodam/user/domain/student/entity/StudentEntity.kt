@@ -31,4 +31,10 @@ class StudentEntity(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long? = null
+
+    fun updateInfo(grade: Int?, room: Int?, number: Int?) {
+        grade?.let { this.grade = it }
+        room?.let { this.room = it }
+        number?.let { this.number = it }
+    }
 }
