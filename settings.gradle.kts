@@ -33,5 +33,6 @@ include("core:core-grpc")
 include(":services:service-gateway")
 include(":services:service-auth")
 include(":services:service-user")
+include(":services:service-wakeup-song")
 
 rootProject.name = "dodamdodam-server"

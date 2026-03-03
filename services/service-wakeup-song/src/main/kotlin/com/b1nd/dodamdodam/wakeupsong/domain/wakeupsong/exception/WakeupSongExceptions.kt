@@ -1,0 +1,8 @@
+package com.b1nd.dodamdodam.wakeupsong.domain.wakeupsong.exception
+
+import com.b1nd.dodamdodam.core.common.exception.BasicException
+
+class WakeupSongNotFoundException : BasicException(WakeupSongExceptionCode.WAKEUP_SONG_NOT_FOUND)
+class WakeupSongNotOwnerException : BasicException(WakeupSongExceptionCode.WAKEUP_SONG_NOT_OWNER)
+class YouTubeVideoNotFoundException : BasicException(WakeupSongExceptionCode.YOUTUBE_VIDEO_NOT_FOUND)
+class MelonChartFetchFailedException : BasicException(WakeupSongExceptionCode.MELON_CHART_FETCH_FAILED)
