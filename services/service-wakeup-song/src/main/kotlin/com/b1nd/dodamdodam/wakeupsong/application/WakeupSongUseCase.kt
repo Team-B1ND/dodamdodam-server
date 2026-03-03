@@ -6,6 +6,7 @@ import com.b1nd.dodamdodam.core.security.passport.requireUserId
 import com.b1nd.dodamdodam.wakeupsong.application.data.request.ApplyWakeupSongByKeywordRequest
 import com.b1nd.dodamdodam.wakeupsong.application.data.request.ApplyWakeupSongRequest
 import com.b1nd.dodamdodam.wakeupsong.application.data.response.MelonChartResponse
+import com.b1nd.dodamdodam.wakeupsong.application.data.response.Mp3DownloadResponse
 import com.b1nd.dodamdodam.wakeupsong.application.data.response.WakeupSongResponse
 import com.b1nd.dodamdodam.wakeupsong.application.data.response.YouTubeSearchResponse
 import com.b1nd.dodamdodam.wakeupsong.application.data.toEntity
@@ -16,9 +17,10 @@ import com.b1nd.dodamdodam.wakeupsong.domain.wakeupsong.service.WakeupSongServic
 import com.b1nd.dodamdodam.wakeupsong.infrastructure.melon.MelonChartClient
 import com.b1nd.dodamdodam.wakeupsong.infrastructure.youtube.YtDlpClient
 import com.b1nd.dodamdodam.wakeupsong.infrastructure.youtube.YouTubeClient
+import org.springframework.core.io.Resource
+import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Component
 import org.springframework.transaction.annotation.Transactional
-import java.nio.file.Path
 
 @Component
 @Transactional(rollbackFor = [Exception::class])
@@ -104,11 +106,12 @@ class WakeupSongUseCase(
         return Response.ok("멜론 차트를 조회했어요.", chart)
     }
 
-    fun downloadMp3(url: String): Pair<Path, String> {
+    fun downloadMp3(url: String): ResponseEntity<Resource> {
         val videoId = YouTubeClient.extractVideoId(url)
             ?: throw YouTubeVideoNotFoundException()
         val videoInfo = youTubeClient.getVideoInfo(videoId)
         val file = ytDlpClient.downloadMp3(url)
-        return Pair(file, videoInfo.videoTitle)
+        val result = Mp3DownloadResponse(file, videoInfo.videoTitle)
+        return Response.toFileResponseEntity(result.file, "${result.title}.mp3", "audio/mpeg")
     }
 }
