@@ -1,0 +1,7 @@
+package com.b1nd.dodamdodam.club.infrastructure.exception
+
+import com.b1nd.dodamdodam.core.common.exception.BasicException
+
+class ClubNotFoundException: BasicException(ClubExceptionCode.CLUB_NOT_FOUNDED)
+class ClubAlreadyExistsException: BasicException(ClubExceptionCode.CLUB_ALREADY_EXISTED)
+class ClubNotOwnerException: BasicException(ClubExceptionCode.CLUB_NOT_OWNER)
