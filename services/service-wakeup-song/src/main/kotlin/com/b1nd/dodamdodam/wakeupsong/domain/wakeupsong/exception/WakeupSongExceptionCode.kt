@@ -12,5 +12,6 @@ enum class WakeupSongExceptionCode(
     YOUTUBE_VIDEO_NOT_FOUND(HttpStatus.NOT_FOUND, "유튜브 영상을 찾을 수 없어요."),
     MELON_CHART_FETCH_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "멜론 차트를 가져올 수 없어요."),
     AUDIO_DOWNLOAD_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "오디오 다운로드에 실패했어요."),
+    INVALID_VIDEO_ID(HttpStatus.BAD_REQUEST, "유효하지 않은 영상 ID에요."),
     ;
 }
