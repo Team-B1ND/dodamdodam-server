@@ -1,7 +1,7 @@
 package com.b1nd.dodamdodam.inapp.domain.app.entity
 
 import com.b1nd.dodamdodam.core.jpa.entity.BaseTimeEntity
-import com.b1nd.dodamdodam.inapp.domain.app.enumeration.AppReleaseStatusType
+import com.b1nd.dodamdodam.inapp.domain.app.enumeration.AppStatusType
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
 import jakarta.persistence.EnumType
@@ -33,7 +33,7 @@ class AppReleaseEntity(
     @Column(columnDefinition = "TEXT")
     var denyResult: String? = null,
     @Enumerated(EnumType.STRING)
-    var status: AppReleaseStatusType
+    var status: AppStatusType
 ): BaseTimeEntity() {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -48,11 +48,11 @@ class AppReleaseEntity(
         publicId = UUID.randomUUID()
     }
 
-    fun updateStatus(status: AppReleaseStatusType, denyResult: String?, updatedUser: UUID) {
+    fun updateStatus(status: AppStatusType, denyResult: String?, updatedUser: UUID) {
         this.status = status
         this.denyResult = denyResult
         this.updatedUser = updatedUser
-        if (status != AppReleaseStatusType.ALLOWED) {
+        if (status != AppStatusType.ALLOWED) {
             this.enabled = false
         }
     }

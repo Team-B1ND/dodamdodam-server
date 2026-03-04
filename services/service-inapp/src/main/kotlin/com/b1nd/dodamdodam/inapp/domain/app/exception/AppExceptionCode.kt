@@ -16,6 +16,7 @@ enum class AppExceptionCode(
     APP_SERVER_ENABLE_NOT_ALLOWED(HttpStatus.BAD_REQUEST, "승인된 앱 서버만 활성화할 수 있어요."),
     APP_SERVER_PREFIX_LEVEL_INVALID(HttpStatus.BAD_REQUEST, "prefix level은 0 또는 1만 가능해요."),
     APP_SERVER_REDIRECT_PATH_INVALID(HttpStatus.BAD_REQUEST, "redirectPath는 /path 또는 /path/sub-path 형식이어야 해요."),
+    APP_SERVER_INFO_INCOMPLETE(HttpStatus.BAD_REQUEST, "서버 정보는 전부 입력하거나 전부 비워야 해요."),
     APP_DENY_REASON_REQUIRED(HttpStatus.BAD_REQUEST, "거절 사유는 필수예요."),
     APP_TEAM_MEMBER_PERMISSION_REQUIRED(HttpStatus.FORBIDDEN, "앱을 관리할 팀원 권한이 필요해요."),
     APP_TEAM_OWNER_PERMISSION_REQUIRED(HttpStatus.FORBIDDEN, "앱을 관리할 팀 오너 권한이 필요해요."),

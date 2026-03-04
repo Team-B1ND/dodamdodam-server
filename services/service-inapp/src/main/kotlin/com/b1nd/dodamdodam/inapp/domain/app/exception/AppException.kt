@@ -20,6 +20,8 @@ class AppServerPrefixLevelInvalidException: BasicException(AppExceptionCode.APP_
 
 class AppServerRedirectPathInvalidException: BasicException(AppExceptionCode.APP_SERVER_REDIRECT_PATH_INVALID)
 
+class AppServerInfoIncompleteException: BasicException(AppExceptionCode.APP_SERVER_INFO_INCOMPLETE)
+
 class AppDenyReasonRequiredException: BasicException(AppExceptionCode.APP_DENY_REASON_REQUIRED)
 
 class AppTeamMemberPermissionRequiredException: BasicException(AppExceptionCode.APP_TEAM_MEMBER_PERMISSION_REQUIRED)

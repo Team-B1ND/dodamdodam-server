@@ -1,6 +1,6 @@
 package com.b1nd.dodamdodam.inapp.application.app.data.response
 
-import com.b1nd.dodamdodam.inapp.domain.app.enumeration.AppServerStatusType
+import com.b1nd.dodamdodam.inapp.domain.app.enumeration.AppStatusType
 
 data class AppServerResponse(
     val name: String,
@@ -9,6 +9,6 @@ data class AppServerResponse(
     val prefixLevel: Int,
     val omitApiPrefix: Boolean,
     val enabled: Boolean,
-    val status: AppServerStatusType,
+    val status: AppStatusType,
     val denyResult: String?,
 )

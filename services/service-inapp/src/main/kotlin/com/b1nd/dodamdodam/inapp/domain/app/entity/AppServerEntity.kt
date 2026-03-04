@@ -1,7 +1,7 @@
 package com.b1nd.dodamdodam.inapp.domain.app.entity
 
 import com.b1nd.dodamdodam.core.jpa.entity.BaseTimeEntity
-import com.b1nd.dodamdodam.inapp.domain.app.enumeration.AppServerStatusType
+import com.b1nd.dodamdodam.inapp.domain.app.enumeration.AppStatusType
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
 import jakarta.persistence.EnumType
@@ -33,7 +33,7 @@ class AppServerEntity(
     @Column(columnDefinition = "TEXT")
     var denyResult: String? = null,
     @Enumerated(EnumType.STRING)
-    var status: AppServerStatusType,
+    var status: AppStatusType,
 ): BaseTimeEntity() {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -73,16 +73,16 @@ class AppServerEntity(
 
         // 서버 실제 배포 정보가 바뀌면 재승인이 필요하다.
         if (changed) {
-            status = AppServerStatusType.PENDING
+            status = AppStatusType.PENDING
             enabled = false
             denyResult = null
         }
     }
 
-    fun updateStatus(status: AppServerStatusType, denyResult: String?) {
+    fun updateStatus(status: AppStatusType, denyResult: String?) {
         this.status = status
         this.denyResult = denyResult
-        if (status != AppServerStatusType.ALLOWED) {
+        if (status != AppStatusType.ALLOWED) {
             this.enabled = false
         }
     }
