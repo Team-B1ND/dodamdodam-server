@@ -4,6 +4,7 @@ plugins {
 
 dependencies {
     implementation(project(":core:core-common"))
+    implementation(project(":core:core-kafka"))
 
     implementation("org.springframework.boot:spring-boot-starter-webflux")
     implementation("org.springframework.cloud:spring-cloud-starter-gateway")

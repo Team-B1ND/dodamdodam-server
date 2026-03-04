@@ -43,7 +43,9 @@ spring:
 app:
   auth:
     url: http://localhost:8082
-
+  kafka:
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS}
+    consumer-group-id: service-gateway
 server:
   port: 8080
 

@@ -20,3 +20,8 @@ spring:
 
 server:
   port: 8085
+
+app:
+  kafka:
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS}
+    consumer-group-id: service-inapp

@@ -82,9 +82,7 @@ class AppServerEntity(
     fun updateStatus(status: AppStatusType, denyResult: String?) {
         this.status = status
         this.denyResult = denyResult
-        if (status != AppStatusType.ALLOWED) {
-            this.enabled = false
-        }
+        this.enabled = status == AppStatusType.ALLOWED
     }
 
     fun updateEnabled(enabled: Boolean) {
