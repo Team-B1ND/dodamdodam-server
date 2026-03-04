@@ -3,6 +3,7 @@ package com.b1nd.dodamdodam.club.application.club.data.response
 import com.b1nd.dodamdodam.club.domain.club.entity.ClubEntity
 import com.b1nd.dodamdodam.club.domain.club.entity.ClubMemberEntity
 import com.b1nd.dodamdodam.club.domain.club.enumeration.ClubType
+import com.fasterxml.jackson.annotation.JsonInclude
 import java.time.LocalDateTime
 import java.util.UUID
 
@@ -13,10 +14,21 @@ data class ClubResponse(
     val imageUrl: String?,
     val category: String?,
     val type: ClubType,
-    val memberIds: List<UUID>,
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    val memberIds: List<UUID>? = null,
     val createdAt: LocalDateTime,
 ) {
     companion object {
+        fun fromEntity(club: ClubEntity) = ClubResponse(
+            publicId = club.publicId!!,
+            name = club.name,
+            description = club.description,
+            imageUrl = club.imageUrl,
+            category = club.category,
+            type = club.type,
+            createdAt = club.createdAt!!,
+        )
+
         fun fromEntity(club: ClubEntity, members: List<ClubMemberEntity>) = ClubResponse(
             publicId = club.publicId!!,
             name = club.name,

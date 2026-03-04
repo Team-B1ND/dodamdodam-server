@@ -31,10 +31,7 @@ class ClubUseCase(
     }
 
     fun getClubs(): Response<List<ClubResponse>> {
-        val clubs = clubService.getAll().map { club ->
-            val members = clubService.getMembers(club)
-            ClubResponse.fromEntity(club, members)
-        }
+        val clubs = clubService.getAll().map { ClubResponse.fromEntity(it) }
         return Response.ok("동아리 목록을 조회했어요.", clubs)
     }
 
