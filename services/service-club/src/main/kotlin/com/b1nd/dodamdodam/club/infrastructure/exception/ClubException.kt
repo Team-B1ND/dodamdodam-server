@@ -5,3 +5,4 @@ import com.b1nd.dodamdodam.core.common.exception.BasicException
 class ClubNotFoundException: BasicException(ClubExceptionCode.CLUB_NOT_FOUNDED)
 class ClubAlreadyExistsException: BasicException(ClubExceptionCode.CLUB_ALREADY_EXISTED)
 class ClubNotOwnerException: BasicException(ClubExceptionCode.CLUB_NOT_OWNER)
+class ClubMemberNotFoundException: BasicException(ClubExceptionCode.CLUB_MEMBER_NOT_FOUND)

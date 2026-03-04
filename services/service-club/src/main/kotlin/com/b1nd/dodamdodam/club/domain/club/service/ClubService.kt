@@ -6,6 +6,7 @@ import com.b1nd.dodamdodam.club.domain.club.enumeration.ClubType
 import com.b1nd.dodamdodam.club.domain.club.repository.ClubMemberRepository
 import com.b1nd.dodamdodam.club.domain.club.repository.ClubRepository
 import com.b1nd.dodamdodam.club.infrastructure.exception.ClubAlreadyExistsException
+import com.b1nd.dodamdodam.club.infrastructure.exception.ClubMemberNotFoundException
 import com.b1nd.dodamdodam.club.infrastructure.exception.ClubNotFoundException
 import com.b1nd.dodamdodam.club.infrastructure.exception.ClubNotOwnerException
 import org.springframework.stereotype.Service
@@ -48,6 +49,22 @@ class ClubService(
         validateOwner(club, userId)
         clubMemberRepository.deleteAllByClub(club)
         clubRepository.delete(club)
+    }
+
+    fun getMembers(club: ClubEntity): List<ClubMemberEntity> =
+        clubMemberRepository.findAllByClub(club)
+
+    fun transferOwner(publicId: UUID, userId: UUID, targetUserId: UUID) {
+        val club = get(publicId)
+        val currentOwner = clubMemberRepository.findByClubAndUserId(club, userId)
+        if (currentOwner == null || !currentOwner.isOwner) throw ClubNotOwnerException()
+
+        val targetMember = clubMemberRepository.findByClubAndUserId(club, targetUserId)
+            ?: throw ClubMemberNotFoundException()
+
+        currentOwner.isOwner = false
+        targetMember.isOwner = true
+        clubMemberRepository.saveAll(listOf(currentOwner, targetMember))
     }
 
     private fun validateOwner(club: ClubEntity, userId: UUID) {

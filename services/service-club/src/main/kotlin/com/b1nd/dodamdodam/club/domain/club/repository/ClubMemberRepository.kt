@@ -9,5 +9,6 @@ import java.util.UUID
 @Repository
 interface ClubMemberRepository: JpaRepository<ClubMemberEntity, Long> {
     fun findByClubAndUserId(club: ClubEntity, userId: UUID): ClubMemberEntity?
+    fun findAllByClub(club: ClubEntity): List<ClubMemberEntity>
     fun deleteAllByClub(club: ClubEntity)
 }

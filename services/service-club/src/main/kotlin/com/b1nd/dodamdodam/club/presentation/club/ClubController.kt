@@ -2,6 +2,7 @@ package com.b1nd.dodamdodam.club.presentation.club
 
 import com.b1nd.dodamdodam.club.application.club.ClubUseCase
 import com.b1nd.dodamdodam.club.application.club.data.request.CreateClubRequest
+import com.b1nd.dodamdodam.club.application.club.data.request.TransferOwnerRequest
 import com.b1nd.dodamdodam.club.application.club.data.request.UpdateClubRequest
 import com.b1nd.dodamdodam.core.security.annotation.authentication.UserAccess
 import org.springframework.web.bind.annotation.DeleteMapping
@@ -43,4 +44,9 @@ class ClubController(
     @DeleteMapping("/{publicId}")
     fun deleteClub(@PathVariable publicId: UUID) =
         clubUseCase.deleteClub(publicId)
+
+    @UserAccess
+    @PatchMapping("/{publicId}/owner")
+    fun transferOwner(@PathVariable publicId: UUID, @RequestBody request: TransferOwnerRequest) =
+        clubUseCase.transferOwner(publicId, request)
 }
