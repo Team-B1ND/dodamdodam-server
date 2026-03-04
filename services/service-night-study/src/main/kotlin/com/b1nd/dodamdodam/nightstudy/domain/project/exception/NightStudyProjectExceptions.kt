@@ -1,0 +1,6 @@
+package com.b1nd.dodamdodam.nightstudy.domain.project.exception
+
+import com.b1nd.dodamdodam.core.common.exception.BasicException
+
+class NightStudyProjectNotFoundException : BasicException(NightStudyProjectExceptionCode.NIGHT_STUDY_PROJECT_NOT_FOUND)
+class NightStudyProjectNotOwnerException : BasicException(NightStudyProjectExceptionCode.NIGHT_STUDY_PROJECT_NOT_OWNER)
