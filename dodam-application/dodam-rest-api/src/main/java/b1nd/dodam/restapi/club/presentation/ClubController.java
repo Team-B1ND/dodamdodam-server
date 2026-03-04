@@ -1,7 +1,6 @@
 package b1nd.dodam.restapi.club.presentation;
 
 import b1nd.dodam.domain.rds.club.enumeration.ClubStatus;
-import b1nd.dodam.restapi.club.application.ClubApplicationUseCase;
 import b1nd.dodam.restapi.club.application.ClubMemberUseCase;
 import b1nd.dodam.restapi.club.application.ClubUseCase;
 import b1nd.dodam.restapi.club.application.data.req.*;
@@ -21,7 +20,6 @@ import java.util.List;
 public class ClubController {
     private final ClubUseCase clubUseCase;
     private final ClubMemberUseCase clubMemberUseCase;
-    private final ClubApplicationUseCase clubApplicationUseCase;
 
     @PostMapping
     public Response create(
@@ -30,12 +28,7 @@ public class ClubController {
         return clubUseCase.save(req);
     }
 
-    @PostMapping("/assignment")
-    public Response sort() {
-        return clubApplicationUseCase.assignmentClubMembers();
-    }
-
-    @PostMapping("/status")
+    @PostMapping("/members/approve")
     public Response passClub(
             @RequestBody @Valid ClubPassReq req
     ) {
@@ -56,15 +49,8 @@ public class ClubController {
         return clubUseCase.setWaiting(id);
     }
 
-    @PostMapping("/{id}/teacher")
-    public Response setTeacher(
-        @PathVariable Long id
-    ) {
-        return clubUseCase.setTeacher(id);
-    }
-
     @PostMapping("/join-requests/{id}")
-    public Response acceptClubJoinRequest(
+    public Response acceptClucbJoinRequest(
             @PathVariable Long id
     ) {
         return clubMemberUseCase.updateClubJoinRequestReceived(id, ClubStatus.ALLOWED);
@@ -72,7 +58,7 @@ public class ClubController {
 
     @PostMapping("/time")
     public Response setClubTime(
-        @RequestBody ClubTimeReq req
+            @RequestBody ClubTimeReq req
     ) {
         return clubUseCase.save(req);
     }

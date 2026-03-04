@@ -6,10 +6,8 @@ import b1nd.dodam.domain.rds.club.entity.ClubTime;
 import b1nd.dodam.domain.rds.club.enumeration.ClubPermission;
 import b1nd.dodam.domain.rds.club.enumeration.ClubStatus;
 import b1nd.dodam.domain.rds.club.enumeration.ClubTimeType;
-import b1nd.dodam.domain.rds.club.enumeration.ClubType;
 import b1nd.dodam.domain.rds.club.exception.ClubApplicationDurationPassedException;
 import b1nd.dodam.domain.rds.club.exception.ClubDuplicateException;
-import b1nd.dodam.domain.rds.club.exception.ClubNotFoundException;
 import b1nd.dodam.domain.rds.club.repository.ClubMemberRepository;
 import b1nd.dodam.domain.rds.club.repository.ClubRepository;
 import b1nd.dodam.domain.rds.club.repository.ClubTimeRepository;
@@ -34,12 +32,6 @@ public class ClubService {
         if (clubRepository.existsByName(name)) {
             throw new ClubDuplicateException();
         }
-    }
-
-    public List<Club> getCreativeActivityClubs() {
-        return clubRepository.findByTypeAndState(ClubType.CREATIVE_ACTIVITY_CLUB, ClubStatus.ALLOWED)
-                .filter(clubs -> !clubs.isEmpty())
-                .orElseThrow(ClubNotFoundException::new);
     }
 
     public void update(Club club) {

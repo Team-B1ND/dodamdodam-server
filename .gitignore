@@ -37,3 +37,6 @@ dodam-application/dodam-rest-api/src/main/resources/dodamdodam-firebase-key.json
 ### VS Code ###
 .vscode/
 *.DS_Store
+
+.CLAUDE.md
+.env

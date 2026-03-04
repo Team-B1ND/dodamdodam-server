@@ -143,4 +143,16 @@ public interface ClubMemberRepository extends JpaRepository<ClubMember, Long> {
     List<ClubMember> findByClubInAndClubStatusNotIn(List<Club> club, List<ClubStatus>  clubStatuses);
 
     List<ClubMember> findByStudentInAndClubStatusNotAndClub_Type(List<Student> student, ClubStatus clubStatus,  ClubType clubType);
+
+    @Query("""
+    SELECT COUNT(cm) FROM club_member cm
+    WHERE cm.club.id = :clubId
+    AND cm.clubStatus = :status
+    AND cm.student.grade = :grade
+    """)
+    long countByClubIdAndClubStatusAndStudentGrade(
+            @Param("clubId") Long clubId,
+            @Param("status") ClubStatus status,
+            @Param("grade") int grade
+    );
 }

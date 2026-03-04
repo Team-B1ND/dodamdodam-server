@@ -40,8 +40,8 @@ public class Club extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private ClubType type;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "fk_teacher_id")
+    @ManyToOne(fetch = FetchType.LAZY, optional = true)
+    @JoinColumn(name = "fk_teacher_id", nullable = true)
     private Teacher teacher;
 
     @NotNull
@@ -69,10 +69,6 @@ public class Club extends BaseEntity {
     public void updateStatus(String name, ClubStatus clubStatus) {
         this.name = name;
         this.state = clubStatus;
-    }
-
-    public void join(Teacher teacher) {
-        this.teacher = teacher;
     }
 
     public void updateInfo(String name, String subject, String shortDescription, String description, String image) {

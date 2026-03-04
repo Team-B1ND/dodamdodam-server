@@ -8,8 +8,7 @@ import b1nd.dodam.domain.rds.club.service.ClubMemberService;
 import b1nd.dodam.domain.rds.club.service.ClubService;
 import b1nd.dodam.domain.rds.member.entity.Student;
 import b1nd.dodam.domain.rds.member.repository.StudentRepository;
-import b1nd.dodam.domain.rds.member.repository.TeacherRepository;
-import b1nd.dodam.restapi.auth.infrastructure.security.support.MemberAuthenticationHolder;
+ import b1nd.dodam.restapi.auth.infrastructure.security.support.MemberAuthenticationHolder;
 import b1nd.dodam.restapi.club.application.data.req.ClubTimeReq;
 import b1nd.dodam.restapi.club.application.data.req.CreateClubReq;
 import b1nd.dodam.restapi.club.application.data.req.UpdateClubInfoReq;
@@ -33,7 +32,6 @@ public class ClubUseCase {
     private final ClubMemberService clubMemberService;
     private final StudentRepository studentRepository;
     private final MemberAuthenticationHolder authHolder;
-    private final TeacherRepository teacherRepository;
 
     public Response save(ClubTimeReq req) {
         clubService.setClubTime(req.toEntity());
@@ -66,13 +64,6 @@ public class ClubUseCase {
         club.updateStatus(ClubStatus.PENDING, null);
         clubService.update(club);
         return Response.ok("동아리 대기 성공");
-    }
-
-    public Response setTeacher(Long clubId) {
-        Club club = clubService.findById(clubId);
-        club.join(teacherRepository.getByMember(authHolder.current()));
-        clubService.update(club);
-        return Response.ok("당담 교사 등록 성공");
     }
 
     public Response update(UpdateClubReq req) {
