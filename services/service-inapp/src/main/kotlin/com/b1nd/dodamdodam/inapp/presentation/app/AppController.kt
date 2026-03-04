@@ -5,9 +5,15 @@ import com.b1nd.dodamdodam.core.security.passport.enumerations.RoleType
 import com.b1nd.dodamdodam.inapp.application.app.AppUseCase
 import com.b1nd.dodamdodam.inapp.application.app.data.request.CreateAppReleaseRequest
 import com.b1nd.dodamdodam.inapp.application.app.data.request.CreateAppRequest
+import com.b1nd.dodamdodam.inapp.application.app.data.request.CreateAppServerRequest
+import com.b1nd.dodamdodam.inapp.application.app.data.request.DenyAppReleaseRequest
+import com.b1nd.dodamdodam.inapp.application.app.data.request.DenyAppServerRequest
 import com.b1nd.dodamdodam.inapp.application.app.data.request.EditAppRequest
+import com.b1nd.dodamdodam.inapp.application.app.data.request.EditAppServerRequest
 import com.b1nd.dodamdodam.inapp.application.app.data.request.ToggleAppReleaseRequest
+import com.b1nd.dodamdodam.inapp.application.app.data.request.ToggleAppServerRequest
 import com.b1nd.dodamdodam.inapp.application.app.data.request.UpdateAppReleaseStatusRequest
+import com.b1nd.dodamdodam.inapp.application.app.data.request.UpdateAppServerStatusRequest
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PatchMapping
@@ -43,15 +49,45 @@ class AppController(
     fun createRelease(@RequestBody request: CreateAppReleaseRequest) =
         appUseCase.createRelease(request)
 
+    @UserAccess
+    @PostMapping("/server")
+    fun createServer(@RequestBody request: CreateAppServerRequest) =
+        appUseCase.createServer(request)
+
     @UserAccess(roles = [RoleType.ADMIN])
     @PatchMapping("/release/status")
     fun updateReleaseStatus(@RequestBody request: UpdateAppReleaseStatusRequest) =
         appUseCase.updateReleaseStatus(request)
 
+    @UserAccess(roles = [RoleType.ADMIN])
+    @PatchMapping("/release/deny")
+    fun denyRelease(@RequestBody request: DenyAppReleaseRequest) =
+        appUseCase.denyRelease(request)
+
     @UserAccess
     @PatchMapping("/release/toggle")
     fun toggleRelease(@RequestBody request: ToggleAppReleaseRequest) =
         appUseCase.toggleRelease(request)
+
+    @UserAccess
+    @PatchMapping("/server")
+    fun editServer(@RequestBody request: EditAppServerRequest) =
+        appUseCase.editServer(request)
+
+    @UserAccess(roles = [RoleType.ADMIN])
+    @PatchMapping("/server/status")
+    fun updateServerStatus(@RequestBody request: UpdateAppServerStatusRequest) =
+        appUseCase.updateServerStatus(request)
+
+    @UserAccess(roles = [RoleType.ADMIN])
+    @PatchMapping("/server/deny")
+    fun denyServer(@RequestBody request: DenyAppServerRequest) =
+        appUseCase.denyServer(request)
+
+    @UserAccess
+    @PatchMapping("/server/toggle")
+    fun toggleServer(@RequestBody request: ToggleAppServerRequest) =
+        appUseCase.toggleServer(request)
 
     @UserAccess
     @GetMapping("/{appId}")

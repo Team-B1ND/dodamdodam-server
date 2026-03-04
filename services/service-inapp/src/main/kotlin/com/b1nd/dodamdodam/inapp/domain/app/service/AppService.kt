@@ -2,15 +2,24 @@ package com.b1nd.dodamdodam.inapp.domain.app.service
 
 import com.b1nd.dodamdodam.inapp.domain.app.entity.AppEntity
 import com.b1nd.dodamdodam.inapp.domain.app.entity.AppReleaseEntity
+import com.b1nd.dodamdodam.inapp.domain.app.entity.AppServerEntity
 import com.b1nd.dodamdodam.inapp.domain.app.enumeration.AppReleaseStatusType
+import com.b1nd.dodamdodam.inapp.domain.app.enumeration.AppServerStatusType
 import com.b1nd.dodamdodam.inapp.domain.app.exception.AppAlreadyExistException
+import com.b1nd.dodamdodam.inapp.domain.app.exception.AppDenyReasonRequiredException
 import com.b1nd.dodamdodam.inapp.domain.app.exception.AppNotFoundException
 import com.b1nd.dodamdodam.inapp.domain.app.exception.AppReleaseEnableNotAllowedException
 import com.b1nd.dodamdodam.inapp.domain.app.exception.AppReleaseNotFoundException
+import com.b1nd.dodamdodam.inapp.domain.app.exception.AppServerAlreadyExistException
+import com.b1nd.dodamdodam.inapp.domain.app.exception.AppServerEnableNotAllowedException
+import com.b1nd.dodamdodam.inapp.domain.app.exception.AppServerNotFoundException
+import com.b1nd.dodamdodam.inapp.domain.app.exception.AppServerPrefixLevelInvalidException
+import com.b1nd.dodamdodam.inapp.domain.app.exception.AppServerRedirectPathInvalidException
 import com.b1nd.dodamdodam.inapp.domain.app.exception.AppTeamMemberPermissionRequiredException
 import com.b1nd.dodamdodam.inapp.domain.app.exception.AppTeamOwnerPermissionRequiredException
 import com.b1nd.dodamdodam.inapp.domain.app.repository.AppReleaseRepository
 import com.b1nd.dodamdodam.inapp.domain.app.repository.AppRepository
+import com.b1nd.dodamdodam.inapp.domain.app.repository.AppServerRepository
 import com.b1nd.dodamdodam.inapp.domain.team.entity.TeamEntity
 import com.b1nd.dodamdodam.inapp.domain.team.repository.TeamMemberRepository
 import com.b1nd.dodamdodam.inapp.domain.team.repository.TeamRepository
@@ -21,9 +30,14 @@ import java.util.UUID
 class AppService(
     private val appRepository: AppRepository,
     private val appReleaseRepository: AppReleaseRepository,
+    private val appServerRepository: AppServerRepository,
     private val teamRepository: TeamRepository,
     private val teamMemberRepository: TeamMemberRepository
 ) {
+    companion object {
+        private val REDIRECT_PATH_REGEX = Regex("^/([A-Za-z0-9_-]+)(/[A-Za-z0-9_-]+)*$")
+    }
+
     fun create(
         userId: UUID,
         teamId: UUID,
@@ -32,22 +46,35 @@ class AppService(
         description: String?,
         iconUrl: String,
         darkIconUrl: String?,
-        inquiryMail: String
+        inquiryMail: String,
+        serverName: String?,
+        serverAddress: String?,
+        redirectPath: String?,
+        prefixLevel: Int?
     ): UUID {
         if (existByName(name)) throw AppAlreadyExistException()
         val team = getTeamWithMemberPermission(userId, teamId)
         val app = appRepository.save(AppEntity(name, description, subtitle, iconUrl, darkIconUrl, inquiryMail, team))
+        if (serverName != null && serverAddress != null && redirectPath != null && prefixLevel != null) {
+            createServerInternal(app, serverName, serverAddress, redirectPath, prefixLevel)
+        }
         return app.publicId!!
     }
 
-    fun createRelease(
+    fun createServer(
         userId: UUID,
         appId: UUID,
-        releaseUrl: String,
-        memo: String?
-    ): UUID {
-        val app = getApp(appId)
-        validateAppMember(userId, app)
+        name: String,
+        serverAddress: String,
+        redirectPath: String,
+        prefixLevel: Int
+    ) {
+        val app = getAppWithMemberPermission(userId, appId)
+        createServerInternal(app, name, serverAddress, redirectPath, prefixLevel)
+    }
+
+    fun createRelease(userId: UUID, appId: UUID, releaseUrl: String, memo: String?): UUID {
+        val app = getAppWithMemberPermission(userId, appId)
         val release = appReleaseRepository.save(
             AppReleaseEntity(
                 app = app,
@@ -62,13 +89,19 @@ class AppService(
     }
 
     fun updateReleaseStatus(userId: UUID, releaseId: UUID, status: AppReleaseStatusType, denyResult: String?) {
+        if (status == AppReleaseStatusType.DENIED) {
+            requireDenyReason(denyResult)
+        }
         val release = getRelease(releaseId)
         release.updateStatus(status, denyResult, userId)
     }
 
+    fun denyRelease(userId: UUID, releaseId: UUID, denyResult: String?) {
+        updateReleaseStatus(userId, releaseId, AppReleaseStatusType.DENIED, denyResult)
+    }
+
     fun toggleReleaseEnabled(userId: UUID, releaseId: UUID, enabled: Boolean) {
-        val release = getRelease(releaseId)
-        validateAppOwner(userId, release.app)
+        val release = getReleaseWithOwnerPermission(userId, releaseId)
         if (enabled && release.status != AppReleaseStatusType.ALLOWED) {
             throw AppReleaseEnableNotAllowedException()
         }
@@ -81,15 +114,15 @@ class AppService(
     }
 
     fun getReleases(userId: UUID, appId: UUID): List<AppReleaseEntity> {
-        val app = getApp(appId)
-        validateAppOwner(userId, app)
+        val app = getAppWithOwnerPermission(userId, appId)
         return appReleaseRepository.findAllByAppOrderByCreatedAtDesc(app)
     }
 
-    fun getAppDetail(appId: UUID): Pair<AppEntity, List<AppReleaseEntity>> {
+    fun getAppDetail(appId: UUID): Triple<AppEntity, AppServerEntity?, List<AppReleaseEntity>> {
         val app = getApp(appId)
+        val server = appServerRepository.findByApp(app)
         val releases = appReleaseRepository.findAllByAppOrderByCreatedAtDesc(app)
-        return app to releases
+        return Triple(app, server, releases)
     }
 
     fun getAppsByTeam(userId: UUID, teamId: UUID): List<AppEntity> {
@@ -115,17 +148,55 @@ class AppService(
         darkIconUrl: String?,
         inquiryMail: String?
     ) {
-        val app = getApp(appId)
-        validateAppMember(userId, app)
+        val app = getAppWithMemberPermission(userId, appId)
         name?.let {
             if (it != app.name && existByName(it)) throw AppAlreadyExistException()
         }
         app.update(name, subtitle, description, iconUrl, darkIconUrl, inquiryMail)
     }
 
-    fun deleteApp(userId: UUID, appId: UUID) {
+    fun updateServer(
+        userId: UUID,
+        appId: UUID,
+        name: String?,
+        serverAddress: String?,
+        redirectPath: String?,
+        prefixLevel: Int?
+    ) {
+        val app = getAppWithMemberPermission(userId, appId)
+        val server = getAppServer(app)
+        server.updateServerInfo(
+            name = name,
+            serverAddress = serverAddress,
+            redirectPath = redirectPath?.let { normalizeAndValidatePath(it) },
+            prefixLevel = prefixLevel?.let { normalizePrefixLevel(it) }
+        )
+    }
+
+    fun updateServerStatus(appId: UUID, status: AppServerStatusType, denyResult: String?) {
+        if (status == AppServerStatusType.DENIED) {
+            requireDenyReason(denyResult)
+        }
         val app = getApp(appId)
-        validateAppOwner(userId, app)
+        val server = getAppServer(app)
+        server.updateStatus(status, denyResult)
+    }
+
+    fun denyServer(appId: UUID, denyResult: String?) {
+        updateServerStatus(appId, AppServerStatusType.DENIED, denyResult)
+    }
+
+    fun toggleServerEnabled(userId: UUID, appId: UUID, enabled: Boolean) {
+        val app = getAppWithMemberPermission(userId, appId)
+        val server = getAppServer(app)
+        if (enabled && server.status != AppServerStatusType.ALLOWED) {
+            throw AppServerEnableNotAllowedException()
+        }
+        server.updateEnabled(enabled)
+    }
+
+    fun deleteApp(userId: UUID, appId: UUID) {
+        val app = getAppWithOwnerPermission(userId, appId)
         appRepository.delete(app)
     }
 
@@ -139,15 +210,6 @@ class AppService(
     private fun getRelease(releaseId: UUID): AppReleaseEntity =
         appReleaseRepository.findByPublicId(releaseId)
             ?: throw AppReleaseNotFoundException()
-
-    private fun getTeamWithOwnerPermission(userId: UUID, teamId: UUID): TeamEntity {
-        val team = teamRepository.findByPublicId(teamId)
-            ?: throw AppTeamOwnerPermissionRequiredException()
-        if (!teamMemberRepository.existsByUserAndTeamAndIsOwnerIsTrue(userId, team)) {
-            throw AppTeamOwnerPermissionRequiredException()
-        }
-        return team
-    }
 
     private fun validateAppOwner(userId: UUID, app: AppEntity) {
         if (!teamMemberRepository.existsByUserAndTeamAndIsOwnerIsTrue(userId, app.team)) {
@@ -167,6 +229,59 @@ class AppService(
     private fun validateAppMember(userId: UUID, app: AppEntity) {
         if (!teamMemberRepository.existsByUserAndTeam(userId, app.team)) {
             throw AppTeamMemberPermissionRequiredException()
+        }
+    }
+
+    private fun getAppWithMemberPermission(userId: UUID, appId: UUID): AppEntity =
+        getApp(appId).also { validateAppMember(userId, it) }
+
+    private fun getAppWithOwnerPermission(userId: UUID, appId: UUID): AppEntity =
+        getApp(appId).also { validateAppOwner(userId, it) }
+
+    private fun getReleaseWithOwnerPermission(userId: UUID, releaseId: UUID): AppReleaseEntity =
+        getRelease(releaseId).also { validateAppOwner(userId, it.app) }
+
+    private fun getAppServer(app: AppEntity): AppServerEntity =
+        appServerRepository.findByApp(app)
+            ?: throw AppServerNotFoundException()
+
+    private fun createServerInternal(
+        app: AppEntity,
+        name: String,
+        serverAddress: String,
+        redirectPath: String,
+        prefixLevel: Int
+    ) {
+        if (appServerRepository.existsByApp(app)) throw AppServerAlreadyExistException()
+        appServerRepository.save(
+            AppServerEntity(
+                app = app,
+                name = name,
+                serverAddress = serverAddress,
+                redirectPath = normalizeAndValidatePath(redirectPath),
+                prefixLevel = normalizePrefixLevel(prefixLevel),
+                enabled = false,
+                status = AppServerStatusType.PENDING
+            )
+        )
+    }
+
+    private fun normalizePrefixLevel(prefixLevel: Int): Int {
+        if (prefixLevel == 0 || prefixLevel == 1) return prefixLevel
+        throw AppServerPrefixLevelInvalidException()
+    }
+
+    private fun normalizeAndValidatePath(path: String): String {
+        val normalized = if (path.startsWith("/")) path else "/$path"
+        if (!REDIRECT_PATH_REGEX.matches(normalized)) {
+            throw AppServerRedirectPathInvalidException()
+        }
+        return normalized
+    }
+
+    private fun requireDenyReason(denyResult: String?) {
+        if (denyResult.isNullOrBlank()) {
+            throw AppDenyReasonRequiredException()
         }
     }
 }
