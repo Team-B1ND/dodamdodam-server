@@ -39,4 +39,20 @@ class AppEntity(
     fun generatePublicId() {
         publicId = UUID.randomUUID()
     }
+
+    fun update(
+        name: String?,
+        subtitle: String?,
+        description: String?,
+        iconUrl: String?,
+        darkIconUrl: String?,
+        inquiryMail: String?
+    ) {
+        name?.let { this.name = it }
+        subtitle?.let { this.subtitle = it }
+        description?.let { this.description = it }
+        iconUrl?.let { this.iconUrl = it }
+        darkIconUrl?.let { this.darkIconUrl = it }
+        inquiryMail?.let { this.inquiryMail = it }
+    }
 }

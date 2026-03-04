@@ -8,4 +8,7 @@ import java.util.UUID
 interface TeamMemberRepository: JpaRepository<TeamMemberEntity, Long> {
     fun deleteAllByTeam(team: TeamEntity)
     fun deleteAllByTeamAndUserIn(team: TeamEntity, users: List<UUID>)
+    fun existsByUserAndTeam(user: UUID, team: TeamEntity): Boolean
+    fun existsByUserAndTeamAndIsOwnerIsTrue(user: UUID, team: TeamEntity): Boolean
+    fun findAllByUser(user: UUID): MutableList<TeamMemberEntity>
 }

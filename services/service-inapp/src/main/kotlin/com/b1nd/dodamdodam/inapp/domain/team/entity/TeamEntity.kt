@@ -8,12 +8,10 @@ import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
 import jakarta.persistence.PrePersist
 import jakarta.persistence.Table
-import org.hibernate.annotations.SoftDelete
 import java.util.UUID
 
 @Entity
 @Table(name = "teams")
-@SoftDelete
 class TeamEntity(
     var name: String,
     var description: String? = null,

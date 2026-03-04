@@ -33,6 +33,12 @@ spring:
             - Path=/wakeup-song/**
           filters:
             - StripPrefix=1
+        - id: inapp-service
+          uri: http://localhost:8085
+          predicates:
+            - Path=/inapp/**
+          filters:
+            - StripPrefix=1
 
 app:
   auth:

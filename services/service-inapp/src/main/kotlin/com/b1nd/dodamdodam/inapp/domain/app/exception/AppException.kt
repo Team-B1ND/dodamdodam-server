@@ -1,0 +1,15 @@
+package com.b1nd.dodamdodam.inapp.domain.app.exception
+
+import com.b1nd.dodamdodam.core.common.exception.BasicException
+
+class AppAlreadyExistException: BasicException(AppExceptionCode.APP_ALREADY_EXIST)
+
+class AppNotFoundException: BasicException(AppExceptionCode.APP_NOT_FOUND)
+
+class AppReleaseNotFoundException: BasicException(AppExceptionCode.APP_RELEASE_NOT_FOUND)
+
+class AppReleaseEnableNotAllowedException: BasicException(AppExceptionCode.APP_RELEASE_ENABLE_NOT_ALLOWED)
+
+class AppTeamMemberPermissionRequiredException: BasicException(AppExceptionCode.APP_TEAM_MEMBER_PERMISSION_REQUIRED)
+
+class AppTeamOwnerPermissionRequiredException: BasicException(AppExceptionCode.APP_TEAM_OWNER_PERMISSION_REQUIRED)

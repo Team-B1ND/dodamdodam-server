@@ -9,7 +9,7 @@ spring:
     gateway:
       httpclient:
         connect-timeout: 3000
-        response-timeout: 5s
+        response-timeout: 60s
 
   flyway:
     locations: classpath:database/migration

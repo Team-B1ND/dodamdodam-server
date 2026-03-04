@@ -14,7 +14,7 @@ data class CreateTeamRequest(
         TeamEntity(
             name = name,
             description = description,
-            icon = iconUrl,
+            iconUrl = iconUrl,
             githubUrl = githubUrl
         )
 }
