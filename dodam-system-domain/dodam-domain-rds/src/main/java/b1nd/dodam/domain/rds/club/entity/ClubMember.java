@@ -1,7 +1,6 @@
 package b1nd.dodam.domain.rds.club.entity;
 
 import b1nd.dodam.domain.rds.club.enumeration.ClubPermission;
-import b1nd.dodam.domain.rds.club.enumeration.ClubPriority;
 import b1nd.dodam.domain.rds.club.enumeration.ClubStatus;
 import b1nd.dodam.domain.rds.member.entity.Student;
 import b1nd.dodam.domain.rds.support.entity.BaseEntity;
@@ -30,9 +29,6 @@ public class ClubMember extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private ClubStatus clubStatus;
 
-    @Enumerated(EnumType.STRING)
-    private ClubPriority priority;
-
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "fk_student_id", nullable = false)
@@ -49,17 +45,12 @@ public class ClubMember extends BaseEntity {
     private String introduction;
 
     @Builder
-    public ClubMember(Student student, Club club, ClubPriority priority, ClubStatus clubStatus, ClubPermission permission, String introduction) {
+    public ClubMember(Student student, Club club, ClubStatus clubStatus, ClubPermission permission, String introduction) {
         this.student = student;
         this.club = club;
-        this.priority = priority;
         this.clubStatus = clubStatus;
         this.permission = permission;
         this.introduction = introduction;
-    }
-
-    public boolean isFirstChoice() {
-        return priority.equals(ClubPriority.CREATIVE_ACTIVITY_CLUB_1);
     }
 
     public void modifyStatus(ClubStatus clubStatus) {

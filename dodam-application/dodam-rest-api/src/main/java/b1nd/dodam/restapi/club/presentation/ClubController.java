@@ -37,9 +37,9 @@ public class ClubController {
 
     @PostMapping("/join-requests")
     public Response joinRequest(
-            @RequestBody @Valid List<JoinClubMemberReq> req
+            @RequestBody @Valid JoinClubMemberReq req
     ) {
-        return clubMemberUseCase.joinClubs(req);
+        return clubMemberUseCase.joinClub(req);
     }
 
     @PostMapping("/{id}/waiting")

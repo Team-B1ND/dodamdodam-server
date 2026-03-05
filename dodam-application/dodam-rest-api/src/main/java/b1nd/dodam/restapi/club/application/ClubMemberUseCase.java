@@ -1,5 +1,6 @@
 package b1nd.dodam.restapi.club.application;
 
+import b1nd.dodam.domain.rds.club.entity.Club;
 import b1nd.dodam.domain.rds.club.enumeration.ClubStatus;
 import b1nd.dodam.domain.rds.club.enumeration.ClubTimeType;
 import b1nd.dodam.domain.rds.club.service.ClubMemberService;
@@ -29,17 +30,12 @@ public class ClubMemberUseCase {
     private final MemberAuthenticationHolder authenticationHolder;
     private final StudentRepository studentRepository;
 
-    public Response joinClubs(List<JoinClubMemberReq> reqs) {
+    public Response joinClub(JoinClubMemberReq req) {
         clubService.validateApplicationDuration(ClubTimeType.CLUB_APPLICANT);
         Student student = studentRepository.getByMember(authenticationHolder.current());
-        boolean clubJoined = clubMemberService.isCreativeClubJoined(student);
-        if (clubJoined) {
-            filterCreativeClub(reqs);
-        }
-        clubMemberService.saveAndValidateClubMembers(reqs.stream()
-            .map(req -> req.toEntity(student, clubMemberService.findClubIfNotClubMember(req.clubId(), ClubStatus.ALLOWED, student, ClubStatus.DELETED)))
-            .toList()
-        );
+        clubMemberService.validateNoActiveCreativeClub(student);
+        Club club = clubMemberService.findClubIfNotClubMember(req.clubId(), ClubStatus.ALLOWED, student, ClubStatus.DELETED);
+        clubMemberService.saveAndValidateClubMembers(List.of(req.toEntity(student, club)));
         return Response.ok("동아리 입부 신청 성공");
     }
 
@@ -110,10 +106,6 @@ public class ClubMemberUseCase {
                     ? clubMemberService.getAllClubMembers(id).stream().map(ClubStudentRes::of).toList()
                     : clubMemberService.getStatusClubMembers(id, ClubStatus.ALLOWED).stream().map(ClubStudentRes::of).toList()
         );
-    }
-
-    private void filterCreativeClub(List<JoinClubMemberReq> reqs) {
-        reqs.removeIf(req -> req.clubPriority() != null);
     }
 
 }

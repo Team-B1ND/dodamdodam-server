@@ -160,8 +160,14 @@ public class ClubMemberService {
         }
     }
 
-    public boolean isCreativeClubJoined(Student student) {
-        return !clubMemberRepository.findByStudentAndClubStatusInAndClub_TypeAndClub_State(student, List.of(ClubStatus.ALLOWED, ClubStatus.PENDING), ClubType.CREATIVE_ACTIVITY_CLUB, ClubStatus.ALLOWED).isEmpty();
+    public void validateNoActiveCreativeClub(Student student) {
+        boolean hasActive = !clubMemberRepository.findByStudentAndClubStatusInAndClub_TypeAndClub_State(
+                student, List.of(ClubStatus.ALLOWED, ClubStatus.PENDING),
+                ClubType.CREATIVE_ACTIVITY_CLUB, ClubStatus.ALLOWED
+        ).isEmpty();
+        if (hasActive) {
+            throw new ClubJoinedException();
+        }
     }
 
     public boolean isClubLeader(Long clubId,  Member member) {
