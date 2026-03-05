@@ -28,11 +28,13 @@ include(":core:core-kafka")
 include(":core:core-security")
 include("core:core-jpa")
 include("core:core-grpc")
+include("core:core-redis")
 
 // Service modules
 include(":services:service-gateway")
 include(":services:service-auth")
 include(":services:service-user")
+include("services:service-inapp")
 include(":services:service-wakeup-song")
 
 rootProject.name = "dodamdodam-server"

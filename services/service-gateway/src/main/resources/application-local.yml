@@ -33,11 +33,19 @@ spring:
             - Path=/wakeup-song/**
           filters:
             - StripPrefix=1
+        - id: inapp-service
+          uri: http://localhost:8085
+          predicates:
+            - Path=/inapp/**
+          filters:
+            - StripPrefix=1
 
 app:
   auth:
     url: http://localhost:8082
-
+  kafka:
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS}
+    consumer-group-id: service-gateway
 server:
   port: 8080
 

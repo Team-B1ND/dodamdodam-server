@@ -83,6 +83,9 @@ class UserService(
             throw UserPasswordIncorrectException()
     }
 
+    fun getByUsername(username: String): UserEntity =
+        userRepository.findByUsername(username) ?: throw UserNotFoundException()
+
     private fun checkDuplicateUser(username: String) {
         if (userRepository.existsByUsername(username))
             throw UserAlreadyExistsException()

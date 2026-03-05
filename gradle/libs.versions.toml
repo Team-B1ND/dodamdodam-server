@@ -34,6 +34,7 @@ mysql-r2dbcDriver = { module = "io.asyncer:r2dbc-mysql", version.ref = "r2dbcMys
 springBootStarterData-jdbc = { module = "org.springframework.boot:spring-boot-starter-data-jdbc" }
 springBootStarterData-r2dbc = { module = "org.springframework.boot:spring-boot-starter-data-r2dbc" }
 springBootStarterData-jpa = { module = "org.springframework.boot:spring-boot-starter-data-jpa" }
+springBootStarterData-redis = { module = "org.springframework.boot:spring-boot-starter-data-redis" }
 flywayCore = { module = "org.flywaydb:flyway-core" }
 flywayMysql = { module = "org.flywaydb:flyway-mysql" }
 

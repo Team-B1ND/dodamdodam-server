@@ -23,7 +23,7 @@ class DbRouteDefinitionRepository(
                     uri = URI.create(entity.targetUri)
 
                     predicates = listOf(
-                        PredicateDefinition("Path=${entity.path}")
+                        PredicateDefinition(buildPathPredicate(entity.path))
                     )
 
                     filters = listOf(
@@ -36,4 +36,9 @@ class DbRouteDefinitionRepository(
     override fun save(route: Mono<RouteDefinition>): Mono<Void> = Mono.empty()
     override fun delete(routeId: Mono<String>): Mono<Void> = Mono.empty()
 
+    private fun buildPathPredicate(path: String): String {
+        val normalized = if (path.startsWith("/")) path else "/$path"
+        if (normalized.contains("*")) return "Path=$normalized"
+        return "Path=$normalized,$normalized/**"
+    }
 }
