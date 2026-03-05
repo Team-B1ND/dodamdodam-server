@@ -160,6 +160,12 @@ public class ClubMemberService {
         }
     }
 
+    public void validateFirstGrade(Student student) {
+        if (student.getGrade() != 1) {
+            throw new ClubApplicationNotAllowedException();
+        }
+    }
+
     public void validateNoActiveCreativeClub(Student student) {
         boolean hasActive = !clubMemberRepository.findByStudentAndClubStatusInAndClub_TypeAndClub_State(
                 student, List.of(ClubStatus.ALLOWED, ClubStatus.PENDING),

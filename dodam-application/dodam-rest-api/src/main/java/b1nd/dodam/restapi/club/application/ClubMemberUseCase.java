@@ -33,6 +33,7 @@ public class ClubMemberUseCase {
     public Response joinClub(JoinClubMemberReq req) {
         clubService.validateApplicationDuration(ClubTimeType.CLUB_APPLICANT);
         Student student = studentRepository.getByMember(authenticationHolder.current());
+        clubMemberService.validateFirstGrade(student);
         clubMemberService.validateNoActiveCreativeClub(student);
         Club club = clubMemberService.findClubIfNotClubMember(req.clubId(), ClubStatus.ALLOWED, student, ClubStatus.DELETED);
         clubMemberService.saveAndValidateClubMembers(List.of(req.toEntity(student, club)));
