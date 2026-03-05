@@ -13,6 +13,7 @@ import reactor.netty.resources.ConnectionProvider;
 
 import javax.net.ssl.SSLException;
 import java.time.Duration;
+import java.util.List;
 
 @Configuration
 public class WebClientConfig {
@@ -21,7 +22,13 @@ public class WebClientConfig {
     public WebClient webClient(ConnectionProvider connectionProvider) throws SSLException {
         SslContext sslContext = SslContextBuilder.forClient()
                 .protocols("TLSv1.2", "TLSv1.3")
-                .ciphers(null)
+                .ciphers(List.of(
+                        "TLS_AES_256_GCM_SHA384",
+                        "TLS_AES_128_GCM_SHA256",
+                        "TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384",
+                        "TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256",
+                        "TLS_RSA_WITH_AES_256_CBC_SHA"
+                ))
                 .build();
 
         HttpClient httpClient = HttpClient.create(connectionProvider)
