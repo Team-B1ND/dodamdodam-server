@@ -13,7 +13,7 @@ class NightStudyBanController(
     private val nightStudyBanUseCase: NightStudyBanUseCase
 ) {
 
-    @UserAccess(roles = [RoleType.TEACHER])
+    @UserAccess(roles = [RoleType.DORMITORY_MANAGER])
     @PostMapping
     fun create(@RequestBody request: CreateNightStudyBanRequest) =
         nightStudyBanUseCase.create(request)
@@ -27,7 +27,7 @@ class NightStudyBanController(
     @GetMapping("/me")
     fun getMy() = nightStudyBanUseCase.getMy()
 
-    @UserAccess(roles = [RoleType.TEACHER])
+    @UserAccess(roles = [RoleType.DORMITORY_MANAGER])
     @DeleteMapping
     fun deleteByUserId(@RequestParam userId: UUID) =
         nightStudyBanUseCase.deleteByUserId(userId)

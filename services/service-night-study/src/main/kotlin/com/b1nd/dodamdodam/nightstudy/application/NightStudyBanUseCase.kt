@@ -19,8 +19,7 @@ class NightStudyBanUseCase(
 ) {
 
     fun create(request: CreateNightStudyBanRequest): Response<Any> {
-        val entity = request.toEntity()
-        nightStudyBanService.save(entity)
+        nightStudyBanService.create(request.toEntity())
         return Response.created("심야자습 정지가 등록되었어요.")
     }
 

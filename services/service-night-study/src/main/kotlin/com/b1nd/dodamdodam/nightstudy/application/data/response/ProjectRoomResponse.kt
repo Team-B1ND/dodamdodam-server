@@ -1,6 +1,6 @@
 package com.b1nd.dodamdodam.nightstudy.application.data.response
 
-import com.b1nd.dodamdodam.nightstudy.domain.project.enumeration.ProjectRoom
+import com.b1nd.dodamdodam.nightstudy.domain.nightstudy.enumeration.ProjectRoom
 
 data class ProjectRoomResponse(
     val room: ProjectRoom,

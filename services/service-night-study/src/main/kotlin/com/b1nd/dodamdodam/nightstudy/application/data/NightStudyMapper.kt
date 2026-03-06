@@ -9,8 +9,7 @@ import com.b1nd.dodamdodam.nightstudy.application.data.response.NightStudyRespon
 import com.b1nd.dodamdodam.nightstudy.application.data.response.ProjectRoomResponse
 import com.b1nd.dodamdodam.nightstudy.domain.ban.entity.NightStudyBanEntity
 import com.b1nd.dodamdodam.nightstudy.domain.nightstudy.entity.NightStudyEntity
-import com.b1nd.dodamdodam.nightstudy.domain.project.entity.NightStudyProjectEntity
-import com.b1nd.dodamdodam.nightstudy.domain.project.entity.NightStudyProjectMemberEntity
+import com.b1nd.dodamdodam.nightstudy.domain.nightstudy.entity.NightStudyMemberEntity
 import java.util.UUID
 
 fun NightStudyEntity.toResponse(): NightStudyResponse =
@@ -40,47 +39,47 @@ fun ApplyNightStudyRequest.toEntity(userId: UUID): NightStudyEntity =
         endAt = endAt
     )
 
-fun NightStudyProjectEntity.toResponse(): NightStudyProjectResponse =
+fun NightStudyEntity.toProjectResponse(): NightStudyProjectResponse =
     NightStudyProjectResponse(
         id = id!!,
         userId = userId,
         type = type,
-        name = name,
-        description = description,
+        name = name!!,
+        description = content,
         startAt = startAt,
         endAt = endAt,
         status = status,
         room = room,
         rejectReason = rejectReason,
-        memberUserIds = members.map { it.userId },
+        userIds = members.map { it.userId },
         createdAt = createdAt,
         modifiedAt = modifiedAt
     )
 
-fun ApplyNightStudyProjectRequest.toEntity(userId: UUID): NightStudyProjectEntity {
-    val project = NightStudyProjectEntity(
+fun ApplyNightStudyProjectRequest.toEntity(userId: UUID): NightStudyEntity {
+    val nightStudy = NightStudyEntity(
         userId = userId,
+        content = description,
         type = type,
         name = name,
-        description = description,
         startAt = startAt,
         endAt = endAt
     )
     val memberEntities = memberUserIds.map { memberId ->
-        NightStudyProjectMemberEntity(
-            project = project,
+        NightStudyMemberEntity(
+            nightStudy = nightStudy,
             userId = memberId
         )
     }
-    project.members.addAll(memberEntities)
-    return project
+    nightStudy.members.addAll(memberEntities)
+    return nightStudy
 }
 
-fun NightStudyProjectEntity.toRoomResponse(): ProjectRoomResponse =
+fun NightStudyEntity.toRoomResponse(): ProjectRoomResponse =
     ProjectRoomResponse(
         room = room!!,
         projectId = id!!,
-        projectName = name
+        projectName = name!!
     )
 
 fun NightStudyBanEntity.toResponse(): NightStudyBanResponse =

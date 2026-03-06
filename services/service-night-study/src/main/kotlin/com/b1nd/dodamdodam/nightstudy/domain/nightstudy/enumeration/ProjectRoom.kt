@@ -1,4 +1,4 @@
-package com.b1nd.dodamdodam.nightstudy.domain.project.enumeration
+package com.b1nd.dodamdodam.nightstudy.domain.nightstudy.enumeration
 
 enum class ProjectRoom {
     LAB_12,

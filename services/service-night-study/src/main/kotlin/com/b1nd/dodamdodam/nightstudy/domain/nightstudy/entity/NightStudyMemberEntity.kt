@@ -1,16 +1,16 @@
-package com.b1nd.dodamdodam.nightstudy.domain.project.entity
+package com.b1nd.dodamdodam.nightstudy.domain.nightstudy.entity
 
 import com.b1nd.dodamdodam.core.jpa.entity.BaseTimeEntity
 import jakarta.persistence.*
 import java.util.UUID
 
 @Entity
-@Table(name = "night_study_project_members")
-class NightStudyProjectMemberEntity(
+@Table(name = "night_study_members")
+class NightStudyMemberEntity(
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "project_id", nullable = false)
-    val project: NightStudyProjectEntity,
+    @JoinColumn(name = "night_study_id", nullable = false)
+    val nightStudy: NightStudyEntity,
 
     @Column(nullable = false, columnDefinition = "BINARY(16)")
     val userId: UUID

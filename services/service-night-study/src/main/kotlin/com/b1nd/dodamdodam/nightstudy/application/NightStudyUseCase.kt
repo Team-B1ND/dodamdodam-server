@@ -8,12 +8,12 @@ import com.b1nd.dodamdodam.nightstudy.application.data.request.RejectNightStudyR
 import com.b1nd.dodamdodam.nightstudy.application.data.response.CombinedNightStudyResponse
 import com.b1nd.dodamdodam.nightstudy.application.data.response.NightStudyResponse
 import com.b1nd.dodamdodam.nightstudy.application.data.toEntity
+import com.b1nd.dodamdodam.nightstudy.application.data.toProjectResponse
 import com.b1nd.dodamdodam.nightstudy.application.data.toResponse
 import com.b1nd.dodamdodam.nightstudy.domain.ban.service.NightStudyBanService
 import com.b1nd.dodamdodam.nightstudy.domain.nightstudy.exception.NightStudyBannedException
 import com.b1nd.dodamdodam.nightstudy.domain.nightstudy.exception.NightStudyNotOwnerException
 import com.b1nd.dodamdodam.nightstudy.domain.nightstudy.service.NightStudyService
-import com.b1nd.dodamdodam.nightstudy.domain.project.service.NightStudyProjectService
 import org.springframework.stereotype.Component
 import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDate
@@ -22,8 +22,7 @@ import java.time.LocalDate
 @Transactional(rollbackFor = [Exception::class])
 class NightStudyUseCase(
     private val nightStudyService: NightStudyService,
-    private val nightStudyBanService: NightStudyBanService,
-    private val nightStudyProjectService: NightStudyProjectService
+    private val nightStudyBanService: NightStudyBanService
 ) {
 
     fun apply(request: ApplyNightStudyRequest): Response<Any> {
@@ -96,7 +95,7 @@ class NightStudyUseCase(
     fun getCombined(): Response<CombinedNightStudyResponse> {
         val today = LocalDate.now()
         val nightStudies = nightStudyService.getAllowed(today).map { it.toResponse() }
-        val projects = nightStudyProjectService.getAllowed(today).map { it.toResponse() }
+        val projects = nightStudyService.getAllowedProjects(today).map { it.toProjectResponse() }
         val combined = CombinedNightStudyResponse(
             nightStudies = nightStudies,
             projects = projects

@@ -3,6 +3,7 @@ package com.b1nd.dodamdodam.nightstudy.domain.nightstudy.entity
 import com.b1nd.dodamdodam.core.jpa.entity.BaseTimeEntity
 import com.b1nd.dodamdodam.nightstudy.domain.nightstudy.enumeration.NightStudyStatus
 import com.b1nd.dodamdodam.nightstudy.domain.nightstudy.enumeration.NightStudyType
+import com.b1nd.dodamdodam.nightstudy.domain.nightstudy.enumeration.ProjectRoom
 import jakarta.persistence.*
 import java.time.LocalDate
 import java.util.UUID
@@ -21,6 +22,8 @@ class NightStudyEntity(
     @Column(nullable = false, length = 20)
     val type: NightStudyType = NightStudyType.NIGHT_STUDY_2,
 
+    val name: String? = null,
+
     @Column(nullable = false)
     val doNeedPhone: Boolean = false,
 
@@ -36,7 +39,14 @@ class NightStudyEntity(
     @Column(nullable = false, length = 20)
     var status: NightStudyStatus = NightStudyStatus.PENDING,
 
-    var rejectReason: String? = null
+    @Enumerated(EnumType.STRING)
+    @Column(length = 20)
+    var room: ProjectRoom? = null,
+
+    var rejectReason: String? = null,
+
+    @OneToMany(mappedBy = "nightStudy", cascade = [CascadeType.ALL], orphanRemoval = true)
+    val members: MutableList<NightStudyMemberEntity> = mutableListOf()
 ) : BaseTimeEntity() {
 
     @Id
@@ -48,6 +58,12 @@ class NightStudyEntity(
         this.rejectReason = null
     }
 
+    fun allow(room: ProjectRoom) {
+        this.status = NightStudyStatus.ALLOWED
+        this.room = room
+        this.rejectReason = null
+    }
+
     fun reject(reason: String?) {
         this.status = NightStudyStatus.REJECTED
         this.rejectReason = reason
@@ -55,6 +71,7 @@ class NightStudyEntity(
 
     fun revert() {
         this.status = NightStudyStatus.PENDING
+        this.room = null
         this.rejectReason = null
     }
 }

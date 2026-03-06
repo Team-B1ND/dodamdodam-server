@@ -25,28 +25,28 @@ class NightStudyController(
     @GetMapping("/me")
     fun getMy() = nightStudyUseCase.getMy()
 
-    @UserAccess(roles = [RoleType.TEACHER])
+    @UserAccess(roles = [RoleType.DORMITORY_MANAGER])
     @GetMapping
     fun getAllowed() = nightStudyUseCase.getAllowed()
 
-    @UserAccess(roles = [RoleType.TEACHER])
+    @UserAccess(roles = [RoleType.DORMITORY_MANAGER])
     @GetMapping("/all")
     fun getAll() = nightStudyUseCase.getAll()
 
-    @UserAccess(roles = [RoleType.TEACHER])
+    @UserAccess(roles = [RoleType.DORMITORY_MANAGER])
     @GetMapping("/pending")
     fun getPending() = nightStudyUseCase.getPending()
 
-    @UserAccess(roles = [RoleType.TEACHER])
+    @UserAccess(roles = [RoleType.DORMITORY_MANAGER])
     @PatchMapping("/{id}/allow")
     fun allow(@PathVariable id: Long) = nightStudyUseCase.allow(id)
 
-    @UserAccess(roles = [RoleType.TEACHER])
+    @UserAccess(roles = [RoleType.DORMITORY_MANAGER])
     @PatchMapping("/{id}/reject")
     fun reject(@PathVariable id: Long, @RequestBody request: RejectNightStudyRequest) =
         nightStudyUseCase.reject(id, request)
 
-    @UserAccess(roles = [RoleType.TEACHER])
+    @UserAccess(roles = [RoleType.DORMITORY_MANAGER])
     @PatchMapping("/{id}/revert")
     fun revert(@PathVariable id: Long) = nightStudyUseCase.revert(id)
 
@@ -54,11 +54,11 @@ class NightStudyController(
     @DeleteMapping("/{id}")
     fun delete(@PathVariable id: Long) = nightStudyUseCase.delete(id)
 
-    @UserAccess(roles = [RoleType.TEACHER])
+    @UserAccess(roles = [RoleType.DORMITORY_MANAGER])
     @GetMapping("/projects")
     fun getValidProjects() = nightStudyProjectUseCase.getValid()
 
-    @UserAccess(roles = [RoleType.TEACHER])
+    @UserAccess(roles = [RoleType.DORMITORY_MANAGER])
     @GetMapping("/bans")
     fun getAllBans() = nightStudyBanUseCase.getAll()
 

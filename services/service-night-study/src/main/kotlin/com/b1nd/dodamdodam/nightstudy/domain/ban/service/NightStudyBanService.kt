@@ -11,7 +11,7 @@ class NightStudyBanService(
     private val nightStudyBanRepository: NightStudyBanRepository
 ) {
 
-    fun save(ban: NightStudyBanEntity): NightStudyBanEntity =
+    fun create(ban: NightStudyBanEntity): NightStudyBanEntity =
         nightStudyBanRepository.save(ban)
 
     fun getActiveBansByUserId(userId: UUID): List<NightStudyBanEntity> =
