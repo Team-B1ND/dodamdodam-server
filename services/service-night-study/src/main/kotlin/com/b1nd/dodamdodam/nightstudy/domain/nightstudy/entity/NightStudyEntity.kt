@@ -5,11 +5,13 @@ import com.b1nd.dodamdodam.nightstudy.domain.nightstudy.enumeration.NightStudySt
 import com.b1nd.dodamdodam.nightstudy.domain.nightstudy.enumeration.NightStudyType
 import com.b1nd.dodamdodam.nightstudy.domain.nightstudy.enumeration.ProjectRoom
 import jakarta.persistence.*
+import org.hibernate.annotations.SQLRestriction
 import java.time.LocalDate
 import java.util.UUID
 
 @Entity
 @Table(name = "night_studies")
+@SQLRestriction("is_deleted = false")
 class NightStudyEntity(
 
     @Column(nullable = false, columnDefinition = "BINARY(16)")
@@ -45,8 +47,8 @@ class NightStudyEntity(
 
     var rejectReason: String? = null,
 
-    @OneToMany(mappedBy = "nightStudy", cascade = [CascadeType.ALL], orphanRemoval = true)
-    val members: MutableList<NightStudyMemberEntity> = mutableListOf()
+    @Column(nullable = false)
+    var isDeleted: Boolean = false
 ) : BaseTimeEntity() {
 
     @Id
@@ -73,5 +75,9 @@ class NightStudyEntity(
         this.status = NightStudyStatus.PENDING
         this.room = null
         this.rejectReason = null
+    }
+
+    fun softDelete() {
+        this.isDeleted = true
     }
 }

@@ -8,9 +8,8 @@ import java.util.UUID
 @Table(name = "night_study_members")
 class NightStudyMemberEntity(
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "night_study_id", nullable = false)
-    val nightStudy: NightStudyEntity,
+    @Column(name = "night_study_id", nullable = false)
+    val nightStudyId: Long,
 
     @Column(nullable = false, columnDefinition = "BINARY(16)")
     val userId: UUID

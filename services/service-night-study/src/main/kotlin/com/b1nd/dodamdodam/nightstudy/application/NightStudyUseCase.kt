@@ -87,7 +87,7 @@ class NightStudyUseCase(
         if (nightStudy.userId != userId) {
             throw NightStudyNotOwnerException()
         }
-        nightStudyService.delete(nightStudy)
+        nightStudyService.softDelete(nightStudy)
         return Response.ok("심야자습이 삭제되었어요.")
     }
 
@@ -95,7 +95,14 @@ class NightStudyUseCase(
     fun getCombined(): Response<CombinedNightStudyResponse> {
         val today = LocalDate.now()
         val nightStudies = nightStudyService.getAllowed(today).map { it.toResponse() }
-        val projects = nightStudyService.getAllowedProjects(today).map { it.toProjectResponse() }
+        val projectEntities = nightStudyService.getAllowedProjects(today)
+        val nightStudyIds = projectEntities.mapNotNull { it.id }
+        val membersMap = nightStudyService.getMembersByNightStudyIds(nightStudyIds)
+            .groupBy { it.nightStudyId }
+        val projects = projectEntities.map { project ->
+            val memberUserIds = membersMap[project.id]?.map { it.userId } ?: emptyList()
+            project.toProjectResponse(memberUserIds)
+        }
         val combined = CombinedNightStudyResponse(
             nightStudies = nightStudies,
             projects = projects

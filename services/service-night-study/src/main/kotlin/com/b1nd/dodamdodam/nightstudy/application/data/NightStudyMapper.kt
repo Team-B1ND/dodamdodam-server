@@ -39,7 +39,7 @@ fun ApplyNightStudyRequest.toEntity(userId: UUID): NightStudyEntity =
         endAt = endAt
     )
 
-fun NightStudyEntity.toProjectResponse(): NightStudyProjectResponse =
+fun NightStudyEntity.toProjectResponse(memberUserIds: List<UUID>): NightStudyProjectResponse =
     NightStudyProjectResponse(
         id = id!!,
         userId = userId,
@@ -51,13 +51,13 @@ fun NightStudyEntity.toProjectResponse(): NightStudyProjectResponse =
         status = status,
         room = room,
         rejectReason = rejectReason,
-        userIds = members.map { it.userId },
+        userIds = memberUserIds,
         createdAt = createdAt,
         modifiedAt = modifiedAt
     )
 
-fun ApplyNightStudyProjectRequest.toEntity(userId: UUID): NightStudyEntity {
-    val nightStudy = NightStudyEntity(
+fun ApplyNightStudyProjectRequest.toEntity(userId: UUID): NightStudyEntity =
+    NightStudyEntity(
         userId = userId,
         content = description,
         type = type,
@@ -65,15 +65,9 @@ fun ApplyNightStudyProjectRequest.toEntity(userId: UUID): NightStudyEntity {
         startAt = startAt,
         endAt = endAt
     )
-    val memberEntities = memberUserIds.map { memberId ->
-        NightStudyMemberEntity(
-            nightStudy = nightStudy,
-            userId = memberId
-        )
-    }
-    nightStudy.members.addAll(memberEntities)
-    return nightStudy
-}
+
+fun ApplyNightStudyProjectRequest.toMemberEntities(nightStudyId: Long): List<NightStudyMemberEntity> =
+    memberUserIds.map { NightStudyMemberEntity(nightStudyId = nightStudyId, userId = it) }
 
 fun NightStudyEntity.toRoomResponse(): ProjectRoomResponse =
     ProjectRoomResponse(

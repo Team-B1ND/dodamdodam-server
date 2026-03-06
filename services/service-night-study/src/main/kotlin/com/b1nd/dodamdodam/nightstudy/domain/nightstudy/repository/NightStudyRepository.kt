@@ -9,16 +9,6 @@ import java.util.UUID
 
 interface NightStudyRepository : JpaRepository<NightStudyEntity, Long> {
 
-    fun findAllByUserId(userId: UUID): List<NightStudyEntity>
-
-    fun findAllByStatus(status: NightStudyStatus): List<NightStudyEntity>
-
-    fun findAllByStatusAndStartAtLessThanEqualAndEndAtGreaterThanEqual(
-        status: NightStudyStatus,
-        startAt: LocalDate,
-        endAt: LocalDate
-    ): List<NightStudyEntity>
-
     fun findAllByUserIdAndTypeIn(userId: UUID, types: List<NightStudyType>): List<NightStudyEntity>
 
     fun findAllByTypeIn(types: List<NightStudyType>): List<NightStudyEntity>

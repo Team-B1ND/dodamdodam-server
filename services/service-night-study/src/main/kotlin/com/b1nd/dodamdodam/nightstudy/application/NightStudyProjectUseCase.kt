@@ -8,9 +8,11 @@ import com.b1nd.dodamdodam.nightstudy.application.data.request.RejectNightStudyR
 import com.b1nd.dodamdodam.nightstudy.application.data.response.NightStudyProjectResponse
 import com.b1nd.dodamdodam.nightstudy.application.data.response.ProjectRoomResponse
 import com.b1nd.dodamdodam.nightstudy.application.data.toEntity
+import com.b1nd.dodamdodam.nightstudy.application.data.toMemberEntities
 import com.b1nd.dodamdodam.nightstudy.application.data.toProjectResponse
 import com.b1nd.dodamdodam.nightstudy.application.data.toRoomResponse
 import com.b1nd.dodamdodam.nightstudy.domain.ban.service.NightStudyBanService
+import com.b1nd.dodamdodam.nightstudy.domain.nightstudy.entity.NightStudyEntity
 import com.b1nd.dodamdodam.nightstudy.domain.nightstudy.enumeration.ProjectRoom
 import com.b1nd.dodamdodam.nightstudy.domain.nightstudy.exception.NightStudyBannedException
 import com.b1nd.dodamdodam.nightstudy.domain.nightstudy.exception.NightStudyNotOwnerException
@@ -33,33 +35,35 @@ class NightStudyProjectUseCase(
             throw NightStudyBannedException()
         }
         val entity = request.toEntity(userId)
-        nightStudyService.save(entity)
+        val saved = nightStudyService.save(entity)
+        val members = request.toMemberEntities(saved.id!!)
+        nightStudyService.saveMembers(members)
         return Response.created("프로젝트 심야자습이 신청되었어요.")
     }
 
     @Transactional(readOnly = true)
     fun getMy(): Response<List<NightStudyProjectResponse>> {
         val userId = PassportHolder.current().requireUserId()
-        val projects = nightStudyService.getProjectsByUserId(userId).map { it.toProjectResponse() }
-        return Response.ok("내 프로젝트 심야자습을 조회했어요.", projects)
+        val projects = nightStudyService.getProjectsByUserId(userId)
+        return Response.ok("내 프로젝트 심야자습을 조회했어요.", toProjectResponses(projects))
     }
 
     @Transactional(readOnly = true)
     fun getValid(): Response<List<NightStudyProjectResponse>> {
-        val projects = nightStudyService.getAllowedProjects(LocalDate.now()).map { it.toProjectResponse() }
-        return Response.ok("유효한 프로젝트 심야자습을 조회했어요.", projects)
+        val projects = nightStudyService.getAllowedProjects(LocalDate.now())
+        return Response.ok("유효한 프로젝트 심야자습을 조회했어요.", toProjectResponses(projects))
     }
 
     @Transactional(readOnly = true)
     fun getPending(): Response<List<NightStudyProjectResponse>> {
-        val projects = nightStudyService.getPendingProjects().map { it.toProjectResponse() }
-        return Response.ok("대기 중인 프로젝트 심야자습을 조회했어요.", projects)
+        val projects = nightStudyService.getPendingProjects()
+        return Response.ok("대기 중인 프로젝트 심야자습을 조회했어요.", toProjectResponses(projects))
     }
 
     @Transactional(readOnly = true)
     fun getAllowed(): Response<List<NightStudyProjectResponse>> {
-        val projects = nightStudyService.getAllowedProjects(LocalDate.now()).map { it.toProjectResponse() }
-        return Response.ok("승인된 프로젝트 심야자습을 조회했어요.", projects)
+        val projects = nightStudyService.getAllowedProjects(LocalDate.now())
+        return Response.ok("승인된 프로젝트 심야자습을 조회했어요.", toProjectResponses(projects))
     }
 
     @Transactional(readOnly = true)
@@ -72,16 +76,17 @@ class NightStudyProjectUseCase(
     @Transactional(readOnly = true)
     fun getStudents(): Response<List<UUID>> {
         val projects = nightStudyService.getAllowedProjects(LocalDate.now())
-        val studentIds = projects.flatMap { project ->
-            project.members.map { it.userId }
-        }.distinct()
+        val nightStudyIds = projects.mapNotNull { it.id }
+        val members = nightStudyService.getMembersByNightStudyIds(nightStudyIds)
+        val studentIds = members.map { it.userId }.distinct()
         return Response.ok("오늘 프로젝트 참가 학생을 조회했어요.", studentIds)
     }
 
     @Transactional(readOnly = true)
     fun getById(id: Long): Response<NightStudyProjectResponse> {
-        val project = nightStudyService.getById(id).toProjectResponse()
-        return Response.ok("프로젝트 심야자습을 조회했어요.", project)
+        val project = nightStudyService.getById(id)
+        val memberUserIds = nightStudyService.getMembersByNightStudyId(id).map { it.userId }
+        return Response.ok("프로젝트 심야자습을 조회했어요.", project.toProjectResponse(memberUserIds))
     }
 
     fun allow(id: Long, room: ProjectRoom): Response<Any> {
@@ -111,7 +116,17 @@ class NightStudyProjectUseCase(
         if (project.userId != userId) {
             throw NightStudyNotOwnerException()
         }
-        nightStudyService.delete(project)
+        nightStudyService.softDelete(project)
         return Response.ok("프로젝트 심야자습이 삭제되었어요.")
+    }
+
+    private fun toProjectResponses(projects: List<NightStudyEntity>): List<NightStudyProjectResponse> {
+        val nightStudyIds = projects.mapNotNull { it.id }
+        val membersMap = nightStudyService.getMembersByNightStudyIds(nightStudyIds)
+            .groupBy { it.nightStudyId }
+        return projects.map { project ->
+            val memberUserIds = membersMap[project.id]?.map { it.userId } ?: emptyList()
+            project.toProjectResponse(memberUserIds)
+        }
     }
 }

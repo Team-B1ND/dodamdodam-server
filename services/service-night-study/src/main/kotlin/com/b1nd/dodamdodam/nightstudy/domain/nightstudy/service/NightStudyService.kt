@@ -1,9 +1,11 @@
 package com.b1nd.dodamdodam.nightstudy.domain.nightstudy.service
 
 import com.b1nd.dodamdodam.nightstudy.domain.nightstudy.entity.NightStudyEntity
+import com.b1nd.dodamdodam.nightstudy.domain.nightstudy.entity.NightStudyMemberEntity
 import com.b1nd.dodamdodam.nightstudy.domain.nightstudy.enumeration.NightStudyStatus
 import com.b1nd.dodamdodam.nightstudy.domain.nightstudy.enumeration.NightStudyType
 import com.b1nd.dodamdodam.nightstudy.domain.nightstudy.exception.NightStudyNotFoundException
+import com.b1nd.dodamdodam.nightstudy.domain.nightstudy.repository.NightStudyMemberRepository
 import com.b1nd.dodamdodam.nightstudy.domain.nightstudy.repository.NightStudyRepository
 import org.springframework.stereotype.Service
 import java.time.LocalDate
@@ -11,7 +13,8 @@ import java.util.UUID
 
 @Service
 class NightStudyService(
-    private val nightStudyRepository: NightStudyRepository
+    private val nightStudyRepository: NightStudyRepository,
+    private val nightStudyMemberRepository: NightStudyMemberRepository
 ) {
 
     companion object {
@@ -25,8 +28,10 @@ class NightStudyService(
     fun getById(id: Long): NightStudyEntity =
         nightStudyRepository.findById(id).orElseThrow { NightStudyNotFoundException() }
 
-    fun delete(nightStudy: NightStudyEntity) =
-        nightStudyRepository.delete(nightStudy)
+    fun softDelete(nightStudy: NightStudyEntity) {
+        nightStudy.softDelete()
+        nightStudyRepository.save(nightStudy)
+    }
 
     // Individual night study queries
     fun getByUserId(userId: UUID): List<NightStudyEntity> =
@@ -43,7 +48,6 @@ class NightStudyService(
     fun getAll(): List<NightStudyEntity> =
         nightStudyRepository.findAllByTypeIn(INDIVIDUAL_TYPES)
 
-    // Project night study queries
     fun getProjectsByUserId(userId: UUID): List<NightStudyEntity> =
         nightStudyRepository.findAllByUserIdAndTypeIn(userId, PROJECT_TYPES)
 
@@ -54,4 +58,14 @@ class NightStudyService(
 
     fun getPendingProjects(): List<NightStudyEntity> =
         nightStudyRepository.findAllByStatusAndTypeIn(NightStudyStatus.PENDING, PROJECT_TYPES)
+
+    // Member management
+    fun saveMembers(members: List<NightStudyMemberEntity>): List<NightStudyMemberEntity> =
+        nightStudyMemberRepository.saveAll(members)
+
+    fun getMembersByNightStudyId(nightStudyId: Long): List<NightStudyMemberEntity> =
+        nightStudyMemberRepository.findAllByNightStudyId(nightStudyId)
+
+    fun getMembersByNightStudyIds(nightStudyIds: List<Long>): List<NightStudyMemberEntity> =
+        nightStudyMemberRepository.findAllByNightStudyIdIn(nightStudyIds)
 }
