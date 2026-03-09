@@ -32,9 +32,13 @@ public class ClubUseCase {
     private final ClubMemberService clubMemberService;
     private final StudentRepository studentRepository;
     private final MemberAuthenticationHolder authHolder;
+    private final ClubApplicantAutoApproveScheduler autoApproveScheduler;
 
     public Response save(ClubTimeReq req) {
         clubService.setClubTime(req.toEntity());
+        if (req.type() == ClubTimeType.CLUB_APPLICANT) {
+            autoApproveScheduler.scheduleAutoApproval();
+        }
         return Response.created("시간 설정 성공");
     }
 

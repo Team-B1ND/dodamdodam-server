@@ -16,6 +16,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -184,6 +185,22 @@ public class ClubMemberService {
         Club club = clubRepository.getByClubId(clubId);
         ClubMember clubMember = clubMemberRepository.findByClubAndStudentAndPermission(club, leader, ClubPermission.CLUB_LEADER);
         return clubMember != null;
+    }
+
+    public void autoApproveClubsWithinLimit() {
+        List<ClubMember> pendingFirstGrade = clubMemberRepository.findPendingFirstGradeByClubType(
+                ClubStatus.PENDING, 1, ClubType.CREATIVE_ACTIVITY_CLUB, ClubStatus.ALLOWED
+        );
+
+        Map<Club, List<ClubMember>> byClub = pendingFirstGrade.stream()
+                .collect(Collectors.groupingBy(ClubMember::getClub));
+
+        byClub.forEach((club, members) -> {
+            if (members.size() <= MAX_FIRST_GRADE_MEMBERS) {
+                members.forEach(m -> m.modifyStatus(ClubStatus.ALLOWED));
+                clubMemberRepository.saveAll(members);
+            }
+        });
     }
 
     private void rejectActivityClubMember(Student student) {

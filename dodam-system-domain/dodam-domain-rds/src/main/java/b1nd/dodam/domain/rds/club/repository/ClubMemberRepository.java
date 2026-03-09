@@ -155,4 +155,19 @@ public interface ClubMemberRepository extends JpaRepository<ClubMember, Long> {
             @Param("status") ClubStatus status,
             @Param("grade") int grade
     );
+
+    @EntityGraph(attributePaths = {"student", "student.member", "club"})
+    @Query("""
+    SELECT cm FROM club_member cm
+    WHERE cm.clubStatus = :status
+    AND cm.student.grade = :grade
+    AND cm.club.type = :clubType
+    AND cm.club.state = :clubState
+    """)
+    List<ClubMember> findPendingFirstGradeByClubType(
+            @Param("status") ClubStatus status,
+            @Param("grade") int grade,
+            @Param("clubType") ClubType clubType,
+            @Param("clubState") ClubStatus clubState
+    );
 }
