@@ -162,14 +162,12 @@ public interface ClubMemberRepository extends JpaRepository<ClubMember, Long> {
     SELECT cm FROM club_member cm
     WHERE cm.clubStatus = :status
     AND cm.student.grade = :grade
-    AND cm.student.member.status = :activeStatus
     AND cm.club.type = :clubType
     AND cm.club.state = :clubState
     """)
     List<ClubMember> findPendingFirstGradeByClubType(
             @Param("status") ClubStatus status,
             @Param("grade") int grade,
-            @Param("activeStatus") ActiveStatus activeStatus,
             @Param("clubType") ClubType clubType,
             @Param("clubState") ClubStatus clubState
     );

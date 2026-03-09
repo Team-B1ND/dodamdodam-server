@@ -189,7 +189,7 @@ public class ClubMemberService {
 
     public void autoApproveClubsWithinLimit() {
         List<ClubMember> pendingFirstGrade = clubMemberRepository.findPendingFirstGradeByClubType(
-                ClubStatus.PENDING, 1, ActiveStatus.ACTIVE, ClubType.CREATIVE_ACTIVITY_CLUB, ClubStatus.ALLOWED
+                ClubStatus.PENDING, 1, ClubType.CREATIVE_ACTIVITY_CLUB, ClubStatus.ALLOWED
         );
 
         Map<Club, List<ClubMember>> byClub = pendingFirstGrade.stream()
