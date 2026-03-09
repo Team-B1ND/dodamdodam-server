@@ -15,7 +15,7 @@ import b1nd.dodam.domain.rds.member.entity.Student;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -70,8 +70,8 @@ public class ClubService {
 
     public void validateApplicationDuration(ClubTimeType clubTimeType) {
         ClubTime time = getClubTime(clubTimeType);
-        LocalDate today = LocalDate.now();
-        if (today.isBefore(time.getStart()) || today.isAfter(time.getEnd())) {
+        LocalDateTime now = LocalDateTime.now();
+        if (now.isBefore(time.getStart()) || now.isAfter(time.getEnd())) {
             throw new ClubApplicationDurationPassedException();
         }
     }

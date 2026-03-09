@@ -11,7 +11,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Getter
 @Entity(name = "club_of_time")
@@ -22,13 +22,13 @@ public class ClubTime {
     private ClubTimeType id;
 
     @NotNull
-    private LocalDate start;
+    private LocalDateTime start;
 
     @NotNull
-    private LocalDate end;
+    private LocalDateTime end;
 
     @Builder
-    public ClubTime(ClubTimeType id, LocalDate start, LocalDate end) {
+    public ClubTime(ClubTimeType id, LocalDateTime start, LocalDateTime end) {
         this.id = id;
         this.start = start;
         this.end = end;

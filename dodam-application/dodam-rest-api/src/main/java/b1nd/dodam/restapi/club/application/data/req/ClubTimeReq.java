@@ -5,17 +5,17 @@ import b1nd.dodam.domain.rds.club.enumeration.ClubTimeType;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.format.annotation.DateTimeFormat;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 public record ClubTimeReq(
     @NotNull
     ClubTimeType type,
     @NotNull
-    @DateTimeFormat(pattern = "yyyy-MM-dd")
-    LocalDate start,
+    @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
+    LocalDateTime start,
     @NotNull
-    @DateTimeFormat(pattern = "yyyy-MM-dd")
-    LocalDate end
+    @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
+    LocalDateTime end
 ) {
     public ClubTime toEntity() {
         return ClubTime.builder()
