@@ -59,13 +59,11 @@ public class ClubMemberService {
         return clubMemberRepository.findByStudentAndClubStatusAndClub_State(studentRepository.getByMember(member), ClubStatus.ALLOWED, ClubStatus.ALLOWED);
     }
 
-    private static final int MAX_FIRST_GRADE_MEMBERS = 10;
-
     public void setStatusStudentClub(int studentId, Long clubId, ClubStatus clubStatus) {
         ClubMember clubMember = clubMemberRepository.getPendingClubMemberWithRelations(studentId, clubId, ClubStatus.PENDING);
         if (clubStatus == ClubStatus.ALLOWED && clubMember.getStudent().getGrade() == 1) {
             long count = clubMemberRepository.countByClubIdAndClubStatusAndStudentGrade(clubId, ClubStatus.ALLOWED, 1);
-            if (count >= MAX_FIRST_GRADE_MEMBERS) {
+            if (count >= clubMember.getClub().getMaxMemberCount()) {
                 throw new OverflowMemberSizeException();
             }
         }
@@ -196,7 +194,7 @@ public class ClubMemberService {
                 .collect(Collectors.groupingBy(ClubMember::getClub));
 
         byClub.forEach((club, members) -> {
-            if (members.size() <= MAX_FIRST_GRADE_MEMBERS) {
+            if (members.size() <= club.getMaxMemberCount()) {
                 members.forEach(m -> m.modifyStatus(ClubStatus.ALLOWED));
                 clubMemberRepository.saveAll(members);
             }

@@ -50,6 +50,10 @@ public class Club extends BaseEntity {
 
     private String reason;
 
+    @NotNull
+    @Column(columnDefinition = "INT DEFAULT 10")
+    private int maxMemberCount;
+
     @Builder
     public Club(String name, String shortDescription, String description, String image, String subject, ClubType type, ClubStatus state) {
         this.name = name;
