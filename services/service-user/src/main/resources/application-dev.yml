@@ -1,0 +1,44 @@
+spring:
+  datasource:
+    url: jdbc:${MYSQL_HOST}
+    username: ${MYSQL_USER}
+    password: ${MYSQL_PASSWORD}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  flyway:
+    url: jdbc:${MYSQL_HOST}
+    user: ${MYSQL_USER}
+    password: ${MYSQL_PASSWORD}
+
+  jpa:
+    hibernate:
+      ddl-auto: none
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.MySQLDialect
+
+server:
+  port: 8080
+
+grpc:
+  server:
+    port: 9090
+
+app:
+  redis:
+    host: ${REDIS_HOST}
+    port: ${REDIS_PORT}
+  sms:
+    gabia:
+      id: ${GABIA_ID}
+      api-key: ${GABIA_API_KEY}
+      ref-key: ${GABIA_REF_KEY}
+      subject: ${GABIA_SMS_SUBJECT}
+      sender-number: ${GABIA_SMS_SENDER}
+      token-url: ${GABIA_TOKEN_URL}
+      sms-url: ${GABIA_SMS_URL}
+      lms-url: ${GABIA_LMS_URL}
+  kafka:
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS}
+    consumer-group-id: service-user
