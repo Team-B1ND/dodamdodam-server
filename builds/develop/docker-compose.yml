@@ -63,7 +63,7 @@ services:
       - "80:8080"
     environment:
       SPRING_PROFILES_ACTIVE: dev
-      MYSQL_HOST: mysql://mysql:3306/dodam_gateway
+      MYSQL_HOST: mysql://mysql:3306/dodam-gateway
       MYSQL_USER: ${MYSQL_USER}
       MYSQL_PASSWORD: ${MYSQL_PASSWORD}
       KAFKA_BOOTSTRAP_SERVERS: kafka:5001
@@ -83,7 +83,7 @@ services:
     restart: unless-stopped
     environment:
       SPRING_PROFILES_ACTIVE: dev
-      MYSQL_HOST: mysql://mysql:3306/dodam_auth
+      MYSQL_HOST: mysql://mysql:3306/dodam-auth
       MYSQL_USER: ${MYSQL_USER}
       MYSQL_PASSWORD: ${MYSQL_PASSWORD}
       KAFKA_BOOTSTRAP_SERVERS: kafka:5001
@@ -104,7 +104,7 @@ services:
     restart: unless-stopped
     environment:
       SPRING_PROFILES_ACTIVE: dev
-      MYSQL_HOST: mysql://mysql:3306/dodam_user
+      MYSQL_HOST: mysql://mysql:3306/dodam-user
       MYSQL_USER: ${MYSQL_USER}
       MYSQL_PASSWORD: ${MYSQL_PASSWORD}
       KAFKA_BOOTSTRAP_SERVERS: kafka:5001
@@ -132,7 +132,7 @@ services:
     restart: unless-stopped
     environment:
       SPRING_PROFILES_ACTIVE: dev
-      MYSQL_HOST: mysql://mysql:3306/dodam_wakeup_song
+      MYSQL_HOST: mysql://mysql:3306/dodam-wakeup-song
       MYSQL_USER: ${MYSQL_USER}
       MYSQL_PASSWORD: ${MYSQL_PASSWORD}
     depends_on:
@@ -145,7 +145,7 @@ services:
     restart: unless-stopped
     environment:
       SPRING_PROFILES_ACTIVE: dev
-      MYSQL_HOST: mysql://mysql:3306/dodam_inapp
+      MYSQL_HOST: mysql://mysql:3306/dodam-inapp
       MYSQL_USER: ${MYSQL_USER}
       MYSQL_PASSWORD: ${MYSQL_PASSWORD}
       KAFKA_BOOTSTRAP_SERVERS: kafka:5001
