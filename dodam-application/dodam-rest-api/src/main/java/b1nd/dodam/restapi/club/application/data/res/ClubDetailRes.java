@@ -14,7 +14,8 @@ public record ClubDetailRes(
     String image,
     ClubType type,
     TeacherRes teacher,
-    ClubStatus state
+    ClubStatus state,
+    int maxMemberCount
 ) {
     public static ClubDetailRes of(Club club) {
         if (club == null || club.getName().isEmpty()) {
@@ -30,7 +31,8 @@ public record ClubDetailRes(
             club.getImage(),
             club.getType(),
             TeacherRes.of(club.getTeacher()),
-            club.getState()
+            club.getState(),
+            club.getMaxMemberCount()
         );
     }
 }
