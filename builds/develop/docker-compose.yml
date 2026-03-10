@@ -56,7 +56,7 @@ services:
       retries: 5
 
   service-gateway:
-    image: ghcr.io/team-b1nd/dodamdodam-server/service-gateway:dev
+    image: ${DOCKERHUB_USERNAME}/dodam-gateway:dev
     container_name: dodam-gateway
     restart: unless-stopped
     ports:
@@ -78,7 +78,7 @@ services:
         condition: service_healthy
 
   service-auth:
-    image: ghcr.io/team-b1nd/dodamdodam-server/service-auth:dev
+    image: ${DOCKERHUB_USERNAME}/dodam-auth:dev
     container_name: dodam-auth
     restart: unless-stopped
     environment:
@@ -99,7 +99,7 @@ services:
         condition: service_healthy
 
   service-user:
-    image: ghcr.io/team-b1nd/dodamdodam-server/service-user:dev
+    image: ${DOCKERHUB_USERNAME}/dodam-user:dev
     container_name: dodam-user
     restart: unless-stopped
     environment:
@@ -127,7 +127,7 @@ services:
         condition: service_healthy
 
   service-wakeup-song:
-    image: ghcr.io/team-b1nd/dodamdodam-server/service-wakeup-song:dev
+    image: ${DOCKERHUB_USERNAME}/dodam-wakeup-song:dev
     container_name: dodam-wakeup-song
     restart: unless-stopped
     environment:
@@ -140,7 +140,7 @@ services:
         condition: service_healthy
 
   service-inapp:
-    image: ghcr.io/team-b1nd/dodamdodam-server/service-inapp:dev
+    image: ${DOCKERHUB_USERNAME}/dodam-inapp:dev
     container_name: dodam-inapp
     restart: unless-stopped
     environment:
