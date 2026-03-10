@@ -60,7 +60,7 @@ services:
     container_name: dodam-gateway
     restart: unless-stopped
     ports:
-      - "8080:8080"
+      - "80:8080"
     environment:
       SPRING_PROFILES_ACTIVE: dev
       MYSQL_HOST: mysql://mysql:3306/dodam_gateway
