@@ -113,7 +113,7 @@ public class MemberController {
     }
 
     @PatchMapping("/student/info")
-    public Response updateStudentInfo(@RequestBody UpdateStudentInfoReq req) {
+    public Response updateStudentInfo(@RequestBody @Valid UpdateStudentInfoReq req) {
         return commandUseCase.updateStudentInfo(req);
     }
 

@@ -1,3 +1,9 @@
 package b1nd.dodam.restapi.member.application.data.req;
 
-public record UpdateStudentInfoReq(Integer grade, Integer room, Integer number) {}
+import jakarta.validation.constraints.NotNull;
+
+public record UpdateStudentInfoReq(
+        @NotNull Integer grade,
+        @NotNull Integer room,
+        @NotNull Integer number
+) {}
