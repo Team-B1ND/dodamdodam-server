@@ -1,0 +1,51 @@
+spring:
+  data:
+    redis:
+      host: ${SPRING_DATA_REDIS_HOST}
+      port: ${SPRING_DATA_REDIS_PORT}
+  r2dbc:
+    url: r2dbc:${MYSQL_HOST}
+    username: ${MYSQL_USER}
+    password: ${MYSQL_PASSWORD}
+  flyway:
+    url: jdbc:${MYSQL_HOST}
+    user: ${MYSQL_USER}
+    password: ${MYSQL_PASSWORD}
+
+  cloud:
+    gateway:
+      routes:
+        - id: auth-service
+          uri: http://service-auth:8080
+          predicates:
+            - Path=/auth/**
+          filters:
+            - StripPrefix=1
+        - id: user-service
+          uri: http://service-user:8080
+          predicates:
+            - Path=/user/**
+          filters:
+            - StripPrefix=1
+        - id: wakeup-song-service
+          uri: http://service-wakeup-song:8080
+          predicates:
+            - Path=/wakeup-song/**
+          filters:
+            - StripPrefix=1
+        - id: inapp-service
+          uri: http://service-inapp:8080
+          predicates:
+            - Path=/inapp/**
+          filters:
+            - StripPrefix=1
+
+app:
+  auth:
+    url: http://service-auth:8080
+  kafka:
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS}
+    consumer-group-id: service-gateway
+
+server:
+  port: 8080
