@@ -106,6 +106,11 @@ public class ClubMemberService {
         return clubMemberRepository.findByStudentAndClubStatus(student, status);
     }
 
+    public List<ClubMember> getJoinRequests(Member member) {
+        Student student = studentRepository.getByMember(member);
+        return clubMemberRepository.findAllByStudent(student);
+    }
+
     public ClubMember getClubLeader(Long clubId) {
         return clubMemberRepository.getByClubAndPermissionAndStatus(clubRepository.getByClubId(clubId), ClubPermission.CLUB_LEADER, ClubStatus.ALLOWED);
     }

@@ -87,7 +87,7 @@ public class ClubMemberUseCase {
 
     @Transactional(readOnly = true)
     public ResponseData<List<ClubMemberRes>> getStudentJoinRequest() {
-        return ResponseData.ok("나의 동아리 입부 신청 불러오기 성공", clubMemberService.getJoinRequests(authenticationHolder.current(), ClubStatus.PENDING).stream().map(ClubMemberRes::of).toList());
+        return ResponseData.ok("나의 동아리 입부 신청 불러오기 성공", clubMemberService.getJoinRequests(authenticationHolder.current()).stream().map(ClubMemberRes::of).toList());
     }
 
     @Transactional(readOnly = true)
