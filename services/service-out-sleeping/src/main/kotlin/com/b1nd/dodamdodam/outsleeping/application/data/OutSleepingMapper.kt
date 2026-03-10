@@ -7,15 +7,12 @@ import java.util.UUID
 
 fun OutSleepingEntity.toResponse(): OutSleepingResponse =
     OutSleepingResponse(
-        id = id!!,
         userId = userId,
         reason = reason,
         status = status,
         rejectReason = rejectReason,
         startAt = startAt,
-        endAt = endAt,
-        createdAt = createdAt,
-        modifiedAt = modifiedAt
+        endAt = endAt
     )
 
 fun ApplyOutSleepingRequest.toEntity(userId: UUID): OutSleepingEntity =

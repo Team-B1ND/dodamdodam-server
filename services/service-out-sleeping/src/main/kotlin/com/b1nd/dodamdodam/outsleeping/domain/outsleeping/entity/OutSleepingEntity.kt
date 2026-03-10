@@ -1,7 +1,7 @@
 package com.b1nd.dodamdodam.outsleeping.domain.outsleeping.entity
 
 import com.b1nd.dodamdodam.core.jpa.entity.BaseTimeEntity
-import com.b1nd.dodamdodam.outsleeping.domain.outsleeping.enumeration.OutSleepingStatus
+import com.b1nd.dodamdodam.outsleeping.domain.outsleeping.enumeration.OutSleepingStatusType
 import jakarta.persistence.*
 import org.hibernate.annotations.SQLRestriction
 import java.time.LocalDate
@@ -26,7 +26,7 @@ class OutSleepingEntity(
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20)
-    var status: OutSleepingStatus = OutSleepingStatus.PENDING,
+    var status: OutSleepingStatusType = OutSleepingStatusType.PENDING,
 
     @Column
     var rejectReason: String? = null,
@@ -40,16 +40,16 @@ class OutSleepingEntity(
     val id: Long? = null
 
     fun allow() {
-        this.status = OutSleepingStatus.ALLOWED
+        this.status = OutSleepingStatusType.ALLOWED
     }
 
     fun reject(reason: String?) {
-        this.status = OutSleepingStatus.REJECTED
+        this.status = OutSleepingStatusType.REJECTED
         this.rejectReason = reason
     }
 
     fun revert() {
-        this.status = OutSleepingStatus.PENDING
+        this.status = OutSleepingStatusType.PENDING
         this.rejectReason = null
     }
 

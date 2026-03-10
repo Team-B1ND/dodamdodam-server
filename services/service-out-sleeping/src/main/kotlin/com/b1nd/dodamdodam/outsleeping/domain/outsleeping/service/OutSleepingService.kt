@@ -1,7 +1,7 @@
 package com.b1nd.dodamdodam.outsleeping.domain.outsleeping.service
 
 import com.b1nd.dodamdodam.outsleeping.domain.outsleeping.entity.OutSleepingEntity
-import com.b1nd.dodamdodam.outsleeping.domain.outsleeping.enumeration.OutSleepingStatus
+import com.b1nd.dodamdodam.outsleeping.domain.outsleeping.enumeration.OutSleepingStatusType
 import com.b1nd.dodamdodam.outsleeping.domain.outsleeping.exception.OutSleepingNotFoundException
 import com.b1nd.dodamdodam.outsleeping.domain.outsleeping.repository.OutSleepingRepository
 import org.springframework.stereotype.Service
@@ -27,6 +27,6 @@ class OutSleepingService(
 
     fun getAllowedByDate(date: LocalDate): List<OutSleepingEntity> =
         outSleepingRepository.findAllByStatusAndStartAtLessThanEqualAndEndAtGreaterThanEqual(
-            OutSleepingStatus.ALLOWED, date, date
+            OutSleepingStatusType.ALLOWED, date, date
         )
 }

@@ -1,6 +1,6 @@
 package com.b1nd.dodamdodam.outsleeping.domain.outsleeping.enumeration
 
-enum class OutSleepingStatus {
+enum class OutSleepingStatusType {
     PENDING,
     ALLOWED,
     REJECTED
