@@ -27,3 +27,7 @@ class AppDenyReasonRequiredException: BasicException(AppExceptionCode.APP_DENY_R
 class AppTeamMemberPermissionRequiredException: BasicException(AppExceptionCode.APP_TEAM_MEMBER_PERMISSION_REQUIRED)
 
 class AppTeamOwnerPermissionRequiredException: BasicException(AppExceptionCode.APP_TEAM_OWNER_PERMISSION_REQUIRED)
+
+class AppApiKeyAlreadyExistException: BasicException(AppExceptionCode.APP_API_KEY_ALREADY_EXIST)
+
+class AppApiKeyNotFoundException: BasicException(AppExceptionCode.APP_API_KEY_NOT_FOUND)

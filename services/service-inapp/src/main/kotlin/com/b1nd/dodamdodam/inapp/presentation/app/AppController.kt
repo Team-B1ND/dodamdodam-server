@@ -90,6 +90,16 @@ class AppController(
         appUseCase.toggleServer(request)
 
     @UserAccess
+    @PostMapping("/{appId}/api-key")
+    fun createApiKey(@PathVariable appId: UUID) =
+        appUseCase.createApiKey(appId)
+
+    @UserAccess
+    @PatchMapping("/{appId}/api-key")
+    fun regenerateApiKey(@PathVariable appId: UUID) =
+        appUseCase.regenerateApiKey(appId)
+
+    @UserAccess
     @GetMapping("/{appId}")
     fun getApp(@PathVariable appId: UUID) =
         appUseCase.getApp(appId)

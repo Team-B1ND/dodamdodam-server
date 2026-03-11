@@ -6,4 +6,5 @@ import org.springframework.data.jpa.repository.JpaRepository
 
 interface UserRoleRepository: JpaRepository<UserRoleEntity, Long> {
     fun findAllByUser(user: UserEntity): List<UserRoleEntity>
+    fun findAllByUserIn(users: Collection<UserEntity>): List<UserRoleEntity>
 }

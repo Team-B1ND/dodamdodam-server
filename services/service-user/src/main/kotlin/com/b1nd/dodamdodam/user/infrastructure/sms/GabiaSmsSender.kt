@@ -7,7 +7,6 @@ import org.springframework.http.HttpHeaders
 import org.springframework.http.MediaType
 import org.springframework.http.client.SimpleClientHttpRequestFactory
 import org.springframework.web.client.HttpClientErrorException
-import org.springframework.web.client.RestClientException
 import org.springframework.stereotype.Component
 import org.springframework.util.LinkedMultiValueMap
 import org.springframework.web.client.RestClient
@@ -42,12 +41,10 @@ class GabiaSmsSender(
             sendSms(url, formData, getOrIssueSmsAuthorizationHeader())
         } catch (ex: HttpClientErrorException.BadRequest) {
             if (!isInvalidTokenError(ex)) {
-                throw BaseInternalServerException()
+                throw ex
             }
             invalidateToken()
-            retrySendWithNewToken(url, formData)
-        } catch (_: RestClientException) {
-            throw BaseInternalServerException()
+            sendSms(url, formData, getOrIssueSmsAuthorizationHeader())
         }
     }
 
@@ -112,14 +109,6 @@ class GabiaSmsSender(
             .body(formData)
             .retrieve()
             .toBodilessEntity()
-    }
-
-    private fun retrySendWithNewToken(url: String, formData: LinkedMultiValueMap<String, String>) {
-        try {
-            sendSms(url, formData, getOrIssueSmsAuthorizationHeader())
-        } catch (_: RestClientException) {
-            throw BaseInternalServerException()
-        }
     }
 
     @Synchronized

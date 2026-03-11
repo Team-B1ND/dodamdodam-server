@@ -10,6 +10,7 @@ dependencies {
 
     implementation(libs.mysql.jdbcDriver)
     implementation(libs.springBootStarterData.jdbc)
+    implementation(libs.springBootStarterData.redis)
     implementation(libs.springBootStarterSecurity)
 
     implementation(libs.jwt.nimbusJose)

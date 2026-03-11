@@ -16,6 +16,9 @@ dependencies {
 
     implementation("org.springframework.boot:spring-boot-starter-data-redis-reactive")
 
+    // swagger
+    implementation("org.springdoc:springdoc-openapi-starter-webflux-ui:2.6.0")
+
     // flyway
     implementation(libs.flywayCore)
     implementation(libs.flywayMysql)

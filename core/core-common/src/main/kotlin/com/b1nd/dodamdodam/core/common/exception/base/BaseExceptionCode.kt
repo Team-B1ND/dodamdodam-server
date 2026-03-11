@@ -7,5 +7,7 @@ enum class BaseExceptionCode(
     override val status: HttpStatus,
     override val message: String
 ): ExceptionCode {
+    UNAUTHORIZED(HttpStatus.UNAUTHORIZED, "인증이 필요해요."),
+    FORBIDDEN(HttpStatus.FORBIDDEN, "접근 권한이 없어요."),
     INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "서비스 요청을 처리하지 못했어요."),
 }

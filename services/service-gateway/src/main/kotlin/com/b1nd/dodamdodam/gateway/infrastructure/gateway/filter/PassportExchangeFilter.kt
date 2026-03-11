@@ -32,6 +32,11 @@ class PassportExchangeFilter(
     override fun getOrder(): Int = 0
 
     override fun filter(exchange: ServerWebExchange, chain: GatewayFilterChain): Mono<Void> {
+        val path = exchange.request.uri.path
+        if (path.startsWith("/openapi/") || path.startsWith("/swagger-ui") || path.startsWith("/v3/api-docs")) {
+            return chain.filter(exchange)
+        }
+
         val jwt = exchange.request.headers
             .getFirst(HttpHeaders.AUTHORIZATION)
             ?.removePrefix("Bearer ")

@@ -21,6 +21,10 @@ spring:
 server:
   port: 8085
 
+grpc:
+  server:
+    port: 9093
+
 app:
   kafka:
     bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS}
