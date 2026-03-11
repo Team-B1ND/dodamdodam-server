@@ -19,6 +19,9 @@ dependencies {
     implementation(libs.flywayCore)
     implementation(libs.flywayMysql)
 
+    // okhttp
+    implementation(libs.okhttp)
+
     // grpc
     implementation(project(":core:core-grpc"))
     implementation(libs.springGrpc)
