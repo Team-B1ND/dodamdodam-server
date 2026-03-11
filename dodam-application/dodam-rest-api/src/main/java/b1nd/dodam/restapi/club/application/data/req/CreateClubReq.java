@@ -12,7 +12,7 @@ import java.util.List;
 public record CreateClubReq(
     @Size(max = 14) @NotBlank String name,
     @Size(max = 4) @NotBlank String subject,
-    @Size(max = 17) @NotBlank String shortDescription,
+    @Size(max = 30) @NotBlank String shortDescription,
     @NotBlank String description,
     @NotBlank String image,
     @NotNull ClubType type,
