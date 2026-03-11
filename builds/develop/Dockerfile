@@ -1,4 +1,4 @@
-FROM eclipse-temurin:21-jre-alpine
+FROM eclipse-temurin:21-jre
 
 ARG JAR_FILE=app.jar
 COPY ${JAR_FILE} app.jar
