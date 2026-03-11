@@ -3,29 +3,28 @@ package com.b1nd.dodamdodam.user.infrastructure.sms
 import com.b1nd.dodamdodam.core.common.exception.base.BaseInternalServerException
 import com.b1nd.dodamdodam.user.infrastructure.sms.data.GabiaTokenResponse
 import com.b1nd.dodamdodam.user.infrastructure.sms.properties.GabiaSmsProperties
-import com.fasterxml.jackson.databind.DeserializationFeature
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
-import com.fasterxml.jackson.module.kotlin.readValue
-import okhttp3.FormBody
-import okhttp3.OkHttpClient
-import okhttp3.Request
+import org.springframework.http.HttpHeaders
+import org.springframework.http.MediaType
+import org.springframework.http.client.SimpleClientHttpRequestFactory
+import org.springframework.web.client.HttpClientErrorException
 import org.springframework.stereotype.Component
-import java.nio.charset.StandardCharsets
+import org.springframework.util.LinkedMultiValueMap
+import org.springframework.web.client.RestClient
 import java.time.Instant
+import java.nio.charset.StandardCharsets
 import java.util.Base64
-import java.util.concurrent.TimeUnit
 
 @Component
 class GabiaSmsSender(
     private val properties: GabiaSmsProperties
 ) {
-    private val client = OkHttpClient.Builder()
-        .connectTimeout(TIMEOUT_SECONDS, TimeUnit.SECONDS)
-        .readTimeout(TIMEOUT_SECONDS, TimeUnit.SECONDS)
+    private val restClient = RestClient.builder()
+        .requestFactory(SimpleClientHttpRequestFactory().apply {
+            setConnectTimeout(TIMEOUT_MILLIS)
+            setReadTimeout(TIMEOUT_MILLIS)
+        })
         .build()
 
-    private val objectMapper = jacksonObjectMapper()
-        .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
     private val apiAuthorizationHeader = createBasicHeader(properties.id, properties.apiKey)
     private val normalizedSenderNumber = normalizePhoneNumber(properties.senderNumber)
 
@@ -36,13 +35,16 @@ class GabiaSmsSender(
     private var tokenExpiresAt: Instant = Instant.EPOCH
 
     fun send(phone: String, message: String) {
+        val formData = createSendFormData(phone, message)
         val url = resolveSendUrl(message)
         try {
-            sendSms(url, phone, message, getOrIssueSmsAuthorizationHeader())
-        } catch (ex: SmsApiException) {
-            if (!ex.isInvalidToken) throw ex
+            sendSms(url, formData, getOrIssueSmsAuthorizationHeader())
+        } catch (ex: HttpClientErrorException.BadRequest) {
+            if (!isInvalidTokenError(ex)) {
+                throw ex
+            }
             invalidateToken()
-            sendSms(url, phone, message, getOrIssueSmsAuthorizationHeader())
+            sendSms(url, formData, getOrIssueSmsAuthorizationHeader())
         }
     }
 
@@ -61,22 +63,17 @@ class GabiaSmsSender(
         smsAuthorizationHeader != null && Instant.now().isBefore(tokenExpiresAt)
 
     private fun requestAccessToken(): GabiaTokenResponse {
-        val body = FormBody.Builder()
-            .add(GRANT_TYPE_KEY, CLIENT_CREDENTIALS)
-            .build()
+        val form = LinkedMultiValueMap<String, String>()
+        form.add(GRANT_TYPE_KEY, CLIENT_CREDENTIALS)
 
-        val request = Request.Builder()
-            .url(properties.tokenUrl)
-            .post(body)
-            .addHeader("Content-Type", "application/x-www-form-urlencoded")
-            .addHeader("Authorization", apiAuthorizationHeader)
-            .build()
-
-        client.newCall(request).execute().use { response ->
-            val responseBody = response.body?.string() ?: throw BaseInternalServerException()
-            if (!response.isSuccessful) throw BaseInternalServerException()
-            return objectMapper.readValue(responseBody)
-        }
+        return restClient.post()
+            .uri(properties.tokenUrl)
+            .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+            .header(HttpHeaders.AUTHORIZATION, apiAuthorizationHeader)
+            .body(form)
+            .retrieve()
+            .body(GabiaTokenResponse::class.java)
+            ?: throw BaseInternalServerException()
     }
 
     private fun updateTokenCache(response: GabiaTokenResponse) {
@@ -90,33 +87,28 @@ class GabiaSmsSender(
         return if (isLms) properties.lmsUrl else properties.smsUrl
     }
 
-    private fun sendSms(url: String, phone: String, message: String, smsAuthHeader: String) {
-        val bodyBuilder = FormBody.Builder()
-            .add(PHONE_KEY, normalizePhoneNumber(phone))
-            .add(CALLBACK_KEY, normalizedSenderNumber)
-            .add(MESSAGE_KEY, message)
-
+    private fun createSendFormData(phone: String, message: String): LinkedMultiValueMap<String, String> {
+        val formData = LinkedMultiValueMap<String, String>()
+        formData.add(PHONE_KEY, normalizePhoneNumber(phone))
+        formData.add(CALLBACK_KEY, normalizedSenderNumber)
+        formData.add(MESSAGE_KEY, message)
         if (properties.refKey.isNotBlank()) {
-            bodyBuilder.add(REF_KEY, properties.refKey)
+            formData.add(REF_KEY, properties.refKey)
         }
         if (properties.subject.isNotBlank()) {
-            bodyBuilder.add(SUBJECT_KEY, properties.subject)
+            formData.add(SUBJECT_KEY, properties.subject)
         }
+        return formData
+    }
 
-        val request = Request.Builder()
-            .url(url)
-            .post(bodyBuilder.build())
-            .addHeader("Content-Type", "application/x-www-form-urlencoded")
-            .addHeader("Authorization", smsAuthHeader)
-            .addHeader("cache-control", "no-cache")
-            .build()
-
-        client.newCall(request).execute().use { response ->
-            if (response.code == 400) {
-                val responseBody = response.body?.string() ?: ""
-                throw SmsApiException(responseBody.contains(INVALID_TOKEN_CODE, ignoreCase = true), responseBody)
-            }
-        }
+    private fun sendSms(url: String, formData: LinkedMultiValueMap<String, String>, smsAuthHeader: String) {
+        restClient.post()
+            .uri(url)
+            .header(HttpHeaders.AUTHORIZATION, smsAuthHeader)
+            .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+            .body(formData)
+            .retrieve()
+            .toBodilessEntity()
     }
 
     @Synchronized
@@ -124,6 +116,9 @@ class GabiaSmsSender(
         smsAuthorizationHeader = null
         tokenExpiresAt = Instant.EPOCH
     }
+
+    private fun isInvalidTokenError(ex: HttpClientErrorException.BadRequest): Boolean =
+        ex.responseBodyAsString.contains(INVALID_TOKEN_CODE, ignoreCase = true)
 
     private fun createBasicHeader(id: String, secret: String): String {
         val encoded = Base64.getEncoder()
@@ -134,10 +129,8 @@ class GabiaSmsSender(
     private fun normalizePhoneNumber(raw: String): String =
         raw.filter { it.isDigit() }
 
-    private class SmsApiException(val isInvalidToken: Boolean, message: String) : RuntimeException(message)
-
     companion object {
-        private const val TIMEOUT_SECONDS = 5L
+        private const val TIMEOUT_MILLIS = 5_000
         private const val GRANT_TYPE_KEY = "grant_type"
         private const val CLIENT_CREDENTIALS = "client_credentials"
         private const val PHONE_KEY = "phone"
