@@ -5,7 +5,8 @@ import com.b1nd.dodamdodam.user.infrastructure.sms.data.GabiaTokenResponse
 import com.b1nd.dodamdodam.user.infrastructure.sms.properties.GabiaSmsProperties
 import org.springframework.http.HttpHeaders
 import org.springframework.http.MediaType
-import org.springframework.http.client.SimpleClientHttpRequestFactory
+import org.apache.hc.client5.http.impl.classic.HttpClients
+import org.springframework.http.client.HttpComponentsClientHttpRequestFactory
 import org.springframework.web.client.HttpClientErrorException
 import org.springframework.stereotype.Component
 import org.springframework.util.LinkedMultiValueMap
@@ -19,9 +20,8 @@ class GabiaSmsSender(
     private val properties: GabiaSmsProperties
 ) {
     private val restClient = RestClient.builder()
-        .requestFactory(SimpleClientHttpRequestFactory().apply {
+        .requestFactory(HttpComponentsClientHttpRequestFactory(HttpClients.custom().build()).apply {
             setConnectTimeout(TIMEOUT_MILLIS)
-            setReadTimeout(TIMEOUT_MILLIS)
         })
         .build()
 
