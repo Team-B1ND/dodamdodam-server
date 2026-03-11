@@ -5,6 +5,11 @@ spring:
     password: ${MYSQL_PASSWORD}
     driver-class-name: com.mysql.cj.jdbc.Driver
 
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+
   flyway:
     url: jdbc:${MYSQL_HOST}
     user: ${MYSQL_USER}
@@ -23,6 +28,9 @@ grpc:
   client:
     service-user:
       address: 'static://localhost:9091'
+      negotiation-type: plaintext
+    service-inapp:
+      address: 'static://localhost:9093'
       negotiation-type: plaintext
 
 server:

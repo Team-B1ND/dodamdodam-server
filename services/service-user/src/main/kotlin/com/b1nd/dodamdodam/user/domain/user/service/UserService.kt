@@ -24,6 +24,9 @@ class UserService(
         userRepository.findByPublicId(publicId)
             ?: throw UserNotFoundException()
 
+    fun getByPublicIds(publicIds: Collection<UUID>): List<UserEntity> =
+        userRepository.findAllByPublicIdIn(publicIds)
+
     fun create(user: UserEntity, role: RoleType): UserEntity {
         checkDuplicateUser(user.username)
         user.updatePassword(encoder.encode(user.password))

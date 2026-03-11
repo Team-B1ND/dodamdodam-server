@@ -16,6 +16,7 @@ import com.b1nd.dodamdodam.inapp.application.app.data.request.UpdateAppReleaseSt
 import com.b1nd.dodamdodam.inapp.application.app.data.request.UpdateAppServerStatusRequest
 import com.b1nd.dodamdodam.inapp.application.app.data.response.AppDetailResponse
 import com.b1nd.dodamdodam.inapp.application.app.data.response.AppReleaseResponse
+import com.b1nd.dodamdodam.inapp.application.app.data.response.AppApiKeyResponse
 import com.b1nd.dodamdodam.inapp.application.app.data.response.AppResponse
 import com.b1nd.dodamdodam.inapp.application.app.data.response.AppSummaryResponse
 import com.b1nd.dodamdodam.inapp.application.app.data.toDetailResponse
@@ -177,6 +178,28 @@ class AppUseCase(
             enabled = request.enabled
         )
         return Response.ok("앱 서버 활성화 상태가 변경되었어요.")
+    }
+
+    fun createApiKey(appId: UUID): Response<AppApiKeyResponse> {
+        val apiKeyEntity = appService.createApiKey(
+            userId = currentUserId(),
+            appId = appId
+        )
+        return Response.created(
+            "API Key가 생성되었어요.",
+            AppApiKeyResponse(apiKey = apiKeyEntity.rawApiKey!!, expiredAt = apiKeyEntity.expiredAt)
+        )
+    }
+
+    fun regenerateApiKey(appId: UUID): Response<AppApiKeyResponse> {
+        val apiKeyEntity = appService.regenerateApiKey(
+            userId = currentUserId(),
+            appId = appId
+        )
+        return Response.ok(
+            "API Key가 재발급되었어요.",
+            AppApiKeyResponse(apiKey = apiKeyEntity.rawApiKey!!, expiredAt = apiKeyEntity.expiredAt)
+        )
     }
 
     fun deleteApp(appId: UUID): Response<Any> {

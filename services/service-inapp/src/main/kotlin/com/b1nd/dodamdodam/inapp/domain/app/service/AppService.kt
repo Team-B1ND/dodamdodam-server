@@ -1,10 +1,13 @@
 package com.b1nd.dodamdodam.inapp.domain.app.service
 
+import com.b1nd.dodamdodam.inapp.domain.app.entity.AppApiKeyEntity
 import com.b1nd.dodamdodam.inapp.domain.app.entity.AppEntity
 import com.b1nd.dodamdodam.inapp.domain.app.entity.AppReleaseEntity
 import com.b1nd.dodamdodam.inapp.domain.app.entity.AppServerEntity
 import com.b1nd.dodamdodam.inapp.domain.app.enumeration.AppStatusType
 import com.b1nd.dodamdodam.inapp.domain.app.exception.AppAlreadyExistException
+import com.b1nd.dodamdodam.inapp.domain.app.exception.AppApiKeyAlreadyExistException
+import com.b1nd.dodamdodam.inapp.domain.app.exception.AppApiKeyNotFoundException
 import com.b1nd.dodamdodam.inapp.domain.app.exception.AppDenyReasonRequiredException
 import com.b1nd.dodamdodam.inapp.domain.app.exception.AppNotFoundException
 import com.b1nd.dodamdodam.inapp.domain.app.exception.AppReleaseEnableNotAllowedException
@@ -17,14 +20,19 @@ import com.b1nd.dodamdodam.inapp.domain.app.exception.AppServerPrefixLevelInvali
 import com.b1nd.dodamdodam.inapp.domain.app.exception.AppServerRedirectPathInvalidException
 import com.b1nd.dodamdodam.inapp.domain.app.exception.AppTeamMemberPermissionRequiredException
 import com.b1nd.dodamdodam.inapp.domain.app.exception.AppTeamOwnerPermissionRequiredException
+import com.b1nd.dodamdodam.inapp.domain.app.repository.AppApiKeyRepository
 import com.b1nd.dodamdodam.inapp.domain.app.repository.AppReleaseRepository
 import com.b1nd.dodamdodam.inapp.domain.app.repository.AppRepository
 import com.b1nd.dodamdodam.inapp.domain.app.repository.AppServerRepository
+import com.b1nd.dodamdodam.inapp.infrastructure.kafka.producer.AppApiKeyEventProducer
 import com.b1nd.dodamdodam.inapp.infrastructure.kafka.producer.AppServerRouteEventProducer
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import com.b1nd.dodamdodam.inapp.domain.team.entity.TeamEntity
 import com.b1nd.dodamdodam.inapp.domain.team.repository.TeamMemberRepository
 import com.b1nd.dodamdodam.inapp.domain.team.repository.TeamRepository
 import org.springframework.stereotype.Service
+import java.security.SecureRandom
+import java.time.LocalDateTime
 import java.util.UUID
 
 @Service
@@ -32,9 +40,12 @@ class AppService(
     private val appRepository: AppRepository,
     private val appReleaseRepository: AppReleaseRepository,
     private val appServerRepository: AppServerRepository,
+    private val appApiKeyRepository: AppApiKeyRepository,
     private val appServerRouteEventProducer: AppServerRouteEventProducer,
+    private val appApiKeyEventProducer: AppApiKeyEventProducer,
     private val teamRepository: TeamRepository,
-    private val teamMemberRepository: TeamMemberRepository
+    private val teamMemberRepository: TeamMemberRepository,
+    private val passwordEncoder: BCryptPasswordEncoder
 ) {
     private data class ServerRegistrationInput(
         val name: String,
@@ -45,6 +56,7 @@ class AppService(
 
     companion object {
         private val REDIRECT_PATH_REGEX = Regex("^/([A-Za-z0-9_-]+)(/[A-Za-z0-9_-]+)*$")
+        private const val API_KEY_EXPIRE_DAYS = 90L
     }
 
     fun create(
@@ -223,6 +235,38 @@ class AppService(
         appServerRouteEventProducer.publishUpdated(server)
     }
 
+    fun createApiKey(userId: UUID, appId: UUID): AppApiKeyEntity {
+        val app = getAppWithMemberPermission(userId, appId)
+        if (appApiKeyRepository.existsByApp(app)) throw AppApiKeyAlreadyExistException()
+        val rawKey = generateRawApiKey()
+        val apiKeyEntity = appApiKeyRepository.save(
+            AppApiKeyEntity(
+                app = app,
+                apiKey = passwordEncoder.encode(rawKey),
+                expiredAt = LocalDateTime.now().plusDays(API_KEY_EXPIRE_DAYS),
+                rawApiKey = rawKey,
+            )
+        )
+        appApiKeyEventProducer.publishCreated(apiKeyEntity)
+        return apiKeyEntity
+    }
+
+    fun regenerateApiKey(userId: UUID, appId: UUID): AppApiKeyEntity {
+        val app = getAppWithMemberPermission(userId, appId)
+        val apiKeyEntity = appApiKeyRepository.findByApp(app) ?: throw AppApiKeyNotFoundException()
+        val rawKey = generateRawApiKey()
+        apiKeyEntity.updateApiKey(passwordEncoder.encode(rawKey), LocalDateTime.now().plusDays(API_KEY_EXPIRE_DAYS))
+        appApiKeyEventProducer.publishCreated(apiKeyEntity)
+        return AppApiKeyEntity(app = apiKeyEntity.app, apiKey = apiKeyEntity.apiKey, expiredAt = apiKeyEntity.expiredAt, rawApiKey = rawKey)
+    }
+
+    fun verifyApiKey(appPublicId: UUID, rawApiKey: String): Boolean {
+        val app = getApp(appPublicId)
+        val apiKeyEntity = appApiKeyRepository.findByApp(app) ?: return false
+        if (apiKeyEntity.isExpired) return false
+        return passwordEncoder.matches(rawApiKey, apiKeyEntity.apiKey)
+    }
+
     fun deleteApp(userId: UUID, appId: UUID) {
         val app = getAppWithOwnerPermission(userId, appId)
         appRepository.delete(app)
@@ -326,5 +370,12 @@ class AppService(
             redirectPath = redirectPath,
             prefixLevel = prefixLevel
         )
+    }
+
+    private fun generateRawApiKey(): String {
+        val random = SecureRandom()
+        val bytes = ByteArray(32)
+        random.nextBytes(bytes)
+        return "dok_" + bytes.joinToString("") { "%02x".format(it) }
     }
 }

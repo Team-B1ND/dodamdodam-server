@@ -39,6 +39,7 @@ class SecurityConfig(
                 auth.requestMatchers(
                     "/passport",
                     "/login",
+                    "/open-api/verify",
                     "/v3/api-docs/**",
                     "/swagger-ui/**",
                     "/swagger-ui.html"

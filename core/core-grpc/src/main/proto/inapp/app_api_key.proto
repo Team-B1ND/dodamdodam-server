@@ -1,0 +1,21 @@
+syntax = "proto3";
+
+package inapp;
+
+option java_multiple_files = true;
+option java_package = "com.b1nd.dodamdodam.grpc.inapp";
+
+service AppApiKeyService {
+
+  rpc VerifyApiKey (VerifyApiKeyRequest)
+      returns (VerifyApiKeyResponse);
+}
+
+message VerifyApiKeyRequest {
+  string app_public_id = 1;
+  string api_key = 2;
+}
+
+message VerifyApiKeyResponse {
+  bool valid = 1;
+}
