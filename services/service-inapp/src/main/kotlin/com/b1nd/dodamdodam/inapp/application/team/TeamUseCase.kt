@@ -5,14 +5,13 @@ import com.b1nd.dodamdodam.core.security.passport.holder.PassportHolder
 import com.b1nd.dodamdodam.core.security.passport.requireUserId
 import com.b1nd.dodamdodam.inapp.application.team.data.request.AddTeamMemberRequest
 import com.b1nd.dodamdodam.inapp.application.team.data.request.CreateTeamRequest
-import com.b1nd.dodamdodam.inapp.application.team.data.request.DeleteTeamMemberRequest
-import com.b1nd.dodamdodam.inapp.application.team.data.request.DeleteTeamRequest
 import com.b1nd.dodamdodam.inapp.application.team.data.request.EditTeamInfoRequest
 import com.b1nd.dodamdodam.inapp.application.team.data.response.MyTeamResponse
 import com.b1nd.dodamdodam.inapp.application.team.data.toMyTeamResponses
 import com.b1nd.dodamdodam.inapp.domain.team.service.TeamService
 import org.springframework.stereotype.Component
 import org.springframework.transaction.annotation.Transactional
+import java.util.UUID
 
 @Component
 @Transactional(rollbackFor = [Exception::class])
@@ -37,15 +36,15 @@ class TeamUseCase(
         return Response.ok("팀 멤버가 추가되었어요.")
     }
 
-    fun deleteTeamMembers(request: DeleteTeamMemberRequest): Response<Any> {
-        teamService.validateOwner(PassportHolder.current().requireUserId(), request.teamId)
-        teamService.deleteMember(request.teamId, request.users)
+    fun deleteTeamMembers(teamId: UUID, users: List<UUID>): Response<Any> {
+        teamService.validateOwner(PassportHolder.current().requireUserId(), teamId)
+        teamService.deleteMember(teamId, users)
         return Response.ok("팀 멤버가 삭제되었어요.")
     }
 
-    fun deleteTeam(request: DeleteTeamRequest): Response<Any> {
-        teamService.validateOwner(PassportHolder.current().requireUserId(), request.teamId)
-        teamService.delete(request.teamId)
+    fun deleteTeam(teamId: UUID): Response<Any> {
+        teamService.validateOwner(PassportHolder.current().requireUserId(), teamId)
+        teamService.delete(teamId)
         return Response.ok("팀이 삭제되었어요.")
     }
 
