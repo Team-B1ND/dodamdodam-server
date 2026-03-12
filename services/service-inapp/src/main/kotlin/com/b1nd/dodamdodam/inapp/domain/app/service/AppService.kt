@@ -1,5 +1,9 @@
 package com.b1nd.dodamdodam.inapp.domain.app.service
 
+import com.b1nd.dodamdodam.inapp.domain.app.command.CreateAppCommand
+import com.b1nd.dodamdodam.inapp.domain.app.command.CreateServerCommand
+import com.b1nd.dodamdodam.inapp.domain.app.command.EditAppCommand
+import com.b1nd.dodamdodam.inapp.domain.app.command.EditServerCommand
 import com.b1nd.dodamdodam.inapp.domain.app.entity.AppApiKeyEntity
 import com.b1nd.dodamdodam.inapp.domain.app.entity.AppEntity
 import com.b1nd.dodamdodam.inapp.domain.app.entity.AppReleaseEntity
@@ -14,7 +18,6 @@ import com.b1nd.dodamdodam.inapp.domain.app.exception.AppReleaseEnableNotAllowed
 import com.b1nd.dodamdodam.inapp.domain.app.exception.AppReleaseNotFoundException
 import com.b1nd.dodamdodam.inapp.domain.app.exception.AppServerAlreadyExistException
 import com.b1nd.dodamdodam.inapp.domain.app.exception.AppServerEnableNotAllowedException
-import com.b1nd.dodamdodam.inapp.domain.app.exception.AppServerInfoIncompleteException
 import com.b1nd.dodamdodam.inapp.domain.app.exception.AppServerNotFoundException
 import com.b1nd.dodamdodam.inapp.domain.app.exception.AppServerPrefixLevelInvalidException
 import com.b1nd.dodamdodam.inapp.domain.app.exception.AppServerRedirectPathInvalidException
@@ -47,56 +50,32 @@ class AppService(
     private val teamMemberRepository: TeamMemberRepository,
     private val passwordEncoder: BCryptPasswordEncoder
 ) {
-    private data class ServerRegistrationInput(
-        val name: String,
-        val serverAddress: String,
-        val redirectPath: String,
-        val prefixLevel: Int
-    )
-
     companion object {
         private val REDIRECT_PATH_REGEX = Regex("^/([A-Za-z0-9_-]+)(/[A-Za-z0-9_-]+)*$")
         private const val API_KEY_EXPIRE_DAYS = 90L
     }
 
-    fun create(
-        userId: UUID,
-        teamId: UUID,
-        name: String,
-        subtitle: String,
-        description: String?,
-        iconUrl: String,
-        darkIconUrl: String?,
-        inquiryMail: String,
-        serverName: String?,
-        serverAddress: String?,
-        redirectPath: String?,
-        prefixLevel: Int?
-    ): UUID {
-        if (existByName(name)) throw AppAlreadyExistException()
-        val team = getTeamWithMemberPermission(userId, teamId)
-        val app = appRepository.save(AppEntity(name, description, subtitle, iconUrl, darkIconUrl, inquiryMail, team))
-        extractServerRegistrationInputOrNull(
-            serverName = serverName,
-            serverAddress = serverAddress,
-            redirectPath = redirectPath,
-            prefixLevel = prefixLevel
-        )?.let { server ->
-            createServerInternal(app, server.name, server.serverAddress, server.redirectPath, server.prefixLevel)
-        }
+    fun create(userId: UUID, command: CreateAppCommand): UUID {
+        if (existByName(command.name)) throw AppAlreadyExistException()
+        val team = getTeamWithMemberPermission(userId, command.teamId)
+        val app = appRepository.save(command.toEntity(team))
+        appReleaseRepository.save(
+            AppReleaseEntity(
+                app = app,
+                enabled = false,
+                releaseUrl = command.githubReleaseUrl,
+                updatedUser = userId,
+                status = AppStatusType.PENDING
+            )
+        )
+        command.server?.let { saveServer(app, it) }
         return app.publicId!!
     }
 
-    fun createServer(
-        userId: UUID,
-        appId: UUID,
-        name: String,
-        serverAddress: String,
-        redirectPath: String,
-        prefixLevel: Int
-    ) {
-        val app = getAppWithMemberPermission(userId, appId)
-        createServerInternal(app, name, serverAddress, redirectPath, prefixLevel)
+    fun createServer(userId: UUID, command: CreateServerCommand) {
+        val app = getAppWithMemberPermission(userId, command.appId!!)
+        if (appServerRepository.existsByApp(app)) throw AppServerAlreadyExistException()
+        saveServer(app, command)
     }
 
     fun createRelease(userId: UUID, appId: UUID, releaseUrl: String, memo: String?): UUID {
@@ -115,9 +94,7 @@ class AppService(
     }
 
     fun updateReleaseStatus(userId: UUID, releaseId: UUID, status: AppStatusType, denyResult: String?) {
-        if (status == AppStatusType.DENIED) {
-            requireDenyReason(denyResult)
-        }
+        if (status == AppStatusType.DENIED) requireDenyReason(denyResult)
         val release = getRelease(releaseId)
         release.updateStatus(status, denyResult, userId)
     }
@@ -164,39 +141,24 @@ class AppService(
         return appRepository.findAllByTeamInOrderByIdDesc(teams)
     }
 
-    fun updateApp(
-        userId: UUID,
-        appId: UUID,
-        name: String?,
-        subtitle: String?,
-        description: String?,
-        iconUrl: String?,
-        darkIconUrl: String?,
-        inquiryMail: String?
-    ) {
-        val app = getAppWithMemberPermission(userId, appId)
-        name?.let {
+    fun updateApp(userId: UUID, command: EditAppCommand) {
+        val app = getAppWithMemberPermission(userId, command.appId)
+        command.name?.let {
             if (it != app.name && existByName(it)) throw AppAlreadyExistException()
         }
-        app.update(name, subtitle, description, iconUrl, darkIconUrl, inquiryMail)
+        app.update(command.name, command.subtitle, command.description, command.iconUrl, command.darkIconUrl, command.inquiryMail)
     }
 
-    fun updateServer(
-        userId: UUID,
-        appId: UUID,
-        name: String?,
-        serverAddress: String?,
-        redirectPath: String?,
-        prefixLevel: Int?
-    ) {
-        val app = getAppWithMemberPermission(userId, appId)
+    fun updateServer(userId: UUID, command: EditServerCommand) {
+        val app = getAppWithMemberPermission(userId, command.appId)
         val server = getAppServer(app)
         val wasEnabled = server.enabled
         server.updateServerInfo(
-            name = name,
-            serverAddress = serverAddress,
-            redirectPath = redirectPath?.let { normalizeAndValidatePath(it) },
-            prefixLevel = prefixLevel?.let { normalizePrefixLevel(it) }
+            name = command.name,
+            serverAddress = command.serverAddress,
+            redirectPath = command.redirectPath?.let { normalizeAndValidatePath(it) },
+            prefixLevel = command.prefixLevel?.let { normalizePrefixLevel(it) },
+            usePushNotification = command.usePushNotification
         )
         if (wasEnabled && !server.enabled) {
             appServerRouteEventProducer.publishUpdated(server)
@@ -204,9 +166,7 @@ class AppService(
     }
 
     fun updateServerStatus(appId: UUID, status: AppStatusType, denyResult: String?) {
-        if (status == AppStatusType.DENIED) {
-            requireDenyReason(denyResult)
-        }
+        if (status == AppStatusType.DENIED) requireDenyReason(denyResult)
         val app = getApp(appId)
         val server = getAppServer(app)
         val wasEnabled = server.enabled
@@ -279,6 +239,21 @@ class AppService(
         appRepository.findByPublicId(appId)
             ?: throw AppNotFoundException()
 
+    private fun saveServer(app: AppEntity, command: CreateServerCommand) {
+        appServerRepository.save(
+            AppServerEntity(
+                app = app,
+                name = command.name,
+                serverAddress = command.serverAddress,
+                redirectPath = normalizeAndValidatePath(command.redirectPath),
+                prefixLevel = normalizePrefixLevel(command.prefixLevel),
+                usePushNotification = command.usePushNotification,
+                enabled = false,
+                status = AppStatusType.PENDING
+            )
+        )
+    }
+
     private fun getRelease(releaseId: UUID): AppReleaseEntity =
         appReleaseRepository.findByPublicId(releaseId)
             ?: throw AppReleaseNotFoundException()
@@ -317,27 +292,6 @@ class AppService(
         appServerRepository.findByApp(app)
             ?: throw AppServerNotFoundException()
 
-    private fun createServerInternal(
-        app: AppEntity,
-        name: String,
-        serverAddress: String,
-        redirectPath: String,
-        prefixLevel: Int
-    ) {
-        if (appServerRepository.existsByApp(app)) throw AppServerAlreadyExistException()
-        appServerRepository.save(
-            AppServerEntity(
-                app = app,
-                name = name,
-                serverAddress = serverAddress,
-                redirectPath = normalizeAndValidatePath(redirectPath),
-                prefixLevel = normalizePrefixLevel(prefixLevel),
-                enabled = false,
-                status = AppStatusType.PENDING
-            )
-        )
-    }
-
     private fun normalizePrefixLevel(prefixLevel: Int): Int {
         if (prefixLevel == 0 || prefixLevel == 1) return prefixLevel
         throw AppServerPrefixLevelInvalidException()
@@ -355,21 +309,6 @@ class AppService(
         if (denyResult.isNullOrBlank()) {
             throw AppDenyReasonRequiredException()
         }
-    }
-
-    private fun extractServerRegistrationInputOrNull(serverName: String?, serverAddress: String?, redirectPath: String?, prefixLevel: Int?): ServerRegistrationInput? {
-        if (serverName == null && serverAddress == null && redirectPath == null && prefixLevel == null) {
-            return null
-        }
-        if (serverName == null || serverAddress == null || redirectPath == null || prefixLevel == null) {
-            throw AppServerInfoIncompleteException()
-        }
-        return ServerRegistrationInput(
-            name = serverName,
-            serverAddress = serverAddress,
-            redirectPath = redirectPath,
-            prefixLevel = prefixLevel
-        )
     }
 
     private fun generateRawApiKey(): String {

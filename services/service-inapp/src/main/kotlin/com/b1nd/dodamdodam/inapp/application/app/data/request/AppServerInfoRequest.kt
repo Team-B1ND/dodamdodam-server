@@ -5,4 +5,5 @@ data class AppServerInfoRequest(
     val serverAddress: String,
     val redirectPath: String,
     val omitApiPrefix: Boolean,
+    val usePushNotification: Boolean,
 )
