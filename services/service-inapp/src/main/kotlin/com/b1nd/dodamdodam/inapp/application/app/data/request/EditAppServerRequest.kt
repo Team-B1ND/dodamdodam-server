@@ -8,4 +8,5 @@ data class EditAppServerRequest(
     val serverAddress: String? = null,
     val redirectPath: String? = null,
     val omitApiPrefix: Boolean? = null,
+    val usePushNotification: Boolean? = null,
 )

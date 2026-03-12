@@ -8,4 +8,5 @@ data class CreateAppServerRequest(
     val serverAddress: String,
     val redirectPath: String,
     val omitApiPrefix: Boolean,
+    val usePushNotification: Boolean,
 )

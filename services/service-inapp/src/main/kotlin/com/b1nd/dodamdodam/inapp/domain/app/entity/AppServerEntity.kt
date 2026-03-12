@@ -29,6 +29,8 @@ class AppServerEntity(
     @Column(nullable = false)
     var prefixLevel: Int,
     @Column(nullable = false)
+    var usePushNotification: Boolean,
+    @Column(nullable = false)
     var enabled: Boolean,
     @Column(columnDefinition = "TEXT")
     var denyResult: String? = null,
@@ -43,7 +45,8 @@ class AppServerEntity(
         name: String?,
         serverAddress: String?,
         redirectPath: String?,
-        prefixLevel: Int?
+        prefixLevel: Int?,
+        usePushNotification: Boolean?
     ) {
         var changed = false
         name?.let {
@@ -69,6 +72,9 @@ class AppServerEntity(
                 this.prefixLevel = it
                 changed = true
             }
+        }
+        usePushNotification?.let {
+            this.usePushNotification = it
         }
 
         // 서버 실제 배포 정보가 바뀌면 재승인이 필요하다.
