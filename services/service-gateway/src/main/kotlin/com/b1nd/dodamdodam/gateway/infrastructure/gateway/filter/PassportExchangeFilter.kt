@@ -28,6 +28,10 @@ class PassportExchangeFilter(
     private val repository: PassportCacheRepository
 ): GlobalFilter, Ordered {
     private val webClient = webClientBuilder.baseUrl(properties.url).build()
+
+    companion object {
+        private const val ACCESS_TOKEN_COOKIE = "access_token"
+    }
     
     override fun getOrder(): Int = 0
 
@@ -37,12 +41,26 @@ class PassportExchangeFilter(
             return chain.filter(exchange)
         }
 
-        val jwt = exchange.request.headers
+        val headerJwt = exchange.request.headers
             .getFirst(HttpHeaders.AUTHORIZATION)
             ?.removePrefix("Bearer ")
             ?.trim()
 
+        val cookieJwt = exchange.request.cookies
+            .getFirst(ACCESS_TOKEN_COOKIE)
+            ?.value
+
+        val jwt = headerJwt ?: cookieJwt
+        val isFromCookie = headerJwt == null && cookieJwt != null
+
         return extractPassport(jwt)
+            .onErrorResume { e ->
+                if (isFromCookie && (e is TokenExpiredException || e is InvalidTokenSignatureException)) {
+                    exchangePassport()
+                } else {
+                    Mono.error(e)
+                }
+            }
             .flatMap { passport ->
                 val decoratedRequest = object : ServerHttpRequestDecorator(exchange.request) {
                     override fun getHeaders(): HttpHeaders {

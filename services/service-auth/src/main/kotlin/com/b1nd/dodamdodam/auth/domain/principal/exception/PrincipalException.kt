@@ -4,3 +4,4 @@ import com.b1nd.dodamdodam.core.common.exception.BasicException
 
 class UserNotFoundException : BasicException(PrincipalExceptionStatusCode.USER_NOT_FOUND)
 class PasswordIncorrectException : BasicException(PrincipalExceptionStatusCode.PASSWORD_INCORRECT)
+class RefreshTokenNotFoundException : BasicException(PrincipalExceptionStatusCode.REFRESH_TOKEN_NOT_FOUND)
