@@ -29,10 +29,6 @@ class PassportExchangeFilter(
 ): GlobalFilter, Ordered {
     private val webClient = webClientBuilder.baseUrl(properties.url).build()
 
-    companion object {
-        private const val ACCESS_TOKEN_COOKIE = "access_token"
-    }
-    
     override fun getOrder(): Int = 0
 
     override fun filter(exchange: ServerWebExchange, chain: GatewayFilterChain): Mono<Void> {
@@ -47,7 +43,7 @@ class PassportExchangeFilter(
             ?.trim()
 
         val cookieJwt = exchange.request.cookies
-            .getFirst(ACCESS_TOKEN_COOKIE)
+            .getFirst(properties.accessTokenCookie)
             ?.value
 
         val jwt = headerJwt ?: cookieJwt

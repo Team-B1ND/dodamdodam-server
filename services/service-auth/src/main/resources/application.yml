@@ -36,6 +36,6 @@ app:
     domain: ${COOKIE_DOMAIN:}
     secure: ${COOKIE_SECURE:true}
     same-site: ${COOKIE_SAME_SITE:Lax}
-    access-token-name: access_token
-    refresh-token-name: refresh_token
+    access-token-name: ${COOKIE_ACCESS_TOKEN_NAME:access_token}
+    refresh-token-name: ${COOKIE_REFRESH_TOKEN_NAME:refresh_token}
     refresh-token-path: ${COOKIE_REFRESH_PATH:/auth/refresh}
