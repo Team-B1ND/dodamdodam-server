@@ -29,3 +29,7 @@ management:
     web:
       exposure:
         include: gateway,health,info
+
+app:
+  auth:
+    access-token-cookie: ${COOKIE_ACCESS_TOKEN_NAME:access_token}

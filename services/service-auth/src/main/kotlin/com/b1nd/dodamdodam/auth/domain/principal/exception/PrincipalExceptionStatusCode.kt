@@ -9,4 +9,5 @@ enum class PrincipalExceptionStatusCode(
 ): ExceptionCode {
     USER_NOT_FOUND(HttpStatus.NOT_FOUND, "유저를 찾을 수 없어요."),
     PASSWORD_INCORRECT(HttpStatus.UNAUTHORIZED, "비밀번호가 올바르지 않아요."),
+    REFRESH_TOKEN_NOT_FOUND(HttpStatus.UNAUTHORIZED, "리프레시 토큰을 찾을 수 없어요."),
 }

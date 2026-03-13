@@ -2,6 +2,7 @@ package com.b1nd.dodamdodam.auth.domain.principal.service
 
 import com.b1nd.dodamdodam.auth.domain.principal.entity.PrincipalEntity
 import com.b1nd.dodamdodam.auth.domain.principal.entity.PrincipalRefreshTokenEntity
+import com.b1nd.dodamdodam.auth.domain.principal.exception.RefreshTokenNotFoundException
 import com.b1nd.dodamdodam.auth.domain.principal.exception.UserNotFoundException
 import com.b1nd.dodamdodam.auth.domain.principal.repository.PrincipalRefreshTokenRepository
 import com.b1nd.dodamdodam.auth.domain.principal.repository.PrincipalRepository
@@ -18,9 +19,22 @@ class PrincipalService(
         repository.findByUsername(username)
             ?: throw UserNotFoundException()
 
+    fun getByUserId(userId: UUID) =
+        repository.findByUserId(userId)
+            ?: throw UserNotFoundException()
+
     fun saveRefreshToken(principal: PrincipalEntity, refreshToken: String, userAgent: String? = null) {
         refreshTokenRepository.save(PrincipalRefreshTokenEntity(principal, refreshToken, userAgent))
     }
+
+    fun rotateRefreshToken(oldToken: String, principal: PrincipalEntity, newToken: String, userAgent: String? = null) {
+        refreshTokenRepository.deleteByToken(oldToken)
+        refreshTokenRepository.save(PrincipalRefreshTokenEntity(principal, newToken, userAgent))
+    }
+
+    fun findRefreshToken(token: String): PrincipalRefreshTokenEntity =
+        refreshTokenRepository.findByToken(token)
+            ?: throw RefreshTokenNotFoundException()
 
     fun updatePrincipal(userId: UUID, status: Boolean, username: String, roles: Set<RoleType>) {
         val principal = repository.findByUserId(userId)
