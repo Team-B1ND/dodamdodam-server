@@ -49,6 +49,25 @@ class UserUseCase(
         )
     }
 
+    fun getAllUsers(): Response<List<UserInfoResponse>> {
+        val users = userService.getAll()
+        if (users.isEmpty()) return Response.ok("모든 유저를 조회했어요.", emptyList())
+
+        val rolesMap = userService.getRolesGroupedByUser(users)
+        val studentsMap = studentService.getByUsers(users)
+        val teachersMap = teacherService.getByUsers(users)
+
+        val responses = users.map { user ->
+            UserInfoResponse.fromEntity(
+                user,
+                rolesMap[user.id] ?: emptySet(),
+                studentsMap[user.id],
+                teachersMap[user.id],
+            )
+        }
+        return Response.ok("모든 유저를 조회했어요.", responses)
+    }
+
     fun registerStudent(request: StudentRegisterRequest): Response<Any> {
         phoneVerificationStore.ensureActive(request.phone)
         val savedUser: UserEntity = userService.create(

@@ -26,4 +26,7 @@ class TeacherService(
 
     fun getOrNull(userEntity: UserEntity): TeacherEntity? =
         repository.findByUser(userEntity)
+
+    fun getByUsers(users: Collection<UserEntity>): Map<Long?, TeacherEntity> =
+        repository.findAllByUserIn(users).associateBy { it.user.id }
 }

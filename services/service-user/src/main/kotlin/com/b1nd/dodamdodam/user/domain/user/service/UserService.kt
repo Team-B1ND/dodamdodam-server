@@ -74,10 +74,18 @@ class UserService(
         userRoleRepository.saveAll(userRoles)
     }
 
+    fun getAll(): List<UserEntity> =
+        userRepository.findAll()
+
     fun getRoles(user: UserEntity): Set<RoleType> =
         userRoleRepository.findAllByUser(user)
             .map { it.role }
             .toSet()
+
+    fun getRolesGroupedByUser(users: Collection<UserEntity>): Map<Long?, Set<RoleType>> =
+        userRoleRepository.findAllByUserIn(users)
+            .groupBy { it.user.id }
+            .mapValues { (_, v) -> v.map { it.role }.toSet() }
 
     fun verify(username: String, password: String) {
         val user = userRepository.findByUsername(username)
