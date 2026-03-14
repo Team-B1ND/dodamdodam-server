@@ -13,6 +13,7 @@ import com.b1nd.dodamdodam.user.application.user.data.request.UpdateStudentInfoR
 import com.b1nd.dodamdodam.user.application.user.data.request.UpdateTeacherInfoRequest
 import com.b1nd.dodamdodam.user.application.user.data.request.UpdateUserInfoRequest
 import org.springframework.web.bind.annotation.DeleteMapping
+import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PatchMapping
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
@@ -66,6 +67,11 @@ class UserController(
     @PatchMapping("/change-password")
     fun changePassword(@RequestBody request: ChangePasswordRequest) =
         userUseCase.changePassword(request)
+
+    @UserAccess(roles = [RoleType.ADMIN])
+    @GetMapping("/all")
+    fun getAllUsers() =
+        userUseCase.getAllUsers()
 
     @UserAccess(roles = [RoleType.ADMIN])
     @PostMapping("/enable-user")
