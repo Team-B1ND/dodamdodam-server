@@ -1,5 +1,9 @@
 package com.b1nd.dodamdodam.user.infrastructure.cache
 
+import com.fasterxml.jackson.annotation.JsonTypeInfo
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.databind.jsontype.BasicPolymorphicTypeValidator
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import org.springframework.cache.annotation.EnableCaching
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -17,10 +21,23 @@ class CacheConfig(
 ) {
     @Bean
     fun cacheManager(): RedisCacheManager {
+        val objectMapper = ObjectMapper().apply {
+            registerModule(JavaTimeModule())
+            activateDefaultTyping(
+                BasicPolymorphicTypeValidator.builder()
+                    .allowIfBaseType(Any::class.java)
+                    .build(),
+                ObjectMapper.DefaultTyping.EVERYTHING,
+                JsonTypeInfo.As.PROPERTY
+            )
+        }
+
         val config = RedisCacheConfiguration.defaultCacheConfig()
             .entryTtl(Duration.ofMinutes(10))
             .serializeValuesWith(
-                RedisSerializationContext.SerializationPair.fromSerializer(GenericJackson2JsonRedisSerializer())
+                RedisSerializationContext.SerializationPair.fromSerializer(
+                    GenericJackson2JsonRedisSerializer(objectMapper)
+                )
             )
             .disableCachingNullValues()
 

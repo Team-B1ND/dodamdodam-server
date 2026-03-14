@@ -47,6 +47,11 @@ class TeamController(
         teamUseCase.addTeamMembers(request)
 
     @UserAccess
+    @GetMapping("/{teamId}/member")
+    fun getMembers(@PathVariable teamId: UUID) =
+        teamUseCase.getTeamMembers(teamId)
+
+    @UserAccess
     @DeleteMapping("/{teamId}/member")
     fun deleteMembers(
         @PathVariable teamId: UUID,
