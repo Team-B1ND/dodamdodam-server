@@ -7,8 +7,12 @@ import com.b1nd.dodamdodam.inapp.application.team.data.request.AddTeamMemberRequ
 import com.b1nd.dodamdodam.inapp.application.team.data.request.CreateTeamRequest
 import com.b1nd.dodamdodam.inapp.application.team.data.request.EditTeamInfoRequest
 import com.b1nd.dodamdodam.inapp.application.team.data.response.MyTeamResponse
+import com.b1nd.dodamdodam.inapp.application.team.data.response.TeamMemberResponse
 import com.b1nd.dodamdodam.inapp.application.team.data.toMyTeamResponses
+import com.b1nd.dodamdodam.inapp.application.team.data.toTeamMemberResponses
 import com.b1nd.dodamdodam.inapp.domain.team.service.TeamService
+import com.b1nd.dodamdodam.inapp.infrastructure.user.client.UserQueryClient
+import kotlinx.coroutines.runBlocking
 import org.springframework.stereotype.Component
 import org.springframework.transaction.annotation.Transactional
 import java.util.UUID
@@ -16,7 +20,8 @@ import java.util.UUID
 @Component
 @Transactional(rollbackFor = [Exception::class])
 class TeamUseCase(
-    private val teamService: TeamService
+    private val teamService: TeamService,
+    private val userQueryClient: UserQueryClient,
 ) {
     fun createTeam(request: CreateTeamRequest): Response<Any> {
         val userId = PassportHolder.current().requireUserId()
@@ -58,5 +63,15 @@ class TeamUseCase(
             request.githubUrl
         )
         return Response.ok("팀 정보가 수정되었어요.")
+    }
+
+    @Transactional(readOnly = true)
+    fun getTeamMembers(teamId: UUID): Response<List<TeamMemberResponse>> {
+        val members = teamService.getAllByTeam(teamId)
+        val userIds = members.map { it.user.toString() }
+        val userMap = runBlocking { userQueryClient.getUsers(userIds) }
+            .usersList
+            .associateBy { UUID.fromString(it.publicId) }
+        return Response.ok("팀 멤버를 조회했어요.", members.toTeamMemberResponses(userMap))
     }
 }

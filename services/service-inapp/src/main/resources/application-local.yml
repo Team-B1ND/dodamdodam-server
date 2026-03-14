@@ -24,6 +24,10 @@ server:
 grpc:
   server:
     port: 9093
+  client:
+    service-user:
+      address: 'static://localhost:9091'
+      negotiation-type: plaintext
 
 app:
   kafka:

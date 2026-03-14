@@ -12,6 +12,7 @@ import com.b1nd.dodamdodam.user.application.openapi.data.toGrpcResponse
 import io.grpc.Status
 import io.grpc.StatusRuntimeException
 import net.devh.boot.grpc.server.service.GrpcService
+import org.slf4j.LoggerFactory
 import java.util.UUID
 
 @GrpcService
@@ -19,6 +20,7 @@ class UserQueryGrpcController(
     private val openApiUserUseCase: OpenApiUserUseCase,
     private val blockingExecutor: CoroutineBlockingExecutor,
 ) : UserQueryServiceGrpcKt.UserQueryServiceCoroutineImplBase() {
+    private val log = LoggerFactory.getLogger(this::class.java)
 
     override suspend fun getUser(request: GetUserRequest): UserResponse {
         val user = blockingExecutor.execute {
@@ -31,10 +33,17 @@ class UserQueryGrpcController(
     }
 
     override suspend fun getUsers(request: GetUsersRequest): GetUsersResponse {
-        val publicIds = request.publicIdsList.map { UUID.fromString(it) }
-        val users = blockingExecutor.execute {
-            openApiUserUseCase.getUsers(publicIds)
+        try {
+            val publicIds = request.publicIdsList.map { UUID.fromString(it) }
+            val users = blockingExecutor.execute {
+                openApiUserUseCase.getUsers(publicIds)
+            }
+            return users.toGetUsersGrpcResponse()
+        } catch (ex: Exception) {
+            log.error("gRPC getUsers failed", ex)
+            throw StatusRuntimeException(
+                Status.INTERNAL.withDescription(ex.message).withCause(ex)
+            )
         }
-        return users.toGetUsersGrpcResponse()
     }
 }
