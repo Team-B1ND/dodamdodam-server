@@ -5,6 +5,7 @@ import com.b1nd.dodamdodam.auth.application.auth.data.response.LoginResponse
 import com.b1nd.dodamdodam.auth.infrastructure.cookie.TokenCookieProvider
 import com.b1nd.dodamdodam.auth.infrastructure.user.client.UserClient
 import com.b1nd.dodamdodam.auth.domain.principal.exception.PasswordIncorrectException
+import com.b1nd.dodamdodam.auth.domain.principal.exception.UserNotActiveException
 import com.b1nd.dodamdodam.auth.domain.principal.service.PrincipalService
 import com.b1nd.dodamdodam.auth.infrastructure.security.jwt.JwtSigner
 import com.b1nd.dodamdodam.core.common.data.Response
@@ -31,6 +32,7 @@ class AuthUseCase(
         val isValid: Boolean = runBlocking { userClient.verifyPassword(request.username, request.password) }.getOrThrow()
         if (!isValid) throw PasswordIncorrectException()
         val principal = principalService.getByUsername(request.username)
+        if (!principal.status) throw UserNotActiveException()
         val tokens = jwtSigner.createTokens(JwtClaims(principal.userId, principal.username))
         principalService.saveRefreshToken(principal, tokens.refreshToken, userAgent)
         cookieProvider.addTokenCookies(tokens.accessToken, tokens.refreshToken)
