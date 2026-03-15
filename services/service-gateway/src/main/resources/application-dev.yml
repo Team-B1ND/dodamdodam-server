@@ -39,6 +39,12 @@ spring:
             - Path=/inapp/**
           filters:
             - StripPrefix=1
+        - id: file-service
+          uri: http://service-file:8080
+          predicates:
+            - Path=/file/**
+          filters:
+            - StripPrefix=1
         - id: openapi-user-service
           uri: http://service-user:8080
           predicates:

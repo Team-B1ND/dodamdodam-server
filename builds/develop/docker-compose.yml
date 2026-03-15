@@ -155,6 +155,20 @@ services:
       kafka:
         condition: service_healthy
 
+  service-file:
+    image: ${DOCKERHUB_USERNAME}/dodam-file:dev
+    container_name: dodam-file
+    restart: unless-stopped
+    environment:
+      SPRING_PROFILES_ACTIVE: dev
+      AWS_S3_ENDPOINT: ${AWS_S3_ENDPOINT}
+      AWS_S3_REGION: ${AWS_S3_REGION}
+      AWS_S3_BUCKET: ${AWS_S3_BUCKET}
+      AWS_ACCESS_KEY: ${AWS_ACCESS_KEY}
+      AWS_SECRET_KEY: ${AWS_SECRET_KEY}
+      AWS_S3_PATH_STYLE: ${AWS_S3_PATH_STYLE}
+      AWS_S3_KEY_PREFIX: ${AWS_S3_KEY_PREFIX}
+
 volumes:
   mysql-data:
   redis-data:

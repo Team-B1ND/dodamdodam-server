@@ -1,0 +1,7 @@
+cloud:
+  aws:
+    s3:
+      key-prefix: ${AWS_S3_KEY_PREFIX:dev/static}
+
+server:
+  port: 8080
