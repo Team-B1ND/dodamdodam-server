@@ -38,7 +38,7 @@ jobs:
 
       - name: Rename jars to predictable names
         run: |
-          for service in gateway auth user wakeup-song inapp; do
+          for service in gateway auth user wakeup-song inapp file; do
             dir="services/service-${service}/build/libs"
             jar=$(find "$dir" -name "service-${service}-*.jar" ! -name "*-plain.jar" | head -1)
             if [ -n "$jar" ]; then
@@ -109,6 +109,16 @@ jobs:
           push: true
           tags: ${{ env.IMAGE_PREFIX }}-inapp:dev
           build-args: JAR_FILE=service-inapp.jar
+
+      - name: Build & Push service-file
+        uses: docker/build-push-action@v6
+        with:
+          context: services/service-file/build/libs
+          file: builds/develop/Dockerfile
+          platforms: linux/arm64
+          push: true
+          tags: ${{ env.IMAGE_PREFIX }}-file:dev
+          build-args: JAR_FILE=service-file.jar
 
       - name: Deploy to Dev Server
         uses: appleboy/ssh-action@v1
