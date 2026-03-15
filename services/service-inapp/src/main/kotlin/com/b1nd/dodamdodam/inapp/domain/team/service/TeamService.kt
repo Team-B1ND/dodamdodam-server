@@ -36,11 +36,12 @@ class TeamService(
             throw TeamOwnerPermissionRequiredException()
     }
 
-    fun create(userId: UUID, teamEntity: TeamEntity) {
+    fun create(userId: UUID, teamEntity: TeamEntity): TeamEntity {
         if (repository.existsByName(teamEntity.name))
             throw TeamNameAlreadyExistException()
         val savedEntity = repository.save(teamEntity)
         teamMemberRepository.save(TeamMemberEntity(savedEntity, userId, true))
+        return savedEntity
     }
 
     fun addMember(team: TeamEntity, userIds: List<UUID>) {

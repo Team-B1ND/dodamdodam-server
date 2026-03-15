@@ -23,8 +23,8 @@ import org.springframework.web.bind.annotation.RestController
 class UserController(
     private val userUseCase: UserUseCase
 ) {
-    @UserAccess(hasAnyRoleOnly = true)
-    @PostMapping("/me")
+    @UserAccess(enabledOnly = false, hasAnyRoleOnly = true)
+    @GetMapping("/me")
     fun getMe() =
         userUseCase.getMyInfo()
 
