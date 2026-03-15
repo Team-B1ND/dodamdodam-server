@@ -1,5 +1,6 @@
 package com.b1nd.dodamdodam.inapp.application.app.data.response
 
+import com.b1nd.dodamdodam.inapp.domain.app.enumeration.AppStatusType
 import java.util.UUID
 
 data class AppSummaryResponse(
@@ -11,4 +12,6 @@ data class AppSummaryResponse(
     val iconUrl: String,
     val darkIconUrl: String?,
     val inquiryMail: String,
+    val releaseEnabled: Boolean?,
+    val releaseStatus: AppStatusType?,
 )

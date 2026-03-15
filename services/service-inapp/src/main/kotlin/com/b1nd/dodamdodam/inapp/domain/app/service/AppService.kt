@@ -68,6 +68,7 @@ class AppService(
                 status = AppStatusType.PENDING
             )
         )
+        app.updateReleaseInfo(enabled = false, status = AppStatusType.PENDING)
         command.server?.let { saveServer(app, it) }
         return app.publicId!!
     }
@@ -97,6 +98,7 @@ class AppService(
         if (status == AppStatusType.DENIED) requireDenyReason(denyResult)
         val release = getRelease(releaseId)
         release.updateStatus(status, denyResult, userId)
+        release.app.updateReleaseInfo(enabled = release.enabled, status = release.status)
     }
 
     fun denyRelease(userId: UUID, releaseId: UUID, denyResult: String?) {
@@ -114,6 +116,7 @@ class AppService(
                 .forEach { it.updateEnabled(false, userId) }
         }
         release.updateEnabled(enabled, userId)
+        release.app.updateReleaseInfo(enabled = release.enabled, status = release.status)
     }
 
     fun getReleases(userId: UUID, appId: UUID): List<AppReleaseEntity> {

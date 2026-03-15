@@ -28,16 +28,19 @@ class TokenCookieProvider(
     private fun currentResponse() =
         (RequestContextHolder.getRequestAttributes() as ServletRequestAttributes).response!!
 
+    private fun cookieMaxAge(): Duration =
+        Duration.ofSeconds(jwtProperties.refreshExpireSeconds * 2)
+
     private fun createAccessTokenCookie(token: String): ResponseCookie =
         buildCookie(cookieProperties.accessTokenName, token)
             .path("/")
-            .maxAge(Duration.ofSeconds(jwtProperties.accessExpireSeconds))
+            .maxAge(cookieMaxAge())
             .build()
 
     private fun createRefreshTokenCookie(token: String): ResponseCookie =
         buildCookie(cookieProperties.refreshTokenName, token)
             .path(cookieProperties.refreshTokenPath)
-            .maxAge(Duration.ofSeconds(jwtProperties.refreshExpireSeconds))
+            .maxAge(cookieMaxAge())
             .build()
 
     private fun createExpiredCookie(name: String, path: String): ResponseCookie =

@@ -69,6 +69,8 @@ fun AppEntity.toSummaryResponse() = AppSummaryResponse(
     iconUrl = iconUrl,
     darkIconUrl = darkIconUrl,
     inquiryMail = inquiryMail,
+    releaseEnabled = releaseEnabled,
+    releaseStatus = releaseStatus,
 )
 
 fun List<AppEntity>.toSummaryResponses() = map { it.toSummaryResponse() }

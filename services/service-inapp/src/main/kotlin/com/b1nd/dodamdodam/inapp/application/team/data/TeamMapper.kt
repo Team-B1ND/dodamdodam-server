@@ -2,9 +2,19 @@ package com.b1nd.dodamdodam.inapp.application.team.data
 
 import com.b1nd.dodamdodam.grpc.user.UserResponse
 import com.b1nd.dodamdodam.inapp.application.team.data.response.MyTeamResponse
+import com.b1nd.dodamdodam.inapp.application.team.data.response.TeamDetailResponse
 import com.b1nd.dodamdodam.inapp.application.team.data.response.TeamMemberResponse
+import com.b1nd.dodamdodam.inapp.domain.team.entity.TeamEntity
 import com.b1nd.dodamdodam.inapp.domain.team.entity.TeamMemberEntity
 import java.util.UUID
+
+fun TeamEntity.toTeamDetailResponse() = TeamDetailResponse(
+    teamId = publicId!!,
+    name = name,
+    description = description,
+    iconUrl = iconUrl,
+    githubUrl = githubUrl,
+)
 
 fun TeamMemberEntity.toMyTeamResponse() = MyTeamResponse(
     teamId = team.publicId!!,

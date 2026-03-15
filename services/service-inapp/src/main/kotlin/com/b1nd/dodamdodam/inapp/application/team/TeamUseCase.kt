@@ -8,8 +8,10 @@ import com.b1nd.dodamdodam.inapp.application.team.data.request.CreateTeamRequest
 import com.b1nd.dodamdodam.inapp.application.team.data.request.EditTeamInfoRequest
 import com.b1nd.dodamdodam.inapp.application.team.data.response.CreateTeamResponse
 import com.b1nd.dodamdodam.inapp.application.team.data.response.MyTeamResponse
+import com.b1nd.dodamdodam.inapp.application.team.data.response.TeamDetailResponse
 import com.b1nd.dodamdodam.inapp.application.team.data.response.TeamMemberResponse
 import com.b1nd.dodamdodam.inapp.application.team.data.toMyTeamResponses
+import com.b1nd.dodamdodam.inapp.application.team.data.toTeamDetailResponse
 import com.b1nd.dodamdodam.inapp.application.team.data.toTeamMemberResponses
 import com.b1nd.dodamdodam.inapp.domain.team.service.TeamService
 import com.b1nd.dodamdodam.inapp.infrastructure.user.client.UserQueryClient
@@ -34,6 +36,12 @@ class TeamUseCase(
         val userId = PassportHolder.current().requireUserId()
         val teamMemberList = teamService.getAllByUser(userId);
         return Response.ok("내 팀들을 조회했어요.", teamMemberList.toMyTeamResponses())
+    }
+
+    @Transactional(readOnly = true)
+    fun getTeam(teamId: UUID): Response<TeamDetailResponse> {
+        val team = teamService.getById(teamId)
+        return Response.ok("팀을 조회했어요.", team.toTeamDetailResponse())
     }
 
     fun addTeamMembers(request: AddTeamMemberRequest): Response<Any> {
