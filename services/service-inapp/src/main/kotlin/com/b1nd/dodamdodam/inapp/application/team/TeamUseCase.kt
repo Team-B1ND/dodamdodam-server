@@ -6,6 +6,7 @@ import com.b1nd.dodamdodam.core.security.passport.requireUserId
 import com.b1nd.dodamdodam.inapp.application.team.data.request.AddTeamMemberRequest
 import com.b1nd.dodamdodam.inapp.application.team.data.request.CreateTeamRequest
 import com.b1nd.dodamdodam.inapp.application.team.data.request.EditTeamInfoRequest
+import com.b1nd.dodamdodam.inapp.application.team.data.response.CreateTeamResponse
 import com.b1nd.dodamdodam.inapp.application.team.data.response.MyTeamResponse
 import com.b1nd.dodamdodam.inapp.application.team.data.response.TeamMemberResponse
 import com.b1nd.dodamdodam.inapp.application.team.data.toMyTeamResponses
@@ -23,10 +24,10 @@ class TeamUseCase(
     private val teamService: TeamService,
     private val userQueryClient: UserQueryClient,
 ) {
-    fun createTeam(request: CreateTeamRequest): Response<Any> {
+    fun createTeam(request: CreateTeamRequest): Response<CreateTeamResponse> {
         val userId = PassportHolder.current().requireUserId()
-        teamService.create(userId, request.toTeamEntity())
-        return Response.created("팀이 생성되었어요.")
+        val teamId = teamService.create(userId, request.toTeamEntity()).publicId
+        return Response.created("팀이 생성되었어요.", CreateTeamResponse(teamId!!))
     }
 
     fun getMyTeam(): Response<List<MyTeamResponse>> {
