@@ -150,20 +150,7 @@ class AppService(
             if (it != app.name && existByName(it)) throw AppAlreadyExistException()
         }
         app.update(command.name, command.subtitle, command.description, command.iconUrl, command.darkIconUrl, command.inquiryMail)
-        command.server?.let { serverCommand ->
-            val server = getAppServer(app)
-            val wasEnabled = server.enabled
-            server.updateServerInfo(
-                name = serverCommand.name,
-                serverAddress = serverCommand.serverAddress,
-                redirectPath = serverCommand.redirectPath?.let { normalizeAndValidatePath(it) },
-                prefixLevel = serverCommand.prefixLevel?.let { normalizePrefixLevel(it) },
-                usePushNotification = serverCommand.usePushNotification
-            )
-            if (wasEnabled && !server.enabled) {
-                appServerRouteEventProducer.publishUpdated(server)
-            }
-        }
+        command.server?.let { updateOrCreateServer(app, it) }
     }
 
     fun updateServer(userId: UUID, command: EditServerCommand) {
@@ -269,6 +256,25 @@ class AppService(
                 status = AppStatusType.PENDING
             )
         )
+    }
+
+    private fun updateOrCreateServer(app: AppEntity, command: EditServerCommand) {
+        val server = appServerRepository.findByApp(app)
+        if (server != null) {
+            val wasEnabled = server.enabled
+            server.updateServerInfo(
+                name = command.name,
+                serverAddress = command.serverAddress,
+                redirectPath = command.redirectPath?.let { normalizeAndValidatePath(it) },
+                prefixLevel = command.prefixLevel?.let { normalizePrefixLevel(it) },
+                usePushNotification = command.usePushNotification
+            )
+            if (wasEnabled && !server.enabled) {
+                appServerRouteEventProducer.publishUpdated(server)
+            }
+        } else {
+            saveServer(app, command.toCreateCommand())
+        }
     }
 
     private fun getRelease(releaseId: UUID): AppReleaseEntity =

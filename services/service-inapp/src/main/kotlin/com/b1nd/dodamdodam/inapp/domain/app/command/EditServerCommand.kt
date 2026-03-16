@@ -9,4 +9,13 @@ data class EditServerCommand(
     val redirectPath: String?,
     val prefixLevel: Int?,
     val usePushNotification: Boolean?,
-)
+) {
+    fun toCreateCommand() = CreateServerCommand(
+        appId = appId,
+        name = name!!,
+        serverAddress = serverAddress!!,
+        redirectPath = redirectPath!!,
+        prefixLevel = prefixLevel!!,
+        usePushNotification = usePushNotification!!,
+    )
+}
