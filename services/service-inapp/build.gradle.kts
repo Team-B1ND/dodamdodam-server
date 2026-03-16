@@ -1,5 +1,6 @@
 plugins {
     id("buildsrc.convention.spring-boot-application")
+    kotlin("kapt")
 }
 
 dependencies {
@@ -14,6 +15,10 @@ dependencies {
     runtimeOnly(libs.mysql.jdbcDriver)
     implementation(libs.springBootStarterData.jdbc)
     implementation(libs.springBootStarterData.jpa)
+
+    // querydsl
+    implementation(libs.querydsl.jpa) { artifact { classifier = "jakarta" } }
+    kapt(libs.querydsl.apt) { artifact { classifier = "jakarta" } }
 
     // swagger
     implementation(libs.springdoc.openapi.webmvc.ui)

@@ -1,5 +1,6 @@
 package com.b1nd.dodamdodam.inapp.application.app
 
+import com.b1nd.dodamdodam.inapp.application.app.data.response.PageResponse
 import com.b1nd.dodamdodam.core.common.data.Response
 import com.b1nd.dodamdodam.core.security.passport.holder.PassportHolder
 import com.b1nd.dodamdodam.core.security.passport.requireUserId
@@ -20,9 +21,11 @@ import com.b1nd.dodamdodam.inapp.application.app.data.response.AppResponse
 import com.b1nd.dodamdodam.inapp.application.app.data.response.AppSummaryResponse
 import com.b1nd.dodamdodam.inapp.application.app.data.toCommand
 import com.b1nd.dodamdodam.inapp.application.app.data.toDetailResponse
-import com.b1nd.dodamdodam.inapp.application.app.data.toResponses
 import com.b1nd.dodamdodam.inapp.application.app.data.toSummaryResponses
+import com.b1nd.dodamdodam.inapp.application.app.data.toResponse
 import com.b1nd.dodamdodam.inapp.domain.app.service.AppService
+import org.springframework.data.domain.Pageable
+import java.time.LocalDate
 import org.springframework.stereotype.Component
 import org.springframework.transaction.annotation.Transactional
 import java.util.UUID
@@ -62,9 +65,9 @@ class AppUseCase(
         return Response.ok("릴리즈 활성화 상태가 변경되었어요.")
     }
 
-    fun getReleases(appId: UUID): Response<List<AppReleaseResponse>> {
-        val releases = appService.getReleases(currentUserId(), appId)
-        return Response.ok("릴리즈 목록을 조회했어요.", releases.toResponses())
+    fun getReleases(appId: UUID, date: LocalDate?, keyword: String?, pageable: Pageable): Response<PageResponse<AppReleaseResponse>> {
+        val releases = appService.getReleases(currentUserId(), appId, date, keyword, pageable)
+        return Response.ok("릴리즈 목록을 조회했어요.", PageResponse.of(releases.map { it.toResponse() }))
     }
 
     fun getApp(appId: UUID): Response<AppDetailResponse> {
