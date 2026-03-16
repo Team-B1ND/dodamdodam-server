@@ -47,14 +47,13 @@ class PassportExchangeFilter(
             ?.value
 
         val jwt = headerJwt ?: cookieJwt
-        val isFromCookie = headerJwt == null && cookieJwt != null
 
         return extractPassport(jwt)
             .onErrorResume { e ->
-                if (isFromCookie && (e is TokenExpiredException || e is InvalidTokenSignatureException)) {
-                    exchangePassport()
-                } else {
+                if (e is TokenExpiredException || e is InvalidTokenSignatureException) {
                     Mono.error(e)
+                } else {
+                    exchangePassport()
                 }
             }
             .flatMap { passport ->
