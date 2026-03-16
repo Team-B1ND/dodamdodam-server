@@ -46,7 +46,8 @@ class PassportExchangeFilter(
             .getFirst(properties.accessTokenCookie)
             ?.value
 
-        val jwt = headerJwt ?: cookieJwt
+        val ignoreCookie = path == "/auth/login" || path == "/auth/refresh"
+        val jwt = headerJwt ?: if (ignoreCookie) null else cookieJwt
 
         return extractPassport(jwt)
             .onErrorResume { e ->
