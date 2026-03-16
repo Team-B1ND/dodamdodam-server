@@ -24,6 +24,7 @@ import com.b1nd.dodamdodam.inapp.domain.app.exception.AppServerRedirectPathInval
 import com.b1nd.dodamdodam.inapp.domain.app.exception.AppTeamMemberPermissionRequiredException
 import com.b1nd.dodamdodam.inapp.domain.app.exception.AppTeamOwnerPermissionRequiredException
 import com.b1nd.dodamdodam.inapp.domain.app.repository.AppApiKeyRepository
+import com.b1nd.dodamdodam.inapp.domain.app.repository.AppReleaseQueryRepository
 import com.b1nd.dodamdodam.inapp.domain.app.repository.AppReleaseRepository
 import com.b1nd.dodamdodam.inapp.domain.app.repository.AppRepository
 import com.b1nd.dodamdodam.inapp.domain.app.repository.AppServerRepository
@@ -33,8 +34,11 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import com.b1nd.dodamdodam.inapp.domain.team.entity.TeamEntity
 import com.b1nd.dodamdodam.inapp.domain.team.repository.TeamMemberRepository
 import com.b1nd.dodamdodam.inapp.domain.team.repository.TeamRepository
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 import java.security.SecureRandom
+import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.UUID
 
@@ -42,6 +46,7 @@ import java.util.UUID
 class AppService(
     private val appRepository: AppRepository,
     private val appReleaseRepository: AppReleaseRepository,
+    private val appReleaseQueryRepository: AppReleaseQueryRepository,
     private val appServerRepository: AppServerRepository,
     private val appApiKeyRepository: AppApiKeyRepository,
     private val appServerRouteEventProducer: AppServerRouteEventProducer,
@@ -119,9 +124,9 @@ class AppService(
         release.app.updateReleaseInfo(enabled = release.enabled, status = release.status)
     }
 
-    fun getReleases(userId: UUID, appId: UUID): List<AppReleaseEntity> {
+    fun getReleases(userId: UUID, appId: UUID, date: LocalDate?, keyword: String?, pageable: Pageable): Page<AppReleaseEntity> {
         val app = getAppWithOwnerPermission(userId, appId)
-        return appReleaseRepository.findAllByAppOrderByCreatedAtDesc(app)
+        return appReleaseQueryRepository.findReleases(app, date, keyword, pageable)
     }
 
     fun getAppDetail(appId: UUID): Triple<AppEntity, AppServerEntity?, List<AppReleaseEntity>> {
