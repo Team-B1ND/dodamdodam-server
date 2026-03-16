@@ -24,6 +24,8 @@ import com.b1nd.dodamdodam.inapp.application.app.data.toDetailResponse
 import com.b1nd.dodamdodam.inapp.application.app.data.toSummaryResponses
 import com.b1nd.dodamdodam.inapp.application.app.data.toResponse
 import com.b1nd.dodamdodam.inapp.domain.app.service.AppService
+import com.b1nd.dodamdodam.inapp.infrastructure.user.client.UserQueryClient
+import kotlinx.coroutines.runBlocking
 import org.springframework.data.domain.Pageable
 import java.time.LocalDate
 import org.springframework.stereotype.Component
@@ -33,7 +35,8 @@ import java.util.UUID
 @Component
 @Transactional(rollbackFor = [Exception::class])
 class AppUseCase(
-    private val appService: AppService
+    private val appService: AppService,
+    private val userQueryClient: UserQueryClient,
 ) {
     fun createApp(request: CreateAppRequest): Response<AppResponse> {
         val appId = appService.create(currentUserId(), request.toCommand())
@@ -67,7 +70,11 @@ class AppUseCase(
 
     fun getReleases(appId: UUID, date: LocalDate?, keyword: String?, pageable: Pageable): Response<PageResponse<AppReleaseResponse>> {
         val releases = appService.getReleases(currentUserId(), appId, date, keyword, pageable)
-        return Response.ok("릴리즈 목록을 조회했어요.", PageResponse.of(releases.map { it.toResponse() }))
+        val userIds = releases.content.map { it.updatedUser.toString() }.distinct()
+        val userMap = runBlocking { userQueryClient.getUsers(userIds) }
+            .usersList
+            .associateBy { UUID.fromString(it.publicId) }
+        return Response.ok("릴리즈 목록을 조회했어요.", PageResponse.of(releases.map { it.toResponse(userMap) }))
     }
 
     fun getApp(appId: UUID): Response<AppDetailResponse> {

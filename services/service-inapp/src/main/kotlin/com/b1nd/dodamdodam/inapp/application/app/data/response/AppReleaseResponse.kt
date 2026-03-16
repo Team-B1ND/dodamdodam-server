@@ -11,7 +11,13 @@ data class AppReleaseResponse(
     val denyResult: String?,
     val status: AppStatusType,
     val enabled: Boolean,
-    val updatedUser: UUID,
+    val updatedUser: ReleaseUserResponse?,
     val createdAt: LocalDateTime?,
     val modifiedAt: LocalDateTime?,
+)
+
+data class ReleaseUserResponse(
+    val userId: UUID,
+    val name: String,
+    val profileImage: String?,
 )
