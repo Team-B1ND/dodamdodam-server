@@ -93,7 +93,11 @@ public class ClubUseCase {
 
     @Transactional(readOnly = true)
     public ResponseData<List<ClubDetailRes>> getClubs() {
-        return ResponseData.ok("전체 동아리 불러오기 성공", clubService.findAll().stream().map(ClubDetailRes::of).toList());
+        return ResponseData.ok("전체 동아리 불러오기 성공", clubService.findAll().stream().map(club -> {
+            long firstGradeCount = clubMemberService.countFirstGradeAllowedMembers(club);
+            boolean isMax = firstGradeCount >= club.getMaxMemberCount();
+            return ClubDetailRes.of(club, isMax);
+        }).toList());
     }
 
     @Transactional(readOnly = true)

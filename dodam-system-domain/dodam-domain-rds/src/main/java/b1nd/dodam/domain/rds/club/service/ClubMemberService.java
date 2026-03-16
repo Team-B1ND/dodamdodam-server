@@ -190,6 +190,10 @@ public class ClubMemberService {
         return clubMember != null;
     }
 
+    public long countFirstGradeAllowedMembers(Club club) {
+        return clubMemberRepository.countByClubIdAndClubStatusAndStudentGrade(club.getId(), ClubStatus.ALLOWED, 1);
+    }
+
     public void autoApproveClubsWithinLimit() {
         List<ClubMember> pendingFirstGrade = clubMemberRepository.findPendingFirstGradeByClubType(
                 ClubStatus.PENDING, 1, ClubType.CREATIVE_ACTIVITY_CLUB, ClubStatus.ALLOWED

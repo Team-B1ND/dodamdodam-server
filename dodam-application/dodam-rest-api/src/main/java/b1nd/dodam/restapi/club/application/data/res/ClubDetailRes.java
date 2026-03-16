@@ -15,9 +15,14 @@ public record ClubDetailRes(
     ClubType type,
     TeacherRes teacher,
     ClubStatus state,
-    int maxMemberCount
+    int maxMemberCount,
+    boolean isMax
 ) {
     public static ClubDetailRes of(Club club) {
+        return of(club, false);
+    }
+
+    public static ClubDetailRes of(Club club, boolean isMax) {
         if (club == null || club.getName().isEmpty()) {
             return null;
         }
@@ -32,7 +37,8 @@ public record ClubDetailRes(
             club.getType(),
             TeacherRes.of(club.getTeacher()),
             club.getState(),
-            club.getMaxMemberCount()
+            club.getMaxMemberCount(),
+            isMax
         );
     }
 }
