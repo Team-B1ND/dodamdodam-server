@@ -4,6 +4,7 @@ import com.b1nd.dodamdodam.inapp.application.app.data.request.AppServerInfoReque
 import com.b1nd.dodamdodam.inapp.application.app.data.request.CreateAppRequest
 import com.b1nd.dodamdodam.inapp.application.app.data.request.CreateAppServerRequest
 import com.b1nd.dodamdodam.inapp.application.app.data.request.EditAppRequest
+import com.b1nd.dodamdodam.inapp.application.app.data.request.EditAppServerInfoRequest
 import com.b1nd.dodamdodam.inapp.application.app.data.request.EditAppServerRequest
 import com.b1nd.dodamdodam.inapp.application.app.data.response.AppDetailResponse
 import com.b1nd.dodamdodam.inapp.application.app.data.response.AppReleaseResponse
@@ -115,6 +116,16 @@ fun EditAppRequest.toCommand() = EditAppCommand(
     iconUrl = iconUrl,
     darkIconUrl = darkIconUrl,
     inquiryMail = inquiryMail,
+    server = server?.toEditServerCommand(),
+)
+
+fun EditAppServerInfoRequest.toEditServerCommand() = EditServerCommand(
+    appId = null,
+    name = name,
+    serverAddress = serverAddress,
+    redirectPath = redirectPath,
+    prefixLevel = omitApiPrefix?.toPrefixLevel(),
+    usePushNotification = usePushNotification,
 )
 
 fun EditAppServerRequest.toCommand() = EditServerCommand(

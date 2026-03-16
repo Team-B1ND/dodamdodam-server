@@ -150,10 +150,24 @@ class AppService(
             if (it != app.name && existByName(it)) throw AppAlreadyExistException()
         }
         app.update(command.name, command.subtitle, command.description, command.iconUrl, command.darkIconUrl, command.inquiryMail)
+        command.server?.let { serverCommand ->
+            val server = getAppServer(app)
+            val wasEnabled = server.enabled
+            server.updateServerInfo(
+                name = serverCommand.name,
+                serverAddress = serverCommand.serverAddress,
+                redirectPath = serverCommand.redirectPath?.let { normalizeAndValidatePath(it) },
+                prefixLevel = serverCommand.prefixLevel?.let { normalizePrefixLevel(it) },
+                usePushNotification = serverCommand.usePushNotification
+            )
+            if (wasEnabled && !server.enabled) {
+                appServerRouteEventProducer.publishUpdated(server)
+            }
+        }
     }
 
     fun updateServer(userId: UUID, command: EditServerCommand) {
-        val app = getAppWithMemberPermission(userId, command.appId)
+        val app = getAppWithMemberPermission(userId, command.appId!!)
         val server = getAppServer(app)
         val wasEnabled = server.enabled
         server.updateServerInfo(

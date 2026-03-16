@@ -9,7 +9,6 @@ import com.b1nd.dodamdodam.inapp.application.app.data.request.CreateAppServerReq
 import com.b1nd.dodamdodam.inapp.application.app.data.request.DenyAppReleaseRequest
 import com.b1nd.dodamdodam.inapp.application.app.data.request.DenyAppServerRequest
 import com.b1nd.dodamdodam.inapp.application.app.data.request.EditAppRequest
-import com.b1nd.dodamdodam.inapp.application.app.data.request.EditAppServerRequest
 import com.b1nd.dodamdodam.inapp.application.app.data.request.ToggleAppReleaseRequest
 import com.b1nd.dodamdodam.inapp.application.app.data.request.ToggleAppServerRequest
 import com.b1nd.dodamdodam.inapp.application.app.data.request.UpdateAppReleaseStatusRequest
@@ -68,11 +67,6 @@ class AppController(
     @PatchMapping("/release/toggle")
     fun toggleRelease(@RequestBody request: ToggleAppReleaseRequest) =
         appUseCase.toggleRelease(request)
-
-    @UserAccess
-    @PatchMapping("/server")
-    fun editServer(@RequestBody request: EditAppServerRequest) =
-        appUseCase.editServer(request)
 
     @UserAccess(roles = [RoleType.ADMIN])
     @PatchMapping("/server/status")

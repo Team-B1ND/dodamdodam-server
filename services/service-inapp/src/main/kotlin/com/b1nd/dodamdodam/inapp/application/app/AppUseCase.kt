@@ -9,7 +9,6 @@ import com.b1nd.dodamdodam.inapp.application.app.data.request.CreateAppServerReq
 import com.b1nd.dodamdodam.inapp.application.app.data.request.DenyAppReleaseRequest
 import com.b1nd.dodamdodam.inapp.application.app.data.request.DenyAppServerRequest
 import com.b1nd.dodamdodam.inapp.application.app.data.request.EditAppRequest
-import com.b1nd.dodamdodam.inapp.application.app.data.request.EditAppServerRequest
 import com.b1nd.dodamdodam.inapp.application.app.data.request.ToggleAppReleaseRequest
 import com.b1nd.dodamdodam.inapp.application.app.data.request.ToggleAppServerRequest
 import com.b1nd.dodamdodam.inapp.application.app.data.request.UpdateAppReleaseStatusRequest
@@ -86,11 +85,6 @@ class AppUseCase(
     fun editApp(request: EditAppRequest): Response<Any> {
         appService.updateApp(currentUserId(), request.toCommand())
         return Response.ok("앱 정보가 수정되었어요.")
-    }
-
-    fun editServer(request: EditAppServerRequest): Response<Any> {
-        appService.updateServer(currentUserId(), request.toCommand())
-        return Response.ok("앱 서버 정보가 수정되었어요.")
     }
 
     fun updateServerStatus(request: UpdateAppServerStatusRequest): Response<Any> {
