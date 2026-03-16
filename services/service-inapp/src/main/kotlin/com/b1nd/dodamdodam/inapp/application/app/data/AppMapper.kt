@@ -6,10 +6,12 @@ import com.b1nd.dodamdodam.inapp.application.app.data.request.CreateAppServerReq
 import com.b1nd.dodamdodam.inapp.application.app.data.request.EditAppRequest
 import com.b1nd.dodamdodam.inapp.application.app.data.request.EditAppServerInfoRequest
 import com.b1nd.dodamdodam.inapp.application.app.data.request.EditAppServerRequest
+import com.b1nd.dodamdodam.grpc.user.UserResponse
 import com.b1nd.dodamdodam.inapp.application.app.data.response.AppDetailResponse
 import com.b1nd.dodamdodam.inapp.application.app.data.response.AppReleaseResponse
 import com.b1nd.dodamdodam.inapp.application.app.data.response.AppServerResponse
 import com.b1nd.dodamdodam.inapp.application.app.data.response.AppSummaryResponse
+import com.b1nd.dodamdodam.inapp.application.app.data.response.ReleaseUserResponse
 import com.b1nd.dodamdodam.inapp.domain.app.command.CreateAppCommand
 import com.b1nd.dodamdodam.inapp.domain.app.command.CreateServerCommand
 import com.b1nd.dodamdodam.inapp.domain.app.command.EditAppCommand
@@ -17,20 +19,27 @@ import com.b1nd.dodamdodam.inapp.domain.app.command.EditServerCommand
 import com.b1nd.dodamdodam.inapp.domain.app.entity.AppEntity
 import com.b1nd.dodamdodam.inapp.domain.app.entity.AppReleaseEntity
 import com.b1nd.dodamdodam.inapp.domain.app.entity.AppServerEntity
+import java.util.UUID
 
-fun AppReleaseEntity.toResponse() = AppReleaseResponse(
+fun AppReleaseEntity.toResponse(userMap: Map<UUID, UserResponse>) = AppReleaseResponse(
     releaseId = publicId!!,
     releaseUrl = releaseUrl,
     memo = memo,
     denyResult = denyResult,
     status = status,
     enabled = enabled,
-    updatedUser = updatedUser,
+    updatedUser = userMap[updatedUser]?.let {
+        ReleaseUserResponse(
+            userId = updatedUser,
+            name = it.name,
+            profileImage = if (it.hasProfileImage()) it.profileImage else null,
+        )
+    },
     createdAt = createdAt,
     modifiedAt = modifiedAt,
 )
 
-fun List<AppReleaseEntity>.toResponses() = map { it.toResponse() }
+fun List<AppReleaseEntity>.toResponses(userMap: Map<UUID, UserResponse>) = map { it.toResponse(userMap) }
 
 fun AppServerEntity.toResponse() = AppServerResponse(
     name = name,
@@ -46,7 +55,8 @@ fun AppServerEntity.toResponse() = AppServerResponse(
 
 fun AppEntity.toDetailResponse(
     server: AppServerEntity?,
-    releases: List<AppReleaseEntity>
+    releases: List<AppReleaseEntity>,
+    userMap: Map<UUID, UserResponse> = emptyMap(),
 ) = AppDetailResponse(
     appId = publicId!!,
     teamId = team.publicId!!,
@@ -58,7 +68,7 @@ fun AppEntity.toDetailResponse(
     inquiryMail = inquiryMail,
     server = server?.toResponse(),
     active = releases.any { it.enabled },
-    releases = releases.toResponses(),
+    releases = releases.toResponses(userMap),
 )
 
 fun AppEntity.toSummaryResponse() = AppSummaryResponse(
