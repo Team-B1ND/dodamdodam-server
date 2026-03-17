@@ -7,6 +7,7 @@ import com.b1nd.dodamdodam.inapp.application.app.data.request.EditAppRequest
 import com.b1nd.dodamdodam.inapp.application.app.data.request.EditAppServerInfoRequest
 import com.b1nd.dodamdodam.inapp.application.app.data.request.EditAppServerRequest
 import com.b1nd.dodamdodam.grpc.user.UserResponse
+import com.b1nd.dodamdodam.inapp.application.app.data.response.ActiveAppResponse
 import com.b1nd.dodamdodam.inapp.application.app.data.response.AppDetailResponse
 import com.b1nd.dodamdodam.inapp.application.app.data.response.AppReleaseResponse
 import com.b1nd.dodamdodam.inapp.application.app.data.response.AppServerResponse
@@ -85,6 +86,15 @@ fun AppEntity.toSummaryResponse() = AppSummaryResponse(
 )
 
 fun List<AppEntity>.toSummaryResponses() = map { it.toSummaryResponse() }
+
+fun AppEntity.toActiveAppResponse() = ActiveAppResponse(
+    appId = publicId!!,
+    name = name,
+    subtitle = subtitle,
+    description = description,
+    iconUrl = iconUrl,
+    darkIconUrl = darkIconUrl,
+)
 
 private fun Boolean.toPrefixLevel() = if (this) 1 else 0
 

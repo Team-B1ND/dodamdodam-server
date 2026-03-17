@@ -97,6 +97,11 @@ class AppController(
         appUseCase.regenerateApiKey(appId)
 
     @UserAccess
+    @GetMapping("/active")
+    fun getActiveApps(pageable: Pageable) =
+        appUseCase.getActiveApps(pageable)
+
+    @UserAccess
     @GetMapping("/{appId}")
     fun getApp(@PathVariable appId: UUID) =
         appUseCase.getApp(appId)
