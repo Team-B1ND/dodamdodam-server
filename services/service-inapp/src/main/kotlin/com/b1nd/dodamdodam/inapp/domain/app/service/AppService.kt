@@ -24,6 +24,7 @@ import com.b1nd.dodamdodam.inapp.domain.app.exception.AppServerRedirectPathInval
 import com.b1nd.dodamdodam.inapp.domain.app.exception.AppTeamMemberPermissionRequiredException
 import com.b1nd.dodamdodam.inapp.domain.app.exception.AppTeamOwnerPermissionRequiredException
 import com.b1nd.dodamdodam.inapp.domain.app.repository.AppApiKeyRepository
+import com.b1nd.dodamdodam.inapp.domain.app.repository.AppQueryRepository
 import com.b1nd.dodamdodam.inapp.domain.app.repository.AppReleaseQueryRepository
 import com.b1nd.dodamdodam.inapp.domain.app.repository.AppReleaseRepository
 import com.b1nd.dodamdodam.inapp.domain.app.repository.AppRepository
@@ -45,6 +46,7 @@ import java.util.UUID
 @Service
 class AppService(
     private val appRepository: AppRepository,
+    private val appQueryRepository: AppQueryRepository,
     private val appReleaseRepository: AppReleaseRepository,
     private val appReleaseQueryRepository: AppReleaseQueryRepository,
     private val appServerRepository: AppServerRepository,
@@ -140,6 +142,9 @@ class AppService(
         val team = getTeamWithMemberPermission(userId, teamId)
         return appRepository.findAllByTeamOrderByIdDesc(team)
     }
+
+    fun getActiveApps(pageable: Pageable): Page<AppEntity> =
+        appQueryRepository.findActiveApps(pageable)
 
     fun getMyApps(userId: UUID): List<AppEntity> {
         val teams = teamMemberRepository.findAllByUser(userId)

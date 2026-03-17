@@ -14,11 +14,13 @@ import com.b1nd.dodamdodam.inapp.application.app.data.request.ToggleAppReleaseRe
 import com.b1nd.dodamdodam.inapp.application.app.data.request.ToggleAppServerRequest
 import com.b1nd.dodamdodam.inapp.application.app.data.request.UpdateAppReleaseStatusRequest
 import com.b1nd.dodamdodam.inapp.application.app.data.request.UpdateAppServerStatusRequest
+import com.b1nd.dodamdodam.inapp.application.app.data.response.ActiveAppResponse
 import com.b1nd.dodamdodam.inapp.application.app.data.response.AppApiKeyResponse
 import com.b1nd.dodamdodam.inapp.application.app.data.response.AppDetailResponse
 import com.b1nd.dodamdodam.inapp.application.app.data.response.AppReleaseResponse
 import com.b1nd.dodamdodam.inapp.application.app.data.response.AppResponse
 import com.b1nd.dodamdodam.inapp.application.app.data.response.AppSummaryResponse
+import com.b1nd.dodamdodam.inapp.application.app.data.toActiveAppResponse
 import com.b1nd.dodamdodam.inapp.application.app.data.toCommand
 import com.b1nd.dodamdodam.inapp.application.app.data.toDetailResponse
 import com.b1nd.dodamdodam.inapp.application.app.data.toSummaryResponses
@@ -75,6 +77,12 @@ class AppUseCase(
             .usersList
             .associateBy { UUID.fromString(it.publicId) }
         return Response.ok("릴리즈 목록을 조회했어요.", PageResponse.of(releases.map { it.toResponse(userMap) }))
+    }
+
+    @Transactional(readOnly = true)
+    fun getActiveApps(pageable: Pageable): Response<PageResponse<ActiveAppResponse>> {
+        val apps = appService.getActiveApps(pageable)
+        return Response.ok("서비스 목록을 조회했어요.", PageResponse.of(apps.map { it.toActiveAppResponse() }))
     }
 
     fun getApp(appId: UUID): Response<AppDetailResponse> {
