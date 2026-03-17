@@ -29,6 +29,7 @@ include(":core:core-security")
 include("core:core-jpa")
 include("core:core-grpc")
 include("core:core-redis")
+include("core:core-github-client")
 
 // Service modules
 include(":services:service-gateway")

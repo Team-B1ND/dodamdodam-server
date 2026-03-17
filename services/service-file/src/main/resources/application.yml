@@ -40,3 +40,10 @@ app:
   swagger:
     enabled: true
     gateway-prefix: /file
+  kafka:
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
+    consumer-group-id: ${KAFKA_CONSUMER_GROUP_ID:service-file}
+    auto-offset-reset: ${KAFKA_AUTO_OFFSET_RESET:latest}
+
+github:
+  token: ${GITHUB_TOKEN:}

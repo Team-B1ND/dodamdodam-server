@@ -8,6 +8,7 @@ dependencies {
     implementation(project(":core:core-security"))
     implementation(project(":core:core-jpa"))
     implementation(project(":core:core-kafka"))
+    implementation(project(":core:core-github-client"))
     implementation(project(":core:core-grpc"))
     implementation(libs.springGrpc)
 
