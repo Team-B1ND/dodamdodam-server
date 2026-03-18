@@ -38,5 +38,6 @@ include(":services:service-user")
 include("services:service-inapp")
 include(":services:service-wakeup-song")
 include(":services:service-file")
+include(":services:service-meal")
 
 rootProject.name = "dodamdodam-server"
