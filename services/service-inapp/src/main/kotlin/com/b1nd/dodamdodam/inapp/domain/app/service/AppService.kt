@@ -30,6 +30,7 @@ import com.b1nd.dodamdodam.inapp.domain.app.repository.AppReleaseRepository
 import com.b1nd.dodamdodam.inapp.domain.app.repository.AppRepository
 import com.b1nd.dodamdodam.inapp.domain.app.repository.AppServerRepository
 import com.b1nd.dodamdodam.inapp.infrastructure.kafka.producer.AppApiKeyEventProducer
+import com.b1nd.dodamdodam.inapp.infrastructure.kafka.producer.AppReleaseActivatedEventProducer
 import com.b1nd.dodamdodam.inapp.infrastructure.kafka.producer.AppServerRouteEventProducer
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import com.b1nd.dodamdodam.inapp.domain.team.entity.TeamEntity
@@ -53,6 +54,7 @@ class AppService(
     private val appApiKeyRepository: AppApiKeyRepository,
     private val appServerRouteEventProducer: AppServerRouteEventProducer,
     private val appApiKeyEventProducer: AppApiKeyEventProducer,
+    private val appReleaseActivatedEventProducer: AppReleaseActivatedEventProducer,
     private val teamRepository: TeamRepository,
     private val teamMemberRepository: TeamMemberRepository,
     private val passwordEncoder: BCryptPasswordEncoder
@@ -105,6 +107,13 @@ class AppService(
         if (status == AppStatusType.DENIED) requireDenyReason(denyResult)
         val release = getRelease(releaseId)
         release.updateStatus(status, denyResult, userId)
+        if (status == AppStatusType.ALLOWED) {
+            appReleaseRepository.findAllByAppAndEnabledIsTrue(release.app)
+                .filter { it.id != release.id }
+                .forEach { it.updateEnabled(false, userId) }
+            release.updateEnabled(true, userId)
+            appReleaseActivatedEventProducer.publishActivated(release)
+        }
         release.app.updateReleaseInfo(enabled = release.enabled, status = release.status)
     }
 
@@ -124,6 +133,9 @@ class AppService(
         }
         release.updateEnabled(enabled, userId)
         release.app.updateReleaseInfo(enabled = release.enabled, status = release.status)
+        if (enabled) {
+            appReleaseActivatedEventProducer.publishActivated(release)
+        }
     }
 
     fun getReleases(userId: UUID, appId: UUID, date: LocalDate?, keyword: String?, pageable: Pageable): Page<AppReleaseEntity> {
@@ -145,6 +157,9 @@ class AppService(
 
     fun getActiveApps(pageable: Pageable): Page<AppEntity> =
         appQueryRepository.findActiveApps(pageable)
+
+    fun getActiveAppsWithRelease(pageable: Pageable) =
+        appQueryRepository.findActiveAppsWithRelease(pageable)
 
     fun getMyApps(userId: UUID): List<AppEntity> {
         val teams = teamMemberRepository.findAllByUser(userId)
@@ -287,7 +302,7 @@ class AppService(
         }
     }
 
-    private fun getRelease(releaseId: UUID): AppReleaseEntity =
+    fun getRelease(releaseId: UUID): AppReleaseEntity =
         appReleaseRepository.findByPublicId(releaseId)
             ?: throw AppReleaseNotFoundException()
 

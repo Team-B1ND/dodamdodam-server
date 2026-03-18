@@ -18,14 +18,17 @@ import com.b1nd.dodamdodam.inapp.application.app.data.response.ActiveAppResponse
 import com.b1nd.dodamdodam.inapp.application.app.data.response.AppApiKeyResponse
 import com.b1nd.dodamdodam.inapp.application.app.data.response.AppDetailResponse
 import com.b1nd.dodamdodam.inapp.application.app.data.response.AppReleaseResponse
+import com.b1nd.dodamdodam.inapp.application.app.data.response.AppReleaseDetailResponse
 import com.b1nd.dodamdodam.inapp.application.app.data.response.AppResponse
 import com.b1nd.dodamdodam.inapp.application.app.data.response.AppSummaryResponse
+import com.b1nd.dodamdodam.core.github.client.GitHubClient
 import com.b1nd.dodamdodam.inapp.application.app.data.toActiveAppResponse
 import com.b1nd.dodamdodam.inapp.application.app.data.toCommand
 import com.b1nd.dodamdodam.inapp.application.app.data.toDetailResponse
 import com.b1nd.dodamdodam.inapp.application.app.data.toSummaryResponses
 import com.b1nd.dodamdodam.inapp.application.app.data.toResponse
 import com.b1nd.dodamdodam.inapp.domain.app.service.AppService
+import com.b1nd.dodamdodam.inapp.infrastructure.config.InAppProperties
 import com.b1nd.dodamdodam.inapp.infrastructure.user.client.UserQueryClient
 import kotlinx.coroutines.runBlocking
 import org.springframework.data.domain.Pageable
@@ -39,6 +42,8 @@ import java.util.UUID
 class AppUseCase(
     private val appService: AppService,
     private val userQueryClient: UserQueryClient,
+    private val inAppProperties: InAppProperties,
+    private val gitHubClient: GitHubClient,
 ) {
     fun createApp(request: CreateAppRequest): Response<AppResponse> {
         val appId = appService.create(currentUserId(), request.toCommand())
@@ -81,8 +86,12 @@ class AppUseCase(
 
     @Transactional(readOnly = true)
     fun getActiveApps(pageable: Pageable): Response<PageResponse<ActiveAppResponse>> {
-        val apps = appService.getActiveApps(pageable)
-        return Response.ok("서비스 목록을 조회했어요.", PageResponse.of(apps.map { it.toActiveAppResponse() }))
+        val appsWithRelease = appService.getActiveAppsWithRelease(pageable)
+        val s3BaseUrl = inAppProperties.s3BaseUrl
+        return Response.ok(
+            "서비스 목록을 조회했어요.",
+            PageResponse.of(appsWithRelease.map { it.app.toActiveAppResponse(it.releasePublicId, s3BaseUrl) })
+        )
     }
 
     fun getApp(appId: UUID): Response<AppDetailResponse> {
@@ -134,6 +143,16 @@ class AppUseCase(
             "API Key가 재발급되었어요.",
             AppApiKeyResponse(apiKey = apiKeyEntity.rawApiKey!!, expiredAt = apiKeyEntity.expiredAt)
         )
+    }
+
+    @Transactional(readOnly = true)
+    fun getReleaseDetail(releaseId: UUID): Response<AppReleaseDetailResponse> {
+        val release = appService.getRelease(releaseId)
+        val releaseNote = runCatching {
+            val info = GitHubClient.parseGitHubReleaseUrl(release.releaseUrl)
+            gitHubClient.getReleaseNote(info.owner, info.repo, info.tag)
+        }.getOrNull()
+        return Response.ok("릴리즈 상세를 조회했어요.", release.toDetailResponse(releaseNote))
     }
 
     fun deleteApp(appId: UUID): Response<Any> {

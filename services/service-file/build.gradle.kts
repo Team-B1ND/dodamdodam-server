@@ -5,6 +5,8 @@ plugins {
 dependencies {
     implementation(project(":core:core-common"))
     implementation(project(":core:core-security"))
+    implementation(project(":core:core-kafka"))
+    implementation(project(":core:core-github-client"))
 
     // swagger
     implementation(libs.springdoc.openapi.webmvc.ui)

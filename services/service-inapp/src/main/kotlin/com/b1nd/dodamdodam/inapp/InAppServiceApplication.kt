@@ -1,6 +1,7 @@
 package com.b1nd.dodamdodam.inapp
 
 import com.b1nd.dodamdodam.core.common.swagger.annotation.EnableDodamSwagger
+import com.b1nd.dodamdodam.core.github.annotation.EnableDodamGitHub
 import com.b1nd.dodamdodam.core.kafka.annotation.EnableDodamKafka
 import com.b1nd.dodamdodam.core.security.annotation.EnableDodamSecurity
 import org.springframework.boot.autoconfigure.SpringBootApplication
@@ -12,6 +13,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaAuditing
 @EnableJpaAuditing
 @EnableDodamSecurity
 @EnableDodamKafka
+@EnableDodamGitHub
 @ConfigurationPropertiesScan
 @EnableDodamSwagger
 class InAppServiceApplication

@@ -9,6 +9,7 @@ import com.b1nd.dodamdodam.inapp.application.app.data.request.EditAppServerReque
 import com.b1nd.dodamdodam.grpc.user.UserResponse
 import com.b1nd.dodamdodam.inapp.application.app.data.response.ActiveAppResponse
 import com.b1nd.dodamdodam.inapp.application.app.data.response.AppDetailResponse
+import com.b1nd.dodamdodam.inapp.application.app.data.response.AppReleaseDetailResponse
 import com.b1nd.dodamdodam.inapp.application.app.data.response.AppReleaseResponse
 import com.b1nd.dodamdodam.inapp.application.app.data.response.AppServerResponse
 import com.b1nd.dodamdodam.inapp.application.app.data.response.AppSummaryResponse
@@ -41,6 +42,18 @@ fun AppReleaseEntity.toResponse(userMap: Map<UUID, UserResponse>) = AppReleaseRe
 )
 
 fun List<AppReleaseEntity>.toResponses(userMap: Map<UUID, UserResponse>) = map { it.toResponse(userMap) }
+
+fun AppReleaseEntity.toDetailResponse(releaseNote: String?) = AppReleaseDetailResponse(
+    releaseId = publicId!!,
+    releaseUrl = releaseUrl,
+    memo = memo,
+    denyResult = denyResult,
+    status = status,
+    enabled = enabled,
+    releaseNote = releaseNote,
+    createdAt = createdAt,
+    modifiedAt = modifiedAt,
+)
 
 fun AppServerEntity.toResponse() = AppServerResponse(
     name = name,
@@ -94,6 +107,18 @@ fun AppEntity.toActiveAppResponse() = ActiveAppResponse(
     description = description,
     iconUrl = iconUrl,
     darkIconUrl = darkIconUrl,
+)
+
+fun AppEntity.toActiveAppResponse(releasePublicId: java.util.UUID?, s3BaseUrl: String?) = ActiveAppResponse(
+    appId = publicId!!,
+    name = name,
+    subtitle = subtitle,
+    description = description,
+    iconUrl = iconUrl,
+    darkIconUrl = darkIconUrl,
+    appUrl = if (!s3BaseUrl.isNullOrBlank() && releasePublicId != null) {
+        "${s3BaseUrl.trimEnd('/')}/inapp/$publicId/releases/$releasePublicId/index.html"
+    } else null,
 )
 
 private fun Boolean.toPrefixLevel() = if (this) 1 else 0

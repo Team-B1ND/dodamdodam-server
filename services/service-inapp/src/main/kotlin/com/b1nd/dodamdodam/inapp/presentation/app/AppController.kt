@@ -117,6 +117,11 @@ class AppController(
         appUseCase.getAppsByTeam(teamId)
 
     @UserAccess
+    @GetMapping("/release/{releaseId}")
+    fun getReleaseDetail(@PathVariable releaseId: UUID) =
+        appUseCase.getReleaseDetail(releaseId)
+
+    @UserAccess
     @GetMapping("/{appId}/release")
     fun getReleases(
         @PathVariable appId: UUID,

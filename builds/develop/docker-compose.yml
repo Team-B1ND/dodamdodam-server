@@ -149,6 +149,8 @@ services:
       MYSQL_USER: ${MYSQL_USER}
       MYSQL_PASSWORD: ${MYSQL_PASSWORD}
       KAFKA_BOOTSTRAP_SERVERS: kafka:5001
+      GITHUB_TOKEN: ${GITHUB_TOKEN}
+      INAPP_S3_BASE_URL: ${INAPP_S3_BASE_URL}
     depends_on:
       mysql:
         condition: service_healthy
@@ -168,6 +170,11 @@ services:
       AWS_SECRET_KEY: ${AWS_SECRET_KEY}
       AWS_S3_PATH_STYLE: ${AWS_S3_PATH_STYLE}
       AWS_S3_KEY_PREFIX: ${AWS_S3_KEY_PREFIX}
+      KAFKA_BOOTSTRAP_SERVERS: kafka:5001
+      GITHUB_TOKEN: ${GITHUB_TOKEN}
+    depends_on:
+      kafka:
+        condition: service_healthy
 
 volumes:
   mysql-data:

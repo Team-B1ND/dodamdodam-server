@@ -9,4 +9,5 @@ data class ActiveAppResponse(
     val description: String?,
     val iconUrl: String,
     val darkIconUrl: String?,
+    val appUrl: String? = null,
 )
