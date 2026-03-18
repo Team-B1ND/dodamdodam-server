@@ -6,6 +6,7 @@ import com.b1nd.dodamdodam.core.security.passport.requireUserId
 import com.b1nd.dodamdodam.inapp.application.team.data.request.AddTeamMemberRequest
 import com.b1nd.dodamdodam.inapp.application.team.data.request.CreateTeamRequest
 import com.b1nd.dodamdodam.inapp.application.team.data.request.EditTeamInfoRequest
+import com.b1nd.dodamdodam.inapp.application.team.data.request.TransferOwnerRequest
 import com.b1nd.dodamdodam.inapp.application.team.data.response.CreateTeamResponse
 import com.b1nd.dodamdodam.inapp.application.team.data.response.MyTeamResponse
 import com.b1nd.dodamdodam.inapp.application.team.data.response.TeamDetailResponse
@@ -73,6 +74,13 @@ class TeamUseCase(
             request.githubUrl
         )
         return Response.ok("팀 정보가 수정되었어요.")
+    }
+
+    fun transferOwnership(request: TransferOwnerRequest): Response<Any> {
+        val userId = PassportHolder.current().requireUserId()
+        teamService.validateOwner(userId, request.teamId)
+        teamService.transferOwner(request.teamId, userId, request.userPublicId)
+        return Response.ok("팀 오너가 변경되었어요.")
     }
 
     @Transactional(readOnly = true)

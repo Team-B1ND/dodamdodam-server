@@ -5,6 +5,7 @@ import com.b1nd.dodamdodam.inapp.application.team.TeamUseCase
 import com.b1nd.dodamdodam.inapp.application.team.data.request.AddTeamMemberRequest
 import com.b1nd.dodamdodam.inapp.application.team.data.request.CreateTeamRequest
 import com.b1nd.dodamdodam.inapp.application.team.data.request.EditTeamInfoRequest
+import com.b1nd.dodamdodam.inapp.application.team.data.request.TransferOwnerRequest
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PatchMapping
@@ -45,6 +46,11 @@ class TeamController(
     @DeleteMapping("/{teamId}")
     fun deleteTeam(@PathVariable teamId: UUID) =
         teamUseCase.deleteTeam(teamId)
+
+    @UserAccess
+    @PatchMapping("/owner")
+    fun transferOwner(@RequestBody request: TransferOwnerRequest) =
+        teamUseCase.transferOwnership(request)
 
     @UserAccess
     @PostMapping("/member")

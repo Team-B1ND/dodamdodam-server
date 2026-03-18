@@ -3,6 +3,7 @@ package com.b1nd.dodamdodam.inapp.domain.team.service
 import com.b1nd.dodamdodam.inapp.domain.team.entity.TeamEntity
 import com.b1nd.dodamdodam.inapp.domain.team.entity.TeamMemberEntity
 import com.b1nd.dodamdodam.inapp.domain.team.exception.TeamCannotRemoveOwnerException
+import com.b1nd.dodamdodam.inapp.domain.team.exception.TeamMemberNotFoundException
 import com.b1nd.dodamdodam.inapp.domain.team.exception.TeamNameAlreadyExistException
 import com.b1nd.dodamdodam.inapp.domain.team.exception.TeamNotFoundException
 import com.b1nd.dodamdodam.inapp.domain.team.exception.TeamOwnerPermissionRequiredException
@@ -67,6 +68,16 @@ class TeamService(
             throw TeamCannotRemoveOwnerException()
         }
         teamMemberRepository.deleteAllByTeamAndUserIn(team, users)
+    }
+
+    fun transferOwner(teamId: UUID, currentOwnerId: UUID, newOwnerId: UUID) {
+        val team = getById(teamId)
+        val currentOwner = teamMemberRepository.findByUserAndTeam(currentOwnerId, team)
+            ?: throw TeamMemberNotFoundException()
+        val newOwner = teamMemberRepository.findByUserAndTeam(newOwnerId, team)
+            ?: throw TeamMemberNotFoundException()
+        currentOwner.isOwner = false
+        newOwner.isOwner = true
     }
 
     fun getAllByUser(userId: UUID): List<TeamMemberEntity> =
