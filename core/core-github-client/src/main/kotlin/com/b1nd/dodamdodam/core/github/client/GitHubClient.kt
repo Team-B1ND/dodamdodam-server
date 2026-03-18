@@ -11,7 +11,6 @@ import reactor.netty.http.client.HttpClient
 class GitHubClient(
     private val webClient: WebClient
 ) {
-    private val log = LoggerFactory.getLogger(javaClass)
     private val objectMapper = ObjectMapper()
 
     fun downloadReleaseAsset(owner: String, repo: String, tag: String): ByteArray {
@@ -28,10 +27,6 @@ class GitHubClient(
             throw IllegalStateException("No assets found in release: $owner/$repo@$tag")
         }
 
-        log.info("Release {}/{}@{} has {} assets: {}", owner, repo, tag,
-            assets.size(),
-            assets.map { it["name"]?.asText() })
-
         val zipAsset = assets.firstOrNull {
             it["name"]?.asText()?.endsWith(".zip") == true
         } ?: throw IllegalStateException(
@@ -40,8 +35,6 @@ class GitHubClient(
 
         val downloadUrl = zipAsset["browser_download_url"]?.asText()
             ?: throw IllegalStateException("No download URL for asset: ${zipAsset["name"]?.asText()}")
-
-        log.info("Downloading release asset from: {}", downloadUrl)
 
         val httpClient = HttpClient.create().followRedirect(true)
         return WebClient.builder()
