@@ -10,8 +10,6 @@ import com.b1nd.dodamdodam.inapp.domain.app.entity.AppReleaseEntity
 import com.b1nd.dodamdodam.inapp.domain.app.entity.AppServerEntity
 import com.b1nd.dodamdodam.inapp.domain.app.enumeration.AppStatusType
 import com.b1nd.dodamdodam.inapp.domain.app.exception.AppAlreadyExistException
-import com.b1nd.dodamdodam.inapp.domain.app.exception.AppApiKeyAlreadyExistException
-import com.b1nd.dodamdodam.inapp.domain.app.exception.AppApiKeyNotFoundException
 import com.b1nd.dodamdodam.inapp.domain.app.exception.AppDenyReasonRequiredException
 import com.b1nd.dodamdodam.inapp.domain.app.exception.AppNotFoundException
 import com.b1nd.dodamdodam.inapp.domain.app.exception.AppReleaseEnableNotAllowedException
@@ -224,10 +222,15 @@ class AppService(
         appServerRouteEventProducer.publishUpdated(server)
     }
 
-    fun createApiKey(userId: UUID, appId: UUID): AppApiKeyEntity {
+    fun issueApiKey(userId: UUID, appId: UUID): AppApiKeyEntity {
         val app = getAppWithMemberPermission(userId, appId)
-        if (appApiKeyRepository.existsByApp(app)) throw AppApiKeyAlreadyExistException()
         val rawKey = generateRawApiKey()
+        val existing = appApiKeyRepository.findByApp(app)
+        if (existing != null) {
+            existing.updateApiKey(passwordEncoder.encode(rawKey), LocalDateTime.now().plusDays(API_KEY_EXPIRE_DAYS))
+            appApiKeyEventProducer.publishCreated(existing)
+            return AppApiKeyEntity(app = existing.app, apiKey = existing.apiKey, expiredAt = existing.expiredAt, rawApiKey = rawKey)
+        }
         val apiKeyEntity = appApiKeyRepository.save(
             AppApiKeyEntity(
                 app = app,
@@ -240,13 +243,9 @@ class AppService(
         return apiKeyEntity
     }
 
-    fun regenerateApiKey(userId: UUID, appId: UUID): AppApiKeyEntity {
+    fun getApiKeys(userId: UUID, appId: UUID): List<AppApiKeyEntity> {
         val app = getAppWithMemberPermission(userId, appId)
-        val apiKeyEntity = appApiKeyRepository.findByApp(app) ?: throw AppApiKeyNotFoundException()
-        val rawKey = generateRawApiKey()
-        apiKeyEntity.updateApiKey(passwordEncoder.encode(rawKey), LocalDateTime.now().plusDays(API_KEY_EXPIRE_DAYS))
-        appApiKeyEventProducer.publishCreated(apiKeyEntity)
-        return AppApiKeyEntity(app = apiKeyEntity.app, apiKey = apiKeyEntity.apiKey, expiredAt = apiKeyEntity.expiredAt, rawApiKey = rawKey)
+        return appApiKeyRepository.findAllByApp(app)
     }
 
     fun verifyApiKey(appPublicId: UUID, rawApiKey: String): Boolean {

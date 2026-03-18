@@ -88,13 +88,13 @@ class AppController(
 
     @UserAccess
     @PostMapping("/{appId}/api-key")
-    fun createApiKey(@PathVariable appId: UUID) =
-        appUseCase.createApiKey(appId)
+    fun issueApiKey(@PathVariable appId: UUID) =
+        appUseCase.issueApiKey(appId)
 
     @UserAccess
-    @PatchMapping("/{appId}/api-key")
-    fun regenerateApiKey(@PathVariable appId: UUID) =
-        appUseCase.regenerateApiKey(appId)
+    @GetMapping("/{appId}/api-key")
+    fun getApiKeys(@PathVariable appId: UUID) =
+        appUseCase.getApiKeys(appId)
 
     @UserAccess
     @GetMapping("/active")

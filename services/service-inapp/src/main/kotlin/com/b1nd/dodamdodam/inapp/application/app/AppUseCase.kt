@@ -15,6 +15,7 @@ import com.b1nd.dodamdodam.inapp.application.app.data.request.ToggleAppServerReq
 import com.b1nd.dodamdodam.inapp.application.app.data.request.UpdateAppReleaseStatusRequest
 import com.b1nd.dodamdodam.inapp.application.app.data.request.UpdateAppServerStatusRequest
 import com.b1nd.dodamdodam.inapp.application.app.data.response.ActiveAppResponse
+import com.b1nd.dodamdodam.inapp.application.app.data.response.AppApiKeyInfoResponse
 import com.b1nd.dodamdodam.inapp.application.app.data.response.AppApiKeyResponse
 import com.b1nd.dodamdodam.inapp.application.app.data.response.AppDetailResponse
 import com.b1nd.dodamdodam.inapp.application.app.data.response.AppReleaseResponse
@@ -129,19 +130,20 @@ class AppUseCase(
         return Response.ok("앱 서버 활성화 상태가 변경되었어요.")
     }
 
-    fun createApiKey(appId: UUID): Response<AppApiKeyResponse> {
-        val apiKeyEntity = appService.createApiKey(currentUserId(), appId)
+    fun issueApiKey(appId: UUID): Response<AppApiKeyResponse> {
+        val apiKeyEntity = appService.issueApiKey(currentUserId(), appId)
         return Response.created(
-            "API Key가 생성되었어요.",
+            "API Key가 발급되었어요.",
             AppApiKeyResponse(apiKey = apiKeyEntity.rawApiKey!!, expiredAt = apiKeyEntity.expiredAt)
         )
     }
 
-    fun regenerateApiKey(appId: UUID): Response<AppApiKeyResponse> {
-        val apiKeyEntity = appService.regenerateApiKey(currentUserId(), appId)
+    @Transactional(readOnly = true)
+    fun getApiKeys(appId: UUID): Response<List<AppApiKeyInfoResponse>> {
+        val apiKeys = appService.getApiKeys(currentUserId(), appId)
         return Response.ok(
-            "API Key가 재발급되었어요.",
-            AppApiKeyResponse(apiKey = apiKeyEntity.rawApiKey!!, expiredAt = apiKeyEntity.expiredAt)
+            "API Key 목록을 조회했어요.",
+            apiKeys.map { AppApiKeyInfoResponse(expiredAt = it.expiredAt, isExpired = it.isExpired, createdAt = it.createdAt) }
         )
     }
 

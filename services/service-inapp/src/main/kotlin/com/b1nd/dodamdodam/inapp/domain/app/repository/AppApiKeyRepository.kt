@@ -6,5 +6,6 @@ import org.springframework.data.jpa.repository.JpaRepository
 
 interface AppApiKeyRepository : JpaRepository<AppApiKeyEntity, Long> {
     fun findByApp(app: AppEntity): AppApiKeyEntity?
+    fun findAllByApp(app: AppEntity): List<AppApiKeyEntity>
     fun existsByApp(app: AppEntity): Boolean
 }
