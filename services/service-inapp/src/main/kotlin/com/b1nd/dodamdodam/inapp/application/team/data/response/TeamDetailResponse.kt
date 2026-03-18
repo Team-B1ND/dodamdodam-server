@@ -8,4 +8,5 @@ data class TeamDetailResponse(
     val description: String?,
     val iconUrl: String?,
     val githubUrl: String?,
+    val isOwner: Boolean
 )

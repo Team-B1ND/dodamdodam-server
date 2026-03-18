@@ -32,9 +32,12 @@ class TeamService(
 
     fun validateOwner(userId: UUID, teamId: UUID) {
         val team = getById(teamId)
-        if (!teamMemberRepository.existsByUserAndTeamAndIsOwnerIsTrue(userId, team))
+        if (!existsOwner(userId, team))
             throw TeamOwnerPermissionRequiredException()
     }
+
+    fun existsOwner(userId: UUID, teamEntity: TeamEntity) =
+        teamMemberRepository.existsByUserAndTeamAndIsOwnerIsTrue(userId, teamEntity)
 
     fun create(userId: UUID, teamEntity: TeamEntity): TeamEntity {
         if (repository.existsByName(teamEntity.name))

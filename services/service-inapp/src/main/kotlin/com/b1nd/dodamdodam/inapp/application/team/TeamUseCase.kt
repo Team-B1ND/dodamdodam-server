@@ -41,7 +41,8 @@ class TeamUseCase(
     @Transactional(readOnly = true)
     fun getTeam(teamId: UUID): Response<TeamDetailResponse> {
         val team = teamService.getById(teamId)
-        return Response.ok("팀을 조회했어요.", team.toTeamDetailResponse())
+        val isOwner = teamService.existsOwner(PassportHolder.current().requireUserId(), team)
+        return Response.ok("팀을 조회했어요.", team.toTeamDetailResponse(isOwner))
     }
 
     fun addTeamMembers(request: AddTeamMemberRequest): Response<Any> {

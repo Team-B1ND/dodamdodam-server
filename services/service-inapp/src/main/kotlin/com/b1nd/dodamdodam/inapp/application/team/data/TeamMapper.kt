@@ -8,12 +8,13 @@ import com.b1nd.dodamdodam.inapp.domain.team.entity.TeamEntity
 import com.b1nd.dodamdodam.inapp.domain.team.entity.TeamMemberEntity
 import java.util.UUID
 
-fun TeamEntity.toTeamDetailResponse() = TeamDetailResponse(
+fun TeamEntity.toTeamDetailResponse(isOwner: Boolean) = TeamDetailResponse(
     teamId = publicId!!,
     name = name,
     description = description,
     iconUrl = iconUrl,
     githubUrl = githubUrl,
+    isOwner = isOwner,
 )
 
 fun TeamMemberEntity.toMyTeamResponse() = MyTeamResponse(
