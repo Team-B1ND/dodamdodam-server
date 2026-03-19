@@ -31,8 +31,7 @@ class UserService(
 
     fun create(user: UserEntity, role: RoleType): UserEntity {
         checkDuplicateUser(user.username)
-        val phone = user.phone
-        if(phone != null) checkDuplicatePhone(phone)
+        user.phone?.let{checkDuplicatePhone(it)}
         user.updatePassword(encoder.encode(user.password))
         val savedUser = userRepository.save(user)
         addRole(savedUser, setOf(role))
@@ -43,7 +42,7 @@ class UserService(
         val user = userRepository.findByPublicId(publicId)
             ?: throw UserNotFoundException()
 
-        if(phone != null && user.phone != phone) checkDuplicatePhone(phone)
+        user.phone?.let{checkDuplicatePhone(it)}
 
         user.updateInfo(name, phone, profileImage)
         return userRepository.save(user)
