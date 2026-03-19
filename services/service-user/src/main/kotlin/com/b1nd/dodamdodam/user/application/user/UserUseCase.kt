@@ -7,9 +7,11 @@ import com.b1nd.dodamdodam.core.security.passport.enumerations.RoleType
 import com.b1nd.dodamdodam.core.security.passport.holder.PassportHolder
 import com.b1nd.dodamdodam.core.security.passport.requireUserId
 import com.b1nd.dodamdodam.user.application.user.data.request.ChangePasswordRequest
+import com.b1nd.dodamdodam.user.application.user.data.request.ChangePhoneRequest
 import com.b1nd.dodamdodam.user.application.user.data.request.ConfirmPhoneVerificationRequest
 import com.b1nd.dodamdodam.user.application.user.data.request.EnableUserRequest
 import com.b1nd.dodamdodam.user.application.user.data.request.RequestPhoneVerificationRequest
+import com.b1nd.dodamdodam.user.application.user.data.request.ResetPasswordRequest
 import com.b1nd.dodamdodam.user.application.user.data.request.StudentRegisterRequest
 import com.b1nd.dodamdodam.user.application.user.data.request.TeacherRegisterRequest
 import com.b1nd.dodamdodam.user.application.user.data.request.UpdateStudentInfoRequest
@@ -120,6 +122,7 @@ class UserUseCase(
     fun updateUser(request: UpdateUserInfoRequest): Response<Any> {
         val passport = PassportHolder.current()
         val userId = passport.requireUserId()
+        if(request.phone != null) phoneVerificationStore.ensureActive(request.phone)
         val updatedUser = userService.update(userId, request.name, request.phone, request.profileImage)
         val roles = userService.getRoles(updatedUser)
         kafkaMessageProducer.send(
@@ -167,5 +170,11 @@ class UserUseCase(
     fun confirmPhoneVerification(request: ConfirmPhoneVerificationRequest): Response<Any> {
         phoneVerificationStore.verifyCode(request.phone, request.code)
         return Response.ok("휴대폰 인증을 성공했어요.")
+    }
+
+    fun resetPassword(request: ResetPasswordRequest): Response<Any> {
+        phoneVerificationStore.ensureActive(request.phone)
+        userService.updatePasswordByPhone(request.phone, request.newPassword)
+        return Response.ok("비밀번호 재설정에 성공했어요.")
     }
 }
