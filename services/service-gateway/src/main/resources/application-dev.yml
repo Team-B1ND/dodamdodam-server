@@ -45,6 +45,12 @@ spring:
             - Path=/file/**
           filters:
             - StripPrefix=1
+        - id: neis-service
+          uri: http://service-neis:8080
+          predicates:
+            - Path=/neis/**
+          filters:
+            - StripPrefix=1
         - id: openapi-user-service
           uri: http://service-user:8080
           predicates:
