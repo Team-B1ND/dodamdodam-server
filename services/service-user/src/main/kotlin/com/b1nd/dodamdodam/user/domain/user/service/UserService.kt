@@ -10,6 +10,7 @@ import com.b1nd.dodamdodam.user.domain.user.exception.UserNotFoundException
 import com.b1nd.dodamdodam.user.domain.user.exception.UserPasswordIncorrectException
 import com.b1nd.dodamdodam.user.domain.user.repository.UserRepository
 import com.b1nd.dodamdodam.user.domain.user.repository.UserRoleRepository
+import com.b1nd.dodamdodam.user.infrastructure.phoneverification.exception.PhoneNotVerifiedException
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.stereotype.Service
 import java.util.UUID
@@ -92,6 +93,14 @@ class UserService(
             ?: throw UserPasswordIncorrectException()
         if (!encoder.matches(password, user.password))
             throw UserPasswordIncorrectException()
+    }
+
+    fun updatePasswordByPhone(phone: String, newPassword: String) {
+        val user = userRepository.findByPhone(phone)
+            ?: throw UserNotFoundException()
+
+        user.updatePassword(encoder.encode(newPassword))
+        userRepository.save(user)
     }
 
     fun getByUsername(username: String): UserEntity =

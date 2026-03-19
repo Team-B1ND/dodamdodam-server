@@ -7,6 +7,7 @@ import com.b1nd.dodamdodam.user.application.user.data.request.ChangePasswordRequ
 import com.b1nd.dodamdodam.user.application.user.data.request.ConfirmPhoneVerificationRequest
 import com.b1nd.dodamdodam.user.application.user.data.request.EnableUserRequest
 import com.b1nd.dodamdodam.user.application.user.data.request.RequestPhoneVerificationRequest
+import com.b1nd.dodamdodam.user.application.user.data.request.ResetPasswordRequest
 import com.b1nd.dodamdodam.user.application.user.data.request.StudentRegisterRequest
 import com.b1nd.dodamdodam.user.application.user.data.request.TeacherRegisterRequest
 import com.b1nd.dodamdodam.user.application.user.data.request.UpdateStudentInfoRequest
@@ -82,4 +83,7 @@ class UserController(
     @DeleteMapping
     fun quitUser() =
         userUseCase.quitUser()
+
+    @PatchMapping("/reset-password")
+    fun resetPassword(@RequestBody request: ResetPasswordRequest) = userUseCase.resetPassword(request)
 }

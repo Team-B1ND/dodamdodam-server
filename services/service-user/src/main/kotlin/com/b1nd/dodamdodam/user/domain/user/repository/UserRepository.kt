@@ -9,4 +9,5 @@ interface UserRepository: JpaRepository<UserEntity, Long> {
     fun findByPublicId(publicId: UUID): UserEntity?
     fun findAllByPublicIdIn(publicIds: Collection<UUID>): List<UserEntity>
     fun findByUsername(username: String): UserEntity?
+    fun findByPhone(phone: String): UserEntity?
 }
