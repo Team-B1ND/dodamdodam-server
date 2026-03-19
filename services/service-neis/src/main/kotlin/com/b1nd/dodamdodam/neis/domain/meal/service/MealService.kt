@@ -14,18 +14,10 @@ class MealService(
         mealRepository.findAllByDateOrderByMealTypeAsc(date)
 
     fun saveOrUpdate(date: LocalDate, mealType: MealType, calorie: Double, menus: String) {
-        val existing = mealRepository.findByDateAndMealType(date, mealType)
-        if (existing != null) {
-            existing.updateMenu(calorie, menus)
-        } else {
-            mealRepository.save(
-                MealEntity(
-                    date = date,
-                    mealType = mealType,
-                    calorie = calorie,
-                    menus = menus,
-                )
-            )
-        }
+        val mealEntity = mealRepository.findByDateAndMealType(date, mealType)
+            ?.apply { updateMenu(calorie, menus) }
+            ?: MealEntity(date, mealType, calorie, menus)
+
+        mealRepository.save(mealEntity)
     }
 }

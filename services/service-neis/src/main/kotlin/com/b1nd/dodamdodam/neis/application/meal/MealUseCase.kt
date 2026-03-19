@@ -11,17 +11,17 @@ import java.time.LocalDate
 import java.time.YearMonth
 
 @Component
-@Transactional(readOnly = true)
+@Transactional(rollbackFor = [Exception::class])
 class MealUseCase(
     private val mealService: MealService,
     private val neisClient: NeisClient,
 ) {
+    @Transactional(readOnly = true)
     fun getMealsByDate(date: LocalDate): Response<List<MealResponse>> {
         val meals = mealService.getMealsByDate(date)
         return Response.ok("급식을 조회했어요.", meals.map { it.toResponse() })
     }
 
-    @Transactional
     fun syncMeals(yearMonth: YearMonth): Response<Any> {
         val meals = neisClient.fetchMonthlyMeals(yearMonth)
         meals.forEach { meal ->
