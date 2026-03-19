@@ -1,5 +1,6 @@
 package com.b1nd.dodamdodam.neis.infrastructure.comcigan
 
+import com.b1nd.dodamdodam.neis.infrastructure.comcigan.data.ParsedSchedule
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
 import jakarta.annotation.PostConstruct
@@ -12,15 +13,6 @@ import java.nio.charset.Charset
 import java.time.DayOfWeek
 import java.time.LocalDate
 import java.util.*
-
-data class ParsedSchedule(
-    val date: LocalDate,
-    val grade: Int,
-    val room: Int,
-    val period: Int,
-    val subject: String,
-    val teacher: String,
-)
 
 @Component
 class ComciganClient(
