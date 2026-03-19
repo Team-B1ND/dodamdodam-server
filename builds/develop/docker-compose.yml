@@ -157,6 +157,20 @@ services:
       kafka:
         condition: service_healthy
 
+  service-neis:
+    image: ${DOCKERHUB_USERNAME}/dodam-neis:dev
+    container_name: dodam-neis
+    restart: unless-stopped
+    environment:
+      SPRING_PROFILES_ACTIVE: dev
+      MYSQL_HOST: mysql://mysql:3306/dodam-neis
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      NEIS_API_KEY: ${NEIS_API_KEY}
+    depends_on:
+      mysql:
+        condition: service_healthy
+
   service-file:
     image: ${DOCKERHUB_USERNAME}/dodam-file:dev
     container_name: dodam-file

@@ -1,0 +1,34 @@
+spring:
+  application:
+    name: service-neis
+
+  profiles:
+    active: local
+
+  flyway:
+    locations: classpath:database/migration
+
+springdoc:
+  swagger-ui:
+    disable-swagger-default-url: true
+    config-url: ${app.swagger.gateway-prefix}/v3/api-docs/swagger-config
+    url: ${app.swagger.gateway-prefix}/v3/api-docs
+
+server:
+  port: 8084
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+
+meal:
+  neis-api-key: ${NEIS_API_KEY:}
+  edu-office-code: D10
+  school-code: 7240454
+
+app:
+  swagger:
+    enabled: true
+    gateway-prefix: /neis
