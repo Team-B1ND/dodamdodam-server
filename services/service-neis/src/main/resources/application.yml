@@ -28,6 +28,11 @@ meal:
   edu-office-code: D10
   school-code: 7240454
 
+schedule:
+  school-name: 대구소프트웨어고등학교
+  max-grade: 3
+  max-room: 4
+
 app:
   swagger:
     enabled: true
