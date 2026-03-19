@@ -7,6 +7,7 @@ import com.b1nd.dodamdodam.core.security.passport.enumerations.RoleType
 import com.b1nd.dodamdodam.core.security.passport.holder.PassportHolder
 import com.b1nd.dodamdodam.core.security.passport.requireUserId
 import com.b1nd.dodamdodam.user.application.user.data.request.ChangePasswordRequest
+import com.b1nd.dodamdodam.user.application.user.data.request.ChangePhoneRequest
 import com.b1nd.dodamdodam.user.application.user.data.request.ConfirmPhoneVerificationRequest
 import com.b1nd.dodamdodam.user.application.user.data.request.EnableUserRequest
 import com.b1nd.dodamdodam.user.application.user.data.request.RequestPhoneVerificationRequest
@@ -121,6 +122,7 @@ class UserUseCase(
     fun updateUser(request: UpdateUserInfoRequest): Response<Any> {
         val passport = PassportHolder.current()
         val userId = passport.requireUserId()
+        if(request.phone != null) phoneVerificationStore.ensureActive(request.phone)
         val updatedUser = userService.update(userId, request.name, request.phone, request.profileImage)
         val roles = userService.getRoles(updatedUser)
         kafkaMessageProducer.send(

@@ -5,6 +5,7 @@ import com.b1nd.dodamdodam.user.application.user.data.request.UpdateUserInfoRequ
 import com.b1nd.dodamdodam.user.domain.user.entity.UserEntity
 import com.b1nd.dodamdodam.user.domain.user.entity.UserRoleEntity
 import com.b1nd.dodamdodam.user.domain.user.enumeration.StatusType
+import com.b1nd.dodamdodam.user.domain.user.exception.PhoneAlreadyExistsException
 import com.b1nd.dodamdodam.user.domain.user.exception.UserAlreadyExistsException
 import com.b1nd.dodamdodam.user.domain.user.exception.UserNotFoundException
 import com.b1nd.dodamdodam.user.domain.user.exception.UserPasswordIncorrectException
@@ -30,6 +31,8 @@ class UserService(
 
     fun create(user: UserEntity, role: RoleType): UserEntity {
         checkDuplicateUser(user.username)
+        val phone = user.phone
+        if(phone != null) checkDuplicatePhone(phone)
         user.updatePassword(encoder.encode(user.password))
         val savedUser = userRepository.save(user)
         addRole(savedUser, setOf(role))
@@ -39,6 +42,9 @@ class UserService(
     fun update(publicId: UUID, name: String?, phone: String?, profileImage: String?): UserEntity {
         val user = userRepository.findByPublicId(publicId)
             ?: throw UserNotFoundException()
+
+        if(phone != null && user.phone != phone) checkDuplicatePhone(phone)
+
         user.updateInfo(name, phone, profileImage)
         return userRepository.save(user)
     }
@@ -109,5 +115,10 @@ class UserService(
     private fun checkDuplicateUser(username: String) {
         if (userRepository.existsByUsername(username))
             throw UserAlreadyExistsException()
+    }
+
+    private fun checkDuplicatePhone(phone: String) {
+        if (userRepository.existsByPhone(phone))
+            throw PhoneAlreadyExistsException()
     }
 }
