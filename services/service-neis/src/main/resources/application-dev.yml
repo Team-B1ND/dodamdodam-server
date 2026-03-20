@@ -20,3 +20,11 @@ spring:
 
 server:
   port: 8080
+
+grpc:
+  server:
+    port: 9090
+  client:
+    service-user:
+      address: 'static://service-user:9090'
+      negotiation-type: plaintext

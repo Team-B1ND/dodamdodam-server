@@ -11,5 +11,9 @@ interface ScheduleRepository : JpaRepository<ScheduleEntity, Long> {
 
     fun findByDateAndGradeAndRoomAndPeriod(date: LocalDate, grade: Int, room: Int, period: Int): ScheduleEntity?
 
+    fun findAllByDateBetweenAndGradeAndRoomOrderByDateAscPeriodAsc(
+        startDate: LocalDate, endDate: LocalDate, grade: Int, room: Int,
+    ): List<ScheduleEntity>
+
     fun deleteAllByDateBetween(startDate: LocalDate, endDate: LocalDate)
 }

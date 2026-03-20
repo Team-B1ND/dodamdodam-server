@@ -17,3 +17,11 @@ spring:
       hibernate:
         format_sql: true
         dialect: org.hibernate.dialect.MySQLDialect
+
+grpc:
+  server:
+    port: 9094
+  client:
+    service-user:
+      address: 'static://localhost:9091'
+      negotiation-type: plaintext
