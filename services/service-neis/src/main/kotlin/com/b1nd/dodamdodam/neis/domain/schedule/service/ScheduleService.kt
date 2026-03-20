@@ -15,6 +15,9 @@ class ScheduleService(
     fun getSchedulesByDate(date: LocalDate): List<ScheduleEntity> =
         scheduleRepository.findAllByDateOrderByGradeAscRoomAscPeriodAsc(date)
 
+    fun getWeeklySchedulesByRoom(startDate: LocalDate, endDate: LocalDate, grade: Int, room: Int): List<ScheduleEntity> =
+        scheduleRepository.findAllByDateBetweenAndGradeAndRoomOrderByDateAscPeriodAsc(startDate, endDate, grade, room)
+
     fun saveOrUpdate(date: LocalDate, grade: Int, room: Int, period: Int, subject: String, teacher: String) {
         val entity = scheduleRepository.findByDateAndGradeAndRoomAndPeriod(date, grade, room, period)
             ?.apply { updateSchedule(subject, teacher) }

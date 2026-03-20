@@ -16,6 +16,10 @@ class ScheduleController(
     private val scheduleUseCase: ScheduleUseCase,
 ) {
     @UserAccess
+    @GetMapping("/me")
+    fun getMySchedules() = scheduleUseCase.getMyWeeklySchedules()
+
+    @UserAccess
     @GetMapping
     fun getSchedules(@RequestParam date: LocalDate, @RequestParam grade: Int, @RequestParam room: Int) =
         scheduleUseCase.getSchedulesByDate(date, grade, room)
