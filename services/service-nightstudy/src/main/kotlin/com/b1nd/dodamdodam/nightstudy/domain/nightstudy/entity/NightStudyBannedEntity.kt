@@ -1,5 +1,6 @@
 package com.b1nd.dodamdodam.nightstudy.domain.nightstudy.entity
 
+import com.b1nd.dodamdodam.core.jpa.entity.BaseTimeEntity
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
 import jakarta.persistence.GeneratedValue
@@ -18,9 +19,7 @@ class NightStudyBannedEntity (
     var reason: String,
 
     var endAt: LocalDate,
-
-    var bannedAt: LocalDate,
-) {
+): BaseTimeEntity() {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     var id: Long? = null

@@ -10,22 +10,24 @@ import com.b1nd.dodamdodam.nightstudy.domain.nightstudy.repository.NightStudyBan
 import com.b1nd.dodamdodam.nightstudy.domain.nightstudy.repository.NightStudyMemberRepository
 import com.b1nd.dodamdodam.nightstudy.domain.nightstudy.repository.NightStudyRepository
 import jakarta.transaction.Transactional
+import org.springframework.stereotype.Service
 import java.util.UUID
 
-open class NightStudyService(
+@Service
+class NightStudyService(
     private val nightStudyRepository: NightStudyRepository,
     private val nightStudyMemberRepository: NightStudyMemberRepository,
     private val bannedRepository: NightStudyBannedRepository
 ) {
     @Transactional
-    open fun save(nightStudy: NightStudyEntity, members: List<UUID>) {
+    fun save(nightStudy: NightStudyEntity, members: List<UUID>?) {
         if(isBanned(nightStudy.leaderId)) throw NightStudyBannedException()
-        members.forEach { member ->
+        members?.forEach { member ->
             if (isBanned(member)) throw NightStudyBannedException()
         }
 
         val saved = nightStudyRepository.save(nightStudy)
-        members.forEach { member ->
+        members?.forEach { member ->
             nightStudyMemberRepository.save(NightStudyMemberEntity(saved.id!!, member))
         }
     }
@@ -51,7 +53,8 @@ open class NightStudyService(
     }
 
     @Transactional
-    open fun delete(id: Long) {
+    fun delete(userId: UUID, id: Long) {
+        if()
         nightStudyRepository.deleteById(id)
         nightStudyMemberRepository.deleteAllByNightStudyId(id)
     }

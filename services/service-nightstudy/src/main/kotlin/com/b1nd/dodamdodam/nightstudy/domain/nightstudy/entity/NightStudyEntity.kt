@@ -35,7 +35,7 @@ class NightStudyEntity (
 
     @Enumerated(EnumType.STRING)
     @Column(length = 10)
-    var status: NightStudyStatusType,
+    var status: NightStudyStatusType = NightStudyStatusType.PENDING,
 
     @Column(name = "fk_user_id", columnDefinition = "BINARY(16)")
     var leaderId: UUID,
