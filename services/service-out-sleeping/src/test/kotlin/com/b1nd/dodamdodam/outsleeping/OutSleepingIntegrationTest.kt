@@ -27,7 +27,6 @@ import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.*
-import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.LocalTime
 import java.util.UUID
@@ -84,10 +83,10 @@ class OutSleepingIntegrationTest {
         outSleepingRepository.deleteAll()
         deadlineRepository.deleteAll()
 
-        // Set deadline to far future so tests can apply
+        // Set deadline to today 23:59 so tests can always apply
         deadlineRepository.save(
             OutSleepingDeadlineEntity(
-                dayOfWeek = DayOfWeek.SUNDAY,
+                dayOfWeek = LocalDate.now().dayOfWeek,
                 time = LocalTime.of(23, 59)
             )
         )
@@ -421,7 +420,7 @@ class OutSleepingIntegrationTest {
             )
                 .andExpect(status().isOk)
                 .andExpect(jsonPath("$.status").value(200))
-                .andExpect(jsonPath("$.data[0].dayOfWeek").value("SUNDAY"))
+                .andExpect(jsonPath("$.data[0].dayOfWeek").value(LocalDate.now().dayOfWeek.name))
         }
 
         @Test
@@ -459,11 +458,11 @@ class OutSleepingIntegrationTest {
 
         @Test
         fun `마감시간이 지나면 외박 신청이 불가능하다`() {
-            // 마감시간을 과거로 설정 (월요일 00:00 → 현재 요일이 월요일 이후면 마감)
+            // 오늘 요일 기준으로 마감시간을 00:00으로 설정하여 항상 마감 초과 상태로 만듦
             deadlineRepository.deleteAll()
             deadlineRepository.save(
                 OutSleepingDeadlineEntity(
-                    dayOfWeek = DayOfWeek.MONDAY,
+                    dayOfWeek = LocalDate.now().dayOfWeek,
                     time = LocalTime.of(0, 0)
                 )
             )
@@ -477,7 +476,6 @@ class OutSleepingIntegrationTest {
                     .content(objectMapper.writeValueAsString(body))
             )
 
-            // 오늘이 월요일이 아니면 마감 초과, 월요일이면 시간 초과
             result.andExpect(status().isBadRequest)
                 .andExpect(jsonPath("$.status").value(400))
                 .andExpect(jsonPath("$.message").value("외박 신청 기간이 지났어요."))
