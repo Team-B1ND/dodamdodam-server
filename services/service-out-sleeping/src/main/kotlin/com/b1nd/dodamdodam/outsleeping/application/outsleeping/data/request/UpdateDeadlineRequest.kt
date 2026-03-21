@@ -4,6 +4,8 @@ import java.time.DayOfWeek
 import java.time.LocalTime
 
 data class UpdateDeadlineRequest(
-    val dayOfWeek: DayOfWeek,
-    val time: LocalTime,
+    val startDayOfWeek: DayOfWeek,
+    val startTime: LocalTime,
+    val endDayOfWeek: DayOfWeek,
+    val endTime: LocalTime,
 )

@@ -10,14 +10,28 @@ import java.time.LocalTime
 class OutSleepingDeadlineEntity(
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false, length = 10, unique = true)
-    var dayOfWeek: DayOfWeek,
+    @Column(nullable = false, length = 10)
+    var startDayOfWeek: DayOfWeek,
 
     @Column(nullable = false)
-    var time: LocalTime = LocalTime.of(17, 0),
+    var startTime: LocalTime,
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, length = 10)
+    var endDayOfWeek: DayOfWeek,
+
+    @Column(nullable = false)
+    var endTime: LocalTime,
 ) : BaseTimeEntity() {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long? = null
+
+    fun update(startDayOfWeek: DayOfWeek, startTime: LocalTime, endDayOfWeek: DayOfWeek, endTime: LocalTime) {
+        this.startDayOfWeek = startDayOfWeek
+        this.startTime = startTime
+        this.endDayOfWeek = endDayOfWeek
+        this.endTime = endTime
+    }
 }

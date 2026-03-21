@@ -48,6 +48,8 @@ fun UserInfoMessage.toMemberResponse() = MemberResponse(
 fun List<UserInfoMessage>.toMemberResponses() = map { it.toMemberResponse() }
 
 fun OutSleepingDeadlineEntity.toResponse() = DeadlineResponse(
-    dayOfWeek = dayOfWeek,
-    time = time,
+    startDayOfWeek = startDayOfWeek,
+    startTime = startTime,
+    endDayOfWeek = endDayOfWeek,
+    endTime = endTime,
 )

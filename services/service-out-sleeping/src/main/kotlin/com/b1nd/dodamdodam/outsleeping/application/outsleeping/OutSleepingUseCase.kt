@@ -121,13 +121,13 @@ class OutSleepingUseCase(
     }
 
     @Transactional(readOnly = true)
-    fun getDeadline(): Response<List<DeadlineResponse>> {
-        val deadlines = deadlineService.getAll()
-        return Response.ok("외박 신청 마감 시간을 조회했어요.", deadlines.map { it.toResponse() })
+    fun getDeadline(): Response<DeadlineResponse?> {
+        val deadline = deadlineService.get()
+        return Response.ok("외박 신청 마감 시간을 조회했어요.", deadline?.toResponse())
     }
 
     fun updateDeadline(request: UpdateDeadlineRequest): Response<Any> {
-        deadlineService.update(request.dayOfWeek, request.time)
+        deadlineService.update(request.startDayOfWeek, request.startTime, request.endDayOfWeek, request.endTime)
         return Response.ok("외박 신청 마감 시간이 수정되었어요.")
     }
 

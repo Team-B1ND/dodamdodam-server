@@ -27,6 +27,7 @@ import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.*
+import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.LocalTime
 import java.util.UUID
@@ -83,11 +84,13 @@ class OutSleepingIntegrationTest {
         outSleepingRepository.deleteAll()
         deadlineRepository.deleteAll()
 
-        // Set deadline to today 23:59 so tests can always apply
+        // 월~일 전체 범위, 23:59까지로 설정하여 테스트에서 항상 신청 가능
         deadlineRepository.save(
             OutSleepingDeadlineEntity(
-                dayOfWeek = LocalDate.now().dayOfWeek,
-                time = LocalTime.of(23, 59)
+                startDayOfWeek = DayOfWeek.MONDAY,
+                startTime = LocalTime.of(0, 0),
+                endDayOfWeek = DayOfWeek.SUNDAY,
+                endTime = LocalTime.of(23, 59),
             )
         )
 
@@ -392,7 +395,6 @@ class OutSleepingIntegrationTest {
 
         @Test
         fun `교사가 잔류학생을 조회할 수 있다`() {
-            // 학생1은 외박 승인됨, 학생2는 잔류
             outSleepingRepository.save(
                 OutSleepingEntity(userId = studentId, reason = "사유", startAt = LocalDate.now(), endAt = LocalDate.now().plusDays(1), status = OutSleepingStatus.ALLOWED)
             )
@@ -420,12 +422,18 @@ class OutSleepingIntegrationTest {
             )
                 .andExpect(status().isOk)
                 .andExpect(jsonPath("$.status").value(200))
-                .andExpect(jsonPath("$.data[0].dayOfWeek").value(LocalDate.now().dayOfWeek.name))
+                .andExpect(jsonPath("$.data.startDayOfWeek").value("MONDAY"))
+                .andExpect(jsonPath("$.data.endDayOfWeek").value("SUNDAY"))
         }
 
         @Test
         fun `교사가 마감시간을 수정할 수 있다`() {
-            val body = mapOf("dayOfWeek" to "FRIDAY", "time" to "18:00")
+            val body = mapOf(
+                "startDayOfWeek" to "SUNDAY",
+                "startTime" to "00:00",
+                "endDayOfWeek" to "FRIDAY",
+                "endTime" to "18:00",
+            )
 
             mockMvc.perform(
                 patch("/out-sleeping/deadline")
@@ -439,7 +447,12 @@ class OutSleepingIntegrationTest {
 
         @Test
         fun `학생은 마감시간을 수정할 수 없다`() {
-            val body = mapOf("dayOfWeek" to "FRIDAY", "time" to "18:00")
+            val body = mapOf(
+                "startDayOfWeek" to "SUNDAY",
+                "startTime" to "00:00",
+                "endDayOfWeek" to "FRIDAY",
+                "endTime" to "18:00",
+            )
 
             mockMvc.perform(
                 patch("/out-sleeping/deadline")
@@ -457,26 +470,28 @@ class OutSleepingIntegrationTest {
     inner class DeadlineExceeded {
 
         @Test
-        fun `마감시간이 지나면 외박 신청이 불가능하다`() {
-            // 오늘 요일 기준으로 마감시간을 00:00으로 설정하여 항상 마감 초과 상태로 만듦
+        fun `마감시간 범위 밖이면 외박 신청이 불가능하다`() {
+            // 어제 요일 00:00 ~ 어제 요일 00:00 범위로 설정하여 오늘은 범위 밖
+            val yesterday = LocalDate.now().minusDays(1).dayOfWeek
             deadlineRepository.deleteAll()
             deadlineRepository.save(
                 OutSleepingDeadlineEntity(
-                    dayOfWeek = LocalDate.now().dayOfWeek,
-                    time = LocalTime.of(0, 0)
+                    startDayOfWeek = yesterday,
+                    startTime = LocalTime.of(0, 0),
+                    endDayOfWeek = yesterday,
+                    endTime = LocalTime.of(23, 59),
                 )
             )
 
             val body = mapOf("reason" to "늦은 신청", "startAt" to "2025-03-22", "endAt" to "2025-03-23")
 
-            val result = mockMvc.perform(
+            mockMvc.perform(
                 post("/out-sleeping")
                     .header("X-User-Passport", studentPassport)
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(objectMapper.writeValueAsString(body))
             )
-
-            result.andExpect(status().isBadRequest)
+                .andExpect(status().isBadRequest)
                 .andExpect(jsonPath("$.status").value(400))
                 .andExpect(jsonPath("$.message").value("외박 신청 기간이 지났어요."))
         }
