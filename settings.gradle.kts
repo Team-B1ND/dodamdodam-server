@@ -37,6 +37,7 @@ include(":services:service-auth")
 include(":services:service-user")
 include("services:service-inapp")
 include(":services:service-wakeup-song")
+include(":services:service-out-sleeping")
 include(":services:service-file")
 include(":services:service-neis")
 

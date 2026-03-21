@@ -24,6 +24,9 @@ class StudentService(
     fun getByUsers(users: Collection<UserEntity>): Map<Long?, StudentEntity> =
         repository.findAllByUserIn(users).associateBy { it.user.id }
 
+    fun getAll(): List<StudentEntity> =
+        repository.findAll()
+
     fun update(user: UserEntity, grade: Int?, room: Int?, number: Int?) {
         val student = repository.findByUser(user) ?: throw StudentNotFoundException()
         student.updateInfo(grade, room, number)
