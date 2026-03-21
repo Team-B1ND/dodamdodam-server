@@ -46,7 +46,12 @@ fun TeacherRegisterRequest.toTeacherEntity(user: UserEntity): TeacherEntity {
     )
 }
 
-fun UserEntity.toUserCreatedEvent(role: RoleType): UserCreatedEvent =
+fun UserEntity.toUserCreatedEvent(
+    role: RoleType,
+    grade: Int? = null,
+    room: Int? = null,
+    number: Int? = null,
+): UserCreatedEvent =
     UserCreatedEvent(
         publicId = publicId!!,
         username = username,
@@ -54,10 +59,18 @@ fun UserEntity.toUserCreatedEvent(role: RoleType): UserCreatedEvent =
         name = name,
         phone = phone,
         profileImage = profileImage,
-        role = role.name
+        role = role.name,
+        grade = grade,
+        room = room,
+        number = number,
     )
 
-fun UserEntity.toUserUpdatedEvent(roles: Collection<RoleType>): UserUpdatedEvent =
+fun UserEntity.toUserUpdatedEvent(
+    roles: Collection<RoleType>,
+    grade: Int? = null,
+    room: Int? = null,
+    number: Int? = null,
+): UserUpdatedEvent =
     UserUpdatedEvent(
         publicId = publicId!!,
         username = username,
@@ -65,5 +78,8 @@ fun UserEntity.toUserUpdatedEvent(roles: Collection<RoleType>): UserUpdatedEvent
         roles = roles.map { it.name },
         name = name,
         phone = phone,
-        profileImage = profileImage
+        profileImage = profileImage,
+        grade = grade,
+        room = room,
+        number = number,
     )

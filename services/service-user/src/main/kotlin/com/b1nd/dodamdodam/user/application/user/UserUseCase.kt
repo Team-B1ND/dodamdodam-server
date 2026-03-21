@@ -58,7 +58,7 @@ class UserUseCase(
         studentService.create(request.toStudentEntity(savedUser))
         kafkaMessageProducer.send(
             KafkaTopics.USER_CREATED,
-            savedUser.toUserCreatedEvent(RoleType.STUDENT)
+            savedUser.toUserCreatedEvent(RoleType.STUDENT, request.grade, request.room, request.number)
         )
         return Response.created("학생 계정이 생성되었어요.")
     }
@@ -114,6 +114,11 @@ class UserUseCase(
         val passport = PassportHolder.current()
         val user = userService.get(passport.requireUserId())
         studentService.update(user, request.garde, request.room, request.number)
+        val roles = userService.getRoles(user)
+        kafkaMessageProducer.send(
+            KafkaTopics.USER_UPDATED,
+            user.toUserUpdatedEvent(roles, request.garde, request.room, request.number)
+        )
         return Response.ok("학생정보가 변경되었어요.")
     }
 

@@ -4,3 +4,5 @@ import com.b1nd.dodamdodam.core.common.exception.BasicException
 
 class OutSleepingNotFoundException : BasicException(OutSleepingExceptionCode.OUT_SLEEPING_NOT_FOUND)
 class OutSleepingNotOwnerException : BasicException(OutSleepingExceptionCode.OUT_SLEEPING_NOT_OWNER)
+class OutSleepingAlreadyProcessedException : BasicException(OutSleepingExceptionCode.OUT_SLEEPING_ALREADY_PROCESSED)
+class OutSleepingDeadlineExceededException : BasicException(OutSleepingExceptionCode.OUT_SLEEPING_DEADLINE_EXCEEDED)

@@ -14,13 +14,13 @@ class OutSleepingEntity(
     val userId: UUID,
 
     @Column(nullable = false)
-    val reason: String,
+    var reason: String,
 
     @Column(nullable = false)
-    val startAt: LocalDate,
+    var startAt: LocalDate,
 
     @Column(nullable = false)
-    val endAt: LocalDate,
+    var endAt: LocalDate,
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20)
@@ -45,5 +45,11 @@ class OutSleepingEntity(
     fun revert() {
         this.status = OutSleepingStatus.PENDING
         this.rejectReason = null
+    }
+
+    fun update(reason: String, startAt: LocalDate, endAt: LocalDate) {
+        this.reason = reason
+        this.startAt = startAt
+        this.endAt = endAt
     }
 }
