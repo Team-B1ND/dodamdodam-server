@@ -19,3 +19,43 @@ message VerifyPasswordRequest {
 message VerifyPasswordResponse {
   bool valid = 1;
 }
+
+service UserInfoService {
+
+  rpc GetUserInfo (GetUserInfoRequest)
+      returns (UserInfoReply);
+
+  rpc GetUserInfosByIds (GetUserInfosByIdsRequest)
+      returns (GetUserInfosReply);
+
+  rpc GetAllStudents (GetAllStudentsRequest)
+      returns (GetUserInfosReply);
+}
+
+message GetUserInfoRequest {
+  string public_id = 1;
+}
+
+message GetUserInfosByIdsRequest {
+  repeated string public_ids = 1;
+}
+
+message GetAllStudentsRequest {
+}
+
+message UserInfoReply {
+  UserInfoMessage user = 1;
+}
+
+message GetUserInfosReply {
+  repeated UserInfoMessage users = 1;
+}
+
+message UserInfoMessage {
+  string public_id = 1;
+  string name = 2;
+  repeated string roles = 3;
+  optional int32 grade = 4;
+  optional int32 room = 5;
+  optional int32 number = 6;
+}

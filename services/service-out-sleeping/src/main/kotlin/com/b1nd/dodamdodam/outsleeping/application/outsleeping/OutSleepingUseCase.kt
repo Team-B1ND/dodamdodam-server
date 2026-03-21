@@ -16,18 +16,20 @@ import com.b1nd.dodamdodam.outsleeping.application.outsleeping.data.toMemberResp
 import com.b1nd.dodamdodam.outsleeping.application.outsleeping.data.toResponse
 import com.b1nd.dodamdodam.outsleeping.application.outsleeping.data.toResponses
 import com.b1nd.dodamdodam.outsleeping.domain.deadline.service.OutSleepingDeadlineService
-import com.b1nd.dodamdodam.outsleeping.domain.member.service.MemberService
 import com.b1nd.dodamdodam.outsleeping.domain.outsleeping.service.OutSleepingService
+import com.b1nd.dodamdodam.outsleeping.infrastructure.grpc.client.UserClient
+import kotlinx.coroutines.runBlocking
 import org.springframework.data.domain.PageRequest
 import org.springframework.stereotype.Component
 import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDate
+import java.util.UUID
 
 @Component
 @Transactional(rollbackFor = [Exception::class])
 class OutSleepingUseCase(
     private val outSleepingService: OutSleepingService,
-    private val memberService: MemberService,
+    private val userClient: UserClient,
     private val deadlineService: OutSleepingDeadlineService,
 ) {
 
@@ -58,15 +60,16 @@ class OutSleepingUseCase(
     fun getMy(): Response<List<OutSleepingResponse>> {
         val userId = currentUserId()
         val outSleepings = outSleepingService.getByUserId(userId)
-        val member = memberService.getByUserId(userId)
-        return Response.ok("내 외박 신청 목록을 조회했어요.", outSleepings.toResponses(member))
+        val userInfo = runBlocking { userClient.getUserInfo(userId) }
+        val userInfoMap = mapOf(userId to userInfo)
+        return Response.ok("내 외박 신청 목록을 조회했어요.", outSleepings.toResponses(userInfoMap))
     }
 
     fun getByDate(date: LocalDate, page: Int, size: Int): Response<PageResponse<OutSleepingResponse>> {
         val pageable = PageRequest.of(page, size)
         val outSleepings = outSleepingService.getByDate(date, pageable)
-        val memberMap = memberService.getByUserIds(outSleepings.content.map { it.userId })
-        val responses = outSleepings.content.toResponses(memberMap)
+        val userInfoMap = getUserInfoMap(outSleepings.content.map { it.userId })
+        val responses = outSleepings.content.toResponses(userInfoMap)
         return Response.ok(
             "외박 신청 목록을 조회했어요.",
             PageResponse(
@@ -81,15 +84,17 @@ class OutSleepingUseCase(
 
     fun getValid(): Response<List<OutSleepingResponse>> {
         val outSleepings = outSleepingService.getAllowedByDate(LocalDate.now())
-        val memberMap = memberService.getByUserIds(outSleepings.map { it.userId })
-        return Response.ok("유효한 외박 목록을 조회했어요.", outSleepings.toResponses(memberMap))
+        val userInfoMap = getUserInfoMap(outSleepings.map { it.userId })
+        return Response.ok("유효한 외박 목록을 조회했어요.", outSleepings.toResponses(userInfoMap))
     }
 
     fun getResidual(): Response<List<MemberResponse>> {
         val allowedUserIds = outSleepingService.getAllowedByDate(LocalDate.now())
             .map { it.userId }.toSet()
-        val residualStudents = memberService.getAllStudents()
-            .filter { it.userId !in allowedUserIds }
+        val allStudents = runBlocking { userClient.getAllStudents() }
+        val residualStudents = allStudents.filter {
+            UUID.fromString(it.publicId) !in allowedUserIds
+        }
         return Response.ok("잔류 학생을 조회했어요.", residualStudents.toMemberResponses())
     }
 
@@ -111,15 +116,19 @@ class OutSleepingUseCase(
         return Response.ok("외박 신청 상태를 되돌렸어요.")
     }
 
-    fun getDeadline(): Response<DeadlineResponse> {
-        val deadline = deadlineService.getOrCreateDefault()
-        return Response.ok("외박 신청 마감 시간을 조회했어요.", deadline.toResponse())
+    fun getDeadline(): Response<List<DeadlineResponse>> {
+        val deadlines = deadlineService.getAll()
+        return Response.ok("외박 신청 마감 시간을 조회했어요.", deadlines.map { it.toResponse() })
     }
 
     fun updateDeadline(request: UpdateDeadlineRequest): Response<Any> {
         deadlineService.update(request.dayOfWeek, request.time)
         return Response.ok("외박 신청 마감 시간이 수정되었어요.")
     }
+
+    private fun getUserInfoMap(userIds: List<UUID>) = runBlocking {
+        userClient.getUserInfosByIds(userIds)
+    }.associateBy { UUID.fromString(it.publicId) }
 
     private fun currentUserId() = PassportHolder.current().requireUserId()
 }

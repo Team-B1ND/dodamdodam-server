@@ -7,10 +7,13 @@ import java.time.LocalDate
 import java.util.UUID
 
 @Entity
-@Table(name = "out_sleepings")
+@Table(
+    name = "out_sleepings",
+    indexes = [Index(name = "idx_out_sleepings_start_at_end_at", columnList = "start_at, end_at")]
+)
 class OutSleepingEntity(
 
-    @Column(nullable = false, columnDefinition = "BINARY(16)")
+    @Column(name = "fk_user_id", nullable = false, columnDefinition = "BINARY(16)")
     val userId: UUID,
 
     @Column(nullable = false)

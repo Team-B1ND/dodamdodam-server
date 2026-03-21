@@ -10,8 +10,8 @@ import java.time.LocalTime
 class OutSleepingDeadlineEntity(
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false, length = 10)
-    var dayOfWeek: DayOfWeek = DayOfWeek.SUNDAY,
+    @Column(nullable = false, length = 10, unique = true)
+    var dayOfWeek: DayOfWeek,
 
     @Column(nullable = false)
     var time: LocalTime = LocalTime.of(17, 0),

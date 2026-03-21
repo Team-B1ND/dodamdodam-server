@@ -1,12 +1,12 @@
 package com.b1nd.dodamdodam.outsleeping.application.outsleeping.data
 
+import com.b1nd.dodamdodam.grpc.user.UserInfoMessage
 import com.b1nd.dodamdodam.outsleeping.application.outsleeping.data.request.ApplyOutSleepingRequest
 import com.b1nd.dodamdodam.outsleeping.application.outsleeping.data.response.DeadlineResponse
 import com.b1nd.dodamdodam.outsleeping.application.outsleeping.data.response.MemberResponse
 import com.b1nd.dodamdodam.outsleeping.application.outsleeping.data.response.OutSleepingResponse
 import com.b1nd.dodamdodam.outsleeping.application.outsleeping.data.response.StudentResponse
 import com.b1nd.dodamdodam.outsleeping.domain.deadline.entity.OutSleepingDeadlineEntity
-import com.b1nd.dodamdodam.outsleeping.domain.member.entity.MemberEntity
 import com.b1nd.dodamdodam.outsleeping.domain.outsleeping.entity.OutSleepingEntity
 import java.util.UUID
 
@@ -17,11 +17,11 @@ fun ApplyOutSleepingRequest.toEntity(userId: UUID) = OutSleepingEntity(
     endAt = endAt,
 )
 
-fun OutSleepingEntity.toResponse(member: MemberEntity?) = OutSleepingResponse(
+fun OutSleepingEntity.toResponse(userInfo: UserInfoMessage?) = OutSleepingResponse(
     id = id!!,
     reason = reason,
     status = status,
-    student = member?.toStudentResponse(),
+    student = userInfo?.toStudentResponse(),
     rejectReason = rejectReason,
     startAt = startAt,
     endAt = endAt,
@@ -29,30 +29,23 @@ fun OutSleepingEntity.toResponse(member: MemberEntity?) = OutSleepingResponse(
     modifiedAt = modifiedAt,
 )
 
-fun List<OutSleepingEntity>.toResponses(member: MemberEntity?) =
-    map { it.toResponse(member) }
+fun List<OutSleepingEntity>.toResponses(userInfoMap: Map<UUID, UserInfoMessage>) =
+    map { it.toResponse(userInfoMap[it.userId]) }
 
-fun List<OutSleepingEntity>.toResponses(memberMap: Map<UUID, MemberEntity>) =
-    map { it.toResponse(memberMap[it.userId]) }
-
-fun MemberEntity.toStudentResponse() = StudentResponse(
-    id = id,
+fun UserInfoMessage.toStudentResponse() = StudentResponse(
     name = name,
-    grade = grade,
-    room = room,
-    number = number,
+    grade = if (hasGrade()) grade else null,
+    room = if (hasRoom()) room else null,
+    number = if (hasNumber()) number else null,
 )
 
-fun MemberEntity.toMemberResponse() = MemberResponse(
-    id = userId,
+fun UserInfoMessage.toMemberResponse() = MemberResponse(
+    id = UUID.fromString(publicId),
     name = name,
-    role = role,
-    student = if (isStudent()) toStudentResponse() else null,
-    createdAt = createdAt,
-    modifiedAt = modifiedAt,
+    student = if (hasGrade()) toStudentResponse() else null,
 )
 
-fun List<MemberEntity>.toMemberResponses() = map { it.toMemberResponse() }
+fun List<UserInfoMessage>.toMemberResponses() = map { it.toMemberResponse() }
 
 fun OutSleepingDeadlineEntity.toResponse() = DeadlineResponse(
     dayOfWeek = dayOfWeek,

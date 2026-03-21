@@ -13,26 +13,26 @@ class OutSleepingDeadlineService(
     private val deadlineRepository: OutSleepingDeadlineRepository
 ) {
 
-    fun getOrCreateDefault(): OutSleepingDeadlineEntity =
-        deadlineRepository.findAll().firstOrNull()
-            ?: deadlineRepository.save(OutSleepingDeadlineEntity())
+    fun getAll(): List<OutSleepingDeadlineEntity> =
+        deadlineRepository.findAll()
 
     fun update(dayOfWeek: DayOfWeek, time: LocalTime): OutSleepingDeadlineEntity {
-        val deadline = getOrCreateDefault()
-        deadline.dayOfWeek = dayOfWeek
-        deadline.time = time
-        return deadline
+        val deadline = deadlineRepository.findByDayOfWeek(dayOfWeek)
+        if (deadline != null) {
+            deadline.time = time
+            return deadline
+        }
+        return deadlineRepository.save(OutSleepingDeadlineEntity(dayOfWeek, time))
     }
 
     fun validateDeadline() {
-        val deadline = getOrCreateDefault()
-        val now = LocalDateTime.now()
-        val currentDay = now.dayOfWeek.value
-        val deadlineDay = deadline.dayOfWeek.value
+        val deadlines = deadlineRepository.findAll()
+        if (deadlines.isEmpty()) return
 
-        if (currentDay > deadlineDay ||
-            (currentDay == deadlineDay && now.toLocalTime().isAfter(deadline.time))
-        ) {
+        val now = LocalDateTime.now()
+        val todayDeadline = deadlines.find { it.dayOfWeek == now.dayOfWeek } ?: return
+
+        if (now.toLocalTime().isAfter(todayDeadline.time)) {
             throw OutSleepingDeadlineExceededException()
         }
     }

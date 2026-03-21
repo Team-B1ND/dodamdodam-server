@@ -16,15 +16,6 @@ spring:
   flyway:
     enabled: false
 
-  kafka:
-    listener:
-      auto-startup: false
-    bootstrap-servers: localhost:0
-
-  autoconfigure:
-    exclude:
-      - org.springframework.boot.autoconfigure.kafka.KafkaAutoConfiguration
-
 app:
   swagger:
     enabled: false

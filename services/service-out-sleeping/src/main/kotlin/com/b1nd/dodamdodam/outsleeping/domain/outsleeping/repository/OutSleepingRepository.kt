@@ -13,19 +13,19 @@ interface OutSleepingRepository : JpaRepository<OutSleepingEntity, Long> {
     fun findAllByUserId(userId: UUID): List<OutSleepingEntity>
 
     fun findAllByStartAtLessThanEqualAndEndAtGreaterThanEqual(
-        endDate: LocalDate,
-        startDate: LocalDate
+        startAt: LocalDate,
+        endAt: LocalDate
     ): List<OutSleepingEntity>
 
     fun findAllByStartAtLessThanEqualAndEndAtGreaterThanEqual(
-        endDate: LocalDate,
-        startDate: LocalDate,
+        startAt: LocalDate,
+        endAt: LocalDate,
         pageable: Pageable
     ): Page<OutSleepingEntity>
 
     fun findAllByStatusAndStartAtLessThanEqualAndEndAtGreaterThanEqual(
         status: OutSleepingStatus,
-        endDate: LocalDate,
-        startDate: LocalDate
+        startAt: LocalDate,
+        endAt: LocalDate
     ): List<OutSleepingEntity>
 }

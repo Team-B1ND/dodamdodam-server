@@ -6,4 +6,5 @@ import org.springframework.data.jpa.repository.JpaRepository
 
 interface StudentRepository: JpaRepository<StudentEntity, Long> {
     fun findByUser(user: UserEntity): StudentEntity?
+    fun findAllByUserIn(users: Collection<UserEntity>): List<StudentEntity>
 }

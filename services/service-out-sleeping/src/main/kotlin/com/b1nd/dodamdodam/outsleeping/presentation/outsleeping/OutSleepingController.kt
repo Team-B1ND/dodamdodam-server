@@ -43,7 +43,7 @@ class OutSleepingController(
     fun getMy() =
         outSleepingUseCase.getMy()
 
-    @UserAccess(roles = [RoleType.TEACHER])
+    @UserAccess(roles = [RoleType.TEACHER, RoleType.DORMITORY_MANAGER])
     @GetMapping("/out-sleeping")
     fun getByDate(
         @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") date: LocalDate,
@@ -56,22 +56,22 @@ class OutSleepingController(
     fun getValid() =
         outSleepingUseCase.getValid()
 
-    @UserAccess(roles = [RoleType.TEACHER])
+    @UserAccess(roles = [RoleType.TEACHER, RoleType.DORMITORY_MANAGER])
     @GetMapping("/out-sleeping/residual")
     fun getResidual() =
         outSleepingUseCase.getResidual()
 
-    @UserAccess(roles = [RoleType.TEACHER])
+    @UserAccess(roles = [RoleType.TEACHER, RoleType.DORMITORY_MANAGER])
     @PatchMapping("/out-sleeping/{id}/allow")
     fun allow(@PathVariable id: Long) =
         outSleepingUseCase.allow(id)
 
-    @UserAccess(roles = [RoleType.TEACHER])
+    @UserAccess(roles = [RoleType.TEACHER, RoleType.DORMITORY_MANAGER])
     @PatchMapping("/out-sleeping/{id}/reject")
     fun reject(@PathVariable id: Long, @RequestBody request: RejectOutSleepingRequest) =
         outSleepingUseCase.reject(id, request)
 
-    @UserAccess(roles = [RoleType.TEACHER])
+    @UserAccess(roles = [RoleType.TEACHER, RoleType.DORMITORY_MANAGER])
     @PatchMapping("/out-sleeping/{id}/revert")
     fun revert(@PathVariable id: Long) =
         outSleepingUseCase.revert(id)
@@ -81,7 +81,7 @@ class OutSleepingController(
     fun getDeadline() =
         outSleepingUseCase.getDeadline()
 
-    @UserAccess(roles = [RoleType.TEACHER])
+    @UserAccess(roles = [RoleType.TEACHER, RoleType.DORMITORY_MANAGER])
     @PatchMapping("/out-sleeping/deadline")
     fun updateDeadline(@RequestBody request: UpdateDeadlineRequest) =
         outSleepingUseCase.updateDeadline(request)

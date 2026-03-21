@@ -1,44 +1,22 @@
 spring:
   datasource:
-    url: jdbc:${MYSQL_HOST}
+    url: ${MYSQL_HOST}
     username: ${MYSQL_USER}
     password: ${MYSQL_PASSWORD}
     driver-class-name: com.mysql.cj.jdbc.Driver
-  flyway:
-    url: jdbc:${MYSQL_HOST}
-    user: ${MYSQL_USER}
-    password: ${MYSQL_PASSWORD}
-
+  
   jpa:
     hibernate:
-      ddl-auto: none
+      ddl-auto: create
     show-sql: true
     properties:
       hibernate:
         format_sql: true
         dialect: org.hibernate.dialect.MySQLDialect
 
+
 server:
   port: 8081
-
 grpc:
   server:
-    port: 9091
-
-app:
-  redis:
-    host: ${REDIS_HOST:localhost}
-    port: ${REDIS_PORT:6379}
-  sms:
-    gabia:
-      id: ${GABIA_ID:${GABIA_SMS_CLIENT_ID:}}
-      api-key: ${GABIA_API_KEY:${GABIA_SMS_CLIENT_SECRET:}}
-      ref-key: ${GABIA_REF_KEY:}
-      subject: ${GABIA_SMS_SUBJECT:}
-      sender-number: ${GABIA_SMS_SENDER:${GABIA_SMS_SENDER_NUMBER:}}
-      token-url: ${GABIA_TOKEN_URL:https://sms.gabia.com/oauth/token}
-      sms-url: ${GABIA_SMS_URL:https://sms.gabia.com/api/send/sms}
-      lms-url: ${GABIA_LMS_URL:https://sms.gabia.com/api/send/lms}
-  kafka:
-    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS}
-    consumer-group-id: service-user
+    port: 9090

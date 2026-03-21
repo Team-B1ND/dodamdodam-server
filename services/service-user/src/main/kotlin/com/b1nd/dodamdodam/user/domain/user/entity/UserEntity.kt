@@ -4,8 +4,6 @@ import com.b1nd.dodamdodam.core.jpa.entity.BaseTimeEntity
 import com.b1nd.dodamdodam.user.domain.user.enumeration.StatusType
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
-import jakarta.persistence.EnumType
-import jakarta.persistence.Enumerated
 import jakarta.persistence.GeneratedValue
 import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
@@ -30,7 +28,6 @@ class UserEntity (
 
     var phone: String? = null,
 
-    @Enumerated(EnumType.STRING)
     var status: StatusType = StatusType.PENDING
 ): BaseTimeEntity() {
     @Id
@@ -48,11 +45,5 @@ class UserEntity (
 
     fun updatePassword(newPassword: String) {
         this.password = newPassword
-    }
-
-    fun updateInfo(name: String?, phone: String?, profileImage: String?) {
-        name?.let { this.name = name }
-        phone?.let { this.phone = phone }
-        profileImage?.let { this.profileImage = profileImage }
     }
 }
