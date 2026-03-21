@@ -12,7 +12,7 @@ CREATE TABLE out_sleepings(
 
 CREATE INDEX idx_out_sleepings_start_at_end_at ON out_sleepings(start_at, end_at);
 
-CREATE TABLE out_sleeping_deadline(
+CREATE TABLE out_sleeping_deadlines(
     id BIGINT AUTO_INCREMENT NOT NULL PRIMARY KEY,
     created_at DATETIME(6) NOT NULL,
     modified_at DATETIME(6) NOT NULL,

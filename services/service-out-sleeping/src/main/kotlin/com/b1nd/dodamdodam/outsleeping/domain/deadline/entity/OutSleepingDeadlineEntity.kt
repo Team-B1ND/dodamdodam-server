@@ -6,7 +6,7 @@ import java.time.DayOfWeek
 import java.time.LocalTime
 
 @Entity
-@Table(name = "out_sleeping_deadline")
+@Table(name = "out_sleeping_deadlines")
 class OutSleepingDeadlineEntity(
 
     @Enumerated(EnumType.STRING)
