@@ -37,11 +37,11 @@ class UserInfoGrpcController(
         val userInfos = blockingExecutor.execute {
             val publicIds = request.publicIdsList.map { UUID.fromString(it) }
             val users = userService.getByPublicIds(publicIds)
-            val rolesMap = userService.getRolesMap(users)
+            val rolesMap = userService.getRolesGroupedByUser(users)
             val studentMap = studentService.getByUsers(users)
 
             users.map { user ->
-                buildUserInfoMessage(user, rolesMap[user] ?: emptySet(), studentMap[user])
+                buildUserInfoMessage(user, rolesMap[user.id] ?: emptySet(), studentMap[user.id])
             }
         }
         return GetUserInfosReply.newBuilder().addAllUsers(userInfos).build()
@@ -51,10 +51,10 @@ class UserInfoGrpcController(
         val userInfos = blockingExecutor.execute {
             val students = studentService.getAll()
             val users = students.map { it.user }
-            val rolesMap = userService.getRolesMap(users)
+            val rolesMap = userService.getRolesGroupedByUser(users)
 
             students.map { student ->
-                buildUserInfoMessage(student.user, rolesMap[student.user] ?: emptySet(), student)
+                buildUserInfoMessage(student.user, rolesMap[student.user.id] ?: emptySet(), student)
             }
         }
         return GetUserInfosReply.newBuilder().addAllUsers(userInfos).build()

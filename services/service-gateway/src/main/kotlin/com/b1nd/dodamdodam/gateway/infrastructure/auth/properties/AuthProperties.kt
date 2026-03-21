@@ -4,5 +4,6 @@ import org.springframework.boot.context.properties.ConfigurationProperties
 
 @ConfigurationProperties("app.auth")
 data class AuthProperties(
-    val url: String
+    val url: String,
+    val accessTokenCookie: String = "access_token"
 )

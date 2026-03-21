@@ -21,6 +21,14 @@ spring:
 server:
   port: 8085
 
+grpc:
+  server:
+    port: 9093
+  client:
+    service-user:
+      address: 'static://localhost:9091'
+      negotiation-type: plaintext
+
 app:
   kafka:
     bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS}

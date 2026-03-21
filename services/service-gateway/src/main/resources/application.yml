@@ -17,8 +17,19 @@ spring:
   profiles:
     active: local
 
+springdoc:
+  api-docs:
+    enabled: true
+  swagger-ui:
+    enabled: true
+    path: /swagger-ui.html
+
 management:
   endpoints:
     web:
       exposure:
         include: gateway,health,info
+
+app:
+  auth:
+    access-token-cookie: ${COOKIE_ACCESS_TOKEN_NAME:access_token}

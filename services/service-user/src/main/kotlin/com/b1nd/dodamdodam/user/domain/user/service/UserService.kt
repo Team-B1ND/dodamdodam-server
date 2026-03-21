@@ -5,11 +5,13 @@ import com.b1nd.dodamdodam.user.application.user.data.request.UpdateUserInfoRequ
 import com.b1nd.dodamdodam.user.domain.user.entity.UserEntity
 import com.b1nd.dodamdodam.user.domain.user.entity.UserRoleEntity
 import com.b1nd.dodamdodam.user.domain.user.enumeration.StatusType
+import com.b1nd.dodamdodam.user.domain.user.exception.PhoneAlreadyExistsException
 import com.b1nd.dodamdodam.user.domain.user.exception.UserAlreadyExistsException
 import com.b1nd.dodamdodam.user.domain.user.exception.UserNotFoundException
 import com.b1nd.dodamdodam.user.domain.user.exception.UserPasswordIncorrectException
 import com.b1nd.dodamdodam.user.domain.user.repository.UserRepository
 import com.b1nd.dodamdodam.user.domain.user.repository.UserRoleRepository
+import com.b1nd.dodamdodam.user.infrastructure.phoneverification.exception.PhoneNotVerifiedException
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.stereotype.Service
 import java.util.UUID
@@ -24,8 +26,12 @@ class UserService(
         userRepository.findByPublicId(publicId)
             ?: throw UserNotFoundException()
 
+    fun getByPublicIds(publicIds: Collection<UUID>): List<UserEntity> =
+        userRepository.findAllByPublicIdIn(publicIds)
+
     fun create(user: UserEntity, role: RoleType): UserEntity {
         checkDuplicateUser(user.username)
+        user.phone?.let{checkDuplicatePhone(it)}
         user.updatePassword(encoder.encode(user.password))
         val savedUser = userRepository.save(user)
         addRole(savedUser, setOf(role))
@@ -35,6 +41,9 @@ class UserService(
     fun update(publicId: UUID, name: String?, phone: String?, profileImage: String?): UserEntity {
         val user = userRepository.findByPublicId(publicId)
             ?: throw UserNotFoundException()
+
+        user.phone?.let{checkDuplicatePhone(it)}
+
         user.updateInfo(name, phone, profileImage)
         return userRepository.save(user)
     }
@@ -71,18 +80,18 @@ class UserService(
         userRoleRepository.saveAll(userRoles)
     }
 
-    fun getByPublicIds(publicIds: Collection<UUID>): List<UserEntity> =
-        userRepository.findAllByPublicIdIn(publicIds)
+    fun getAll(): List<UserEntity> =
+        userRepository.findAll()
 
     fun getRoles(user: UserEntity): Set<RoleType> =
         userRoleRepository.findAllByUser(user)
             .map { it.role }
             .toSet()
 
-    fun getRolesMap(users: Collection<UserEntity>): Map<UserEntity, Set<RoleType>> =
+    fun getRolesGroupedByUser(users: Collection<UserEntity>): Map<Long?, Set<RoleType>> =
         userRoleRepository.findAllByUserIn(users)
-            .groupBy { it.user }
-            .mapValues { (_, roles) -> roles.map { it.role }.toSet() }
+            .groupBy { it.user.id }
+            .mapValues { (_, v) -> v.map { it.role }.toSet() }
 
     fun verify(username: String, password: String) {
         val user = userRepository.findByUsername(username)
@@ -91,11 +100,24 @@ class UserService(
             throw UserPasswordIncorrectException()
     }
 
+    fun updatePasswordByPhone(phone: String, newPassword: String) {
+        val user = userRepository.findByPhone(phone)
+            ?: throw UserNotFoundException()
+
+        user.updatePassword(encoder.encode(newPassword))
+        userRepository.save(user)
+    }
+
     fun getByUsername(username: String): UserEntity =
         userRepository.findByUsername(username) ?: throw UserNotFoundException()
 
     private fun checkDuplicateUser(username: String) {
         if (userRepository.existsByUsername(username))
             throw UserAlreadyExistsException()
+    }
+
+    private fun checkDuplicatePhone(phone: String) {
+        if (userRepository.existsByPhone(phone))
+            throw PhoneAlreadyExistsException()
     }
 }

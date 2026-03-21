@@ -1,0 +1,9 @@
+FROM eclipse-temurin:21-jre-alpine
+
+RUN apk add --no-cache python3 py3-pip ffmpeg && \
+    pip3 install --no-cache-dir --break-system-packages yt-dlp
+
+ARG JAR_FILE=app.jar
+COPY ${JAR_FILE} app.jar
+
+ENTRYPOINT ["java", "-Xmx256m", "-Xms128m", "-jar", "app.jar"]

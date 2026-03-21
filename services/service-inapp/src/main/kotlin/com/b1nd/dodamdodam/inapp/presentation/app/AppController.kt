@@ -9,11 +9,11 @@ import com.b1nd.dodamdodam.inapp.application.app.data.request.CreateAppServerReq
 import com.b1nd.dodamdodam.inapp.application.app.data.request.DenyAppReleaseRequest
 import com.b1nd.dodamdodam.inapp.application.app.data.request.DenyAppServerRequest
 import com.b1nd.dodamdodam.inapp.application.app.data.request.EditAppRequest
-import com.b1nd.dodamdodam.inapp.application.app.data.request.EditAppServerRequest
 import com.b1nd.dodamdodam.inapp.application.app.data.request.ToggleAppReleaseRequest
 import com.b1nd.dodamdodam.inapp.application.app.data.request.ToggleAppServerRequest
 import com.b1nd.dodamdodam.inapp.application.app.data.request.UpdateAppReleaseStatusRequest
 import com.b1nd.dodamdodam.inapp.application.app.data.request.UpdateAppServerStatusRequest
+import org.springframework.data.domain.Pageable
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PatchMapping
@@ -21,7 +21,9 @@ import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
+import java.time.LocalDate
 import java.util.UUID
 
 @RestController
@@ -69,11 +71,6 @@ class AppController(
     fun toggleRelease(@RequestBody request: ToggleAppReleaseRequest) =
         appUseCase.toggleRelease(request)
 
-    @UserAccess
-    @PatchMapping("/server")
-    fun editServer(@RequestBody request: EditAppServerRequest) =
-        appUseCase.editServer(request)
-
     @UserAccess(roles = [RoleType.ADMIN])
     @PatchMapping("/server/status")
     fun updateServerStatus(@RequestBody request: UpdateAppServerStatusRequest) =
@@ -88,6 +85,21 @@ class AppController(
     @PatchMapping("/server/toggle")
     fun toggleServer(@RequestBody request: ToggleAppServerRequest) =
         appUseCase.toggleServer(request)
+
+    @UserAccess
+    @PostMapping("/{appId}/api-key")
+    fun issueApiKey(@PathVariable appId: UUID) =
+        appUseCase.issueApiKey(appId)
+
+    @UserAccess
+    @GetMapping("/{appId}/api-key")
+    fun getApiKeys(@PathVariable appId: UUID) =
+        appUseCase.getApiKeys(appId)
+
+    @UserAccess
+    @GetMapping("/active")
+    fun getActiveApps(pageable: Pageable) =
+        appUseCase.getActiveApps(pageable)
 
     @UserAccess
     @GetMapping("/{appId}")
@@ -105,7 +117,16 @@ class AppController(
         appUseCase.getAppsByTeam(teamId)
 
     @UserAccess
+    @GetMapping("/release/{releaseId}")
+    fun getReleaseDetail(@PathVariable releaseId: UUID) =
+        appUseCase.getReleaseDetail(releaseId)
+
+    @UserAccess
     @GetMapping("/{appId}/release")
-    fun getReleases(@PathVariable appId: UUID) =
-        appUseCase.getReleases(appId)
+    fun getReleases(
+        @PathVariable appId: UUID,
+        @RequestParam(required = false) date: LocalDate?,
+        @RequestParam(required = false) keyword: String?,
+        pageable: Pageable,
+    ) = appUseCase.getReleases(appId, date, keyword, pageable)
 }

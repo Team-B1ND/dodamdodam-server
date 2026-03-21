@@ -20,5 +20,7 @@ enum class AppExceptionCode(
     APP_DENY_REASON_REQUIRED(HttpStatus.BAD_REQUEST, "거절 사유는 필수예요."),
     APP_TEAM_MEMBER_PERMISSION_REQUIRED(HttpStatus.FORBIDDEN, "앱을 관리할 팀원 권한이 필요해요."),
     APP_TEAM_OWNER_PERMISSION_REQUIRED(HttpStatus.FORBIDDEN, "앱을 관리할 팀 오너 권한이 필요해요."),
+    APP_API_KEY_ALREADY_EXIST(HttpStatus.CONFLICT, "이미 API Key가 존재해요."),
+    APP_API_KEY_NOT_FOUND(HttpStatus.NOT_FOUND, "API Key를 찾을 수 없어요."),
     ;
 }

@@ -54,3 +54,5 @@ CLAUDE.md
 ### Docker (local test) ###
 Dockerfile
 docker-compose.yml
+
+.env

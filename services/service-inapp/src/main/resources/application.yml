@@ -23,6 +23,12 @@ management:
       exposure:
         include: health,info
 
+inapp:
+  s3-base-url: ${INAPP_S3_BASE_URL:}
+
+github:
+  token: ${GITHUB_TOKEN:}
+
 app:
   swagger:
     enabled: true

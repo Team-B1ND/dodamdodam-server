@@ -29,6 +29,7 @@ include(":core:core-security")
 include("core:core-jpa")
 include("core:core-grpc")
 include("core:core-redis")
+include("core:core-github-client")
 
 // Service modules
 include(":services:service-gateway")
@@ -37,5 +38,7 @@ include(":services:service-user")
 include("services:service-inapp")
 include(":services:service-wakeup-song")
 include(":services:service-out-sleeping")
+include(":services:service-file")
+include(":services:service-neis")
 
 rootProject.name = "dodamdodam-server"

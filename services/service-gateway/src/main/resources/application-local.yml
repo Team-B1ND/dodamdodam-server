@@ -39,6 +39,24 @@ spring:
             - Path=/inapp/**
           filters:
             - StripPrefix=1
+        - id: file-service
+          uri: http://localhost:8086
+          predicates:
+            - Path=/file/**
+          filters:
+            - StripPrefix=1
+        - id: neis-service
+          uri: http://localhost:8084
+          predicates:
+            - Path=/neis/**
+          filters:
+            - StripPrefix=1
+        - id: openapi-user-service
+          uri: http://localhost:8081
+          predicates:
+            - Path=/openapi/user/**
+          filters:
+            - StripPrefix=2
 
 app:
   auth:

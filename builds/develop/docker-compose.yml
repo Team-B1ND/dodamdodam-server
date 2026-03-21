@@ -1,0 +1,195 @@
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: dodam-mysql
+    restart: unless-stopped
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+    volumes:
+      - mysql-data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    container_name: dodam-redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  kafka:
+    image: confluentinc/cp-kafka:7.6.1
+    container_name: dodam-kafka
+    restart: unless-stopped
+    ports:
+      - "5001:5001"
+    environment:
+      KAFKA_PROCESS_ROLES: broker,controller
+      KAFKA_NODE_ID: 1
+      CLUSTER_ID: MkU3OEVBNTcwNTJENDM2Qk
+      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
+      KAFKA_CONTROLLER_QUORUM_VOTERS: 1@localhost:9093
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:5001,CONTROLLER://0.0.0.0:9093
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:5001
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,CONTROLLER:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: "true"
+    healthcheck:
+      test: ["CMD", "kafka-broker-api-versions", "--bootstrap-server", "localhost:5001"]
+      interval: 15s
+      timeout: 10s
+      retries: 5
+
+  service-gateway:
+    image: ${DOCKERHUB_USERNAME}/dodam-gateway:dev
+    container_name: dodam-gateway
+    restart: unless-stopped
+    ports:
+      - "80:8080"
+    environment:
+      SPRING_PROFILES_ACTIVE: dev
+      MYSQL_HOST: mysql://mysql:3306/dodam-gateway
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      KAFKA_BOOTSTRAP_SERVERS: kafka:5001
+      SPRING_DATA_REDIS_HOST: redis
+      SPRING_DATA_REDIS_PORT: 6379
+    depends_on:
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
+
+  service-auth:
+    image: ${DOCKERHUB_USERNAME}/dodam-auth:dev
+    container_name: dodam-auth
+    restart: unless-stopped
+    environment:
+      SPRING_PROFILES_ACTIVE: dev
+      MYSQL_HOST: mysql://mysql:3306/dodam-auth
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      KAFKA_BOOTSTRAP_SERVERS: kafka:5001
+      JWT_PUBLIC_KEY: ${JWT_PUBLIC_KEY}
+      JWT_PRIVATE_KEY: ${JWT_PRIVATE_KEY}
+      JWT_ISSUER: ${JWT_ISSUER}
+      JWT_ACCESS_SECONDS: ${JWT_ACCESS_SECONDS}
+      JWT_REFRESH_SECONDS: ${JWT_REFRESH_SECONDS}
+    depends_on:
+      mysql:
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
+
+  service-user:
+    image: ${DOCKERHUB_USERNAME}/dodam-user:dev
+    container_name: dodam-user
+    restart: unless-stopped
+    environment:
+      SPRING_PROFILES_ACTIVE: dev
+      MYSQL_HOST: mysql://mysql:3306/dodam-user
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      KAFKA_BOOTSTRAP_SERVERS: kafka:5001
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      GABIA_ID: ${GABIA_ID}
+      GABIA_API_KEY: ${GABIA_API_KEY}
+      GABIA_REF_KEY: ${GABIA_REF_KEY}
+      GABIA_SMS_SUBJECT: ${GABIA_SMS_SUBJECT}
+      GABIA_SMS_SENDER: ${GABIA_SMS_SENDER}
+      GABIA_TOKEN_URL: ${GABIA_TOKEN_URL}
+      GABIA_SMS_URL: ${GABIA_SMS_URL}
+      GABIA_LMS_URL: ${GABIA_LMS_URL}
+    depends_on:
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
+
+  service-wakeup-song:
+    image: ${DOCKERHUB_USERNAME}/dodam-wakeup-song:dev
+    container_name: dodam-wakeup-song
+    restart: unless-stopped
+    environment:
+      SPRING_PROFILES_ACTIVE: dev
+      MYSQL_HOST: mysql://mysql:3306/dodam-wakeup-song
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+    depends_on:
+      mysql:
+        condition: service_healthy
+
+  service-inapp:
+    image: ${DOCKERHUB_USERNAME}/dodam-inapp:dev
+    container_name: dodam-inapp
+    restart: unless-stopped
+    environment:
+      SPRING_PROFILES_ACTIVE: dev
+      MYSQL_HOST: mysql://mysql:3306/dodam-inapp
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      KAFKA_BOOTSTRAP_SERVERS: kafka:5001
+      GITHUB_TOKEN: ${GITHUB_TOKEN}
+      INAPP_S3_BASE_URL: ${INAPP_S3_BASE_URL}
+    depends_on:
+      mysql:
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
+
+  service-neis:
+    image: ${DOCKERHUB_USERNAME}/dodam-neis:dev
+    container_name: dodam-neis
+    restart: unless-stopped
+    environment:
+      SPRING_PROFILES_ACTIVE: dev
+      MYSQL_HOST: mysql://mysql:3306/dodam-neis
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      NEIS_API_KEY: ${NEIS_API_KEY}
+    depends_on:
+      mysql:
+        condition: service_healthy
+
+  service-file:
+    image: ${DOCKERHUB_USERNAME}/dodam-file:dev
+    container_name: dodam-file
+    restart: unless-stopped
+    environment:
+      SPRING_PROFILES_ACTIVE: dev
+      AWS_S3_ENDPOINT: ${AWS_S3_ENDPOINT}
+      AWS_S3_REGION: ${AWS_S3_REGION}
+      AWS_S3_BUCKET: ${AWS_S3_BUCKET}
+      AWS_ACCESS_KEY: ${AWS_ACCESS_KEY}
+      AWS_SECRET_KEY: ${AWS_SECRET_KEY}
+      AWS_S3_PATH_STYLE: ${AWS_S3_PATH_STYLE}
+      AWS_S3_KEY_PREFIX: ${AWS_S3_KEY_PREFIX}
+      KAFKA_BOOTSTRAP_SERVERS: kafka:5001
+      GITHUB_TOKEN: ${GITHUB_TOKEN}
+    depends_on:
+      kafka:
+        condition: service_healthy
+
+volumes:
+  mysql-data:
+  redis-data:

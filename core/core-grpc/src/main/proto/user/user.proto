@@ -11,6 +11,15 @@ service UserCredentialService {
       returns (VerifyPasswordResponse);
 }
 
+service UserQueryService {
+
+  rpc GetUser (GetUserRequest)
+      returns (UserResponse);
+
+  rpc GetUsers (GetUsersRequest)
+      returns (GetUsersResponse);
+}
+
 message VerifyPasswordRequest {
   string username = 1;
   string raw_password = 2;
@@ -58,4 +67,39 @@ message UserInfoMessage {
   optional int32 grade = 4;
   optional int32 room = 5;
   optional int32 number = 6;
+}
+
+message GetUserRequest {
+  string public_id = 1;
+}
+
+message GetUsersRequest {
+  repeated string public_ids = 1;
+}
+
+message GetUsersResponse {
+  repeated UserResponse users = 1;
+}
+
+message UserResponse {
+  string public_id = 1;
+  string username = 2;
+  string name = 3;
+  optional string phone = 4;
+  optional string profile_image = 5;
+  string status = 6;
+  repeated string roles = 7;
+  optional StudentInfo student = 8;
+  optional TeacherInfo teacher = 9;
+  string created_at = 10;
+}
+
+message StudentInfo {
+  int32 grade = 1;
+  int32 room = 2;
+  int32 number = 3;
+}
+
+message TeacherInfo {
+  string position = 1;
 }

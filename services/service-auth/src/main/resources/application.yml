@@ -32,3 +32,10 @@ app:
     issuer: ${JWT_ISSUER}
     access-expire-seconds: ${JWT_ACCESS_SECONDS}
     refresh-expire-seconds: ${JWT_REFRESH_SECONDS}
+  cookie:
+    domain: ${COOKIE_DOMAIN:}
+    secure: ${COOKIE_SECURE:true}
+    same-site: ${COOKIE_SAME_SITE:Lax}
+    access-token-name: ${COOKIE_ACCESS_TOKEN_NAME:access_token}
+    refresh-token-name: ${COOKIE_REFRESH_TOKEN_NAME:refresh_token}
+    refresh-token-path: ${COOKIE_REFRESH_PATH:/auth/refresh}

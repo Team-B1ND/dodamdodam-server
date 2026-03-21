@@ -26,7 +26,7 @@ class PhoneVerificationStore(
             PhoneVerificationStatusType.PENDING.name,
             Duration.ofMinutes(STATUS_EXPIRE_MINUTES)
         )
-        gabiaSmsSender.send(phone, "[Web발신]\n[인증번호: $code] 도담도담 인증을 1분안에 진행해 주세요.")
+        gabiaSmsSender.send(phone, "[인증번호: $code] 도담도담 인증을 1분안에 진행해 주세요.")
     }
 
     fun verifyCode(phone: String, code: String) {

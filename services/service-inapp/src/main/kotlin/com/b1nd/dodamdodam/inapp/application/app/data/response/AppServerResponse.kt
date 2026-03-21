@@ -8,6 +8,7 @@ data class AppServerResponse(
     val redirectPath: String,
     val prefixLevel: Int,
     val omitApiPrefix: Boolean,
+    val usePushNotification: Boolean,
     val enabled: Boolean,
     val status: AppStatusType,
     val denyResult: String?,

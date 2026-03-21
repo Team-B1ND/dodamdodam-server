@@ -1,0 +1,49 @@
+spring:
+  application:
+    name: service-file
+
+  profiles:
+    active: local
+
+  servlet:
+    multipart:
+      max-file-size: 50MB
+      max-request-size: 50MB
+
+springdoc:
+  swagger-ui:
+    disable-swagger-default-url: true
+    config-url: ${app.swagger.gateway-prefix}/v3/api-docs/swagger-config
+    url: ${app.swagger.gateway-prefix}/v3/api-docs
+
+server:
+  port: 8086
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+
+cloud:
+  aws:
+    s3:
+      endpoint: ${AWS_S3_ENDPOINT:}
+      region: ${AWS_S3_REGION:}
+      bucket: ${AWS_S3_BUCKET:}
+      access-key: ${AWS_ACCESS_KEY:}
+      secret-key: ${AWS_SECRET_KEY:}
+      path-style-access: ${AWS_S3_PATH_STYLE:false}
+      key-prefix: ${AWS_S3_KEY_PREFIX:}
+
+app:
+  swagger:
+    enabled: true
+    gateway-prefix: /file
+  kafka:
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
+    consumer-group-id: ${KAFKA_CONSUMER_GROUP_ID:service-file}
+    auto-offset-reset: ${KAFKA_AUTO_OFFSET_RESET:latest}
+
+github:
+  token: ${GITHUB_TOKEN:}

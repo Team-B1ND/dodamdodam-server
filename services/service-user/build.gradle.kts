@@ -19,6 +19,9 @@ dependencies {
     implementation(libs.flywayCore)
     implementation(libs.flywayMysql)
 
+    // http client
+    implementation("org.apache.httpcomponents.client5:httpclient5")
+
     // grpc
     implementation(project(":core:core-grpc"))
     implementation(libs.springGrpc)

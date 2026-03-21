@@ -21,8 +21,8 @@ class StudentService(
     fun getOrNull(user: UserEntity): StudentEntity? =
         repository.findByUser(user)
 
-    fun getByUsers(users: Collection<UserEntity>): Map<UserEntity, StudentEntity> =
-        repository.findAllByUserIn(users).associateBy { it.user }
+    fun getByUsers(users: Collection<UserEntity>): Map<Long?, StudentEntity> =
+        repository.findAllByUserIn(users).associateBy { it.user.id }
 
     fun getAll(): List<StudentEntity> =
         repository.findAll()
