@@ -9,7 +9,7 @@ data class OutSleepingResponse(
     val reason: String,
     val status: OutSleepingStatus,
     val student: StudentResponse?,
-    val rejectReason: String?,
+    val denyReason: String?,
     val startAt: LocalDate,
     val endAt: LocalDate,
     val createdAt: LocalDateTime?,

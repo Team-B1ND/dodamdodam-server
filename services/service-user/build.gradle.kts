@@ -7,11 +7,17 @@ dependencies {
     implementation(project(":core:core-security"))
     implementation(project(":core:core-kafka"))
     implementation(project(":core:core-jpa"))
+    implementation(project(":core:core-redis"))
 
     // database
     runtimeOnly(libs.mysql.jdbcDriver)
     implementation(libs.springBootStarterData.jdbc)
     implementation(libs.springBootStarterData.jpa)
+    implementation(libs.springdoc.openapi.webmvc.ui)
+
+    // flyway
+    implementation(libs.flywayCore)
+    implementation(libs.flywayMysql)
 
     // grpc
     implementation(project(":core:core-grpc"))

@@ -27,7 +27,7 @@ class UserInfoGrpcController(
         val userInfo = blockingExecutor.execute {
             val user = userService.get(UUID.fromString(request.publicId))
             val roles = userService.getRoles(user)
-            val student = studentService.getByUser(user)
+            val student = studentService.getOrNull(user)
             buildUserInfoMessage(user, roles, student)
         }
         return UserInfoReply.newBuilder().setUser(userInfo).build()

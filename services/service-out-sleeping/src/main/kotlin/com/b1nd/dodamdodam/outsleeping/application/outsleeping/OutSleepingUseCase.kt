@@ -4,8 +4,8 @@ import com.b1nd.dodamdodam.core.common.data.Response
 import com.b1nd.dodamdodam.core.security.passport.holder.PassportHolder
 import com.b1nd.dodamdodam.core.security.passport.requireUserId
 import com.b1nd.dodamdodam.outsleeping.application.outsleeping.data.request.ApplyOutSleepingRequest
+import com.b1nd.dodamdodam.outsleeping.application.outsleeping.data.request.DenyOutSleepingRequest
 import com.b1nd.dodamdodam.outsleeping.application.outsleeping.data.request.ModifyOutSleepingRequest
-import com.b1nd.dodamdodam.outsleeping.application.outsleeping.data.request.RejectOutSleepingRequest
 import com.b1nd.dodamdodam.outsleeping.application.outsleeping.data.request.UpdateDeadlineRequest
 import com.b1nd.dodamdodam.outsleeping.application.outsleeping.data.response.DeadlineResponse
 import com.b1nd.dodamdodam.outsleeping.application.outsleeping.data.response.MemberResponse
@@ -40,10 +40,10 @@ class OutSleepingUseCase(
     }
 
     fun modify(id: Long, request: ModifyOutSleepingRequest): Response<Any> {
+        deadlineService.validateDeadline()
         val userId = currentUserId()
         val outSleeping = outSleepingService.getById(id)
         outSleepingService.validateOwner(outSleeping, userId)
-        outSleepingService.validatePending(outSleeping)
         outSleeping.update(request.reason, request.startAt, request.endAt)
         return Response.ok("외박 신청이 수정되었어요.")
     }
@@ -57,6 +57,7 @@ class OutSleepingUseCase(
         return Response.ok("외박 신청이 취소되었어요.")
     }
 
+    @Transactional(readOnly = true)
     fun getMy(): Response<List<OutSleepingResponse>> {
         val userId = currentUserId()
         val outSleepings = outSleepingService.getByUserId(userId)
@@ -65,6 +66,7 @@ class OutSleepingUseCase(
         return Response.ok("내 외박 신청 목록을 조회했어요.", outSleepings.toResponses(userInfoMap))
     }
 
+    @Transactional(readOnly = true)
     fun getByDate(date: LocalDate, page: Int, size: Int): Response<PageResponse<OutSleepingResponse>> {
         val pageable = PageRequest.of(page, size)
         val outSleepings = outSleepingService.getByDate(date, pageable)
@@ -82,12 +84,14 @@ class OutSleepingUseCase(
         )
     }
 
+    @Transactional(readOnly = true)
     fun getValid(): Response<List<OutSleepingResponse>> {
         val outSleepings = outSleepingService.getAllowedByDate(LocalDate.now())
         val userInfoMap = getUserInfoMap(outSleepings.map { it.userId })
         return Response.ok("유효한 외박 목록을 조회했어요.", outSleepings.toResponses(userInfoMap))
     }
 
+    @Transactional(readOnly = true)
     fun getResidual(): Response<List<MemberResponse>> {
         val allowedUserIds = outSleepingService.getAllowedByDate(LocalDate.now())
             .map { it.userId }.toSet()
@@ -104,9 +108,9 @@ class OutSleepingUseCase(
         return Response.ok("외박 신청을 승인했어요.")
     }
 
-    fun reject(id: Long, request: RejectOutSleepingRequest): Response<Any> {
+    fun deny(id: Long, request: DenyOutSleepingRequest): Response<Any> {
         val outSleeping = outSleepingService.getById(id)
-        outSleeping.reject(request.rejectReason)
+        outSleeping.deny(request.denyReason)
         return Response.ok("외박 신청을 거절했어요.")
     }
 
@@ -116,6 +120,7 @@ class OutSleepingUseCase(
         return Response.ok("외박 신청 상태를 되돌렸어요.")
     }
 
+    @Transactional(readOnly = true)
     fun getDeadline(): Response<List<DeadlineResponse>> {
         val deadlines = deadlineService.getAll()
         return Response.ok("외박 신청 마감 시간을 조회했어요.", deadlines.map { it.toResponse() })

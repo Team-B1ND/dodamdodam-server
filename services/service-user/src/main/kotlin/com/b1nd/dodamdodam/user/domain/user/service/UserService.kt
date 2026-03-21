@@ -1,8 +1,10 @@
 package com.b1nd.dodamdodam.user.domain.user.service
 
 import com.b1nd.dodamdodam.core.security.passport.enumerations.RoleType
+import com.b1nd.dodamdodam.user.application.user.data.request.UpdateUserInfoRequest
 import com.b1nd.dodamdodam.user.domain.user.entity.UserEntity
 import com.b1nd.dodamdodam.user.domain.user.entity.UserRoleEntity
+import com.b1nd.dodamdodam.user.domain.user.enumeration.StatusType
 import com.b1nd.dodamdodam.user.domain.user.exception.UserAlreadyExistsException
 import com.b1nd.dodamdodam.user.domain.user.exception.UserNotFoundException
 import com.b1nd.dodamdodam.user.domain.user.exception.UserPasswordIncorrectException
@@ -18,25 +20,59 @@ class UserService(
     private val userRoleRepository: UserRoleRepository,
     private val encoder: BCryptPasswordEncoder
 ) {
-    fun create(user: UserEntity, role: RoleType): UserEntity {
-        checkDuplicateUser(user.username)
-        user.updatePassword(encoder.encode(user.password))
-        val savedUser = userRepository.save(user)
-        addRole(savedUser, listOf(role))
-        return savedUser
-    }
-
     fun get(publicId: UUID): UserEntity =
         userRepository.findByPublicId(publicId)
             ?: throw UserNotFoundException()
 
-    fun getByPublicIds(publicIds: Collection<UUID>): List<UserEntity> =
-        userRepository.findAllByPublicIdIn(publicIds)
+    fun create(user: UserEntity, role: RoleType): UserEntity {
+        checkDuplicateUser(user.username)
+        user.updatePassword(encoder.encode(user.password))
+        val savedUser = userRepository.save(user)
+        addRole(savedUser, setOf(role))
+        return savedUser
+    }
 
-    fun addRole(user: UserEntity, roles: List<RoleType>) {
-        val userRoles = roles.map { UserRoleEntity(user, it) }
+    fun update(publicId: UUID, name: String?, phone: String?, profileImage: String?): UserEntity {
+        val user = userRepository.findByPublicId(publicId)
+            ?: throw UserNotFoundException()
+        user.updateInfo(name, phone, profileImage)
+        return userRepository.save(user)
+    }
+
+    fun delete(publicId: UUID): UserEntity {
+        val user = userRepository.findByPublicId(publicId)
+            ?: throw UserNotFoundException()
+        user.status = StatusType.DEACTIVATED
+        return userRepository.save(user)
+    }
+
+    fun enable(publicId: UUID): UserEntity {
+        val user = userRepository.findByPublicId(publicId)
+            ?: throw UserNotFoundException()
+        user.status = StatusType.ACTIVE
+        return userRepository.save(user)
+    }
+
+    fun updatePassword(publicId: UUID, postPassword: String, newPassword: String) {
+        val user = userRepository.findByPublicId(publicId)
+            ?: throw UserNotFoundException()
+        if (!encoder.matches(postPassword, user.password)) throw UserPasswordIncorrectException()
+
+        user.updatePassword(encoder.encode(newPassword))
+        userRepository.save(user)
+    }
+
+    fun addRole(user: UserEntity, roles: Set<RoleType>) {
+        val existingRoles = getRoles(user)
+        val rolesToAdd = roles.subtract(existingRoles)
+        if (rolesToAdd.isEmpty()) return
+
+        val userRoles = rolesToAdd.map { UserRoleEntity(user, it) }
         userRoleRepository.saveAll(userRoles)
     }
+
+    fun getByPublicIds(publicIds: Collection<UUID>): List<UserEntity> =
+        userRepository.findAllByPublicIdIn(publicIds)
 
     fun getRoles(user: UserEntity): Set<RoleType> =
         userRoleRepository.findAllByUser(user)
@@ -54,6 +90,9 @@ class UserService(
         if (!encoder.matches(password, user.password))
             throw UserPasswordIncorrectException()
     }
+
+    fun getByUsername(username: String): UserEntity =
+        userRepository.findByUsername(username) ?: throw UserNotFoundException()
 
     private fun checkDuplicateUser(username: String) {
         if (userRepository.existsByUsername(username))

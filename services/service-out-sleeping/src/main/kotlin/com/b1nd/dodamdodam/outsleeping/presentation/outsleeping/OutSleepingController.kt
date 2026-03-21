@@ -4,8 +4,8 @@ import com.b1nd.dodamdodam.core.security.annotation.authentication.UserAccess
 import com.b1nd.dodamdodam.core.security.passport.enumerations.RoleType
 import com.b1nd.dodamdodam.outsleeping.application.outsleeping.OutSleepingUseCase
 import com.b1nd.dodamdodam.outsleeping.application.outsleeping.data.request.ApplyOutSleepingRequest
+import com.b1nd.dodamdodam.outsleeping.application.outsleeping.data.request.DenyOutSleepingRequest
 import com.b1nd.dodamdodam.outsleeping.application.outsleeping.data.request.ModifyOutSleepingRequest
-import com.b1nd.dodamdodam.outsleeping.application.outsleeping.data.request.RejectOutSleepingRequest
 import com.b1nd.dodamdodam.outsleeping.application.outsleeping.data.request.UpdateDeadlineRequest
 import org.springframework.format.annotation.DateTimeFormat
 import org.springframework.web.bind.annotation.DeleteMapping
@@ -23,7 +23,7 @@ class OutSleepingController(
     private val outSleepingUseCase: OutSleepingUseCase,
 ) {
 
-    @UserAccess
+    @UserAccess(roles = [RoleType.STUDENT])
     @PostMapping("/out-sleeping")
     fun apply(@RequestBody request: ApplyOutSleepingRequest) =
         outSleepingUseCase.apply(request)
@@ -67,9 +67,9 @@ class OutSleepingController(
         outSleepingUseCase.allow(id)
 
     @UserAccess(roles = [RoleType.TEACHER, RoleType.DORMITORY_MANAGER])
-    @PatchMapping("/out-sleeping/{id}/reject")
-    fun reject(@PathVariable id: Long, @RequestBody request: RejectOutSleepingRequest) =
-        outSleepingUseCase.reject(id, request)
+    @PatchMapping("/out-sleeping/{id}/deny")
+    fun deny(@PathVariable id: Long, @RequestBody request: DenyOutSleepingRequest) =
+        outSleepingUseCase.deny(id, request)
 
     @UserAccess(roles = [RoleType.TEACHER, RoleType.DORMITORY_MANAGER])
     @PatchMapping("/out-sleeping/{id}/revert")

@@ -111,6 +111,20 @@ class OutSleepingIntegrationTest {
             )
                 .andExpect(status().isForbidden)
         }
+
+        @Test
+        fun `교사는 외박을 신청할 수 없다`() {
+            val body = mapOf("reason" to "가족 행사", "startAt" to "2025-03-22", "endAt" to "2025-03-23")
+
+            mockMvc.perform(
+                post("/out-sleeping")
+                    .header("X-User-Passport", teacherPassport)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(objectMapper.writeValueAsString(body))
+            )
+                .andExpect(status().isForbidden)
+                .andExpect(jsonPath("$.status").value(403))
+        }
     }
 
     @Nested
@@ -239,10 +253,10 @@ class OutSleepingIntegrationTest {
 
         @Test
         fun `교사가 외박을 거절할 수 있다`() {
-            val body = mapOf("rejectReason" to "사유 부족")
+            val body = mapOf("denyReason" to "사유 부족")
 
             mockMvc.perform(
-                patch("/out-sleeping/${pendingOutSleeping.id}/reject")
+                patch("/out-sleeping/${pendingOutSleeping.id}/deny")
                     .header("X-User-Passport", teacherPassport)
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(objectMapper.writeValueAsString(body))
@@ -250,6 +264,19 @@ class OutSleepingIntegrationTest {
                 .andExpect(status().isOk)
                 .andExpect(jsonPath("$.status").value(200))
                 .andExpect(jsonPath("$.message").value("외박 신청을 거절했어요."))
+        }
+
+        @Test
+        fun `이미 승인된 외박을 다시 승인할 수 없다`() {
+            pendingOutSleeping.allow()
+            outSleepingRepository.save(pendingOutSleeping)
+
+            mockMvc.perform(
+                patch("/out-sleeping/${pendingOutSleeping.id}/allow")
+                    .header("X-User-Passport", teacherPassport)
+            )
+                .andExpect(status().isBadRequest)
+                .andExpect(jsonPath("$.status").value(400))
         }
 
         @Test
@@ -263,6 +290,16 @@ class OutSleepingIntegrationTest {
             )
                 .andExpect(status().isOk)
                 .andExpect(jsonPath("$.status").value(200))
+        }
+
+        @Test
+        fun `PENDING 상태에서 되돌리기를 할 수 없다`() {
+            mockMvc.perform(
+                patch("/out-sleeping/${pendingOutSleeping.id}/revert")
+                    .header("X-User-Passport", teacherPassport)
+            )
+                .andExpect(status().isBadRequest)
+                .andExpect(jsonPath("$.status").value(400))
         }
 
         @Test

@@ -2,6 +2,7 @@ package com.b1nd.dodamdodam.outsleeping.domain.outsleeping.entity
 
 import com.b1nd.dodamdodam.core.jpa.entity.BaseTimeEntity
 import com.b1nd.dodamdodam.outsleeping.domain.outsleeping.enumeration.OutSleepingStatus
+import com.b1nd.dodamdodam.outsleeping.domain.outsleeping.exception.OutSleepingAlreadyProcessedException
 import jakarta.persistence.*
 import java.time.LocalDate
 import java.util.UUID
@@ -29,7 +30,8 @@ class OutSleepingEntity(
     @Column(nullable = false, length = 20)
     var status: OutSleepingStatus = OutSleepingStatus.PENDING,
 
-    var rejectReason: String? = null,
+    @Column(name = "deny_reason")
+    var denyReason: String? = null,
 ) : BaseTimeEntity() {
 
     @Id
@@ -37,22 +39,34 @@ class OutSleepingEntity(
     val id: Long? = null
 
     fun allow() {
+        validatePending()
         this.status = OutSleepingStatus.ALLOWED
     }
 
-    fun reject(rejectReason: String?) {
-        this.status = OutSleepingStatus.REJECTED
-        this.rejectReason = rejectReason
+    fun deny(denyReason: String?) {
+        validatePending()
+        this.status = OutSleepingStatus.DENIED
+        this.denyReason = denyReason
     }
 
     fun revert() {
+        if (this.status == OutSleepingStatus.PENDING) {
+            throw OutSleepingAlreadyProcessedException()
+        }
         this.status = OutSleepingStatus.PENDING
-        this.rejectReason = null
+        this.denyReason = null
     }
 
     fun update(reason: String, startAt: LocalDate, endAt: LocalDate) {
+        validatePending()
         this.reason = reason
         this.startAt = startAt
         this.endAt = endAt
+    }
+
+    private fun validatePending() {
+        if (this.status != OutSleepingStatus.PENDING) {
+            throw OutSleepingAlreadyProcessedException()
+        }
     }
 }
