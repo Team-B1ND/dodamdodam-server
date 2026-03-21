@@ -3,21 +3,25 @@ package com.b1nd.dodamdodam.outsleeping
 import com.b1nd.dodamdodam.core.security.passport.Passport
 import com.b1nd.dodamdodam.core.security.passport.crypto.PassportCompressor
 import com.b1nd.dodamdodam.core.security.passport.enumerations.RoleType
+import com.b1nd.dodamdodam.grpc.user.UserInfoMessage
 import com.b1nd.dodamdodam.outsleeping.domain.deadline.entity.OutSleepingDeadlineEntity
 import com.b1nd.dodamdodam.outsleeping.domain.deadline.repository.OutSleepingDeadlineRepository
-import com.b1nd.dodamdodam.outsleeping.domain.member.entity.MemberEntity
-import com.b1nd.dodamdodam.outsleeping.domain.member.repository.MemberRepository
 import com.b1nd.dodamdodam.outsleeping.domain.outsleeping.entity.OutSleepingEntity
 import com.b1nd.dodamdodam.outsleeping.domain.outsleeping.enumeration.OutSleepingStatus
 import com.b1nd.dodamdodam.outsleeping.domain.outsleeping.repository.OutSleepingRepository
+import com.b1nd.dodamdodam.outsleeping.infrastructure.grpc.client.UserClient
 import com.fasterxml.jackson.databind.ObjectMapper
+import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
+import org.mockito.kotlin.any
+import org.mockito.kotlin.whenever
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.http.MediaType
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.web.servlet.MockMvc
@@ -36,12 +40,26 @@ class OutSleepingIntegrationTest {
     @Autowired lateinit var mockMvc: MockMvc
     @Autowired lateinit var objectMapper: ObjectMapper
     @Autowired lateinit var outSleepingRepository: OutSleepingRepository
-    @Autowired lateinit var memberRepository: MemberRepository
     @Autowired lateinit var deadlineRepository: OutSleepingDeadlineRepository
+    @MockBean lateinit var userClient: UserClient
 
     private val studentId = UUID.randomUUID()
     private val teacherId = UUID.randomUUID()
     private val otherStudentId = UUID.randomUUID()
+
+    private fun buildUserInfoMessage(publicId: UUID, name: String, grade: Int? = null, room: Int? = null, number: Int? = null): UserInfoMessage {
+        val builder = UserInfoMessage.newBuilder()
+            .setPublicId(publicId.toString())
+            .setName(name)
+        grade?.let { builder.setGrade(it) }
+        room?.let { builder.setRoom(it) }
+        number?.let { builder.setNumber(it) }
+        return builder.build()
+    }
+
+    private val studentInfo get() = buildUserInfoMessage(studentId, "학생1", 2, 3, 15)
+    private val otherStudentInfo get() = buildUserInfoMessage(otherStudentId, "학생2", 1, 2, 10)
+    private val teacherInfo get() = buildUserInfoMessage(teacherId, "선생님1")
 
     private fun passportHeader(userId: UUID, role: RoleType): String {
         val passport = Passport(
@@ -64,7 +82,6 @@ class OutSleepingIntegrationTest {
     @BeforeEach
     fun setUp() {
         outSleepingRepository.deleteAll()
-        memberRepository.deleteAll()
         deadlineRepository.deleteAll()
 
         // Set deadline to far future so tests can apply
@@ -75,10 +92,18 @@ class OutSleepingIntegrationTest {
             )
         )
 
-        // Create test members
-        memberRepository.save(MemberEntity(userId = studentId, name = "학생1", role = "STUDENT", grade = 2, room = 3, number = 15))
-        memberRepository.save(MemberEntity(userId = otherStudentId, name = "학생2", role = "STUDENT", grade = 1, room = 2, number = 10))
-        memberRepository.save(MemberEntity(userId = teacherId, name = "선생님1", role = "TEACHER"))
+        // Mock gRPC UserClient
+        runBlocking {
+            whenever(userClient.getUserInfo(studentId)).thenReturn(studentInfo)
+            whenever(userClient.getUserInfo(otherStudentId)).thenReturn(otherStudentInfo)
+            whenever(userClient.getUserInfo(teacherId)).thenReturn(teacherInfo)
+            whenever(userClient.getUserInfosByIds(any())).thenAnswer { invocation ->
+                val ids = invocation.getArgument<Collection<UUID>>(0)
+                val infoMap = mapOf(studentId to studentInfo, otherStudentId to otherStudentInfo, teacherId to teacherInfo)
+                ids.mapNotNull { infoMap[it] }
+            }
+            whenever(userClient.getAllStudents()).thenReturn(listOf(studentInfo, otherStudentInfo))
+        }
     }
 
     @Nested
@@ -396,7 +421,7 @@ class OutSleepingIntegrationTest {
             )
                 .andExpect(status().isOk)
                 .andExpect(jsonPath("$.status").value(200))
-                .andExpect(jsonPath("$.data.dayOfWeek").value("SUNDAY"))
+                .andExpect(jsonPath("$.data[0].dayOfWeek").value("SUNDAY"))
         }
 
         @Test
